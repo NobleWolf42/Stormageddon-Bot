@@ -1,0 +1,11 @@
+{
+    "name": "stormageddon-bot",
+    "version": "1.0.0",
+    "description": "Basic bot for Discord",
+    "main": "storm.js",
+    "author": "NobleWolf42",
+    "dependencies": {
+        "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
+        "winston": "^3.2.1"
+    }
+}
