@@ -1,9 +1,19 @@
 var Discord = require('discord.js');
-var fs = require("fs");
 var config = require('./config.json');
 
 // Initialize Discord Bot
-var bot = new Discord.Client();
+var client = new Discord.Client();
+
+client.on('ready', () => {
+    console.log(`Logged in as ${client.user.tag}!`);
+  });
+  
+  client.on('message', msg => {
+    if (msg.content === 'ping') {
+      msg.reply('pong');
+    }
+  });
+  
 
 //Logs the bot into discord, using it's auth token
-bot.login(config.auth.token);
+client.login(config.auth.token);
