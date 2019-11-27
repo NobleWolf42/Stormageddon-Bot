@@ -25,7 +25,7 @@ function generateEmbedFields() {
 }
 
 // Handles the creation of the role reactions. Will either send the role messages separately or in an embed, depending on your settings in config.json
-function sendRoleMessage {
+function sendRoleMessage() {
     
     // Make sure bots can't run this command
     if (message.author.bot) return;
@@ -108,7 +108,7 @@ function sendRoleMessage {
             }
         });
     }
-});
+};
 
 // This makes the events used a bit more readable
 const events = {
