@@ -1,0 +1,16 @@
+{
+    "auth": {
+        "token": "YOUR BOT TOKEN"
+    },
+    "connection": {
+        "server_id": "YOUR SERVER ID",
+        "admin_roles": [
+            "Server Admin",
+            "Example Role"
+        ],
+        "allowed_channels": [
+            "General",
+            "Example-Chat-1"
+        ]
+    }
+}
