@@ -1,0 +1,6 @@
+{
+    "help" : "Displays this Help Message.",
+    "dog/storm" : "Displays a random picture of our lord and savior ***Stormageddon***.",
+    "prefix INSERT SYMBOL HERE" : "**ADMIN ONLY** command that lets you change the bot's prefix to the desired symbol.",
+    "createautorole" : "**ADMIN ONLY** command that has the bot create the reactions for auto role assignment"
+}

@@ -4,6 +4,7 @@ var Discord = require('discord.js');
 var fs = require("fs");
 var config = require('./config.json');
 var prefixFile = require('./botprefix.json');
+var cmdObj = require('./commands.json');
 var prefix = prefixFile.prefix;
 var doggoLinks = [];
 var adminRoleIDs = [];
@@ -185,6 +186,21 @@ client.on("message", message => {
     if((command === (prefix + 'dog')) || (command === (prefix + 'storm'))) {
         var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
         message.channel.send(attachment);
+    }
+    //#endregion
+
+    //#region help command
+    if(command === (prefix + 'help')) {
+        var txt = "";
+        for (key in cmdObj) {
+            txt += prefix + key + ' - ' + cmdObj.key + '/n';
+        }
+        
+        const embMsg = new Discord.RichEmbed()
+        .setTitle('Error!')
+        .setColor(0xb50000)
+        .setDescription(txt);
+        message.channel.send(embMsg);
     }
     //#endregion
 });
