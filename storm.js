@@ -147,7 +147,10 @@ client.on("message", message => {
     //#region prefix command
     if((command === (prefix + 'prefix')) && (adminTF === true)) {
         
-        prefixChange(userInput[1]);
+        if(userInput[1] != undefined) {
+            prefixChange(userInput[1]);
+        }
+
         const embMsg = new Discord.RichEmbed()
             .setTitle('Current Prefix:')
             .setColor(32768)
@@ -193,11 +196,11 @@ client.on("message", message => {
     if(command === (prefix + 'help')) {
         var txt = "";
         for (key in cmdObj) {
-            txt += prefix + key + ' - ' + cmdObj.key + '/n';
+            txt += prefix + key + ' - ' + cmdObj[key] + '\n';
         }
         
         const embMsg = new Discord.RichEmbed()
-        .setTitle('Error!')
+        .setTitle('Help!')
         .setColor(0xb50000)
         .setDescription(txt);
         message.channel.send(embMsg);
