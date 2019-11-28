@@ -1,5 +1,6 @@
 var Discord = require('discord.js');
 var config = require('./config.json');
+var prefix = require('./botprefix.json').prefix;
 var adminRoleIDs = [];
 var modRoleIDs = [];
 
@@ -112,11 +113,17 @@ client.on("message", message => {
     if (!message.guild) return;
 
     //Runs AutoRole Message Generation
-    if ((adminTF == true) && (userInput == (config.general.botPrefix + config.autorole.setupCMD))){
+    if ((adminTF == true) && (userInput == (prefix + config.autorole.setupCMD))){
         sendRoleMessage(message);
     };
 });
 
+
+//BEGIN PREFIX SETTING
+
+function setPrefix() {
+    
+}
 
 //BEGIN AUTOROLE
 
