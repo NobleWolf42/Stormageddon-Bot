@@ -110,17 +110,6 @@ client.on("message", message => {
 
     // Make sure the command can only be run in a server
     if (!message.guild) return;
-    
-    // We don't want the bot to do anything further if it can't send messages in the channel
-    if (message.guild && !message.channel.permissionsFor(message.guild.me).missing('SEND_MESSAGES')) return;
-    
-    if (config.autorole.deleteSetupCMD) {
-        const missing = message.channel.permissionsFor(message.guild.me).missing('MANAGE_MESSAGES');
-        // Here we check if the bot can actually delete messages in the channel the command is being ran in
-        if (missing.includes('MANAGE_MESSAGES'))
-            throw new Error("I need permission to delete your command message! Please assign the 'Manage Messages' permission to me in this channel!");
-        message.delete().catch(O_o=>{});
-    }
 
     //Runs AutoRole Message Generation
     if ((adminTF == true) && (userInput == (config.general.botPrefix + config.autorole.setupCMD))){
@@ -160,6 +149,17 @@ function generateEmbedFields() {
 
 // Handles the creation of the role reactions. Will either send the role messages separately or in an embed, depending on your settings in config.json
 function sendRoleMessage(message) {
+
+    // We don't want the bot to do anything further if it can't send messages in the channel
+    if (message.guild && !message.channel.permissionsFor(message.guild.me).missing('SEND_MESSAGES')) return;
+    
+    if (config.autorole.deleteSetupCMD) {
+        const missing = message.channel.permissionsFor(message.guild.me).missing('MANAGE_MESSAGES');
+        // Here we check if the bot can actually delete messages in the channel the command is being ran in
+        if (missing.includes('MANAGE_MESSAGES'))
+            throw new Error("I need permission to delete your command message! Please assign the 'Manage Messages' permission to me in this channel!");
+        message.delete().catch(O_o=>{});
+    }
 
     const missing = message.channel.permissionsFor(message.guild.me).missing('MANAGE_MESSAGES');
 
