@@ -5,6 +5,7 @@ var fs = require("fs");
 var config = require('./config.json');
 var prefixFile = require('./botprefix.json');
 var prefix = prefixFile.prefix;
+var doggoLinks = [];
 var adminRoleIDs = [];
 var modRoleIDs = [];
 
@@ -26,6 +27,8 @@ client.login(config.auth.token);
 //Logs the Bot info when bot starts
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}!`)
+    getDoggoPics();
+    client.user.setPresence({ game: { name: `Use ${prefix}help to show commands` } });
 });
 
 //Logs Errors
@@ -120,7 +123,8 @@ function modCheck(userRolesArray, serverRolesArray) {
 client.on("message", message => {
 
     //Varibles for the message info needed
-    var userInput = message.content.toLowerCase();
+    var userInput = message.content.toLowerCase().split(' ');
+    var command = userInput[0];
     var userRoles = message.author.lastMessage.member._roles;
     var serverRoles = message.channel.guild.roles;
     var adminTF = adminCheck(userRoles, serverRoles);
@@ -135,21 +139,21 @@ client.on("message", message => {
     //#endregion
 
     //Runs AutoRole Message Generation
-    if ((userInput === (prefix + config.autorole.setupCMD) && (adminTF === true))){
+    if ((command === (prefix + config.autorole.setupCMD) && (adminTF === true))){
         sendRoleMessage(message);
     };
 
     //#region prefix command
-    if((userInput.slice(0,7) === (prefix + 'prefix')) && (adminTF === true)) {
+    if((command === (prefix + 'prefix')) && (adminTF === true)) {
         
-        prefixChange(userInput.slice(8,9));
+        prefixChange(userInput[1]);
         const embMsg = new Discord.RichEmbed()
             .setTitle('Current Prefix:')
             .setColor(32768)
             .setDescription('Current Prefix is ' + prefix);
         message.channel.send(embMsg);
     }
-    else if((userInput.slice(0,7) === (prefix + 'prefix')) && (adminTF === false)) {
+    else if((command === (prefix + 'prefix')) && (adminTF === false)) {
         const embMsg = new Discord.RichEmbed()
         .setTitle('Error!')
         .setColor(0xb50000)
@@ -158,13 +162,30 @@ client.on("message", message => {
     }
     //#endregion
 
-    //#region @magma command
-    if(message.mentions.users.first().id === '211865015592943616') {
-        const attachment = new Discord.Attachment('https://i.ytimg.com/vi/EKxio8HZiNA/maxresdefault.jpg');
-        message.channel.send('Nep Nep Nep Nep Nep Nep Nep');
+    //#region for all @ commands
+    //@magma
+    if(message.mentions.users.first() !== undefined) {
+        console.log(message.mentions.users.first());
+        if(message.mentions.users.first().id === '211865015592943616') {
+            const attachment = new Discord.Attachment('https://i.ytimg.com/vi/EKxio8HZiNA/maxresdefault.jpg');
+            message.channel.send('Nep Nep Nep Nep Nep Nep Nep');
+            message.channel.send(attachment);
+        }
+
+        //@storm
+        if(message.mentions.users.first().id === '645141555719569439') {
+            var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
+            message.channel.send('Woof Woof');
+            message.channel.send(attachment);
+        }
+    }
+    //#endregion
+
+    //#region dog/storm command
+    if((command === (prefix + 'dog')) || (command === (prefix + 'storm'))) {
+        var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
         message.channel.send(attachment);
     }
-    console.log(message.mentions.users.first().id);
     //#endregion
 });
 
@@ -184,6 +205,20 @@ function prefixChange(newPrefix) {
     });
 }
 
+//#endregion
+
+//#region get random int function
+function getRandomInt(max) {
+    return Math.floor(Math.random() * Math.floor(max));
+  }
+//#endregion
+
+//#region Imgur Handeling for Storm Pics
+function getDoggoPics() {
+    for (key in require('./stormpics.json').data) {
+        doggoLinks.push(require('./stormpics.json').data[key].link);
+    }
+}
 //#endregion
 
 //#region Autoroll
