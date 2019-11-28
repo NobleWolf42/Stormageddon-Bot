@@ -1,12 +1,17 @@
 //#region Dependency
+
 var Discord = require('discord.js');
+var fs = require("fs");
 var config = require('./config.json');
-var prefix = require('./botprefix.json').prefix;
+var prefixFile = require('./botprefix.json');
+var prefix = prefixFile.prefix;
 var adminRoleIDs = [];
 var modRoleIDs = [];
+
 //#endregion
 
 //#region Login / Initialize
+
 // Initialize Discord Bot
 var client = new Discord.Client();
 
@@ -25,9 +30,11 @@ client.on("ready", () => {
 
 //Logs Errors
 client.on('error', console.error);
+
 //#endregion
 
 //#region Server Rolls
+
 //Function that calls the server roles
 function serverRoleUpdate(sRole) {
     
@@ -58,9 +65,11 @@ function serverRoleUpdate(sRole) {
         }
     }
 }
+
 //#endregion
 
-//#region  Admin / Mod Check
+//#region Admin / Mod Check
+
 //Function that returns boolean for if the user who sent the message is an Admin (based off config.connection.adminRoles)
 function adminCheck(userRolesArray, serverRolesArray) {
     
@@ -102,7 +111,10 @@ function modCheck(userRolesArray, serverRolesArray) {
 
     return false;
 }
+
 //#endregion
+
+//#region Message Handeling
 
 //Handels Messages and their responses
 client.on("message", message => {
@@ -114,48 +126,68 @@ client.on("message", message => {
     var adminTF = adminCheck(userRoles, serverRoles);
     var modTF = modCheck(userRoles, serverRoles);
 
+    //#region Permission Checks
     // Make sure bots can't run this command
     if (message.author.bot) return;
 
     // Make sure the command can only be run in a server
     if (!message.guild) return;
+    //#endregion
 
     //Runs AutoRole Message Generation
-    if ((adminTF == true) && (userInput == (prefix + config.autorole.setupCMD))){
+    if ((userInput === (prefix + config.autorole.setupCMD) && (adminTF === true))){
         sendRoleMessage(message);
     };
 
-    if((userInput === 'prefix') && (modTF == true)) {
-            const embMsg = new Discord.RichEmbed()
+    //#region prefix command
+    if((userInput.slice(0,7) === (prefix + 'prefix')) && (adminTF === true)) {
+        
+        prefixChange(userInput.slice(8,9));
+        const embMsg = new Discord.RichEmbed()
             .setTitle('Current Prefix:')
-            .setColor(0xb50000)
-            .setDescription('Currently Prefix is a WIP. Current Prefix is -');
-            message.channel.send(embMsg);
+            .setColor(32768)
+            .setDescription('Current Prefix is ' + prefix);
+        message.channel.send(embMsg);
     }
-    else if ((userInput === 'prefix') && (modTF == false)) {
+    else if((userInput.slice(0,7) === (prefix + 'prefix')) && (adminTF === false)) {
         const embMsg = new Discord.RichEmbed()
         .setTitle('Error!')
         .setColor(0xb50000)
         .setDescription('You lack the required permissions to change the prefix!');
         message.channel.send(embMsg);
     }
+    //#endregion
 
-//BEGIN PREFIX SETTING
-
-function setPrefix() {
-    
-}
-
-//BEGIN AUTOROLE
-
-    if(userInput === 'magma') {
+    //#region @magma command
+    if(message.mentions.users.first().id === '211865015592943616') {
         const attachment = new Discord.Attachment('https://i.ytimg.com/vi/EKxio8HZiNA/maxresdefault.jpg');
         message.channel.send('Nep Nep Nep Nep Nep Nep Nep');
         message.channel.send(attachment);
     }
+    console.log(message.mentions.users.first().id);
+    //#endregion
 });
 
+//#endregion
+
+//#region Prefix Changing
+
+function prefixChange(newPrefix) {
+    prefix = newPrefix;
+    prefixFile.prefix = newPrefix;
+
+    fs.writeFile("./botprefix.json", JSON.stringify(prefixFile), (err) => {
+        if (err) {
+            console.error(err);
+            return;
+        };
+    });
+}
+
+//#endregion
+
 //#region Autoroll
+
 //Checks to make sure your roles and reactions match up
 if (config.autorole.roles.length !== config.autorole.reactions.length) {
     throw new Error("Roles list and reactions list are not the same length! Please double check this in the config.js file");
@@ -324,4 +356,5 @@ process.on('unhandledRejection', err => {
     const msg = err.stack.replace(new RegExp(`${__dirname}/`, 'g'), './');
 	console.error("Unhandled Rejection", msg);
 });
+
 //#endregion
