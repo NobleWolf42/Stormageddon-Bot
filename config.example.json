@@ -16,7 +16,6 @@
         "embedThumbnailLink": ""
     },
     "general": {
-        "botPrefix": "!",
         "adminRoles": [
             "Server Admin",
             "Example Role"
