@@ -1,9 +1,12 @@
+//#region Dependency
 var Discord = require('discord.js');
 var config = require('./config.json');
 var prefix = require('./botprefix.json').prefix;
 var adminRoleIDs = [];
 var modRoleIDs = [];
+//#endregion
 
+//#region Login / Initialize
 // Initialize Discord Bot
 var client = new Discord.Client();
 
@@ -22,7 +25,9 @@ client.on("ready", () => {
 
 //Logs Errors
 client.on('error', console.error);
+//#endregion
 
+//#region Server Rolls
 //Function that calls the server roles
 function serverRoleUpdate(sRole) {
     
@@ -53,7 +58,9 @@ function serverRoleUpdate(sRole) {
         }
     }
 }
+//#endregion
 
+//#region  Admin / Mod Check
 //Function that returns boolean for if the user who sent the message is an Admin (based off config.connection.adminRoles)
 function adminCheck(userRolesArray, serverRolesArray) {
     
@@ -95,6 +102,7 @@ function modCheck(userRolesArray, serverRolesArray) {
 
     return false;
 }
+//#endregion
 
 //Handels Messages and their responses
 client.on("message", message => {
@@ -116,8 +124,21 @@ client.on("message", message => {
     if ((adminTF == true) && (userInput == (prefix + config.autorole.setupCMD))){
         sendRoleMessage(message);
     };
-});
 
+    if((userInput === 'prefix') && (modTF == true)) {
+            const embMsg = new Discord.RichEmbed()
+            .setTitle('Current Prefix:')
+            .setColor(0xb50000)
+            .setDescription('Currently Prefix is a WIP. Current Prefix is -');
+            message.channel.send(embMsg);
+    }
+    else if ((userInput === 'prefix') && (modTF == false)) {
+        const embMsg = new Discord.RichEmbed()
+        .setTitle('Error!')
+        .setColor(0xb50000)
+        .setDescription('You lack the required permissions to change the prefix!');
+        message.channel.send(embMsg);
+    }
 
 //BEGIN PREFIX SETTING
 
@@ -127,7 +148,14 @@ function setPrefix() {
 
 //BEGIN AUTOROLE
 
+    if(userInput === 'magma') {
+        const attachment = new Discord.Attachment('https://i.ytimg.com/vi/EKxio8HZiNA/maxresdefault.jpg');
+        message.channel.send('Nep Nep Nep Nep Nep Nep Nep');
+        message.channel.send(attachment);
+    }
+});
 
+//#region Autoroll
 //Checks to make sure your roles and reactions match up
 if (config.autorole.roles.length !== config.autorole.reactions.length) {
     throw new Error("Roles list and reactions list are not the same length! Please double check this in the config.js file");
@@ -296,5 +324,4 @@ process.on('unhandledRejection', err => {
     const msg = err.stack.replace(new RegExp(`${__dirname}/`, 'g'), './');
 	console.error("Unhandled Rejection", msg);
 });
-
-//END AUTOROLE
+//#endregion
