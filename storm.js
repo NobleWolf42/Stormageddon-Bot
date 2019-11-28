@@ -222,6 +222,8 @@ function prefixChange(newPrefix) {
             return;
         };
     });
+
+    client.user.setPresence({ game: { name: `Use ${prefix}help to show commands` } });
 }
 
 //#endregion
