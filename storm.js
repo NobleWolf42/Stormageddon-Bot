@@ -122,14 +122,6 @@ function modCheck(userRolesArray, serverRolesArray) {
 //Handels Messages and their responses
 client.on("message", message => {
 
-    //Varibles for the message info needed
-    var userInput = message.content.toLowerCase().split(' ');
-    var command = userInput[0];
-    var userRoles = message.author.lastMessage.member._roles;
-    var serverRoles = message.channel.guild.roles;
-    var adminTF = adminCheck(userRoles, serverRoles);
-    var modTF = modCheck(userRoles, serverRoles);
-
     //#region Permission Checks
     // Make sure bots can't run this command
     if (message.author.bot) return;
@@ -137,6 +129,14 @@ client.on("message", message => {
     // Make sure the command can only be run in a server
     if (!message.guild) return;
     //#endregion
+
+    //Varibles for the message info needed
+    var userInput = message.content.toLowerCase().split(' ');
+    var command = userInput[0];
+    var userRoles = message.author.lastMessage.member._roles;
+    var serverRoles = message.channel.guild.roles;
+    var adminTF = adminCheck(userRoles, serverRoles);
+    var modTF = modCheck(userRoles, serverRoles);
 
     //Runs AutoRole Message Generation
     if ((command === (prefix + config.autorole.setupCMD) && (adminTF === true))){
