@@ -2,15 +2,32 @@
     "auth": {
         "token": "YOUR BOT TOKEN"
     },
-    "connection": {
-        "server_id": "YOUR SERVER ID",
-        "admin_roles": [
+    "autorole" : {
+        "setupCMD": "createautorole",
+        "deleteSetupCMD": true,
+        "initialMessage": "`**React to the messages below to receive the associated role. If you would like to remove the role, simply remove your reaction!**`",
+        "embedMessage": "`\nReact to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`",
+        "embedFooter": "Role Reactions",
+        "roles": ["Computer"],
+        "reactions": ["💻"],
+        "embed": true,
+        "embedColor": "#dd9323",
+        "embedThumbnail": false,
+        "embedThumbnailLink": ""
+    },
+    "general": {
+        "botPrefix": "!",
+        "adminRoles": [
             "Server Admin",
             "Example Role"
         ],
-        "allowed_channels": [
-            "General",
-            "Example-Chat-1"
+        "modRoles": [
+            "Server Admin",
+            "Example Role"
+        ],
+        "allowedChannels": [
+            "Example-Chat-1",
+            "General"
         ]
     }
 }
