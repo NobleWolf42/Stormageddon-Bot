@@ -171,7 +171,7 @@ client.on("message", message => {
     if(message.mentions.users.first() !== undefined) {
         console.log(message.mentions.users.first());
         if(message.mentions.users.first().id === '211865015592943616') {
-            const attachment = new Discord.Attachment('https://i.ytimg.com/vi/EKxio8HZiNA/maxresdefault.jpg');
+            const attachment = new Discord.Attachment('https://cdn.discordapp.com/attachments/254389303294165003/649734083366223895/kji50lq4nhq11.png');
             message.channel.send('Nep Nep Nep Nep Nep Nep Nep');
             message.channel.send(attachment);
         }
