@@ -6,7 +6,6 @@ var fs = require("fs");
 var config = require('./config.json');
 var prefixFile = require('./botprefix.json');
 var cmdObj = require('./commands.json');
-var prefix = prefixFile.prefix;
 var doggoLinks = [];
 var adminRoleIDs = [];
 var modRoleIDs = [];
@@ -30,7 +29,7 @@ client.login(config.auth.token);
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}!`)
     getDoggoPics();
-    client.user.setPresence({ game: { name: `Use ${prefix}help to show commands` } });
+    client.user.setPresence({ game: { name: `Use !help to show commands` } });
 });
 
 //Logs Errors
@@ -140,32 +139,69 @@ client.on("message", message => {
     var serverRoles = message.channel.guild.roles;
     var adminTF = adminCheck(userRoles, serverRoles, serverid);
     var modTF = modCheck(userRoles, serverRoles, serverid);
+    if (prefixFile[serverid] != undefined) {
+        if (prefixFile[serverid].prefix != undefined) {
+            var prefix = prefixFile[serverid].prefix;
+        }
+        else {
+            var prefix = "!";
+        }
+    }
+    else {
+        var prefix = "!";
+    }
 
     //Runs AutoRole Message Generation
-    if ((command === (prefix + config[serverid].autorole.setupCMD) && (adminTF === true))){
+    if ((command === (prefix + 'createautorolemsg') && (adminTF === true))){
         sendRoleMessage(message, serverid);
     };
 
     //#region prefix command
-    if(command === ('prefix')) {
+    if((command === (prefix + 'changeprefix')) && (adminTF == true)) {
         
-        /*if(userInput[1] != undefined) {
-            prefixChange(userInput[1]);
-        }*/
+        var isSymbol = /[`~!$%^&*()_+-={}[\]\|\\:";'<>?,.\/]/;
 
+        if(userInput[1] != undefined) {
+            if ((userInput[1].length = 1) && (isSymbol.test(userInput[1]))){
+                prefixChange(userInput[1], serverid);
+
+                const embMsg = new Discord.RichEmbed()
+                    .setTitle('Current Prefix:')
+                    .setColor(32768)
+                    .setDescription('Current Prefix is ' + userInput[1]);
+                message.channel.send(embMsg);
+            }
+            else {
+                const embMsg = new Discord.RichEmbed()
+                    .setTitle('Error!')
+                    .setColor(0xb50000)
+                    .setDescription('Bot Prefix Must be one of the following: ````~!$%^&*()_+-={}[]|\:";\'<>?,./```');
+                message.channel.send(embMsg);
+            }
+        }
+        else {
+            const embMsg = new Discord.RichEmbed()
+                .setTitle('Error!')
+                .setColor(0xb50000)
+                .setDescription('You must define a bot prefix.');
+            message.channel.send(embMsg);
+        }
+
+    }
+    else if((command === (prefix + 'changeprefix')) && (adminTF === false)) {
+        const embMsg = new Discord.RichEmbed()
+        .setTitle('Error!')
+        .setColor(0xb50000)
+        .setDescription('You lack the required permissions to change the prefix!');
+        message.channel.send(embMsg);
+    }
+    else if (command === 'prefix') {
         const embMsg = new Discord.RichEmbed()
             .setTitle('Current Prefix:')
             .setColor(32768)
             .setDescription('Current Prefix is ' + prefix);
         message.channel.send(embMsg);
     }
-    /*else if((command === (prefix + 'prefix')) && (adminTF === false)) {
-        const embMsg = new Discord.RichEmbed()
-        .setTitle('Error!')
-        .setColor(0xb50000)
-        .setDescription('You lack the required permissions to change the prefix!');
-        message.channel.send(embMsg);
-    }*/
     //#endregion
 
     //#region for all @ commands
@@ -235,9 +271,8 @@ client.on("message", message => {
 
 //#region Prefix Changing
 
-function prefixChange(newPrefix) {
-    prefix = newPrefix;
-    prefixFile.prefix = newPrefix;
+function prefixChange(newPrefix, serverid) {
+    prefixFile[serverid] = {"prefix": newPrefix};
 
     fs.writeFile("./botprefix.json", JSON.stringify(prefixFile), (err) => {
         if (err) {
@@ -245,8 +280,6 @@ function prefixChange(newPrefix) {
             return;
         };
     });
-
-    client.user.setPresence({ game: { name: `Use ${prefix}help to show commands` } });
 }
 
 //#endregion

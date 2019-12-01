@@ -2,5 +2,6 @@
     "help" : "Displays this Help Message.",
     "dog/storm" : "Displays a random picture of our lord and savior ***Stormageddon***.",
     "prefix" : "Displays the current bot prefix.",
-    "createautorole" : "**ADMIN ONLY** command that has the bot create the reactions for auto role assignment"
+    "changeprefix" : "**BOT ADMIN ONLY** command that changes the prefix the bot uses in your server.",
+    "createautorolemsg" : "**BOT ADMIN ONLY** command that has the bot create the reactions for auto role assignment."
 }
