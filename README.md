@@ -8,6 +8,6 @@ Uses discord.js
 
 Install Commands for Dependancies:
 
-- npm install discord.js
+- npm install discord.js ffmpeg ffmpeg-binaries opusscript ytdl-core
 
 You will have to change some variables for your own use, copy the config.example.json to config.json and enter your settings.

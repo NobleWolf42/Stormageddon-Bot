@@ -1,6 +1,7 @@
 //#region Dependency
 
 var Discord = require('discord.js');
+var ytdl = require('ytdl-core');
 var fs = require("fs");
 var config = require('./config.json');
 var prefixFile = require('./botprefix.json');
@@ -40,7 +41,7 @@ client.on('error', console.error);
 //#region Server Rolls
 
 //Function that calls the server roles
-function serverRoleUpdate(sRole) {
+function serverRoleUpdate(sRole, serverid) {
     
     //Sets Local Varibles
     var basicServerRoles = {};
@@ -52,20 +53,20 @@ function serverRoleUpdate(sRole) {
     }
 
     //Loops throught the Admin Role Names, pusing them to an array
-    for (key in config.general.adminRoles) {
+    for (key in config[serverid].general.adminRoles) {
         
-        //Pushes role IDs to Admin if they Match config.general.adminRoles
-        if (basicServerRoles[config.general.adminRoles[key]]){
-            adminRoleIDs.push(basicServerRoles[config.general.adminRoles[key]]);
+        //Pushes role IDs to Admin if they Match config[serverid].general.adminRoles
+        if (basicServerRoles[config[serverid].general.adminRoles[key]]){
+            adminRoleIDs.push(basicServerRoles[config[serverid].general.adminRoles[key]]);
         }
     }
 
     //Loops throught the Mod Role Names, pusing them to an array
-    for (key in config.general.modRoles) {
+    for (key in config[serverid].general.modRoles) {
         
-        //Pushes role IDs to Mods if they Match config.general.modRoles
-        if (basicServerRoles[config.general.modRoles[key]]){
-            modRoleIDs.push(basicServerRoles[config.general.modRoles[key]]);
+        //Pushes role IDs to Mods if they Match config[serverid].general.modRoles
+        if (basicServerRoles[config[serverid].general.modRoles[key]]){
+            modRoleIDs.push(basicServerRoles[config[serverid].general.modRoles[key]]);
         }
     }
 }
@@ -74,11 +75,11 @@ function serverRoleUpdate(sRole) {
 
 //#region Admin / Mod Check
 
-//Function that returns boolean for if the user who sent the message is an Admin (based off config.connection.adminRoles)
-function adminCheck(userRolesArray, serverRolesArray) {
+//Function that returns boolean for if the user who sent the message is an Admin (based off config[serverid].connection.adminRoles)
+function adminCheck(userRolesArray, serverRolesArray, serverid) {
     
     //Calls a function that updates the server role information
-    serverRoleUpdate(serverRolesArray);
+    serverRoleUpdate(serverRolesArray, serverid);
     
     //Checks to see if any of the user role ids match any of the admin role ids
     for (key in userRolesArray) {
@@ -95,11 +96,11 @@ function adminCheck(userRolesArray, serverRolesArray) {
     return false;
 }
 
-//Function that returns boolean for if the user who sent the message is a Moderator (based off config.connection.modRoles)
-function modCheck(userRolesArray, serverRolesArray) {
+//Function that returns boolean for if the user who sent the message is a Moderator (based off config[serverid].connection.modRoles)
+function modCheck(userRolesArray, serverRolesArray, serverid) {
     
     //Calls a function that updates the server role information
-    serverRoleUpdate(serverRolesArray);
+    serverRoleUpdate(serverRolesArray, serverid);
     
     //Checks to see if user role ids match any of the mod role ids
     for (key in userRolesArray) {
@@ -132,16 +133,17 @@ client.on("message", message => {
     //#endregion
 
     //Varibles for the message info needed
+    var serverid = message.channel.guild.id;
     var userInput = message.content.toLowerCase().split(' ');
     var command = userInput[0];
     var userRoles = message.author.lastMessage.member._roles;
     var serverRoles = message.channel.guild.roles;
-    var adminTF = adminCheck(userRoles, serverRoles);
-    var modTF = modCheck(userRoles, serverRoles);
+    var adminTF = adminCheck(userRoles, serverRoles, serverid);
+    var modTF = modCheck(userRoles, serverRoles, serverid);
 
     //Runs AutoRole Message Generation
-    if ((command === (prefix + config.autorole.setupCMD) && (adminTF === true))){
-        sendRoleMessage(message);
+    if ((command === (prefix + config[serverid].autorole.setupCMD) && (adminTF === true))){
+        sendRoleMessage(message, serverid);
     };
 
     //#region prefix command
@@ -169,7 +171,7 @@ client.on("message", message => {
     //#region for all @ commands
     //@magma
     if(message.mentions.users.first() !== undefined) {
-        console.log(message.mentions.users.first());
+
         if(message.mentions.users.first().id === '211865015592943616') {
             const attachment = new Discord.Attachment('https://cdn.discordapp.com/attachments/254389303294165003/649734083366223895/kji50lq4nhq11.png');
             message.channel.send('Nep Nep Nep Nep Nep Nep Nep');
@@ -244,39 +246,39 @@ function getDoggoPics() {
 
 //#region Autoroll
 
-//Checks to make sure your roles and reactions match up
-if (config.autorole.roles.length !== config.autorole.reactions.length) {
-    throw new Error("Roles list and reactions list are not the same length! Please double check this in the config.js file");
-}
-
 //Function that will create messages to allow you to assign yourself a role
-function generateMessages() {
-    return config.autorole.roles.map((r, e) => {
+function generateMessages(serverid) {
+    return config[serverid].autorole.roles.map((r, e) => {
         return {
             role: r,
             message: `React below to get the **"${r}"** role!`, //DONT CHANGE THIS,
-            emoji: config.autorole.reactions[e]
+            emoji: config[serverid].autorole.reactions[e]
         };
     });
 }
 
-//Function that generates embed feilds if config.autorole.embed is set to true
-function generateEmbedFields() {
-    return config.autorole.roles.map((r, e) => {
+//Function that generates embed feilds if config[serverid].autorole.embed is set to true
+function generateEmbedFields(serverid) {
+    return config[serverid].autorole.roles.map((r, e) => {
         return {
-            emoji: config.autorole.reactions[e],
+            emoji: config[serverid].autorole.reactions[e],
             role: r
         };
     });
 }
 
-// Handles the creation of the role reactions. Will either send the role messages separately or in an embed, depending on your settings in config.json
-function sendRoleMessage(message) {
+// Handles the creation of the role reactions. Will either send the role messages separately or in an embed, depending on your settings in config[serverid].json
+function sendRoleMessage(message, serverid) {
 
+    //Checks to make sure your roles and reactions match up
+    if (config[serverid].autorole.roles.length !== config[serverid].autorole.reactions.length) {
+        throw new Error("Roles list and reactions list are not the same length! Please double check this in the config[serverid].js file");
+    }  
+    
     // We don't want the bot to do anything further if it can't send messages in the channel
     if (message.guild && !message.channel.permissionsFor(message.guild.me).missing('SEND_MESSAGES')) return;
     
-    if (config.autorole.deleteSetupCMD) {
+    if (config[serverid].autorole.deleteSetupCMD) {
         const missing = message.channel.permissionsFor(message.guild.me).missing('MANAGE_MESSAGES');
         // Here we check if the bot can actually delete messages in the channel the command is being ran in
         if (missing.includes('MANAGE_MESSAGES'))
@@ -290,13 +292,13 @@ function sendRoleMessage(message) {
     if (missing.includes('ADD_REACTIONS'))
         throw new Error("I need permission to add reactions to these messages! Please assign the 'Add Reactions' permission to me in this channel!");
 
-    if (!config.autorole.embed) {
-        if (!config.autorole.initialMessage || (config.autorole.initialMessage === '')) 
-            throw "The 'initialMessage' property is not set in the config.js file. Please do this!";
+    if (!config[serverid].autorole.embed) {
+        if (!config[serverid].autorole.initialMessage || (config[serverid].autorole.initialMessage === '')) 
+            throw "The 'initialMessage' property is not set in the config[serverid].js file. Please do this!";
 
-        message.channel.send(config.autorole.initialMessage);
+        message.channel.send(config[serverid].autorole.initialMessage);
 
-        const messages = generateMessages();
+        const messages = generateMessages(serverid);
         for (const { role, message: msg, emoji } of messages) {
             if (!message.guild.roles.find(r => r.name === role))
                 throw `The role '${role}' does not exist!`;
@@ -308,23 +310,23 @@ function sendRoleMessage(message) {
             }).catch(console.error);
         }
     } else {
-        if (!config.autorole.embedMessage || (config.autorole.embedMessage === ''))
-            throw "The 'embedMessage' property is not set in the config.js file. Please do this!";
-        if (!config.autorole.embedFooter || (config.autorole.embedMessage === ''))
-            throw "The 'embedFooter' property is not set in the config.js file. Please do this!";
+        if (!config[serverid].autorole.embedMessage || (config[serverid].autorole.embedMessage === ''))
+            throw "The 'embedMessage' property is not set in the config[serverid].js file. Please do this!";
+        if (!config[serverid].autorole.embedFooter || (config[serverid].autorole.embedMessage === ''))
+            throw "The 'embedFooter' property is not set in the config[serverid].js file. Please do this!";
 
         const roleEmbed = new Discord.RichEmbed()
-            .setDescription(config.autorole.embedMessage)
-            .setFooter(config.autorole.embedFooter);
+            .setDescription(config[serverid].autorole.embedMessage)
+            .setFooter(config[serverid].autorole.embedFooter);
 
-        if (config.autorole.embedColor) roleEmbed.setColor(config.autorole.embedColor);
+        if (config[serverid].autorole.embedColor) roleEmbed.setColor(config[serverid].autorole.embedColor);
 
-        if (config.autorole.embedThumbnail && (config.autorole.embedThumbnailLink !== '')) 
-            roleEmbed.setThumbnail(config.autorole.embedThumbnailLink);
-        else if (config.autorole.embedThumbnail && message.guild.icon)
+        if (config[serverid].autorole.embedThumbnail && (config[serverid].autorole.embedThumbnailLink !== '')) 
+            roleEmbed.setThumbnail(config[serverid].autorole.embedThumbnailLink);
+        else if (config[serverid].autorole.embedThumbnail && message.guild.icon)
             roleEmbed.setThumbnail(message.guild.iconURL);
 
-        const fields = generateEmbedFields();
+        const fields = generateEmbedFields(serverid);
         if (fields.length > 25) throw "That maximum roles that can be set for an embed is 25!";
 
         for (const { emoji, role } of fields) {
@@ -338,7 +340,7 @@ function sendRoleMessage(message) {
         }
 
         message.channel.send(roleEmbed).then(async m => {
-            for (const r of config.autorole.reactions) {
+            for (const r of config[serverid].autorole.reactions) {
                 const emoji = r;
                 const customCheck = client.emojis.find(e => e.name === emoji);
                 
@@ -365,6 +367,7 @@ client.on('raw', async event => {
 
     const message = await channel.fetchMessage(data.message_id);
     const member = message.guild.members.get(user.id);
+    var serverid = message.channel.guild.id;
 
     const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
     let reaction = message.reactions.get(emojiKey);
@@ -379,11 +382,11 @@ client.on('raw', async event => {
     if (message.embeds[0]) embedFooterText = message.embeds[0].footer.text;
 
     if (
-        (message.author.id === client.user.id) && (message.content !== config.autorole.initialMessage || 
-        (message.embeds[0] && (embedFooterText !== config.autorole.embedFooter)))
+        (message.author.id === client.user.id) && (message.content !== config[serverid].autorole.initialMessage || 
+        (message.embeds[0] && (embedFooterText !== config[serverid].autorole.embedFooter)))
     ) {
 
-        if (!config.autorole.embed && (message.embeds.length < 1)) {
+        if (!config[serverid].autorole.embed && (message.embeds.length < 1)) {
             const re = `\\*\\*"(.+)?(?="\\*\\*)`;
             const role = message.content.match(re)[1];
 
@@ -392,7 +395,7 @@ client.on('raw', async event => {
                 if (event.t === "MESSAGE_REACTION_ADD") member.addRole(guildRole.id);
                 else if (event.t === "MESSAGE_REACTION_REMOVE") member.removeRole(guildRole.id);
             }
-        } else if (config.autorole.embed && (message.embeds.length >= 1)) {
+        } else if (config[serverid].autorole.embed && (message.embeds.length >= 1)) {
             const fields = message.embeds[0].fields;
 
             for (const { name, value } of fields) {
