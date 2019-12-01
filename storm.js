@@ -147,11 +147,11 @@ client.on("message", message => {
     };
 
     //#region prefix command
-    if((command === (prefix + 'prefix')) && (adminTF === true)) {
+    if(command === ('prefix')) {
         
-        if(userInput[1] != undefined) {
+        /*if(userInput[1] != undefined) {
             prefixChange(userInput[1]);
-        }
+        }*/
 
         const embMsg = new Discord.RichEmbed()
             .setTitle('Current Prefix:')
@@ -159,13 +159,13 @@ client.on("message", message => {
             .setDescription('Current Prefix is ' + prefix);
         message.channel.send(embMsg);
     }
-    else if((command === (prefix + 'prefix')) && (adminTF === false)) {
+    /*else if((command === (prefix + 'prefix')) && (adminTF === false)) {
         const embMsg = new Discord.RichEmbed()
         .setTitle('Error!')
         .setColor(0xb50000)
         .setDescription('You lack the required permissions to change the prefix!');
         message.channel.send(embMsg);
-    }
+    }*/
     //#endregion
 
     //#region for all @ commands
@@ -198,7 +198,12 @@ client.on("message", message => {
     if(command === (prefix + 'help')) {
         var txt = "";
         for (key in cmdObj) {
-            txt += prefix + key + ' - ' + cmdObj[key] + '\n';
+            if (key != "prefix"){
+                txt += prefix + key + ' - ' + cmdObj[key] + '\n';
+            }
+            else {
+                txt += key + ' - ' + cmdObj[key] + '\n';
+            }
         }
         
         const embMsg = new Discord.RichEmbed()
@@ -206,6 +211,22 @@ client.on("message", message => {
         .setColor(0xb50000)
         .setDescription(txt);
         message.channel.send(embMsg);
+    }
+    //#endregion
+
+    //#region replys to meow/mew/cat/kitty
+    if((userInput.includes('meow')) || (userInput.includes('mew')) || (userInput.includes('cat')) || (userInput.includes('kitty'))) {
+        var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
+
+        message.channel.send("Bark Bark Bark Bark Bark");
+        message.channel.send(attachment);
+
+        setIntervalTimes(function () {
+            var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
+
+            message.author.send("Bark Bark Bark Bark Bark");
+            message.author.send(attachment);
+        }, 5000, 7)
     }
     //#endregion
 });
@@ -241,6 +262,20 @@ function getDoggoPics() {
     for (key in require('./stormpics.json').data) {
         doggoLinks.push(require('./stormpics.json').data[key].link);
     }
+}
+//#endregion
+
+//#region Set An Interval that only runs x times function (setIntervalTimes)
+function setIntervalTimes(callback, delay, repetitions) {
+    var x = 0;
+    var intervalID = setInterval(function () {
+        
+        callback();
+
+        if (++x === repetitions) {
+            clearInterval(intervalID);
+        }
+    }, delay);
 }
 //#endregion
 
