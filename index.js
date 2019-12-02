@@ -16,11 +16,11 @@ http.createServer((req, res) => {
 		const accessCode = urlObj.query.code;
 		const data = new FormData();
 
-		data.append('client_id', 'your client id');
-		data.append('client_secret', 'your client secret');
+		data.append('client_id', '648179533115293697');
+		data.append('client_secret', 'LlQ3WZ0GcX2RtTxsT4u830OwoYpuV8QI');
 		data.append('grant_type', 'authorization_code');
-		data.append('redirect_uri', 'your redirect url');
-		data.append('scope', 'your scopes');
+		data.append('redirect_uri', 'http%3A%2F%2Fnoblewolf42.com%3A3000');
+		data.append('scope', 'connections');
 		data.append('code', accessCode);
 
 		fetch('https://discordapp.com/api/oauth2/token', {
