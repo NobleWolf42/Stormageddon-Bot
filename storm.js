@@ -205,9 +205,9 @@ client.on("message", message => {
     //#endregion
 
     //#region for all @ commands
-    //@magma
     if(message.mentions.users.first() !== undefined) {
 
+        //@magma
         if(message.mentions.users.first().id === '211865015592943616') {
             const attachment = new Discord.Attachment('https://cdn.discordapp.com/attachments/254389303294165003/649734083366223895/kji50lq4nhq11.png');
             message.channel.send('Nep Nep Nep Nep Nep Nep Nep');
@@ -251,16 +251,16 @@ client.on("message", message => {
     //#endregion
 
     //#region replys to meow/mew/cat/kitty
-    if((userInput.includes('meow')) || (userInput.includes('mew')) || (userInput.includes('cat')) || (userInput.includes('kitty'))) {
+    if((userInput.includes('meow')) || (userInput.includes('mew')) || (userInput.includes('cat')) || (userInput.includes('kitty')) || (userInput.includes('squirrel'))) {
         var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
 
-        message.channel.send("Bark Bark Bark Bark Bark");
+        message.channel.send("Bork Bork Bork Bork Bork");
         message.channel.send(attachment);
 
         setIntervalTimes(function () {
             var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
 
-            message.author.send("Bark Bark Bark Bark Bark");
+            message.author.send("Bork Bork Bork Bork Bork");
             message.author.send(attachment);
         }, 5000, 7)
     }
