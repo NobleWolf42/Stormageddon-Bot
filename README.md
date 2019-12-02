@@ -7,7 +7,10 @@ If you would like to help in the development of this bot, the discord is https:/
 Uses discord.js
 
 Install Commands for Dependancies:
-
-- npm install discord.js ffmpeg ffmpeg-binaries opusscript ytdl-core
+- npm install discord.js simple-youtube-api node-opus ytdl-core ffmpeg
+- Install FFMPEG
+    - Windows: choco install ffmpeg
+    - Ubuntu: apt install ffmpeg
+    - Mac: brew install ffmpeg
 
 You will have to change some variables for your own use, copy the config.example.json to config.json and enter your settings.
