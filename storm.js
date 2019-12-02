@@ -6,6 +6,7 @@ var fs = require("fs");
 var config = require('./config.json');
 var prefixFile = {};
 var cmdObj = require('./commands.json');
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var doggoLinks = [];
 var adminRoleIDs = [];
 var modRoleIDs = [];
@@ -351,6 +352,114 @@ client.on("message", message => {
             .setDescription('Current Prefix is ' + prefix);
         message.channel.send(embMsg);
         return;
+    }
+    //#endregion
+
+    //#region iss command
+    if (command == (prefix + 'iss')) {
+        var request = new XMLHttpRequest()
+        request.open('GET', 'http://api.open-notify.org/astros.json', true)
+        request.onload = function() {
+           // Begin accessing JSON data here
+           var data = JSON.parse(request.responseText)
+    
+           if (request.status >= 200 && request.status < 400) {
+             var response = "\n [Astronaut Information]";
+
+             Array.from(data.people).forEach(function(people){
+               response += "\n " + people.name + " : " + people.craft;
+             })
+             
+              message.reply(response);
+          } else {
+             console.log('error');
+             message.reply("The ISS API was unable to be reached at this time. \n Try again later.");
+          }
+        }
+
+        request.send()
+    }
+    //#endregion
+
+    //#region agify command
+    if (command == (prefix + 'agify')) {
+        var request = new XMLHttpRequest()
+        request.open('GET', 'https://api.agify.io/?name='+userInput[1], true)
+        request.onload = function() {
+            // Begin accessing JSON data here
+            var data = JSON.parse(request.responseText)
+    
+            if (request.status >= 200 && request.status < 400) {
+                // Capitalizing the first lettter of the returned name
+                var capitalizedname = userInput[1].charAt(0).toUpperCase() + userInput[1].slice(1);
+
+                message.reply("\n The age of " + capitalizedname + " is estimated at " + data.age + ".");
+            } else {
+                console.log('error');
+                message.reply("The Agify API was unable to be reached at this time. \n Try again later.");
+            }
+        }
+
+        request.send()
+    }
+    //#endregion
+
+    //#region d2 commands
+    if (command == (prefix + 'd2')) {
+        if (userInput[1] == "status") {
+            var pers_name = message.content.toLowerCase().substring(11);
+            var request = new XMLHttpRequest()
+            request.open('GET', 'https://www.bungie.net/Platform//User/SearchUsers?q='+pers_name, true);
+            request.setRequestHeader('X-API-KEY', '671b3211756445cbb83b5d82f6682ebd');
+            request.onload = function() {
+            // Begin accessing JSON data here
+            var data = JSON.parse(request.responseText)["Response"][0]
+    
+            if (request.status >= 200 && request.status < 400 ) {
+                if (data != null) {
+                message.reply("\n User was last updated at " + data["lastUpdate"] + "\n User began their journey at " + data["firstAccess"]);
+                }
+                else {
+                    message.reply("\n The Search for a user by that name returned no results. \n Try something else.");
+                }
+            } else {
+                message.reply("The Destiny API was unable to be reached at this time. \n Try again later.");
+            }
+        }
+
+        request.send()
+        }
+        else if (userInput[1] == "clan") {
+            var clan_name = message.content.toLowerCase().substring(9);
+            var request = new XMLHttpRequest()
+            request.open('GET', 'https://www.bungie.net/Platform/GroupV2/Name/'+clan_name+'/1', true);
+            request.setRequestHeader('X-API-KEY', '671b3211756445cbb83b5d82f6682ebd');
+            request.onload = function() {
+                // Begin accessing JSON data here
+                var data = JSON.parse(request.responseText)["Response"]
+        
+                if (request.status >= 200 && request.status < 400) {
+                    if (data != null) {
+                        var domain = "https://www.bungie.net/";
+                        // Clan Avatar + about section
+                        var attachment = new Discord.Attachment(domain + data["detail"]["avatarPath"]);
+                        message.channel.send(data["detail"]["about"], attachment);
+                        //Founder Profile pic + name
+                        var attachment = new Discord.Attachment(domain + data["founder"]["bungieNetUserInfo"]["iconPath"]);
+                        message.channel.send("The founder is " + data["founder"]["bungieNetUserInfo"]["displayName"],attachment);
+                        // Clan Creation Date
+                        message.reply("The clan was created on " + data["detail"]["creationDate"]);
+                    }
+                    else {
+                        message.reply("\n The Search for a clan by that name returned no results. \n Try something else.");
+                    }
+                } else {
+                    message.reply("The Destiny API was unable to be reached at this time. \n Try again later.");
+                }
+            }
+    
+            request.send()
+        }
     }
     //#endregion
 

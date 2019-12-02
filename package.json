@@ -5,6 +5,7 @@
     "main": "storm.js",
     "author": "NobleWolf42",
     "dependencies": {
+        "xmlhttprequest": "^1.8.0",
         "@discordjs/uws": "^10.149.0",
         "discord.js": "^11.5.1",
         "ffmpeg": "0.0.4",
