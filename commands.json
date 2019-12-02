@@ -2,6 +2,14 @@
     "help" : "Displays this Help Message.",
     "dog/storm" : "Displays a random picture of our lord and savior ***Stormageddon***.",
     "prefix" : "Displays the current bot prefix.",
-    "changeprefix" : "**BOT ADMIN ONLY** command that changes the prefix the bot uses in your server.",
-    "createautorolemsg" : "**BOT ADMIN ONLY** command that has the bot create the reactions for auto role assignment."
+    "changeprefix INSERT-SYMBOL" : "**BOT ADMIN ONLY** command that changes the prefix the bot uses in your server. Available Symbols: ``~!$%^&*()_+-={}[]|\\:\";\\'<>?,.`",
+    "createautorolemsg" : "**BOT ADMIN ONLY** command that has the bot create the reactions for auto role assignment.",
+    "play SEARCH-TEARM/YOUTUBE-LINK/YOUTUBE-PLAYLIST": "Plays the selected music in the voice channel you are in, NOTE: Playlists have a maximum of 30 videos.",
+    "skip": "Skips current song.",
+    "stop": "Stop playing music.",
+    "pause": "Pauses the music.",
+    "resume": "Resumes the paused music.",
+    "showqueue": "Shows the currently queued music.",
+    "nowplaying": "Shows the currently playing song.",
+    "volume 1-100": "Sets the bots volume in percent."
 }
