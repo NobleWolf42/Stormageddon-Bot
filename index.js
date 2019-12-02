@@ -20,7 +20,7 @@ http.createServer((req, res) => {
 		data.append('client_secret', 'LlQ3WZ0GcX2RtTxsT4u830OwoYpuV8QI');
 		data.append('grant_type', 'authorization_code');
 		data.append('redirect_uri', 'http://noblewolf42.com:3000');
-		data.append('scope', 'connections');
+		data.append('scope', 'connections identify email');
 		data.append('code', accessCode);
 
 		fetch('https://discordapp.com/api/oauth2/token', {
