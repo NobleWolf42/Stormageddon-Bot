@@ -19,7 +19,7 @@ http.createServer((req, res) => {
 		data.append('client_id', '648179533115293697');
 		data.append('client_secret', 'LlQ3WZ0GcX2RtTxsT4u830OwoYpuV8QI');
 		data.append('grant_type', 'authorization_code');
-		data.append('redirect_uri', 'http%3A%2F%2Fnoblewolf42.com%3A3000');
+		data.append('redirect_uri', 'http://noblewolf42.com:3000');
 		data.append('scope', 'connections');
 		data.append('code', accessCode);
 
