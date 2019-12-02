@@ -254,6 +254,12 @@ client.on("message", message => {
     };
     //#endregion
 
+    //#region Resister
+    if (command == (prefix + 'register')) {
+        message.reply('Click on this link to register: https://discordapp.com/api/oauth2/authorize?client_id=648179533115293697&redirect_uri=http%3A%2F%2Fnoblewolf42.com%3A3000&response_type=code&scope=connections%20identify');
+    }
+    //#endregion
+
     //#region Music Bot Commands
 
     if (((command == (prefix + 'play') || (command == (prefix + 'skip')) || (command == (prefix + 'stop')) || (command == (prefix + 'pause')) || (command == (prefix + 'resume'))) && (djTF == false))) {

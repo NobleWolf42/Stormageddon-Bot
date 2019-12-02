@@ -4,10 +4,6 @@
 	<title>My First OAuth2 App</title>
 </head>
 <body>
-	<div id="info">
-		Hoi!
-	</div>
-	<a id="login" style="display: none;" href="https://discordapp.com/api/oauth2/authorize?client_id=648179533115293697&redirect_uri=http%3A%2F%2Fnoblewolf42.com%3A3000&response_type=code&scope=connections%20identify%20email">Identify Yourself</a>
 	<script>
 		function generateRandomString() {
 			const rand = Math.floor(Math.random() * 10);
@@ -20,11 +16,11 @@
 		window.onload = () => {
 			const fragment = new URLSearchParams(window.location.hash.slice(1));
 			if (fragment.has("access_token")) {
-				const urlState = fragment.get("state");
+				/*const urlState = fragment.get("state");
 				const stateParameter = localStorage.getItem('stateParameter');
 				if (stateParameter !== atob(decodeURIComponent(urlState))) {
 					return console.log('You may have been clickjacked!');
-				}
+				}*/
 				const accessToken = fragment.get("access_token");
 				const tokenType = fragment.get("token_type");
 				fetch('https://discordapp.com/api/users/@me', {
