@@ -674,7 +674,7 @@ async function execute(msg, url) {
             try {
 				var videos = await youtube.searchVideos(url, 10);
 				let index = 0;
-				msg.channel.send(`__**Song selection:**__\n${videos.map(video2 => `**${++index} -** ${video2.title} ----- ${video2.id}`).join('\n')}\nPlease provide a value to select one of the search results ranging from 1-10.`);
+				msg.channel.send(`__**Song selection:**__\n${videos.map(video2 => `**${++index} -** ${video2.title}`).join('\n')}\nPlease provide a value to select one of the search results ranging from 1-10.`);
                 
                 // eslint-disable-next-line max-depth
 				try {
