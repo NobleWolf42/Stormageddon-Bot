@@ -11,5 +11,5 @@
     "resume": "Resumes the paused music.",
     "showqueue": "Shows the currently queued music.",
     "nowplaying": "Shows the currently playing song.",
-    "volume 1-100": "Sets the bots volume in percent."
+    "volume/volume 1-100": "**BOT MOD ONLY* command that shows current volume/Sets the bots volume in percent (Deafult is 200%)."
 }
