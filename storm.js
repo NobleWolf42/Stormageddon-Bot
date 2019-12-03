@@ -189,6 +189,7 @@ client.on("message", message => {
     var serverid = message.channel.guild.id;
     var userInputNoLower = message.content.split(' ');
     var userInput = message.content.toLowerCase().split(' ');
+    var noncommand = '';
     var command = userInput[0];
     var userRoles = message.author.lastMessage.member._roles;
     var serverRoles = message.channel.guild.roles;
@@ -206,6 +207,23 @@ client.on("message", message => {
     }
     else {
         var prefix = "!";
+    }
+
+    console.log(userInputNoLower.length);
+    for (i = 1; i <= userInputNoLower.length; i++) {
+        if (userInputNoLower.length != 2) {
+            if (i < (userInputNoLower.length - 1)) {
+                noncommand += (userInputNoLower[i] + ' ');
+            }
+            else {
+                noncommand += userInputNoLower[i-1];
+            }
+        }
+        else {
+            if (userInputNoLower[i] != undefined) {
+                noncommand += userInputNoLower[i];
+            }
+        }
     }
     //#endregion
 
@@ -256,7 +274,7 @@ client.on("message", message => {
     };
     //#endregion
 
-    //#region Resister
+    //#region Register
     if (command == (prefix + 'register')) {
         message.reply('Click on this link to register: https://discordapp.com/api/oauth2/authorize?client_id=645141555719569439&redirect_uri=http%3A%2F%2Fnoblewolf42.com%3A3000%2F&response_type=code&scope=identify%20email%20connections');
     }
@@ -273,7 +291,7 @@ client.on("message", message => {
 
     if (djTF == true) {
         if (command == (prefix + 'play')) {
-            execute(message, userInputNoLower[1]);
+            execute(message, noncommand);
             return;
         }
         else if (command == (prefix + 'skip')) {
@@ -697,7 +715,7 @@ async function handleVideo(video, msg, voiceChannel, playlist = false) {
 			voiceChannel: voiceChannel,
 			connection: null,
 			songs: [],
-			volume: 5,
+			volume: 20,
 			playing: true
 		};
 		queue.set(msg.guild.id, queueConstruct);
@@ -739,7 +757,7 @@ function play(guild, song) {
 			play(guild, serverQueue.songs[0]);
 		})
 		.on('error', error => console.error(error));
-	dispatcher.setVolumeLogarithmic(serverQueue.volume / 5);
+	dispatcher.setVolumeLogarithmic(serverQueue.volume / 100);
 
 	serverQueue.textChannel.send(`🎶 Start playing: **${song.title}**`);
 }
