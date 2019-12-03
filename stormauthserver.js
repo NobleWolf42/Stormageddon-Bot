@@ -17,7 +17,7 @@ async function saveUserInfo(accessCode){
 		scope: "identify email connections",
 		grantType: "authorization_code",
 		
-		redirectUri: "http://noblewolf42:3000/"
+		redirectUri: "http://noblewolf42.com:3000/"
 	});
 
 	console.log(tokenInfo);
