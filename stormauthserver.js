@@ -10,7 +10,7 @@ var oauth = new DiscordOauth2();
 
 async function saveUserInfo(accessCode){
     tokenInfo = await oauth.tokenRequest({
-		clientId: "648179533115293697",
+		clientId: "645141555719569439",
 		clientSecret: config.auth.clientSecret,
 	 
 		code: accessCode,
