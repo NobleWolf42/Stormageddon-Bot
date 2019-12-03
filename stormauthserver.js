@@ -22,6 +22,7 @@ async function saveUserInfo(accessCode){
 
 	userObj = await oauth.getUser(tokenInfo.access_token)
 
+	console.log(userObj);
 	userID = userObj.id;
 	finalObj = {};
 
@@ -61,6 +62,7 @@ http.createServer((req, res) => {
 	if (urlObj.query.code) {
 		const accessCode = urlObj.query.code;
 
+		console.log(accessCode);
 		saveUserInfo(accessCode);
 		
 	}
