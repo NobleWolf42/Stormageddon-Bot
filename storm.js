@@ -256,7 +256,7 @@ client.on("message", message => {
 
     //#region Resister
     if (command == (prefix + 'register')) {
-        message.reply('Click on this link to register: https://discordapp.com/api/oauth2/authorize?client_id=645141555719569439&redirect_uri=http%3A%2F%2Fnoblewolf42.com%3A3000&response_type=code&scope=identify%20email%20connections');
+        message.reply('Click on this link to register: https://discordapp.com/api/oauth2/authorize?client_id=645141555719569439&redirect_uri=http%3A%2F%2Fnoblewolf42.com%3A3000%2F&response_type=code&scope=identify%20email%20connections');
     }
     //#endregion
 
