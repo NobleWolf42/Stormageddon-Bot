@@ -9,6 +9,7 @@ var config = require('./config.json');
 var prefixFile = {};
 var cmdObj = require('./commands.json');
 var doggoLinks = [];
+var quotes = [];
 var adminRoleIDs = [];
 var modRoleIDs = [];
 var djRoleIDs = [];
@@ -53,6 +54,7 @@ client.login(config.auth.token);
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}!`)
     getDoggoPics();
+    getQuotes();
     createJSONfiles();
     client.user.setPresence({ game: { name: `Use !help to show commands` } });
 });
@@ -541,6 +543,27 @@ client.on("message", message => {
     }
     //#endregion
     
+    //#region quote command
+    if (command == (prefix + 'quote')) {
+        // Get a random index (random quote) from list of quotes in quotes.json
+        var random_index = getRandomInt(15);
+
+        message.channel.send(
+            "\"" + quotes[random_index].text + 
+            "\" \n Cited from " + quotes[random_index].author + "." + 
+            " \n Picked by " + quotes[random_index].submitter + "."
+        );
+    }
+    //#endregion
+
+    //#region torture command
+    if (command == (prefix + 'torture') && (adminTF === true)) {
+        // Call Torture helper function
+        message.mentions.members.forEach((member) => {
+            torture_helper(message, member);
+        });
+    }
+    //#endregion
 });
 //#endregion
 
@@ -567,6 +590,14 @@ function getRandomInt(max) {
 function getDoggoPics() {
     for (key in require('./stormpics.json').data) {
         doggoLinks.push(require('./stormpics.json').data[key].link);
+    }
+}
+//#endregion
+
+//#region Quote handing
+function getQuotes() {
+    for (key in require('./quotes.json').data) {
+        quotes.push(require('./quotes.json').data[key]);
     }
 }
 //#endregion
@@ -957,4 +988,86 @@ process.on('unhandledRejection', err => {
     const msg = err.stack.replace(new RegExp(`${__dirname}/`, 'g'), './');
 	console.error("Unhandled Rejection", msg);
 });
+//#endregion
+
+//#region torture function and helper
+function torture_helper(message, user) {
+    // Assigning variables
+    var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
+    var target = getRandomInt(100);
+
+    // Torture game intro
+    user.send(
+        "Woof Woof <@" + user.id + ">" +
+        "\n It's time to play a game like Russian Roulette...." +
+        "\n Stormjack but not like Blackjack!" +
+        "\n Guess a number between 1 and 100." +
+        "\n If you are within 5, you get shamed." +
+        "\n If you are more than 5 away from the number, you get kicked!" +
+        "\n 30 seconds on the clock, if time runs out, you get shamed AND kicked!"
+        , attachment
+    ).then((newmsg) => {
+        newmsg.channel.awaitMessages(response => (parseInt(response.content)<100), {
+            max: 1,
+            time: 30000,
+            errors: ['time']
+        }).then(mg => {
+            if (Math.abs((parseInt(mg.first().content)-target) <= 5))  { // guess within range
+                user.send(
+                    "Right!" +
+                    "\n The number was " + target + "." +
+                    "\n You were close, but it's time to be kinkshamed by a dog!"
+                );
+
+                message.guild.channels.find(x => x.name === "general").send(
+                    "<@" + user.id + "> got beaten by the almighty Stormaggedon." +
+                    "\n They are into some weird wacky stuff, but they still survived."
+                );
+            }
+            else if (Math.abs((parseInt(mg.first().content)-target)) <= 0){
+                user.send(
+                    "Right!" +
+                    "\n The number was " + target + "." +
+                    "\n You actually guessed the right number!"
+                );
+
+                message.guild.channels.find(x => x.name === "general").send(
+                    "<@" + user.id + "> beat the almighty Stormaggedon." +
+                    "\n They are into some weird wacky stuff, but they survived!"
+                );
+            }
+            else { // guess out of range
+                user.send(
+                    "Wrong!" +
+                    "\n Your guess was either too far off, or was not valid." +
+                    "\n The number was " + target + "." +
+                    "\n It's time to get booted by a ruff ruff like me!"
+                );
+        
+                message.guild.channels.find(x => x.name === "general").send(
+                    "<@" + user.id + "> got beaten by the almighty Stormaggedon." +
+                    "\n They lost their game of stormjack!"
+                ).then((newmsg) => {
+                    if (newmsg.mentions.members.first().kick()) {
+                        console.log(newmsg.mentions.members.first().username + " was kicked.");
+                    }
+                })
+            }
+        }).catch((err) => {
+            user.send(
+                "Ran out of time!" +
+                "\n It's time to be kinkshamed by a dog!"
+            );
+
+            message.guild.channels.find(x => x.name === "general").send(
+                "<@" + user.id + ">  got beaten by the almighty Stormaggedon." +
+                "\n They lost their game of stormjack!"
+            ).then((newmsg) => {
+                if (newmsg.mentions.members.first().kick()) {
+                    console.log(newmsg.mentions.members.first().username + " was kicked.");
+                }
+            })
+        })
+    })
+}
 //#endregion
