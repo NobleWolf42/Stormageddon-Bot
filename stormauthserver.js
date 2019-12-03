@@ -20,6 +20,8 @@ async function saveUserInfo(accessCode){
 		redirectUri: "http://localhost:3000/"
 	});
 
+	console.log(tokenInfo);
+
 	userObj = await oauth.getUser(tokenInfo.access_token)
 
 	console.log(userObj);
