@@ -533,7 +533,7 @@ client.on("message", message => {
         }
         
         const embMsg = new Discord.RichEmbed()
-            .setTitle('Help!')
+            .setTitle('Help')
             .setColor(0xb50000)
             .setDescription(txt);
         message.channel.send(embMsg);
