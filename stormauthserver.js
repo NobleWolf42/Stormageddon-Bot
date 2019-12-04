@@ -4,6 +4,7 @@ const fs = require('fs');
 const url = require('url');
 var config = require('./config.json');
 var currentdate = new Date();
+var months = ['January', 'Feburary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
 const port = 3000;
 
@@ -28,7 +29,7 @@ async function saveUserInfo(accessCode){
 
 	userConnections = await oauth.getUserConnections(tokenInfo.access_token);
 
-	var datetime = currentdate.getDay() + "/" + currentdate.getMonth() + "/" + currentdate.getFullYear() + " @ " + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
+	var datetime = months[currentdate.getUTCMonth()] + ' ' + (currentdate.getUTCDay() + 1) + " " + currentdate.getUTCFullYear() + " @ " + currentdate.getUTCHours() + ":" + currentdate.getUTCMinutes() + ":" + currentdate.getUTCSeconds();
 
 	for (i = 0; i < userConnections.length; i++) {
 		idnameObj = {};
