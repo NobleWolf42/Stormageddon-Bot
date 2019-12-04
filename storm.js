@@ -13,6 +13,7 @@ var quotes = [];
 var adminRoleIDs = [];
 var modRoleIDs = [];
 var djRoleIDs = [];
+var userAccountInfo = {};
 var queue = new Map();
 //#endregion
 
@@ -209,7 +210,6 @@ client.on("message", message => {
         var prefix = "!";
     }
 
-    console.log(userInputNoLower.length);
     for (i = 1; i <= userInputNoLower.length; i++) {
         if (userInputNoLower.length != 2) {
             if (i < (userInputNoLower.length - 1)) {
@@ -276,7 +276,21 @@ client.on("message", message => {
 
     //#region Register
     if (command == (prefix + 'register')) {
-        message.author.send('Click on this link to register: https://discordapp.com/api/oauth2/authorize?client_id=645141555719569439&redirect_uri=http%3A%2F%2Fnoblewolf42.com%3A3000%2F&response_type=code&scope=identify%20email%20connections');
+        refreshUser();
+        if (message.author.id in userAccountInfo) {
+            var txt = `You Have Already Registered.\nThe last time you updated your inf was ${userAccountInfo[message.author.id].time}\n If you wish to update you info now, please click on this link: ${config.general.registerLink}`;
+        }
+        else {
+            var txt = `Click on this link to register: ${config.general.registerLink}`;
+            var color = 0xb50000;
+        }
+
+
+        const embMsg = new Discord.RichEmbed()
+            .setTitle('Register')
+            .setColor(color)
+            .setDescription(txt);
+        message.author.send(embMsg);
     }
     //#endregion
 
@@ -563,7 +577,7 @@ client.on("message", message => {
         }
         
         const embMsg = new Discord.RichEmbed()
-            .setTitle('Help!')
+            .setTitle('Help')
             .setColor(0xb50000)
             .setDescription(txt);
         message.channel.send(embMsg);
@@ -683,6 +697,12 @@ function setIntervalTimes(callback, delay, repetitions) {
             clearInterval(intervalID);
         }
     }, delay);
+}
+//#endregion
+
+//#region Refresh User Account Info
+function refreshUser() {
+    userAccountInfo = (require('./userinfo.json'));
 }
 //#endregion
 

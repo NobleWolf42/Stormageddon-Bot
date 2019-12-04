@@ -3,6 +3,7 @@ var DiscordOauth2 = require('discord-oauth2');
 const fs = require('fs');
 const url = require('url');
 var config = require('./config.json');
+var currentdate = new Date();
 
 const port = 3000;
 
@@ -10,29 +11,24 @@ var oauth = new DiscordOauth2();
 
 async function saveUserInfo(accessCode){
     tokenInfo = await oauth.tokenRequest({
-		clientId: "645141555719569439",
+		clientId: config.general.clientId,
 		clientSecret: config.auth.clientSecret,
 	 
 		code: accessCode,
 		scope: "identify email connections",
 		grantType: "authorization_code",
 		
-		redirectUri: "http://noblewolf42.com:3000/"
+		redirectUri: config.general.redirectUri
 	});
-
-	console.log(tokenInfo);
 
 	userObj = await oauth.getUser(tokenInfo.access_token)
 
-	console.log(userObj);
 	userID = userObj.id;
 	finalObj = {};
 
 	userConnections = await oauth.getUserConnections(tokenInfo.access_token);
 
-	console.log(userID);
-	
-	console.log(userConnections.length);
+	var datetime = currentdate.getDay() + "/" + currentdate.getMonth() + "/" + currentdate.getFullYear() + " @ " + currentdate.getHours() + ":" + currentdate.getMinutes() + ":" + currentdate.getSeconds();
 
 	for (i = 0; i < userConnections.length; i++) {
 		idnameObj = {};
@@ -43,6 +39,8 @@ async function saveUserInfo(accessCode){
 			finalObj[userConnections[i].type] = idnameObj;	
 		}
 	}
+
+	finalObj.time = datetime;
 
 	var oldInfo = require('./userinfo.json');
 
