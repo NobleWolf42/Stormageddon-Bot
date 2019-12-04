@@ -276,7 +276,7 @@ client.on("message", message => {
 
     //#region Register
     if (command == (prefix + 'register')) {
-        message.reply('Click on this link to register: https://discordapp.com/api/oauth2/authorize?client_id=645141555719569439&redirect_uri=http%3A%2F%2Fnoblewolf42.com%3A3000%2F&response_type=code&scope=identify%20email%20connections');
+        message.author.send('Click on this link to register: https://discordapp.com/api/oauth2/authorize?client_id=645141555719569439&redirect_uri=http%3A%2F%2Fnoblewolf42.com%3A3000%2F&response_type=code&scope=identify%20email%20connections');
     }
     //#endregion
 
@@ -501,12 +501,34 @@ client.on("message", message => {
     //#region help Command
     if(command === (prefix + 'help')) {
         var txt = "";
-        for (key in cmdObj) {
-            if (key != "prefix"){
-                txt += prefix + key + ' - ' + cmdObj[key] + '\n';
+        if (userInput[1] == 'help') {
+            for (key in cmdObj.help) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.help[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.help[key] + '\n';
+                }
             }
-            else {
-                txt += key + ' - ' + cmdObj[key] + '\n';
+        }
+        else if (userInput[1] == 'music') {
+            for (key in cmdObj.music) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.music[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.music[key] + '\n';
+                }
+            }
+        }
+        else {
+            for (key in cmdObj.help) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.help[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.help[key] + '\n';
+                }
             }
         }
         
@@ -514,7 +536,7 @@ client.on("message", message => {
             .setTitle('Help!')
             .setColor(0xb50000)
             .setDescription(txt);
-        message.author.send(embMsg);
+        message.channel.send(embMsg);
         return;
     }
     //#endregion

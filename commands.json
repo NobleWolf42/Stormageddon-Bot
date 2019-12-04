@@ -1,21 +1,25 @@
 {
-    "agify INSERT-NAME"                              : "Estimates age of name.",
-    "help"                                           : "Displays this Help Message.",
-    "dog/storm"                                      : "Displays a random picture of our lord and savior ***Stormageddon***.",
-    "d2 status INSERT-BUNGIE-NAME"                   : "Displays Destiny 2 account's original creation date, and last API update date.",
-    "d2 clan INSERT-CLAN-NAME"                       : "Displays Destiny 2 clan's bio, avatar, motto, and founder",
-    "changeprefix INSERT-SYMBOL"                     : "**BOT ADMIN ONLY** command that changes the prefix the bot uses in your server. Available Symbols: ``~!$%^&*()_+-={}[]|\\:\";\\'<>?,.`",
-    "createautorolemsg"                              : "**BOT ADMIN ONLY** command that has the bot create the reactions for auto role assignment.",
-    "iss"                                            : "Displays the names of which astronauts are aboard the ISS",
-    "nowplaying"                                     : "Shows the currently playing song.",
-    "pause"                                          : "Pauses the music.",
-    "play SEARCH-TEARM/YOUTUBE-LINK/YOUTUBE-PLAYLIST": "Plays the selected music in the voice channel you are in, NOTE: Playlists have a maximum of 30 videos.",
-    "prefix"                                         : "Displays the current bot prefix.",
-    "quote"                                          : "Display a random quote, picked by the developers of Stormageddon.",
-    "resume"                                         : "Resumes the paused music.",
-    "skip"                                           : "Skips current song.",
-    "stop"                                           : "Stop playing music.",
-    "showqueue"                                      : "Shows the currently queued music.",
-    "torture MENTION-USER"                           : "Stormagedon stalks user into playing Stormjack, where the user may or may not be kicked.",
-    "volume 1-100"                                   : "Sets the bots volume in percent."
+    "help": {
+        "help PAGE"                                      : "Displays Help Message, specifying a page will show that help info. Avalible pages are `Help, Music`.",
+        "agify INSERT-NAME"                              : "Estimates age of name.",
+        "dog/storm"                                      : "Displays a random picture of our lord and savior ***Stormageddon***.",
+        "d2 status INSERT-BUNGIE-NAME"                   : "Displays Destiny 2 account's original creation date, and last API update date.",
+        "d2 clan INSERT-CLAN-NAME"                       : "Displays Destiny 2 clan's bio, avatar, motto, and founder",
+        "changeprefix INSERT-SYMBOL"                     : "**BOT ADMIN ONLY** command that changes the prefix the bot uses in your server. Available Symbols: ``~!$%^&*()_+-={}[]|\\:\";\\'<>?,.`",
+        "createautorolemsg"                              : "**BOT ADMIN ONLY** command that has the bot create the reactions for auto role assignment.",
+        "iss"                                            : "Displays the names of which astronauts are aboard the ISS",
+        "prefix"                                         : "Displays the current bot prefix.",
+        "quote"                                          : "Display a random quote, picked by the developers of Stormageddon.",
+        "torture MENTION-USER"                           : "Stormagedon stalks user into playing Stormjack, where the user may or may not be kicked."
+    },
+    "music": {
+        "play SEARCH-TEARM/YOUTUBE-LINK/YOUTUBE-PLAYLIST": "Plays the selected music in the voice channel you are in, NOTE: Playlists have a maximum of 30 videos.",
+        "pause"                                          : "Pauses the music.",
+        "resume"                                         : "Resumes the paused music.",
+        "stop"                                           : "Stop playing music.",
+        "skip"                                           : "Skips current song.",
+        "showqueue"                                      : "Shows the currently queued music.",
+        "nowplaying"                                     : "Shows the currently playing song.",
+        "volume 1-100"                                   : "Sets the bots volume in percent."
+    }
 }
