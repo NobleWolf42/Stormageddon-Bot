@@ -1,19 +1,25 @@
-//#region Dependency
-var Discord = require('discord.js');
-var YouTube = require('simple-youtube-api');
-var ytdl = require('ytdl-core');
-var fs = require("fs");
-var xmlhttp = require("xmlhttprequest");
-var XMLHttpRequest = xmlhttp.XMLHttpRequest;
-var config = require('./config.json');
-var prefixFile = {};
-var cmdObj = require('./commands.json');
-var doggoLinks = [];
-var quotes = [];
-var adminRoleIDs = [];
-var modRoleIDs = [];
-var djRoleIDs = [];
-var queue = new Map();
+//#region initial setup
+    //#region Dependency
+    var Discord = require('discord.js');
+    var YouTube = require('simple-youtube-api');
+    var ytdl = require('ytdl-core');
+    var fs = require("fs");
+    var xmlhttp = require("xmlhttprequest");
+    var config = require('./config.json');
+    var cmdObj = require('./commands.json');
+    //#endregion
+
+    //#region variable initialization
+    var adminRoleIDs = [];
+    var doggoLinks = [];
+    var djRoleIDs = [];
+    var modRoleIDs = [];
+    var prefixFile = {};
+    var queue = new Map();
+    var quotes = [];
+    var userAccountInfo = {};
+    var XMLHttpRequest = xmlhttp.XMLHttpRequest;
+    //#endregion
 //#endregion
 
 //#region Creates missing files on start
@@ -209,7 +215,6 @@ client.on("message", message => {
         var prefix = "!";
     }
 
-    console.log(userInputNoLower.length);
     for (i = 1; i <= userInputNoLower.length; i++) {
         if (userInputNoLower.length != 2) {
             if (i < (userInputNoLower.length - 1)) {
@@ -266,48 +271,73 @@ client.on("message", message => {
     if (!message.content.startsWith(prefix)) return;
 
     //#region AutoRole Commands
-
     //Runs AutoRole Message Generation
     if ((command === (prefix + 'createautorolemsg') && (adminTF === true))){
         sendRoleMessage(message, serverid);
+        message.delete().catch(O_o=>{});
         return;
     };
     //#endregion
 
     //#region Register
     if (command == (prefix + 'register')) {
-        message.reply('Click on this link to register: https://discordapp.com/api/oauth2/authorize?client_id=645141555719569439&redirect_uri=http%3A%2F%2Fnoblewolf42.com%3A3000%2F&response_type=code&scope=identify%20email%20connections');
+        refreshUser();
+        if (message.author.id in userAccountInfo) {
+            var txt = `You Have Already Registered.\nThe last time you updated your info was ${userAccountInfo[message.author.id].time}\n If you wish to update you info now, please click on this link: ${config.general.registerLink}`;
+            var color = 2385434;
+        }
+        else {
+            var txt = `Click on this link to register: ${config.general.registerLink}`;
+            var color = 0xb50000;
+        }
+
+
+        const embMsg = new Discord.RichEmbed()
+            .setTitle('Register')
+            .setColor(color)
+            .setDescription(txt);
+        message.author.send(embMsg);
+        message.delete().catch(O_o=>{})
+        return;
     }
     //#endregion
 
     //#region Music Bot Commands
-
     if (((command == (prefix + 'play') || (command == (prefix + 'skip')) || (command == (prefix + 'stop')) || (command == (prefix + 'pause')) || (command == (prefix + 'resume'))) && (djTF == false))) {
-        message.reply(`You do not have access to this command, To gain acces to this command you must have a DJ Role.`)
+        message.reply(`You do not have access to this command, To gain acces to this command you must have a DJ Role.`);
+        message.delete().catch(O_o=>{});
+        return;
     }
     else if ((command == (prefix + 'volume')) && (modTF == false)) {
-        message.reply(`You do not have access to this command, To gain acces to this command you must be a **BOT MOD*.`)
+        message.reply(`You do not have access to this command, To gain acces to this command you must be a **BOT MOD*.`);
+        message.delete().catch(O_o=>{});
+        return;
     }
 
     if (djTF == true) {
         if (command == (prefix + 'play')) {
             execute(message, noncommand);
+            message.delete().catch(O_o=>{})
             return;
         }
         else if (command == (prefix + 'skip')) {
             skip(message);
+            message.delete().catch(O_o=>{})
             return;
         }
         else if (command == (prefix + 'stop')) {
             stop(message);
+            message.delete().catch(O_o=>{})
             return;
         }
         else if (command == (prefix + 'pause')) {
             pause(message);
+            message.delete().catch(O_o=>{})
             return;
         }
         else if (command == (prefix + 'resume')) {
             resume(message);
+            message.delete().catch(O_o=>{})
             return;
         }
     }
@@ -315,16 +345,19 @@ client.on("message", message => {
     if (modTF == true) {
         if (command == (prefix + 'volume')) {
             volume(message, userInput[1]);
+            message.delete().catch(O_o=>{})
             return;
         }
     }
 
     if (command == (prefix + 'nowplaying')) {
         nowPlaying(message);
+        message.delete().catch(O_o=>{})
         return;
     }
     else if (command == (prefix + 'showqueue')) {
         showQueue(message);
+        message.delete().catch(O_o=>{})
         return;
     }
     //#endregion
@@ -343,6 +376,7 @@ client.on("message", message => {
                     .setColor(32768)
                     .setDescription('Current Prefix is ' + userInput[1]);
                 message.channel.send(embMsg);
+                message.delete().catch(O_o=>{})
                 return;
             }
             else {
@@ -351,6 +385,7 @@ client.on("message", message => {
                     .setColor(0xb50000)
                     .setDescription('Bot Prefix Must be one of the following: ````~!$%^&*()_+-={}[]|\:";\'<>?,./```');
                 message.channel.send(embMsg);
+                message.delete().catch(O_o=>{})
                 return;
             }
         }
@@ -360,9 +395,9 @@ client.on("message", message => {
                 .setColor(0xb50000)
                 .setDescription('You must define a bot prefix.');
             message.channel.send(embMsg);
+            message.delete().catch(O_o=>{})
             return;
         }
-
     }
     else if((command === (prefix + 'changeprefix')) && (adminTF === false)) {
         const embMsg = new Discord.RichEmbed()
@@ -370,6 +405,7 @@ client.on("message", message => {
         .setColor(0xb50000)
         .setDescription('You lack the required permissions to change the prefix!');
         message.channel.send(embMsg);
+        message.delete().catch(O_o=>{})
         return;
     }
     else if (command === 'prefix') {
@@ -378,6 +414,7 @@ client.on("message", message => {
             .setColor(32768)
             .setDescription('Current Prefix is ' + prefix);
         message.channel.send(embMsg);
+        message.delete().catch(O_o=>{})
         return;
     }
     //#endregion
@@ -404,7 +441,9 @@ client.on("message", message => {
           }
         }
 
-        request.send()
+        request.send();
+        message.delete().catch(O_o=>{})
+        return;
     }
     //#endregion
 
@@ -428,6 +467,7 @@ client.on("message", message => {
         }
 
         request.send()
+        return;
     }
     //#endregion
 
@@ -487,6 +527,7 @@ client.on("message", message => {
     
             request.send()
         }
+        return;
     }
     //#endregion
 
@@ -501,63 +542,115 @@ client.on("message", message => {
     //#region help Command
     if(command === (prefix + 'help')) {
         var txt = "";
-        for (key in cmdObj) {
-            if (key != "prefix"){
-                txt += prefix + key + ' - ' + cmdObj[key] + '\n';
+        if (userInput[1] == 'help') {
+            for (key in cmdObj.help) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.help[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.help[key] + '\n';
+                }
             }
-            else {
-                txt += key + ' - ' + cmdObj[key] + '\n';
+        }
+        else if (userInput[1] == 'music') {
+            for (key in cmdObj.music) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.music[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.music[key] + '\n';
+                }
+            }
+        }
+        else if (userInput[1] == 'admin') {
+            for (key in cmdObj.admin) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.admin[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.admin[key] + '\n';
+                }
+            }
+        }
+        else if (userInput[1] == 'fun') {
+            for (key in cmdObj.fun) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.fun[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.fun[key] + '\n';
+                }
+            }
+        }
+        else if (userInput[1] == 'gaming') {
+            for (key in cmdObj.gaming) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.gaming[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.gaming[key] + '\n';
+                }
+            }
+        }
+        else {
+            for (key in cmdObj.help) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.help[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.help[key] + '\n';
+                }
             }
         }
         
         const embMsg = new Discord.RichEmbed()
-            .setTitle('Help!')
+            .setTitle('Help')
             .setColor(0xb50000)
             .setDescription(txt);
-        message.author.send(embMsg);
+        message.channel.send(embMsg);
+        message.delete().catch(O_o=>{});
         return;
     }
     //#endregion
 
     //#region Chat Clear
     if((command === (prefix + 'clear')) && (adminTF == true)) {
-        var amount = userInput[1];
+        var amount = parseInt(userInput[1]);
         var passed = true;
+        var embMsg = "";
 
         if(isNaN(amount)) {
-            const embMsg = new Discord.RichEmbed()
+            embMsg = new Discord.RichEmbed()
                 .setTitle('Error!')
                 .setColor(0xb50000)
                 .setDescription('That is not a valid number for the ' + prefix + 'clear command!');
-            message.channel.send(embMsg);
             passed = false;
-        } else if(amount < 2 || amount > 100) {
-            const embMsg = new Discord.RichEmbed()
+        } else if(amount < 1 || amount > 99) {
+            embMsg = new Discord.RichEmbed()
                 .setTitle('Error!')
                 .setColor(0xb50000)
-                .setDescription(userInput[1] + ' is invalid! Number must be between 2 and 100!');
-            message.channel.send(embMsg);
+                .setDescription(userInput[1] + ' is invalid! Number must be between 1 and 99!');
             passed = false;
         }
 
-        if(amount >= 2 && amount <= 100) {
-            message.channel.bulkDelete(amount, true).catch(err => {
+        if(amount >= 1 && amount <= 99) {
+            message.channel.bulkDelete((amount + 1), true).catch(err => {
                 console.error(err);
-                const embMsg = new Discord.RichEmbed()
+                embMsg = new Discord.RichEmbed()
                     .setTitle('Error!')
                     .setColor(0xb50000)
                     .setDescription('An error occurred while attempting to delete!');
-                message.channel.send(embMsg);
                 passed = false;
             });
             if(passed == true) {
-                const embMsg = new Discord.RichEmbed()
+                embMsg = new Discord.RichEmbed()
                     .setTitle('Success!')
                     .setColor(32768)
                     .setDescription('As Per ' + message.author.tag + ', successfully deleted ' + amount + ' messages!');
-                message.channel.send(embMsg);
             }
         }
+        message.channel.send(embMsg);
+        return;
     }
     //#endregion
     
@@ -566,11 +659,9 @@ client.on("message", message => {
         // Get a random index (random quote) from list of quotes in quotes.json
         var random_index = getRandomInt(15);
 
-        message.channel.send(
-            "\"" + quotes[random_index].text + 
-            "\" \n Cited from " + quotes[random_index].author + "." + 
-            " \n Picked by " + quotes[random_index].submitter + "."
-        );
+        message.channel.send("\"" + quotes[random_index].text + "\" \n Cited from " + quotes[random_index].author + "." + " \n Picked by " + quotes[random_index].submitter + ".");
+        message.channel.send(embMsg);
+        return;
     }
     //#endregion
 
@@ -580,6 +671,7 @@ client.on("message", message => {
         message.mentions.members.forEach((member) => {
             torture_helper(message, member);
         });
+        return;
     }
     //#endregion
 });
@@ -631,6 +723,12 @@ function setIntervalTimes(callback, delay, repetitions) {
             clearInterval(intervalID);
         }
     }, delay);
+}
+//#endregion
+
+//#region Refresh User Account Info
+function refreshUser() {
+    userAccountInfo = JSON.parse(fs.readFileSync('./userinfo.json', 'utf8'));
 }
 //#endregion
 
@@ -868,14 +966,6 @@ function sendRoleMessage(message, serverid) {
     
     // We don't want the bot to do anything further if it can't send messages in the channel
     if (message.guild && !message.channel.permissionsFor(message.guild.me).missing('SEND_MESSAGES')) return;
-    
-    if (config[serverid].autorole.deleteSetupCMD) {
-        const missing = message.channel.permissionsFor(message.guild.me).missing('MANAGE_MESSAGES');
-        // Here we check if the bot can actually delete messages in the channel the command is being ran in
-        if (missing.includes('MANAGE_MESSAGES'))
-            throw new Error("I need permission to delete your command message! Please assign the 'Manage Messages' permission to me in this channel!");
-        message.delete().catch(O_o=>{});
-    }
 
     const missing = message.channel.permissionsFor(message.guild.me).missing('MANAGE_MESSAGES');
 
