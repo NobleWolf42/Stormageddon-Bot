@@ -1,32 +1,47 @@
 {
     "auth": {
-        "token": "YOUR BOT TOKEN"
-    },
-    "autorole" : {
-        "setupCMD": "createautorole",
-        "deleteSetupCMD": true,
-        "initialMessage": "`**React to the messages below to receive the associated role. If you would like to remove the role, simply remove your reaction!**`",
-        "embedMessage": "`\nReact to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`",
-        "embedFooter": "Role Reactions",
-        "roles": ["Computer"],
-        "reactions": ["💻"],
-        "embed": true,
-        "embedColor": "#dd9323",
-        "embedThumbnail": false,
-        "embedThumbnailLink": ""
+        "token": "YOUR BOT TKEN",
+        "GOOGLE_API_KEY": "YOUR YOUTUBE API KEY",
+        "clientSecret": "YOUR CLIENT SECRET"
     },
     "general": {
-        "adminRoles": [
-            "Server Admin",
-            "Example Role"
-        ],
-        "modRoles": [
-            "Server Admin",
-            "Example Role"
-        ],
-        "allowedChannels": [
-            "Example-Chat-1",
-            "General"
-        ]
+        "clientId": "YOUR CLIENT ID",
+        "redirectUri": "YOUR REDIRECT URI",
+        "registerLink": "YOUR REDIRECT LINK"
+
+    },
+    "644966355875135499": {
+        "autorole" : {
+            "deleteSetupCMD": true,
+            "initialMessage": "`**React to the messages below to receive the associated role. If you would like to remove the role, simply remove your reaction!**`",
+            "embedMessage": "`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`",
+            "embedFooter": "Role Reactions",
+            "roles": ["DJ"],
+            "reactions": ["🎵"],
+            "embed": true,
+            "embedColor": "#dd9323",
+            "embedThumbnail": false,
+            "embedThumbnailLink": ""
+        },
+        "music": {
+            "textChannel": "music"
+        },
+        "general": {
+            "adminRoles": [
+                "Server Admin",
+                "Stormageddon Bot Contributor"
+            ],
+            "modRoles": [
+                "Server Admin",
+                "Stormageddon Bot Contributor"
+            ],
+            "djRoles": [
+                "DJ"
+            ],
+            "allowedChannels": [
+                "botspam",
+                "general"
+            ]
+        }
     }
 }
