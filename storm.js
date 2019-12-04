@@ -278,7 +278,7 @@ client.on("message", message => {
     if (command == (prefix + 'register')) {
         refreshUser();
         if (message.author.id in userAccountInfo) {
-            var txt = `You Have Already Registered.\nThe last time you updated your inf was ${userAccountInfo[message.author.id].time}\n If you wish to update you info now, please click on this link: ${config.general.registerLink}`;
+            var txt = `You Have Already Registered.\nThe last time you updated your info was ${userAccountInfo[message.author.id].time}\n If you wish to update you info now, please click on this link: ${config.general.registerLink}`;
         }
         else {
             var txt = `Click on this link to register: ${config.general.registerLink}`;
