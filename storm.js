@@ -535,6 +535,36 @@ client.on("message", message => {
                 }
             }
         }
+        else if (userInput[1] == 'admin') {
+            for (key in cmdObj.admin) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.admin[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.admin[key] + '\n';
+                }
+            }
+        }
+        else if (userInput[1] == 'fun') {
+            for (key in cmdObj.fun) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.fun[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.fun[key] + '\n';
+                }
+            }
+        }
+        else if (userInput[1] == 'gaming') {
+            for (key in cmdObj.gaming) {
+                if (key != "prefix"){
+                    txt += prefix + key + ' - ' + cmdObj.gaming[key] + '\n';
+                }
+                else {
+                    txt += key + ' - ' + cmdObj.gaming[key] + '\n';
+                }
+            }
+        }
         else {
             for (key in cmdObj.help) {
                 if (key != "prefix"){
