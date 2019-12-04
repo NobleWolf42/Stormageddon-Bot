@@ -1,20 +1,25 @@
-//#region Dependency
-var Discord = require('discord.js');
-var YouTube = require('simple-youtube-api');
-var ytdl = require('ytdl-core');
-var fs = require("fs");
-var xmlhttp = require("xmlhttprequest");
-var XMLHttpRequest = xmlhttp.XMLHttpRequest;
-var config = require('./config.json');
-var prefixFile = {};
-var cmdObj = require('./commands.json');
-var doggoLinks = [];
-var quotes = [];
-var adminRoleIDs = [];
-var modRoleIDs = [];
-var djRoleIDs = [];
-var userAccountInfo = {};
-var queue = new Map();
+//#region initial setup
+    //#region Dependency
+    var Discord = require('discord.js');
+    var YouTube = require('simple-youtube-api');
+    var ytdl = require('ytdl-core');
+    var fs = require("fs");
+    var xmlhttp = require("xmlhttprequest");
+    var config = require('./config.json');
+    var cmdObj = require('./commands.json');
+    //#endregion
+
+    //#region variable initialization
+    var adminRoleIDs = [];
+    var doggoLinks = [];
+    var djRoleIDs = [];
+    var modRoleIDs = [];
+    var prefixFile = {};
+    var queue = new Map();
+    var quotes = [];
+    var userAccountInfo = {};
+    var XMLHttpRequest = xmlhttp.XMLHttpRequest;
+    //#endregion
 //#endregion
 
 //#region Creates missing files on start
