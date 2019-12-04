@@ -266,7 +266,6 @@ client.on("message", message => {
     if (!message.content.startsWith(prefix)) return;
 
     //#region AutoRole Commands
-
     //Runs AutoRole Message Generation
     if ((command === (prefix + 'createautorolemsg') && (adminTF === true))){
         sendRoleMessage(message, serverid);
@@ -277,6 +276,7 @@ client.on("message", message => {
     //#region Register
     if (command == (prefix + 'register')) {
         refreshUser();
+        console.log(userAccountInfo);
         if (message.author.id in userAccountInfo) {
             var txt = `You Have Already Registered.\nThe last time you updated your info was ${userAccountInfo[message.author.id].time}\n If you wish to update you info now, please click on this link: ${config.general.registerLink}`;
         }
@@ -295,7 +295,6 @@ client.on("message", message => {
     //#endregion
 
     //#region Music Bot Commands
-
     if (((command == (prefix + 'play') || (command == (prefix + 'skip')) || (command == (prefix + 'stop')) || (command == (prefix + 'pause')) || (command == (prefix + 'resume'))) && (djTF == false))) {
         message.reply(`You do not have access to this command, To gain acces to this command you must have a DJ Role.`)
     }
@@ -702,7 +701,7 @@ function setIntervalTimes(callback, delay, repetitions) {
 
 //#region Refresh User Account Info
 function refreshUser() {
-    userAccountInfo = (require('./userinfo.json'));
+    userAccountInfo = JSON.parse(fs.readFileSync('./userinfo.json', 'utf8'));
 }
 //#endregion
 
