@@ -1,7 +1,7 @@
 //#region Dependancices
 var Discord = require('discord.js');
 
-var config = require('../config.json');
+var config = require('../data/config.json');
 //#endregion
 
 //#region Autoroll

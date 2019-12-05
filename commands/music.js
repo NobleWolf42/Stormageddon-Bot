@@ -4,7 +4,7 @@
     var ytdl = require('ytdl-core');
     var YouTube = require('simple-youtube-api');
 
-    var config = require('../config.json');
+    var config = require('../data/config.json');
     //#endregion
 
     //#region Initialize Varibles
