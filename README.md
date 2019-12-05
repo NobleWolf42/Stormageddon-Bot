@@ -14,5 +14,3 @@ Install Commands for Dependancies:
     - Mac: brew install ffmpeg
 
 You will have to change some variables for your own use, copy the config.example.json to config.json and enter your settings.
-
-DOES THIS SYNC?
