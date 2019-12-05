@@ -21,6 +21,9 @@
             "embedThumbnailLink": ""
         },
         "music": {
+            "djRoles": [
+                "DJ"
+            ],
             "textChannel": "music"
         },
         "general": {
@@ -31,9 +34,6 @@
             "modRoles": [
                 "Server Admin",
                 "Stormageddon Bot Contributor"
-            ],
-            "djRoles": [
-                "DJ"
             ],
             "allowedChannels": [
                 "botspam",

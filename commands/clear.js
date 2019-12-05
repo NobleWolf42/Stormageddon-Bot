@@ -2,7 +2,7 @@ var Discord = require('discord.js');
 
 function clearMessages(message) {
     var userInput = message.content.toLowerCase().split(' ');
-    var amount = userInput[1];
+    var amount = parseInt(userInput[1]);
     var passed = true;
 
     if(isNaN(amount)) {
@@ -12,7 +12,7 @@ function clearMessages(message) {
             .setDescription('That is not a valid number for the ' + prefix + 'clear command!');
         message.channel.send(embMsg);
         passed = false;
-    } else if(amount < 2 || amount > 100) {
+    } else if(amount < 1 || amount > 99) {
         const embMsg = new Discord.RichEmbed()
             .setTitle('Error!')
             .setColor(0xb50000)
@@ -21,8 +21,8 @@ function clearMessages(message) {
         passed = false;
     }
 
-    if(amount >= 2 && amount <= 100) {
-        message.channel.bulkDelete(amount, true).catch(err => {
+    if(amount >= 1 && amount <= 99) {
+        message.channel.bulkDelete((amount + 1), true).catch(err => {
             console.error(err);
             const embMsg = new Discord.RichEmbed()
                 .setTitle('Error!')
