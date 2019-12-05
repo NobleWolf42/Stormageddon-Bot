@@ -15,6 +15,7 @@
     var userHandeling = require('./helpers/userHandeling.js');
     var intervalMgr = require('./helpers/intervalManagers.js')
     var pfx = require('./commands/changeprefix.js')
+    var AutoRole = require('./commands/autorole.js');
     //#endregion
 //#endregion
 
@@ -85,7 +86,7 @@ function messageHandeling(client) {
 
                 message.author.send("Bork Bork Bork Bork Bork");
                 message.author.send(attachment);
-            }, 5000, 7)
+            }, 2000, 3)
         }
         //#endregion
 
@@ -207,7 +208,6 @@ function messageHandeling(client) {
                         .setColor(32768)
                         .setDescription('Current Prefix is ' + userInput[1]);
                     message.channel.send(embMsg);
-                    message.delete().catch(O_o=>{})
                     return;
                 }
                 else {
@@ -216,7 +216,6 @@ function messageHandeling(client) {
                         .setColor(0xb50000)
                         .setDescription('Bot Prefix Must be one of the following: ````~!$%^&*()_+-={}[]|\:";\'<>?,./```');
                     message.channel.send(embMsg);
-                    message.delete().catch(O_o=>{})
                     return;
                 }
             }
@@ -226,7 +225,6 @@ function messageHandeling(client) {
                     .setColor(0xb50000)
                     .setDescription('You must define a bot prefix.');
                 message.channel.send(embMsg);
-                message.delete().catch(O_o=>{})
                 return;
             }
         }
@@ -236,7 +234,6 @@ function messageHandeling(client) {
             .setColor(0xb50000)
             .setDescription('You lack the required permissions to change the prefix!');
             message.channel.send(embMsg);
-            message.delete().catch(O_o=>{})
             return;
         }
         //#endregion
