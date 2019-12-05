@@ -5,7 +5,7 @@
     var config = require('./config.json');
 
     var AutoRole = require('./commands/autorole.js');
-    var MessageHandeler = require('./messagehandling.js');
+    var MessageHandeler = require('./commands/messagehandling.js');
     var filecreate = require('./helpers/createfiles.js')
     //#endregion
 //#endregion
