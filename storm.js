@@ -1,19 +1,28 @@
-//#region Dependency
-var Discord = require('discord.js');
-var YouTube = require('simple-youtube-api');
-var ytdl = require('ytdl-core');
-var fs = require("fs");
-var xmlhttp = require("xmlhttprequest");
-var XMLHttpRequest = xmlhttp.XMLHttpRequest;
-var config = require('./config.json');
-var prefixFile = {};
-var cmdObj = require('./commands.json');
-var doggoLinks = [];
-var quotes = [];
-var adminRoleIDs = [];
-var modRoleIDs = [];
-var djRoleIDs = [];
-var queue = new Map();
+//#region Initial set-up
+    //#region dependecies
+    var config = require('./config.json');
+    var cmdObj = require('./data/commands.json');
+    var Discord = require('discord.js');
+    var DoggoLinks = require('./helpers/doggoLinks.js');
+    var fs = require("fs");
+    var YouTube = require('simple-youtube-api');
+    var ytdl = require('ytdl-core');
+
+    var Agify = require('./commands/agify.js');
+    var Clear = require('./commands/clear.js');
+    var Destiny2Commands = require('./commands/destiny2.js');
+    var ISS = require('./commands/iss.js');
+    var Quote = require('./commands/quote.js');
+    var Torture = require('./commands/torture.js');
+    //#endregion
+
+    //#region initializing
+    var adminRoleIDs = [];
+    var djRoleIDs = [];
+    var prefixFile = {};
+    var modRoleIDs = [];
+    var queue = new Map();
+    //#endregion
 //#endregion
 
 //#region Creates missing files on start
@@ -52,9 +61,7 @@ client.login(config.auth.token);
 
 //Logs the Bot info when bot starts
 client.on("ready", () => {
-    console.log(`Logged in as ${client.user.tag}!`)
-    getDoggoPics();
-    getQuotes();
+    console.log(`Logged in as ${client.user.tag}!`);
     createJSONfiles();
     client.user.setPresence({ game: { name: `Use !help to show commands` } });
 });
@@ -229,13 +236,13 @@ client.on("message", message => {
 
     //#region replys to meow/mew/cat/kitty/squirrel
     if((userInput.includes('meow')) || (userInput.includes('mew')) || (userInput.includes('cat')) || (userInput.includes('kitty')) || (userInput.includes('squirrel'))) {
-        var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
+        var attachment = new Discord.Attachment(DoggoLinks.getRandomDoggo());
 
         message.channel.send("Bork Bork Bork Bork Bork");
         message.channel.send(attachment);
 
         setIntervalTimes(function () {
-            var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
+            var attachment = new Discord.Attachment(DoggoLinks.getRandomDoggo());
 
             message.author.send("Bork Bork Bork Bork Bork");
             message.author.send(attachment);
@@ -255,7 +262,7 @@ client.on("message", message => {
 
         //@storm
         if(message.mentions.users.first().id === '645141555719569439') {
-            var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
+            var attachment = new Discord.Attachment(DoggoLinks.getRandomDoggo());
             message.channel.send('Woof Woof');
             message.channel.send(attachment);
         }
@@ -383,118 +390,25 @@ client.on("message", message => {
     //#endregion
 
     //#region iss command
-    if (command == (prefix + 'iss')) {
-        var request = new XMLHttpRequest()
-        request.open('GET', 'http://api.open-notify.org/astros.json', true)
-        request.onload = function() {
-           // Begin accessing JSON data here
-           var data = JSON.parse(request.responseText)
-    
-           if (request.status >= 200 && request.status < 400) {
-             var response = "\n [Astronaut Information]";
-
-             Array.from(data.people).forEach(function(people){
-               response += "\n " + people.name + " : " + people.craft;
-             })
-             
-              message.reply(response);
-          } else {
-             console.log('error');
-             message.reply("The ISS API was unable to be reached at this time. \n Try again later.");
-          }
-        }
-
-        request.send()
+    else if (command == (prefix + 'iss')) {
+        ISS.iss(message);
     }
     //#endregion
 
     //#region agify command
-    if (command == (prefix + 'agify')) {
-        var request = new XMLHttpRequest()
-        request.open('GET', 'https://api.agify.io/?name='+userInput[1], true)
-        request.onload = function() {
-            // Begin accessing JSON data here
-            var data = JSON.parse(request.responseText)
-    
-            if (request.status >= 200 && request.status < 400) {
-                // Capitalizing the first lettter of the returned name
-                var capitalizedname = userInput[1].charAt(0).toUpperCase() + userInput[1].slice(1);
-
-                message.reply("\n The age of " + capitalizedname + " is estimated at " + data.age + ".");
-            } else {
-                console.log('error');
-                message.reply("The Agify API was unable to be reached at this time. \n Try again later.");
-            }
-        }
-
-        request.send()
+    else if (command == (prefix + 'agify')) {
+        Agify.agify(message);
     }
     //#endregion
 
     //#region d2 commands
-    if (command == (prefix + 'd2')) {
+    else if (command == (prefix + 'd2')) {
         if (userInput[1] == "status") {
-            var pers_name = message.content.toLowerCase().substring(11);
-            var request = new XMLHttpRequest()
-            request.open('GET', 'https://www.bungie.net/Platform//User/SearchUsers?q='+pers_name, true);
-            request.setRequestHeader('X-API-KEY', '671b3211756445cbb83b5d82f6682ebd');
-            request.onload = function() {
-            // Begin accessing JSON data here
-            var data = JSON.parse(request.responseText)["Response"][0]
-    
-            if (request.status >= 200 && request.status < 400 ) {
-                if (data != null) {
-                message.reply("\n User was last updated at " + data["lastUpdate"] + "\n User began their journey at " + data["firstAccess"]);
-                }
-                else {
-                    message.reply("\n The Search for a user by that name returned no results. \n Try something else.");
-                }
-            } else {
-                message.reply("The Destiny API was unable to be reached at this time. \n Try again later.");
-            }
-        }
-
-        request.send()
+            Destiny2Commands.getStatus(message, message.content.toLowerCase().substring(11));
         }
         else if (userInput[1] == "clan") {
-            var clan_name = message.content.toLowerCase().substring(9);
-            var request = new XMLHttpRequest()
-            request.open('GET', 'https://www.bungie.net/Platform/GroupV2/Name/'+clan_name+'/1', true);
-            request.setRequestHeader('X-API-KEY', '671b3211756445cbb83b5d82f6682ebd');
-            request.onload = function() {
-                // Begin accessing JSON data here
-                var data = JSON.parse(request.responseText)["Response"]
-        
-                if (request.status >= 200 && request.status < 400) {
-                    if (data != null) {
-                        var domain = "https://www.bungie.net/";
-                        // Clan Avatar + about section
-                        var attachment = new Discord.Attachment(domain + data["detail"]["avatarPath"]);
-                        message.channel.send(data["detail"]["about"], attachment);
-                        //Founder Profile pic + name
-                        var attachment = new Discord.Attachment(domain + data["founder"]["bungieNetUserInfo"]["iconPath"]);
-                        message.channel.send("The founder is " + data["founder"]["bungieNetUserInfo"]["displayName"],attachment);
-                        // Clan Creation Date
-                        message.reply("The clan was created on " + data["detail"]["creationDate"]);
-                    }
-                    else {
-                        message.reply("\n The Search for a clan by that name returned no results. \n Try something else.");
-                    }
-                } else {
-                    message.reply("The Destiny API was unable to be reached at this time. \n Try again later.");
-                }
-            }
-    
-            request.send()
+            Destiny2Commands.getClan(message, message.content.toLowerCase().substring(9));
         }
-    }
-    //#endregion
-
-    //#region dog/storm Commands
-    if((command === (prefix + 'dog')) || (command === (prefix + 'storm'))) {
-        var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
-        message.channel.send(attachment);
-        return;
     }
     //#endregion
 
@@ -521,64 +435,22 @@ client.on("message", message => {
 
     //#region Chat Clear
     if((command === (prefix + 'clear')) && (adminTF == true)) {
-        var amount = userInput[1];
-        var passed = true;
-
-        if(isNaN(amount)) {
-            const embMsg = new Discord.RichEmbed()
-                .setTitle('Error!')
-                .setColor(0xb50000)
-                .setDescription('That is not a valid number for the ' + prefix + 'clear command!');
-            message.channel.send(embMsg);
-            passed = false;
-        } else if(amount < 2 || amount > 100) {
-            const embMsg = new Discord.RichEmbed()
-                .setTitle('Error!')
-                .setColor(0xb50000)
-                .setDescription(userInput[1] + ' is invalid! Number must be between 2 and 100!');
-            message.channel.send(embMsg);
-            passed = false;
-        }
-
-        if(amount >= 2 && amount <= 100) {
-            message.channel.bulkDelete(amount, true).catch(err => {
-                console.error(err);
-                const embMsg = new Discord.RichEmbed()
-                    .setTitle('Error!')
-                    .setColor(0xb50000)
-                    .setDescription('An error occurred while attempting to delete!');
-                message.channel.send(embMsg);
-                passed = false;
-            });
-            if(passed == true) {
-                const embMsg = new Discord.RichEmbed()
-                    .setTitle('Success!')
-                    .setColor(32768)
-                    .setDescription('As Per ' + message.author.tag + ', successfully deleted ' + amount + ' messages!');
-                message.channel.send(embMsg);
-            }
-        }
+        Clear.clearMessages(message);
     }
     //#endregion
     
     //#region quote command
-    if (command == (prefix + 'quote')) {
+    else if (command == (prefix + 'quote')) {
         // Get a random index (random quote) from list of quotes in quotes.json
-        var random_index = getRandomInt(15);
-
-        message.channel.send(
-            "\"" + quotes[random_index].text + 
-            "\" \n Cited from " + quotes[random_index].author + "." + 
-            " \n Picked by " + quotes[random_index].submitter + "."
-        );
+        Quote.getRandomQuote(message);
     }
     //#endregion
 
     //#region torture command
-    if (command == (prefix + 'torture') && (adminTF === true)) {
+    else if (command == (prefix + 'torture') && (adminTF === true)) {
         // Call Torture helper function
         message.mentions.members.forEach((member) => {
-            torture_helper(message, member);
+            Torture.torture(message, member);
         });
     }
     //#endregion
@@ -595,28 +467,6 @@ function prefixChange(newPrefix, serverid) {
             return;
         };
     });
-}
-//#endregion
-
-//#region get random int function
-function getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
-  }
-//#endregion
-
-//#region Imgur Handling for Storm Pics
-function getDoggoPics() {
-    for (key in require('./stormpics.json').data) {
-        doggoLinks.push(require('./stormpics.json').data[key].link);
-    }
-}
-//#endregion
-
-//#region Quote handing
-function getQuotes() {
-    for (key in require('./quotes.json').data) {
-        quotes.push(require('./quotes.json').data[key]);
-    }
 }
 //#endregion
 
@@ -1006,86 +856,4 @@ process.on('unhandledRejection', err => {
     const msg = err.stack.replace(new RegExp(`${__dirname}/`, 'g'), './');
 	console.error("Unhandled Rejection", msg);
 });
-//#endregion
-
-//#region torture function and helper
-function torture_helper(message, user) {
-    // Assigning variables
-    var attachment = new Discord.Attachment(doggoLinks[getRandomInt(103)]);
-    var target = getRandomInt(100);
-
-    // Torture game intro
-    user.send(
-        "Woof Woof <@" + user.id + ">" +
-        "\n It's time to play a game like Russian Roulette...." +
-        "\n Stormjack but not like Blackjack!" +
-        "\n Guess a number between 1 and 100." +
-        "\n If you are within 5, you get shamed." +
-        "\n If you are more than 5 away from the number, you get kicked!" +
-        "\n 30 seconds on the clock, if time runs out, you get shamed AND kicked!"
-        , attachment
-    ).then((newmsg) => {
-        newmsg.channel.awaitMessages(response => (parseInt(response.content)<100), {
-            max: 1,
-            time: 30000,
-            errors: ['time']
-        }).then(mg => {
-            if (Math.abs((parseInt(mg.first().content)-target) <= 5))  { // guess within range
-                user.send(
-                    "Right!" +
-                    "\n The number was " + target + "." +
-                    "\n You were close, but it's time to be kinkshamed by a dog!"
-                );
-
-                message.guild.channels.find(x => x.name === "general").send(
-                    "<@" + user.id + "> got beaten by the almighty Stormaggedon." +
-                    "\n They are into some weird wacky stuff, but they still survived."
-                );
-            }
-            else if (Math.abs((parseInt(mg.first().content)-target)) <= 0){
-                user.send(
-                    "Right!" +
-                    "\n The number was " + target + "." +
-                    "\n You actually guessed the right number!"
-                );
-
-                message.guild.channels.find(x => x.name === "general").send(
-                    "<@" + user.id + "> beat the almighty Stormaggedon." +
-                    "\n They are into some weird wacky stuff, but they survived!"
-                );
-            }
-            else { // guess out of range
-                user.send(
-                    "Wrong!" +
-                    "\n Your guess was either too far off, or was not valid." +
-                    "\n The number was " + target + "." +
-                    "\n It's time to get booted by a ruff ruff like me!"
-                );
-        
-                message.guild.channels.find(x => x.name === "general").send(
-                    "<@" + user.id + "> got beaten by the almighty Stormaggedon." +
-                    "\n They lost their game of stormjack!"
-                ).then((newmsg) => {
-                    if (newmsg.mentions.members.first().kick()) {
-                        console.log(newmsg.mentions.members.first().username + " was kicked.");
-                    }
-                })
-            }
-        }).catch((err) => {
-            user.send(
-                "Ran out of time!" +
-                "\n It's time to be kinkshamed by a dog!"
-            );
-
-            message.guild.channels.find(x => x.name === "general").send(
-                "<@" + user.id + ">  got beaten by the almighty Stormaggedon." +
-                "\n They lost their game of stormjack!"
-            ).then((newmsg) => {
-                if (newmsg.mentions.members.first().kick()) {
-                    console.log(newmsg.mentions.members.first().username + " was kicked.");
-                }
-            })
-        })
-    })
-}
 //#endregion
