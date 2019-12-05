@@ -1,12 +1,12 @@
 //#region Initial set-up
     //#region dependecies
-    var config = require('./config.json');
-    var cmdObj = require('./data/commands.json');
     var Discord = require('discord.js');
-    var DoggoLinks = require('./helpers/doggoLinks.js');
     var fs = require("fs");
-    var YouTube = require('simple-youtube-api');
-    var ytdl = require('ytdl-core');
+
+    var DoggoLinks = require('./helpers/doggoLinks.js');
+
+    var cmdObj = require('./data/commands.json');
+    var config = require('./config.json');
 
     var Agify = require('./commands/agify.js');
     var Clear = require('./commands/clear.js');
@@ -14,6 +14,8 @@
     var ISS = require('./commands/iss.js');
     var Quote = require('./commands/quote.js');
     var Torture = require('./commands/torture.js');
+    var Music = require('./commands/music.js');
+    var AutoRole = require('./commands/autorole.js');
     //#endregion
 
     //#region initializing
@@ -21,7 +23,6 @@
     var djRoleIDs = [];
     var prefixFile = {};
     var modRoleIDs = [];
-    var queue = new Map();
     //#endregion
 //#endregion
 
@@ -49,7 +50,6 @@ function updateFilevaribles(){
 //#region Login / Initialize
 // Initialize Discord Bot
 var client = new Discord.Client();
-const youtube = new YouTube(config.auth.GOOGLE_API_KEY);
 
 //Throws Error if bot's token is not set.
 if (config.auth.token === 'YOUR BOT TOKEN' || config.auth.token === '') {
@@ -71,7 +71,7 @@ client.on('error', console.error);
 
 //#endregion
 
-//#region Server Rolls
+//#region Server Roles
 //Function that calls the server roles
 function serverRoleUpdate(sRole, serverid) {
     
@@ -103,11 +103,11 @@ function serverRoleUpdate(sRole, serverid) {
     }
 
     //Loops throught the DJ Role Names, pushing them to an array
-    for (key in config[serverid].general.djRoles) {
+    for (key in config[serverid].music.djRoles) {
         
-        //Pushes role IDs to DJs if they Match config[serverid].general.djRoles
-        if (basicServerRoles[config[serverid].general.djRoles[key]]){
-            djRoleIDs.push(basicServerRoles[config[serverid].general.djRoles[key]]);
+        //Pushes role IDs to DJs if they Match config[serverid].music.djRoles
+        if (basicServerRoles[config[serverid].music.djRoles[key]]){
+            djRoleIDs.push(basicServerRoles[config[serverid].music.djRoles[key]]);
         }
     }
 }
@@ -274,7 +274,7 @@ client.on("message", message => {
     //#region AutoRole Commands
     //Runs AutoRole Message Generation
     if ((command === (prefix + 'createautorolemsg') && (adminTF === true))){
-        sendRoleMessage(message, serverid);
+        AutoRole.sendRoleMessage(message, serverid, client);
         message.delete().catch(O_o=>{});
         return;
     };
@@ -306,59 +306,49 @@ client.on("message", message => {
     //#region Music Bot Commands
     if (((command == (prefix + 'play') || (command == (prefix + 'skip')) || (command == (prefix + 'stop')) || (command == (prefix + 'pause')) || (command == (prefix + 'resume'))) && (djTF == false))) {
         message.reply(`You do not have access to this command, To gain acces to this command you must have a DJ Role.`);
-        message.delete().catch(O_o=>{});
         return;
     }
     else if ((command == (prefix + 'volume')) && (modTF == false)) {
         message.reply(`You do not have access to this command, To gain acces to this command you must be a **BOT MOD*.`);
-        message.delete().catch(O_o=>{});
         return;
     }
 
     if (djTF == true) {
         if (command == (prefix + 'play')) {
-            execute(message, noncommand);
-            message.delete().catch(O_o=>{})
+            Music.execute(message, noncommand);
             return;
         }
         else if (command == (prefix + 'skip')) {
-            skip(message);
-            message.delete().catch(O_o=>{})
+            Music.skip(message);
             return;
         }
         else if (command == (prefix + 'stop')) {
-            stop(message);
-            message.delete().catch(O_o=>{})
+            Music.stop(message);
             return;
         }
         else if (command == (prefix + 'pause')) {
-            pause(message);
-            message.delete().catch(O_o=>{})
+            Music.pause(message);
             return;
         }
         else if (command == (prefix + 'resume')) {
-            resume(message);
-            message.delete().catch(O_o=>{})
+            Music.resume(message);
             return;
         }
     }
 
     if (modTF == true) {
         if (command == (prefix + 'volume')) {
-            volume(message, userInput[1]);
-            message.delete().catch(O_o=>{})
+            Music.volume(message, userInput[1]);
             return;
         }
     }
 
     if (command == (prefix + 'nowplaying')) {
-        nowPlaying(message);
-        message.delete().catch(O_o=>{})
+        Music.nowPlaying(message);
         return;
     }
     else if (command == (prefix + 'showqueue')) {
-        showQueue(message);
-        message.delete().catch(O_o=>{})
+        Music.showQueue(message);
         return;
     }
     //#endregion
@@ -572,372 +562,69 @@ function setIntervalTimes(callback, delay, repetitions) {
 
 //#region Refresh User Account Info
 function refreshUser() {
-    userAccountInfo = JSON.parse(fs.readFileSync('./userinfo.json', 'utf8'));
+    userAccountInfo = JSON.parse(fs.readFileSync('./userinfo.json'));
 }
 //#endregion
 
-//#region Music Bot Functionality
-//Execute the Play Command Function
-async function execute(msg, url) {
-    const voiceChannel = msg.member.voiceChannel;
+//#region Autorole Listener
+    //#region Redable constants
+    // This makes the events used a bit more readable
+    const events = {
+	    MESSAGE_REACTION_ADD: 'messageReactionAdd',
+	    MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
+    };
+    //#endregion
 
-    if (!voiceChannel) return msg.reply('I\'m sorry but you need to be in a voice channel to play music!');
-        
-    const permissions = voiceChannel.permissionsFor(msg.client.user);
-        
-    if (!permissions.has('CONNECT')) {
-	    return msg.reply('I cannot connect to your voice channel, make sure I have the proper permissions!');
-	}
-        
-    if (!permissions.has('SPEAK')) {
-		return msg.reply('I cannot speak in this voice channel, make sure I have the proper permissions!');
-	}
+    //#region This event handles adding/removing users from the role(s) they chose based on message reactions
+    client.on('raw', async event => {
+        if (!events.hasOwnProperty(event.t)) return;
 
-	if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
-        const playlist = await youtube.getPlaylist(url);
-        const videos = await playlist.getVideos();
-        if (videos.length <= 30) {
-		    for (const video of Object.values(videos)) {
-			    const video2 = await youtube.getVideoByID(video.id); // eslint-disable-line no-await-in-loop
-			    await handleVideo(video2, msg, voiceChannel, true); // eslint-disable-line no-await-in-loop
-            }
-            return msg.channel.send(`✅ Playlist: **${playlist.title}** has been added to the queue!`);
-        }
-        else if (videos.length > 30) {
-            return msg.reply(`🆘 Playlist: **${playlist.title}** has too many videos! You may only queue playlists tha have 30 or less videos.`);
-        }
-    }
-    else {
-		try {
-			var video = await youtube.getVideo(url);
-        }
-        catch (error) {
-            
-            try {
-				var videos = await youtube.searchVideos(url, 10);
-				let index = 0;
-				msg.channel.send(`__**Song selection:**__\n${videos.map(video2 => `**${++index} -** ${video2.title}`).join('\n')}\nPlease provide a value to select one of the search results ranging from 1-10.`);
-                
-                // eslint-disable-next-line max-depth
-				try {
-					var response = await msg.channel.awaitMessages(msg2 => msg2.content > 0 && msg2.content < 11, {
-						maxMatches: 1,
-						time: 10000,
-						errors: ['time']
-					});
-                }
-                catch (err) {
-					console.error(err);
-					return msg.channel.send('No or invalid value entered, cancelling video selection.');
-				}
-                
-                const videoIndex = parseInt(response.first().content);
-				var video = await youtube.getVideoByID(videos[videoIndex - 1].id);
-            }
-            catch (err) {
-				console.error(err);
-				return msg.channel.send('🆘 I could not obtain any search results.');
-			}
-		}
-		return handleVideo(video, msg, voiceChannel);
-	}
-}
+        const { d: data } = event;
+        const user = client.users.get(data.user_id);
+        const channel = client.channels.get(data.channel_id);
 
-//handlevideo function
-async function handleVideo(video, msg, voiceChannel, playlist = false) {
-	const serverQueue = queue.get(msg.guild.id);
-	const song = {
-		id: video.id,
-		title: Discord.Util.escapeMarkdown(video.title),
-		url: `https://www.youtube.com/watch?v=${video.id}`
-	};
-	if (!serverQueue) {
-		const queueConstruct = {
-			textChannel: msg.channel,
-			voiceChannel: voiceChannel,
-			connection: null,
-			songs: [],
-			volume: 20,
-			playing: true
-		};
-		queue.set(msg.guild.id, queueConstruct);
+        const message = await channel.fetchMessage(data.message_id);
+        const member = message.guild.members.get(user.id);
+        var serverid = message.channel.guild.id;
 
-		queueConstruct.songs.push(song);
+        const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
+        let reaction = message.reactions.get(emojiKey);
 
-		try {
-			var connection = await voiceChannel.join();
-			queueConstruct.connection = connection;
-			play(msg.guild, queueConstruct.songs[0]);
-		} catch (error) {
-			console.error(`I could not join the voice channel: ${error}`);
-			queue.delete(msg.guild.id);
-			return msg.channel.send(`I could not join the voice channel: ${error}`);
-		}
-	} else {
-		serverQueue.songs.push(song);
-		if (playlist) return undefined;
-		else return msg.channel.send(`✅ **${song.title}** has been added to the queue!`);
-	}
-	return undefined;
-}
-
-//play function
-function play(guild, song) {
-	const serverQueue = queue.get(guild.id);
-
-	if (!song) {
-		serverQueue.voiceChannel.leave();
-		queue.delete(guild.id);
-		return;
-	}
-
-	const dispatcher = serverQueue.connection.playStream(ytdl(song.url))
-		.on('end', reason => {
-			if (reason === 'Stream is not generating quickly enough.') console.log('Song ended.');
-			else console.log(reason);
-			serverQueue.songs.shift();
-			play(guild, serverQueue.songs[0]);
-		})
-		.on('error', error => console.error(error));
-	dispatcher.setVolumeLogarithmic(serverQueue.volume / 100);
-
-	serverQueue.textChannel.send(`🎶 Start playing: **${song.title}**`);
-}
-
-//skip function
-function skip(msg) {
-    const serverQueue = queue.get(msg.guild.id);
-
-    if (!msg.member.voiceChannel) return msg.reply('You are not in a voice channel!');
-		if (!serverQueue) return msg.reply('There is nothing playing that I could skip for you.');
-	    serverQueue.connection.dispatcher.end('Skip command has been used!');
-        return undefined;
-}
-
-//stop function
-function stop(msg) {
-    const serverQueue = queue.get(msg.guild.id);
-
-    if (!msg.member.voiceChannel) return msg.reply('You are not in a voice channel!');
-		if (!serverQueue) return msg.reply('There is nothing playing that I could stop for you.');
-		serverQueue.songs = [];
-		serverQueue.connection.dispatcher.end('Stop command has been used!');
-		return undefined;
-}
-
-function volume(msg, volumePercent) {
-    const serverQueue = queue.get(msg.guild.id);
-
-    if (!msg.member.voiceChannel) return msg.reply('You are not in a voice channel!');
-		if (!serverQueue) return msg.reply('There is nothing playing.');
-		if (!volumePercent) return msg.channel.send(`The current volume is: **${serverQueue.volume}**`);
-        if ((volumePercent >= 1) && (volumePercent <= 100)) {
-            serverQueue.volume = volumePercent;
-		    serverQueue.connection.dispatcher.setVolumeLogarithmic(volumePercent / 100);
-            return msg.channel.send(`I set the volume to: **${volumePercent}%**`);
-        }
-        else {
-            return msg.reply(`**${volumePercent}** is not a valid volume setting, you must choose a value inbetween 1-100.`);
-        }
-}
-
-function nowPlaying(msg) {
-    const serverQueue = queue.get(msg.guild.id);
-
-    if (!serverQueue) return msg.reply('There is nothing playing.');
-    return msg.channel.send(`🎶 Now playing: **${serverQueue.songs[0].title}**`);
-}
-
-function showQueue(msg) {
-    const serverQueue = queue.get(msg.guild.id);
-
-    if (!serverQueue) return msg.reply('There is nothing playing.');
-		return msg.channel.send(`__**Song queue:**__\n${serverQueue.songs.map(song => `**-** ${song.title}`).join('\n')}\n**Now playing:** ${serverQueue.songs[0].title}`);
-}
-
-function pause(msg) {
-    const serverQueue = queue.get(msg.guild.id);
-
-    if (serverQueue && serverQueue.playing) {
-        serverQueue.playing = false;
-        serverQueue.connection.dispatcher.pause();
-        return msg.channel.send('⏸ Paused the music for you!');
-    }
-    return msg.reply('There is nothing playing.');
-}
-
-function resume(msg) {
-    const serverQueue = queue.get(msg.guild.id);
-
-    if (serverQueue && !serverQueue.playing) {
-        serverQueue.playing = true;
-        serverQueue.connection.dispatcher.resume();
-        return msg.channel.send('▶ Resumed the music for you!');
-    }
-    return msg.reply('There is nothing playing.');
-}
-//#endregion
-
-//#region Autoroll
-//Function that will create messages to allow you to assign yourself a role
-function generateMessages(serverid) {
-    return config[serverid].autorole.roles.map((r, e) => {
-        return {
-            role: r,
-            message: `React below to get the **"${r}"** role!`, //DONT CHANGE THIS,
-            emoji: config[serverid].autorole.reactions[e]
-        };
-    });
-}
-
-//Function that generates embed feilds if config[serverid].autorole.embed is set to true
-function generateEmbedFields(serverid) {
-    return config[serverid].autorole.roles.map((r, e) => {
-        return {
-            emoji: config[serverid].autorole.reactions[e],
-            role: r
-        };
-    });
-}
-
-// Handles the creation of the role reactions. Will either send the role messages separately or in an embed, depending on your settings in config[serverid].json
-function sendRoleMessage(message, serverid) {
-
-    //Checks to make sure your roles and reactions match up
-    if (config[serverid].autorole.roles.length !== config[serverid].autorole.reactions.length) {
-        throw new Error("Roles list and reactions list are not the same length! Please double check this in the config[serverid].js file");
-    }  
-    
-    // We don't want the bot to do anything further if it can't send messages in the channel
-    if (message.guild && !message.channel.permissionsFor(message.guild.me).missing('SEND_MESSAGES')) return;
-
-    const missing = message.channel.permissionsFor(message.guild.me).missing('MANAGE_MESSAGES');
-
-    // Here we check if the bot can actually add recations in the channel the command is being ran in
-    if (missing.includes('ADD_REACTIONS'))
-        throw new Error("I need permission to add reactions to these messages! Please assign the 'Add Reactions' permission to me in this channel!");
-
-    if (!config[serverid].autorole.embed) {
-        if (!config[serverid].autorole.initialMessage || (config[serverid].autorole.initialMessage === '')) 
-            throw "The 'initialMessage' property is not set in the config[serverid].js file. Please do this!";
-
-        message.channel.send(config[serverid].autorole.initialMessage);
-
-        const messages = generateMessages(serverid);
-        for (const { role, message: msg, emoji } of messages) {
-            if (!message.guild.roles.find(r => r.name === role))
-                throw `The role '${role}' does not exist!`;
-
-            message.channel.send(msg).then(async m => {
-                const customCheck = message.guild.emojis.find(e => e.name === emoji);
-                if (!customCheck) await m.react(emoji);
-                else await m.react(customCheck.id);
-            }).catch(console.error);
-        }
-    } else {
-        if (!config[serverid].autorole.embedMessage || (config[serverid].autorole.embedMessage === ''))
-            throw "The 'embedMessage' property is not set in the config[serverid].js file. Please do this!";
-        if (!config[serverid].autorole.embedFooter || (config[serverid].autorole.embedMessage === ''))
-            throw "The 'embedFooter' property is not set in the config[serverid].js file. Please do this!";
-
-        const roleEmbed = new Discord.RichEmbed()
-            .setDescription(config[serverid].autorole.embedMessage)
-            .setFooter(config[serverid].autorole.embedFooter);
-
-        if (config[serverid].autorole.embedColor) roleEmbed.setColor(config[serverid].autorole.embedColor);
-
-        if (config[serverid].autorole.embedThumbnail && (config[serverid].autorole.embedThumbnailLink !== '')) 
-            roleEmbed.setThumbnail(config[serverid].autorole.embedThumbnailLink);
-        else if (config[serverid].autorole.embedThumbnail && message.guild.icon)
-            roleEmbed.setThumbnail(message.guild.iconURL);
-
-        const fields = generateEmbedFields(serverid);
-        if (fields.length > 25) throw "That maximum roles that can be set for an embed is 25!";
-
-        for (const { emoji, role } of fields) {
-            if (!message.guild.roles.find(r => r.name === role))
-                throw `The role '${role}' does not exist!`;
-
-            const customEmote = client.emojis.find(e => e.name === emoji);
-            
-            if (!customEmote) roleEmbed.addField(emoji, role, true);
-            else roleEmbed.addField(customEmote, role, true);
+        if (!reaction) {
+            // Create an object that can be passed through the event like normal
+            const emoji = new Emoji(client.guilds.get(data.guild_id), data.emoji);
+            reaction = new MessageReaction(message, emoji, 1, data.user_id === client.user.id);
         }
 
-        message.channel.send(roleEmbed).then(async m => {
-            for (const r of config[serverid].autorole.reactions) {
-                const emoji = r;
-                const customCheck = client.emojis.find(e => e.name === emoji);
-                
-                if (!customCheck) await m.react(emoji);
-                else await m.react(customCheck.id);
-            }
-        });
-    }
-};
+        let embedFooterText;
+        if (message.embeds[0]) embedFooterText = message.embeds[0].footer.text;
 
-// This makes the events used a bit more readable
-const events = {
-	MESSAGE_REACTION_ADD: 'messageReactionAdd',
-	MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
-};
+        if (
+            (message.author.id === client.user.id) && (message.content !== config[serverid].autorole.initialMessage || 
+            (message.embeds[0] && (embedFooterText !== config[serverid].autorole.embedFooter)))
+        ) {
 
-// This event handles adding/removing users from the role(s) they chose based on message reactions
-client.on('raw', async event => {
-    if (!events.hasOwnProperty(event.t)) return;
+            if ((message.embeds.length >= 1)) {
+                const fields = message.embeds[0].fields;
 
-    const { d: data } = event;
-    const user = client.users.get(data.user_id);
-    const channel = client.channels.get(data.channel_id);
-
-    const message = await channel.fetchMessage(data.message_id);
-    const member = message.guild.members.get(user.id);
-    var serverid = message.channel.guild.id;
-
-    const emojiKey = (data.emoji.id) ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
-    let reaction = message.reactions.get(emojiKey);
-
-    if (!reaction) {
-        // Create an object that can be passed through the event like normal
-        const emoji = new Emoji(client.guilds.get(data.guild_id), data.emoji);
-        reaction = new MessageReaction(message, emoji, 1, data.user_id === client.user.id);
-    }
-
-    let embedFooterText;
-    if (message.embeds[0]) embedFooterText = message.embeds[0].footer.text;
-
-    if (
-        (message.author.id === client.user.id) && (message.content !== config[serverid].autorole.initialMessage || 
-        (message.embeds[0] && (embedFooterText !== config[serverid].autorole.embedFooter)))
-    ) {
-
-        if (!config[serverid].autorole.embed && (message.embeds.length < 1)) {
-            const re = `\\*\\*"(.+)?(?="\\*\\*)`;
-            const role = message.content.match(re)[1];
-
-            if (member.id !== client.user.id) {
-                const guildRole = message.guild.roles.find(r => r.name === role);
-                if (event.t === "MESSAGE_REACTION_ADD") member.addRole(guildRole.id);
-                else if (event.t === "MESSAGE_REACTION_REMOVE") member.removeRole(guildRole.id);
-            }
-        } else if (config[serverid].autorole.embed && (message.embeds.length >= 1)) {
-            const fields = message.embeds[0].fields;
-
-            for (const { name, value } of fields) {
-                if (member.id !== client.user.id) {
-                    const guildRole = message.guild.roles.find(r => r.name === value);
-                    if ((name === reaction.emoji.name) || (name === reaction.emoji.toString())) {
-                        if (event.t === "MESSAGE_REACTION_ADD") member.addRole(guildRole.id);
-                        else if (event.t === "MESSAGE_REACTION_REMOVE") member.removeRole(guildRole.id);
+                for (const { name, value } of fields) {
+                    if (member.id !== client.user.id) {
+                        const guildRole = message.guild.roles.find(r => r.name === value);
+                        if ((name === reaction.emoji.name) || (name === reaction.emoji.toString())) {
+                            if (event.t === "MESSAGE_REACTION_ADD") member.addRole(guildRole.id);
+                            else if (event.t === "MESSAGE_REACTION_REMOVE") member.removeRole(guildRole.id);
+                        }
                     }
                 }
             }
         }
-    }
-});
+    });
+    //#endregion
 
-process.on('unhandledRejection', err => {
-    const msg = err.stack.replace(new RegExp(`${__dirname}/`, 'g'), './');
-	console.error("Unhandled Rejection", msg);
-});
+    //#region This handels unhandeled rejections
+    process.on('unhandledRejection', err => {
+        const msg = err.stack.replace(new RegExp(`${__dirname}/`, 'g'), './');
+	    console.error("Unhandled Rejection", msg);
+    });
+    //#endregion
 //#endregion
