@@ -8,7 +8,7 @@ var prefixFile = {};
 function prefixChange(newPrefix, serverid) {
     prefixFile[serverid] = {"prefix": newPrefix};
 
-    fs.writeFile("../data/botprefix.json", JSON.stringify(prefixFile), (err) => {
+    fs.writeFile("./data/botprefix.json", JSON.stringify(prefixFile), (err) => {
         if (err) {
             console.error(err);
             return;
