@@ -1,7 +1,6 @@
 //#region Initial set-up
     //#region dependecies
     var config = require('./config.json');
-    var cmdObj = require('./data/commands.json');
     var Discord = require('discord.js');
     var DoggoLinks = require('./helpers/doggoLinks.js');
     var fs = require("fs");
@@ -11,6 +10,7 @@
     var Agify = require('./commands/agify.js');
     var Clear = require('./commands/clear.js');
     var Destiny2Commands = require('./commands/destiny2.js');
+    var Help = require('./commands/help.js');
     var ISS = require('./commands/iss.js');
     var Quote = require('./commands/quote.js');
     var Torture = require('./commands/torture.js');
@@ -445,76 +445,8 @@ client.on("message", message => {
     //#endregion
 
     //#region help Command
-    if(command === (prefix + 'help')) {
-        var txt = "";
-        if (userInput[1] == 'help') {
-            for (key in cmdObj.help) {
-                if (key != "prefix"){
-                    txt += prefix + key + ' - ' + cmdObj.help[key] + '\n';
-                }
-                else {
-                    txt += key + ' - ' + cmdObj.help[key] + '\n';
-                }
-            }
-        }
-        else if (userInput[1] == 'music') {
-            for (key in cmdObj.music) {
-                if (key != "prefix"){
-                    txt += prefix + key + ' - ' + cmdObj.music[key] + '\n';
-                }
-                else {
-                    txt += key + ' - ' + cmdObj.music[key] + '\n';
-                }
-            }
-        }
-        else if (userInput[1] == 'admin') {
-            for (key in cmdObj.admin) {
-                if (key != "prefix"){
-                    txt += prefix + key + ' - ' + cmdObj.admin[key] + '\n';
-                }
-                else {
-                    txt += key + ' - ' + cmdObj.admin[key] + '\n';
-                }
-            }
-        }
-        else if (userInput[1] == 'fun') {
-            for (key in cmdObj.fun) {
-                if (key != "prefix"){
-                    txt += prefix + key + ' - ' + cmdObj.fun[key] + '\n';
-                }
-                else {
-                    txt += key + ' - ' + cmdObj.fun[key] + '\n';
-                }
-            }
-        }
-        else if (userInput[1] == 'gaming') {
-            for (key in cmdObj.gaming) {
-                if (key != "prefix"){
-                    txt += prefix + key + ' - ' + cmdObj.gaming[key] + '\n';
-                }
-                else {
-                    txt += key + ' - ' + cmdObj.gaming[key] + '\n';
-                }
-            }
-        }
-        else {
-            for (key in cmdObj.help) {
-                if (key != "prefix"){
-                    txt += prefix + key + ' - ' + cmdObj.help[key] + '\n';
-                }
-                else {
-                    txt += key + ' - ' + cmdObj.help[key] + '\n';
-                }
-            }
-        }
-        
-        const embMsg = new Discord.RichEmbed()
-            .setTitle('Help')
-            .setColor(0xb50000)
-            .setDescription(txt);
-        message.channel.send(embMsg);
-        message.delete().catch(O_o=>{});
-        return;
+    else if(command === (prefix + 'help')) {
+        Help.getHelp(message);
     }
     //#endregion
 

@@ -1,24 +1,23 @@
 {
-    "help": {
-        "help PAGE"                                      : "Displays Help Message, specifying a page will show that help info. Avalible pages are `Help, Admin, Fun, Gaming, Music`.",
-        "prefix"                                         : "Displays the current bot prefix."
+    "Help": {
+        "help PAGE"                                      : "Displays Help Message, specifying a page will show that help info."
     },
-    "admin": {
+    "Admin": {
         "changeprefix INSERT-SYMBOL"                     : "Changes the prefix the bot uses in your server. Available Symbols: ``~!$%^&*()_+-={}[]|\\:\";\\'<>?,.`",
         "createautorolemsg"                              : "Create the reactions for auto role assignment.",
         "torture MENTION-USER"                           : "Stormagedon stalks user into playing Stormjack, where the user may or may not be kicked."
     },
-    "fun": {
+    "Fun": {
         "agify INSERT-NAME"                              : "Estimates age of name.",
         "dog/storm"                                      : "Displays a random picture of our lord and savior ***Stormageddon***.",
         "iss"                                            : "Displays the names of which astronauts are aboard the ISS",
         "quote"                                          : "Display a random quote, picked by the developers of Stormageddon."
     },
-    "gaming": {
+    "Gaming": {
         "d2 status INSERT-BUNGIE-NAME"                   : "Displays Destiny 2 account's original creation date, and last API update date.",
         "d2 clan INSERT-CLAN-NAME"                       : "Displays Destiny 2 clan's bio, avatar, motto, and founder"
     },
-    "music": {
+    "Music": {
         "play SEARCH-TEARM/YOUTUBE-LINK/YOUTUBE-PLAYLIST": "Plays the selected music in the voice channel you are in, NOTE: Playlists have a maximum of 30 videos.",
         "pause"                                          : "Pauses the music.",
         "resume"                                         : "Resumes the paused music.",
