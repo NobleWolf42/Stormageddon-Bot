@@ -1,8 +1,13 @@
+//#region dependecies
 var Discord = require('discord.js');
 var cmdObj = require('../data/commands.json');
 var stringHelper = require('../helpers/stringhelpers.js');
+//#endregion
 
-function getHelp(message) {
+var excludedcommands = ["Admin"];
+
+//#region Help function
+function getHelp(adminbool, message) {
     var txt = "";
     var sections = Object.keys(cmdObj);
     var title = "Help";
@@ -10,10 +15,11 @@ function getHelp(message) {
 
     if (userInput.length == 1 || stringHelper.capitalize(userInput[1]) == "Help") {
         txt = "\
-        There are **" + sections.length + "** pages of commands. \n \
+        There are **" + getHelpSize(adminbool, sections) + "** pages of commands. \n \
         The pages are ";
 
         for(var ind in sections){
+            if (!adminbool && sections[ind] =="Admin") { continue; }
             txt += ("`" + sections[ind] + "`");
             if (ind < sections.length-1){
                 txt +=", ";
@@ -34,12 +40,38 @@ function getHelp(message) {
         }
     }
     
+    if (!adminbool && title =="Admin") { 
+        title="Access Denied";
+        txt="You do not have access to those commands.";
+    }
+    else {
+        title = (title=="Help"?title:"Help: "+title);
+    }
+
     const embMsg = new Discord.RichEmbed()
-        .setTitle((title=="Help"?title:"Help: "+title))
+        .setTitle(title)
         .setColor(0xb50000)
         .setDescription(txt);
-    message.channel.send(embMsg);
+    message.author.send(embMsg);
     message.delete().catch(O_o=>{});
 }
+//#endregion
+
+//#region Help function helpers
+
+function getHelpSize(adminbool, sections){
+    var size = sections.length;
+    // if the user isn't an admin
+    if (!adminbool){
+        for(var index in excludedcommands){
+            if (sections.includes(excludedcommands[index])){
+                size--;
+            }
+        }
+    }
+
+    return size;
+}
+//#endregion
 
 module.exports = { getHelp };

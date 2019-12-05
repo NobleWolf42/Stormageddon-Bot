@@ -16,14 +16,15 @@ function torture(message, user) {
         "\n Guess a number between 1 and 100." +
         "\n If you are within 5, you get shamed." +
         "\n If you are more than 5 away from the number, you get kicked!" +
-        "\n 30 seconds on the clock, if time runs out, you get shamed AND kicked!"
+        "\n 60 seconds on the clock, if time runs out, you get shamed AND kicked!"
         , attachment
     ).then((newmsg) => {
         newmsg.channel.awaitMessages(response => (parseInt(response.content)<100), {
             max: 1,
-            time: 30000,
+            time: 60000,
             errors: ['time']
         }).then(mg => {
+            // Response scenarios
             if (Math.abs((parseInt(mg.first().content)-target) <= 5))  { // guess within range
                 user.send(
                     "Right!" +
@@ -36,7 +37,7 @@ function torture(message, user) {
                     "\n They are into some weird wacky stuff, but they still survived."
                 );
             }
-            else if (Math.abs((parseInt(mg.first().content)-target)) <= 0){
+            else if (Math.abs((parseInt(mg.first().content)-target)) <= 0){ // guess exactly right
                 user.send(
                     "Right!" +
                     "\n The number was " + target + "." +
@@ -48,7 +49,7 @@ function torture(message, user) {
                     "\n They are into some weird wacky stuff, but they survived!"
                 );
             }
-            else { // guess out of range
+            else {                                                          // guess out of range
                 user.send(
                     "Wrong!" +
                     "\n Your guess was either too far off, or was not valid." +
@@ -65,7 +66,7 @@ function torture(message, user) {
                     }
                 })
             }
-        }).catch((err) => {
+        }).catch((err) => { // no guess entered, time ran out.
             user.send(
                 "Ran out of time!" +
                 "\n It's time to be kinkshamed by a dog!"

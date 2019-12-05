@@ -264,7 +264,7 @@ function messageHandling(client) {
 
         //#region help Command
         else if(command === (prefix + 'help')) {
-            Help.getHelp(message);
+            Help.getHelp(adminTF, message);
         }
         //#endregion
 
