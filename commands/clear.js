@@ -16,7 +16,7 @@ function clearMessages(message) {
         const embMsg = new Discord.RichEmbed()
             .setTitle('Error!')
             .setColor(0xb50000)
-            .setDescription(userInput[1] + ' is invalid! Number must be between 2 and 100!');
+            .setDescription(userInput[1] + ' is invalid! Number must be between 1 and 99!');
         message.channel.send(embMsg);
         passed = false;
     }

@@ -9,7 +9,6 @@
     },
     "Fun": {
         "agify INSERT-NAME"                              : "Estimates age of name.",
-        "dog/storm"                                      : "Displays a random picture of our lord and savior ***Stormageddon***.",
         "iss"                                            : "Displays the names of which astronauts are aboard the ISS",
         "quote"                                          : "Display a random quote, picked by the developers of Stormageddon."
     },

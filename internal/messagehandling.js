@@ -4,23 +4,23 @@
     var fs = require('fs');
 
     var DoggoLinks = require('../helpers/doggoLinks.js');
-    var Agify = require('./agify.js');
-    var Clear = require('./clear.js');
-    var Destiny2Commands = require('./destiny2.js');
-    var Help = require('./help.js');
-    var ISS = require('./iss.js');
-    var Quote = require('./quote.js');
-    var Torture = require('./torture.js');
-    var Music = require('./music.js');
-    var userHandeling = require('../helpers/userHandeling.js');
+    var Agify = require('../commands/agify.js');
+    var Clear = require('../commands/clear.js');
+    var Destiny2Commands = require('../commands/destiny2.js');
+    var Help = require('../commands/help.js');
+    var ISS = require('../commands/iss.js');
+    var Quote = require('../commands/quote.js');
+    var Torture = require('../commands/torture.js');
+    var Music = require('../commands/music.js');
+    var userHandeling = require('../helpers/userHandling.js');
     var intervalMgr = require('../helpers/intervalManagers.js')
-    var pfx = require('./changeprefix.js')
-    var AutoRole = require('./autorole.js');
+    var pfx = require('../commands/changeprefix.js')
+    var AutoRole = require('../internal/autorole.js');
     //#endregion
 //#endregion
 
 //#region Message Handling
-function messageHandeling(client) {
+function messageHandling(client) {
     //Handels Messages and their responses
     client.on("message", message => {
 
@@ -43,7 +43,7 @@ function messageHandeling(client) {
         var adminTF = userHandeling.adminCheck(userRoles, serverRoles, serverid);
         var modTF = userHandeling.modCheck(userRoles, serverRoles, serverid);
         var djTF = userHandeling.djCheck(userRoles, serverRoles, serverid);
-        var prefixFile = JSON.parse(fs.readFileSync('../data/botprefix.json'));
+        var prefixFile = JSON.parse(fs.readFileSync('./data/botprefix.json'));
 
         if (prefixFile[serverid] != undefined) {
             if (prefixFile[serverid].prefix != undefined) {
@@ -295,5 +295,5 @@ function messageHandeling(client) {
 //#endregion
 
 //#region exports
-module.exports = { messageHandeling };
+module.exports = { messageHandling };
 //#endregion

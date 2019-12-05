@@ -2,10 +2,10 @@
     //#region dependecies
     var Discord = require('discord.js');
 
-    var config = require('./config.json');
+    var config = require('./data/config.json');
 
-    var AutoRole = require('./commands/autorole.js');
-    var MessageHandeler = require('./commands/messagehandling.js');
+    var AutoRole = require('./internal/autorole.js');
+    var MessageHandler = require('./internal/messagehandling.js');
     var filecreate = require('./helpers/createfiles.js')
     //#endregion
 //#endregion
@@ -27,7 +27,7 @@ client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}!`);
     filecreate.createJSONfiles();
     AutoRole.autoroleListener(client);
-    MessageHandeler.messageHandeling(client);
+    MessageHandler.messageHandling(client);
     client.user.setPresence({ game: { name: `Use !help to show commands` } });
 });
 

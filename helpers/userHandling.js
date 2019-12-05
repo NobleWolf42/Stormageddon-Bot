@@ -1,5 +1,5 @@
 //#region Dependancies
-var config = require('../config.json');
+var config = require('../data/config.json');
 
 var adminRoleIDs = [];
 var djRoleIDs = [];
