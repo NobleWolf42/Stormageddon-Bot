@@ -5,19 +5,23 @@ var fs = require('fs');
 //#region Creates missing files on start
 function createJSONfiles() {
 
-    var emptyFile = {};
+    var emptyfile = {};
 
     if (!fs.existsSync("./data/botprefix.json")) {
-        fs.writeFile("./data/botprefix.json", JSON.stringify(emptyFile), function(err) {
+        fs.writeFileSync("./data/botprefix.json", JSON.stringify(emptyfile), function(err) {
             if (err) {
                 console.log(err);
             }
         });
     }
-}
-
-function updateFilevaribles(){
-    prefixFile = JSON.parse(fs.readFileSync('./data/botprefix.json'));
+    
+    if (!fs.existsSync("./data/serverconfig.json")) {
+        fs.writeFileSync("./data/serverconfig.json", JSON.stringify(emptyfile), function(err) {
+            if (err) {
+                console.log(err);
+            }
+        });
+    }
 }
 //#endregion
 

@@ -13,4 +13,4 @@ Install Commands for Dependancies:
     - Ubuntu: apt install ffmpeg
     - Mac: brew install ffmpeg
 
-You will have to change some variables for your own use, copy the config.example.json to config.json and enter your settings.
+You will have to change some variables for your own use, copy the botconfig.example.json to botconfig.json and enter your settings.

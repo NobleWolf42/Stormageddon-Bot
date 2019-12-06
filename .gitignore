@@ -1,4 +1,5 @@
 /node_modules
-config.json
+/data/botconfig.json
+/data/serverconfig.json
 /data/botprefix.json
 userinfo.json

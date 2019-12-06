@@ -9,36 +9,5 @@
         "redirectUri": "YOUR REDIRECT URI",
         "registerLink": "YOUR REDIRECT LINK"
 
-    },
-    "644966355875135499": {
-        "autorole" : {
-            "embedMessage": "`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`",
-            "embedFooter": "Role Reactions",
-            "roles": ["DJ"],
-            "reactions": ["🎵"],
-            "embedColor": "#dd9323",
-            "embedThumbnail": false,
-            "embedThumbnailLink": ""
-        },
-        "music": {
-            "djRoles": [
-                "DJ"
-            ],
-            "textChannel": "music"
-        },
-        "general": {
-            "adminRoles": [
-                "Server Admin",
-                "Stormageddon Bot Contributor"
-            ],
-            "modRoles": [
-                "Server Admin",
-                "Stormageddon Bot Contributor"
-            ],
-            "allowedChannels": [
-                "botspam",
-                "general"
-            ]
-        }
     }
 }

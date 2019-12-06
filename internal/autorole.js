@@ -1,7 +1,7 @@
 //#region Dependancices
 var Discord = require('discord.js');
 
-var config = require('../data/config.json');
+var config = require('../data/serverconfig.json');
 //#endregion
 
 //#region Autoroll
@@ -39,10 +39,11 @@ var config = require('../data/config.json');
             throw "The 'embedFooter' property is not set in the config[serverid].js file. Please do this!";
 
         const roleEmbed = new Discord.RichEmbed()
+            .setTitle('Role Message')
             .setDescription(config[serverid].autorole.embedMessage)
             .setFooter(config[serverid].autorole.embedFooter);
 
-        if (config[serverid].autorole.embedColor) roleEmbed.setColor(config[serverid].autorole.embedColor);
+        roleEmbed.setColor('#dd9323');
 
         if (config[serverid].autorole.embedThumbnail && (config[serverid].autorole.embedThumbnailLink !== '')) 
             roleEmbed.setThumbnail(config[serverid].autorole.embedThumbnailLink);

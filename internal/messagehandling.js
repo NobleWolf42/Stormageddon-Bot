@@ -16,6 +16,10 @@
     var intervalMgr = require('../helpers/intervalManagers.js')
     var pfx = require('../commands/changeprefix.js')
     var AutoRole = require('../internal/autorole.js');
+    var errormsg = require('../helpers/errormessages.js');
+    var sconfig = JSON.parse(fs.readFileSync('./data/serverconfig.json', 'utf8'));
+    var bconfig = require('../data/botconfig.json');
+    var set = require('../commands/setsettings.js');
     //#endregion
 //#endregion
 
@@ -32,19 +36,8 @@ function messageHandling(client) {
         if (!message.guild) return;
         //#endregion
 
-        //#region Varibles for the message info needed
-        var serverid = message.channel.guild.id;
-        var userInputNoLower = message.content.split(' ');
-        var userInput = message.content.toLowerCase().split(' ');
-        var noncommand = '';
-        var command = userInput[0];
-        var userRoles = message.author.lastMessage.member._roles;
-        var serverRoles = message.channel.guild.roles;
-        var adminTF = userHandeling.adminCheck(userRoles, serverRoles, serverid);
-        var modTF = userHandeling.modCheck(userRoles, serverRoles, serverid);
-        var djTF = userHandeling.djCheck(userRoles, serverRoles, serverid);
-        var prefixFile = JSON.parse(fs.readFileSync('./data/botprefix.json'));
-
+        //#region prefix/defaultprefix set
+        var prefixFile = JSON.parse(fs.readFileSync('./data/botprefix.json', 'utf8'));
         if (prefixFile[serverid] != undefined) {
             if (prefixFile[serverid].prefix != undefined) {
                 var prefix = prefixFile[serverid].prefix;
@@ -56,6 +49,53 @@ function messageHandling(client) {
         else {
             var prefix = "!";
         }
+        //#endregion
+
+        //#region Varible part 1
+        var serverid = message.channel.guild.id;
+        var userInputNoLower = message.content.split(' ');
+        var userInput = message.content.toLowerCase().split(' ');
+        var noncommand = '';
+        var command = userInput[0];
+        //#endregion
+
+        //#region for all @ Commands
+        if(message.mentions.users.first() !== undefined) {
+
+            //@magma
+            if(message.mentions.users.first().id === '211865015592943616') {
+                var attachment = new Discord.Attachment('https://cdn.discordapp.com/attachments/254389303294165003/649734083366223895/kji50lq4nhq11.png');
+                message.channel.send('Nep Nep Nep Nep Nep Nep Nep');
+                message.channel.send(attachment);
+            }
+
+            //@storm
+            if(message.mentions.users.first().id === '645141555719569439') {
+                var attachment = new Discord.Attachment(DoggoLinks.getRandomDoggo());
+                message.channel.send(`Woof Woof, My Prefix is \`${prefix}\`, for more commands, please use the ${prefix}help command.`);
+                message.channel.send(attachment);
+            }
+        }
+        //#endregion
+
+        //#region setup command
+        if (!(serverid in sconfig)) {
+            if ((command == (prefix + 'setup')) && (message.member.hasPermission('ADMINISTRATOR'))) {
+                set.setup(message);
+            }
+            else {
+                return;
+            }
+            return;
+        };
+        //#endregion
+
+        //#region Varibles part 2
+        var userRoles = message.author.lastMessage.member._roles;
+        var serverRoles = message.channel.guild.roles;
+        var adminTF = userHandeling.adminCheck(userRoles, serverRoles, serverid);
+        var modTF = userHandeling.modCheck(userRoles, serverRoles, serverid);
+        var djTF = userHandeling.djCheck(userRoles, serverRoles, serverid);
 
         for (i = 1; i <= userInputNoLower.length; i++) {
             if (userInputNoLower.length != 2) {
@@ -89,47 +129,42 @@ function messageHandling(client) {
             }, 2000, 3)
         }
         //#endregion
+        
+        //Everything after this point requires a prefix
+        if (!message.content.startsWith(prefix)) return;
 
-        //#region for all @ Commands
-        if(message.mentions.users.first() !== undefined) {
+        sconfig = set.updateConfigFile();
 
-            //@magma
-            if(message.mentions.users.first().id === '211865015592943616') {
-                var attachment = new Discord.Attachment('https://cdn.discordapp.com/attachments/254389303294165003/649734083366223895/kji50lq4nhq11.png');
-                message.channel.send('Nep Nep Nep Nep Nep Nep Nep');
-                message.channel.send(attachment);
-            }
-
-            //@storm
-            if(message.mentions.users.first().id === '645141555719569439') {
-                var attachment = new Discord.Attachment(DoggoLinks.getRandomDoggo());
-                message.channel.send(`Woof Woof, My Prefix is \`${prefix}\``);
-                message.channel.send(attachment);
+        //#region setting commands
+        if ((command == (prefix + 'set')) && (message.member.hasPermission('ADMINISTRATOR'))) {
+            if (userInput[1] == 'autorole') {
+                set.setAutorole(message);
+                sconfig = set.updateConfigFile();
             }
         }
         //#endregion
 
-        //Everything after this point requires a prefix
-        if (!message.content.startsWith(prefix)) return;
-
         //#region AutoRole Commands
         //Runs AutoRole Message Generation
-        if ((command === (prefix + 'createautorolemsg') && (adminTF === true))){
+        if ((command === (prefix + 'createautorolemsg') && (adminTF))) {
             AutoRole.sendRoleMessage(message, serverid, client);
             message.delete().catch(O_o=>{});
             return;
-        };
+        }
+        else if ((command === (prefix + 'createautorolemsg') && (!adminTF))) {
+            errormsg.noAdmin(message);
+        }
         //#endregion
 
         //#region Register
         if (command == (prefix + 'register')) {
             userHandeling.refreshUser();
             if (message.author.id in userAccountInfo) {
-                var txt = `You Have Already Registered.\nThe last time you updated your info was ${userAccountInfo[message.author.id].time}\n If you wish to update you info now, please click on this link: ${config.general.registerLink}`;
+                var txt = `You Have Already Registered.\nThe last time you updated your info was ${userAccountInfo[message.author.id].time}\n If you wish to update you info now, please click on this link: ${bconfig.general.registerLink}`;
                 var color = 2385434;
             }
             else {
-                var txt = `Click on this link to register: ${config.general.registerLink}`;
+                var txt = `Click on this link to register: ${bconfig.general.registerLink}`;
                 var color = 0xb50000;
             }
 
@@ -145,12 +180,12 @@ function messageHandling(client) {
         //#endregion
 
         //#region Music Bot Commands
-        if (((command == (prefix + 'play') || (command == (prefix + 'skip')) || (command == (prefix + 'stop')) || (command == (prefix + 'pause')) || (command == (prefix + 'resume'))) && (djTF == false))) {
-            message.reply(`You do not have access to this command, To gain acces to this command you must have a DJ Role.`);
+        if (((command == (prefix + 'play') || (command == (prefix + 'skip')) || (command == (prefix + 'stop')) || (command == (prefix + 'pause')) || (command == (prefix + 'resume'))) && (!djTF))) {
+            errormsg.noDJ(message);
             return;
         }
-        else if ((command == (prefix + 'volume')) && (modTF == false)) {
-            message.reply(`You do not have access to this command, To gain acces to this command you must be a **BOT MOD*.`);
+        else if ((command == (prefix + 'volume')) && (!modTF)) {
+            errormsg.noMod(message);
             return;
         }
 
@@ -195,7 +230,7 @@ function messageHandling(client) {
         //#endregion
 
         //#region prefix Command
-        if((command === (prefix + 'changeprefix')) && (adminTF == true)) {
+        if((command === (prefix + 'changeprefix')) && (adminTF)) {
 
             var isSymbol = /[`~!$%^&*()_+-={}[\]\|\\:";'<>?,.\/]/;
 
@@ -228,12 +263,8 @@ function messageHandling(client) {
                 return;
             }
         }
-        else if((command === (prefix + 'changeprefix')) && (adminTF === false)) {
-            const embMsg = new Discord.RichEmbed()
-            .setTitle('Error!')
-            .setColor(0xb50000)
-            .setDescription('You lack the required permissions to change the prefix!');
-            message.channel.send(embMsg);
+        else if((command === (prefix + 'changeprefix')) && (!adminTF)) {
+            errormsg.noAdmin(message);
             return;
         }
         //#endregion
@@ -269,25 +300,31 @@ function messageHandling(client) {
         //#endregion
 
         //#region Chat Clear
-        if((command === (prefix + 'clear')) && (adminTF == true)) {
+        if((command === (prefix + 'clear')) && (adminTF)) {
             Clear.clearMessages(message);
+        }
+        else if ((command === (prefix + 'clear')) && (!adminTF)) {
+            errormsg.noAdmin(message);
         }
         //#endregion
 
         //#region quote command
-        else if (command == (prefix + 'quote')) {
+        if (command == (prefix + 'quote')) {
             // Get a random index (random quote) from list of quotes in quotes.json
             Quote.getRandomQuote(message);
         }
         //#endregion
 
         //#region torture command
-        else if (command == (prefix + 'torture') && (adminTF === true)) {
+        if (command == (prefix + 'torture') && (adminTF)) {
             // Call Torture helper function
             message.mentions.members.forEach((member) => {
                 Torture.torture(message, member);
             });
             return;
+        }
+        else if (command == (prefix + 'torture') && (!adminTF)) {
+            errormsg.noAdmin(message);
         }
         //#endregion
     });

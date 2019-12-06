@@ -2,7 +2,7 @@ const http = require('http');
 var DiscordOauth2 = require('discord-oauth2');
 const fs = require('fs');
 const url = require('url');
-var config = require('../data/config.json');
+var config = require('../data/botconfig.json');
 var currentdate = new Date();
 var months = ['January', 'Feburary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -47,7 +47,7 @@ async function saveUserInfo(accessCode){
 
 	oldInfo[userID] = finalObj;
 
-	fs.writeFile("../data/userinfo.json", JSON.stringify(oldInfo), function(err) {
+	fs.writeFileSync("../data/userinfo.json", JSON.stringify(oldInfo), function(err) {
 		if (err) {
 			console.log(err);
 		}

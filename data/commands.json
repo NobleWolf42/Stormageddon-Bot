@@ -5,7 +5,8 @@
     "Admin": {
         "changeprefix INSERT-SYMBOL"                     : "Changes the prefix the bot uses in your server. Available Symbols: ``~!$%^&*()_+-={}[]|\\:\";\\'<>?,.`",
         "createautorolemsg"                              : "Create the reactions for auto role assignment.",
-        "torture MENTION-USER"                           : "Stormagedon stalks user into playing Stormjack, where the user may or may not be kicked."
+        "torture MENTION-USER"                           : "Stormagedon stalks user into playing Stormjack, where the user may or may not be kicked.",
+        "clear 1-99"                                     : "Clears the last 1-99 messages."
     },
     "Fun": {
         "agify INSERT-NAME"                              : "Estimates age of name.",

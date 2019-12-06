@@ -1,5 +1,5 @@
 //#region Dependancies
-var config = require('../data/config.json');
+var config = require('../data/serverconfig.json');
 
 var adminRoleIDs = [];
 var djRoleIDs = [];
@@ -115,7 +115,7 @@ function djCheck(userRolesArray, serverRolesArray, serverid) {
 
 //#region Refresh User Account Info
 function refreshUser() {
-    userAccountInfo = JSON.parse(fs.readFileSync('../data/userinfo.json'));
+    userAccountInfo = JSON.parse(fs.readFileSync('./data/userinfo.json', 'utf8'));
 }
 //#endregion
 
