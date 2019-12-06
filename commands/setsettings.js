@@ -92,6 +92,7 @@ async function setJoinrole(message) {
     try {
         var enablein = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
         var enabletxt = enablein.first().content.toLowerCase();
+        var enable = undefined;
         if (enabletxt == 't') {
             enable = true,
             message.channel.send('Please respond with the role you would like to assign users when they join your server.')
