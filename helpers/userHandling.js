@@ -40,7 +40,7 @@ function serverRoleUpdate(sRole, serverid) {
         }
     }
 
-    console.log(config);
+    console.log(config[serverid]);
 
     //Loops throught the DJ Role Names, pushing them to an array
     for (key in config[serverid].music.djRoles) {
