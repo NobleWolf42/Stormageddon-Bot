@@ -72,6 +72,10 @@ function messageHandling(client) {
             //@storm
             if(message.mentions.users.first().id === '645141555719569439') {
                 var attachment = new Discord.Attachment(DoggoLinks.getRandomDoggo());
+                var firstime = '';
+                if (config[serverid] == undefined) {
+                    firstime = 'Run !setup in an admin only chat channel to set up server.';
+                }
                 message.channel.send(`Woof Woof, My Prefix is \`${prefix}\`, for more commands, please use the ${prefix}help command.`);
                 message.channel.send(attachment);
             }
