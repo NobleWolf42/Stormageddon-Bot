@@ -48,6 +48,8 @@ function serverRoleUpdate(sRole, serverid) {
             djRoleIDs.push(basicServerRoles[config[serverid].music.djRoles[key]]);
         }
     }
+
+    console.log(djRoleIDs);
 }
 //#endregion
 
