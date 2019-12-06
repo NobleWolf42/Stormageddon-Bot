@@ -42,7 +42,8 @@ function serverRoleUpdate(sRole, serverid) {
 
     //Loops throught the DJ Role Names, pushing them to an array
     for (key in config[serverid].music.djRoles) {
-        
+        console.log(key);
+        console.log(basicServerRoles[config[serverid].music.djRoles[key]]);
         //Pushes role IDs to DJs if they Match config[serverid].music.djRoles
         if (basicServerRoles[config[serverid].music.djRoles[key]]){
             djRoleIDs.push(basicServerRoles[config[serverid].music.djRoles[key]]);
