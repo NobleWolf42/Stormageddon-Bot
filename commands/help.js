@@ -20,6 +20,7 @@ function getHelp(adminbool, message) {
 
         for(var ind in sections){
             if (!adminbool && sections[ind] =="Admin") { continue; }
+            if (!message.member.hasPermission('ADMINISTRATOR') && sections[ind] == "Server Admin") { continue; }
             txt += ("`" + sections[ind] + "`");
             if (ind < sections.length-1){
                 txt +=", ";

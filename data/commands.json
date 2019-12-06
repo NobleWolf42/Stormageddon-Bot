@@ -2,6 +2,10 @@
     "Help": {
         "help PAGE"                                      : "Displays Help Message, specifying a page will show that help info."
     },
+    "Server Admin": {
+        "setup"                                         : "Fist time set up on a server.",
+        "set autorole/joinrole/general/music"           : "Allows you to change the settings you set during setup."
+    },
     "Admin": {
         "changeprefix INSERT-SYMBOL"                     : "Changes the prefix the bot uses in your server. Available Symbols: ``~!$%^&*()_+-={}[]|\\:\";\\'<>?,.`",
         "createautorolemsg"                              : "Create the reactions for auto role assignment.",

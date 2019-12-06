@@ -32,6 +32,26 @@ function noDJ(message) {
 }
 //#endregion
 
+//#region No Server Admin Access
+function noServerAdmin(message) {
+    const embMsg = new Discord.RichEmbed()
+        .setTitle('Error!')
+        .setColor(0xb50000)
+        .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!');
+    message.channel.send(embMsg);
+}
+//#endregion
+
+//#region No Server Admin Access
+function custom(message, text) {
+    const embMsg = new Discord.RichEmbed()
+        .setTitle('Error!')
+        .setColor(0xb50000)
+        .setDescription(text);
+    message.channel.send(embMsg);
+}
+//#endregion
+
 //#region exports
-module.exports = { noAdmin, noMod, noDJ };
+module.exports = { noAdmin, noMod, noDJ, noServerAdmin, custom };
 //#endregion

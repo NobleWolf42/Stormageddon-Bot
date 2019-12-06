@@ -133,18 +133,39 @@ function messageHandling(client) {
             }, 2000, 3)
         }
         //#endregion
-        
+
         //Everything after this point requires a prefix
         if (!message.content.startsWith(prefix)) return;
 
-        sconfig = set.updateConfigFile();
-
         //#region setting commands
         if ((command == (prefix + 'set')) && (message.member.hasPermission('ADMINISTRATOR'))) {
+
             if (userInput[1] == 'autorole') {
                 set.setAutorole(message);
-                sconfig = set.updateConfigFile();
+                updatesconfig();
+                return;
             }
+            else if (userInput[1] == 'joinrole') {
+                set.setJoinrole(message);
+                updatesconfig();
+                return;
+            }
+            else if (userInput[1] == 'general') {
+                set.setGeneral(message);
+                updatesconfig();
+                return;
+            }
+            else if (userInput[1] == 'music') {
+                set.setMusic(message);
+                updatesconfig();
+                return;
+            }
+            else {
+                errormsg.custom(message, 'Invalid command, valid commands are `!set` `autorole, joinrole, general, and music`');
+            }
+        }
+        else if ((command == (prefix + 'set')) && (!message.member.hasPermission('ADMINISTRATOR'))) {
+            errormsg.noServerAdmin(message);
         }
         //#endregion
 
@@ -333,6 +354,12 @@ function messageHandling(client) {
         //#endregion
     });
 }
+//#endregion
+
+//#region updatesconfig function
+async function updatesconfig() {
+    sconfig = await set.updateConfigFile();
+};
 //#endregion
 
 //#region exports
