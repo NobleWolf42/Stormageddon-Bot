@@ -1,6 +1,7 @@
 //#region Dependancies
 var fs = require('fs');
 var config = JSON.parse(fs.readFileSync('./data/serverconfig.json', 'utf8'));
+var set = require('../commands/setsettings.js');
 //#endregion
 
 //#region code that happens when someone joins a server
