@@ -1,5 +1,7 @@
 //#region Dependancies
-var config = require('../data/serverconfig.json');
+var fs = require('fs');
+var config = JSON.parse(fs.readFileSync('./data/serverconfig.json', 'utf8'));
+var set = require('../commands/setsettings.js')
 
 var adminRoleIDs = [];
 var djRoleIDs = [];
@@ -10,6 +12,7 @@ var modRoleIDs = [];
 //Function that calls the server roles
 function serverRoleUpdate(sRole, serverid) {
     
+    config = set.updateConfigFile();
     //Sets Local Varibles
     var basicServerRoles = {};
 
@@ -52,6 +55,7 @@ function serverRoleUpdate(sRole, serverid) {
 //Function that returns boolean for if the user who sent the message is an Admin (based off config[serverid].connection.adminRoles)
 function adminCheck(userRolesArray, serverRolesArray, serverid) {
     
+    config = set.updateConfigFile();
     //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverid);
     
@@ -73,6 +77,7 @@ function adminCheck(userRolesArray, serverRolesArray, serverid) {
 //Function that returns boolean for if the user who sent the message is a Moderator (based off config[serverid].connection.modRoles)
 function modCheck(userRolesArray, serverRolesArray, serverid) {
     
+    config = set.updateConfigFile();
     //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverid);
     
@@ -94,6 +99,7 @@ function modCheck(userRolesArray, serverRolesArray, serverid) {
 //Function that returns boolean for if the user who sent the message is a DJ (based off config[serverid].connection.djRole)
 function djCheck(userRolesArray, serverRolesArray, serverid) {
     
+    config = set.updateConfigFile();
     //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverid);
     

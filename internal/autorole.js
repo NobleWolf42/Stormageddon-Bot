@@ -1,7 +1,9 @@
 //#region Dependancices
 var Discord = require('discord.js');
+var fs = require('fs');
 
-var config = require('../data/serverconfig.json');
+var config = JSON.parse(fs.readFileSync('./data/serverconfig.json', 'utf8'));
+var set = require('../commands/setsettings.js');
 //#endregion
 
 //#region Autoroll
@@ -19,6 +21,7 @@ var config = require('../data/serverconfig.json');
     //#region Handles the creation of the role reactions. Will either send the role messages separately or in an embed, depending on your settings in config[serverid].json
     function sendRoleMessage(message, serverid, client) {
 
+        config = set.updateConfigFile();
         //Checks to make sure your roles and reactions match up
         if (config[serverid].autorole.roles.length !== config[serverid].autorole.reactions.length) {
             throw new Error("Roles list and reactions list are not the same length! Please double check this in the config[serverid].js file");
@@ -78,6 +81,7 @@ var config = require('../data/serverconfig.json');
 
 //#region Autorole Listener
 function autoroleListener(client) {
+    config = set.updateConfigFile();
     //#region Redable constants
     // This makes the events used a bit more readable
     const events = {

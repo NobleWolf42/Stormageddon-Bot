@@ -241,7 +241,7 @@ async function bulidConfigFile() {
 //#region add server to configfile
 function addServerConfig(serverid) {
     if (cfg[serverid] == undefined) {
-        cfg[serverid] = {};
+        cfg[serverid] = {"autorole":{"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinroles":{"role":"Not Set Up","enable":false},"music":{"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]}};
     }
 
     bulidConfigFile();
