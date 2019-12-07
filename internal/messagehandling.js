@@ -101,8 +101,6 @@ function messageHandling(client) {
         var modTF = userHandeling.modCheck(userRoles, serverRoles, serverid);
         var djTF = userHandeling.djCheck(userRoles, serverRoles, serverid);
 
-        console.log(djTF);
-
         for (i = 1; i <= userInputNoLower.length; i++) {
             if (userInputNoLower.length != 2) {
                 if (i < (userInputNoLower.length - 1)) {

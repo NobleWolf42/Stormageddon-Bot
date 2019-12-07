@@ -40,8 +40,6 @@ function serverRoleUpdate(sRole, serverid) {
         }
     }
 
-    console.log(config[serverid].music.djRoles);
-
     //Loops throught the DJ Role Names, pushing them to an array
     for (key in config[serverid].music.djRoles) {
         console.log(key);
@@ -51,8 +49,6 @@ function serverRoleUpdate(sRole, serverid) {
             djRoleIDs.push(basicServerRoles[config[serverid].music.djRoles[key]]);
         }
     }
-
-    console.log(djRoleIDs);
 }
 //#endregion
 

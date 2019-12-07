@@ -137,7 +137,7 @@ async function setMusic(message) {
     
     try {
         var djrolein = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
-        var djRoles = djrolein.first().content;
+        var djRoles = djrolein.first().content.split(', ');
     }
     catch (err) {
         return message.channel.send('Timeout Occured. Process Terminated.')
