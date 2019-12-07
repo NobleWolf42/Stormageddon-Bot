@@ -137,7 +137,7 @@ async function setMusic(message) {
     
     try {
         var djrolein = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
-        var djRole = djrolein.first().content;
+        var djRoles = djrolein.first().content;
     }
     catch (err) {
         return message.channel.send('Timeout Occured. Process Terminated.')
@@ -153,15 +153,15 @@ async function setMusic(message) {
         return message.channel.send('Timeout Occured. Process Terminated.')
     }
 
-    if (djRole == undefined) {
-        djRole = "DJ";
+    if (djRoles == undefined) {
+        djRoles = "DJ";
     }
     if (textChannel == undefined) {
         textChannel = "Music";
     }
 
     music = {};
-    music.djRole = djRole;
+    music.djRoles = djRoles;
     music.textChannel = textChannel;
 
     cfg[serverid].music = music;
