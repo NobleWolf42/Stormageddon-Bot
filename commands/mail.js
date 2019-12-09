@@ -36,7 +36,7 @@ function modMailSend (client, message, servername, content) {
 
 //#region devSend
 function devSend(client, message, user, content) {
-    client.users.get(user).send(content + '\n NOTE: You cannot reposnd to this message.');
+    client.users.get(user).send('```' + content + '````NOTE: You cannot respond to this message.`');
 
     message.channel.send('```Message Sent.```');
 }

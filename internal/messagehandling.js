@@ -428,7 +428,6 @@ function PMHandeling (client) {
         if (message.author.bot) return;
         //#endregion
 
-        console.log("PM");
         //#region varibles
         var userInputNoLowerComma = message.content.split(', ');
         var userInputComma = message.content.toLowerCase().split(', ');
@@ -445,7 +444,7 @@ function PMHandeling (client) {
 
         //#region devSend command
         if ((command == ('!devsend')) && (bconfig.devids.includes(message.author.id))) {
-            mail.devSend(client, message, userInputNoLower[1], userInputNoLower[2]);
+            mail.devSend(client, message, userInputNoLower[1], stringHelper.combineArray(userInputNoLower, 2));
         }
         else if ((command == ('!devsend')) && (!bconfig.devids.includes(message.author.id))) {
             errormsg.custom(message, 'You do not have acces to that command. It is for the **BOT DEVS ONLY**. Your attempt has been logged.');

@@ -10,7 +10,7 @@ function combineArray (array, start) {
 
     for (i = start; i < array.length; i++) {
         if (array.length != (start + 1)) {
-            if (i < (array.length - start)) {
+            if (i < (array.length - start + 1)) {
                 text += (array[i] + ' ');
             }
             else {
@@ -19,10 +19,11 @@ function combineArray (array, start) {
         }
         else {
             if (array[i] != undefined) {
-                text += array[i + 'else'];
+                text += array[i + 1];
             }
         }
     }
+    console.log(text);
 
     return text;
 }
