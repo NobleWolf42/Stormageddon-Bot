@@ -76,8 +76,10 @@ function torture(message, user) {
                 "<@" + user.id + ">  got beaten by the almighty Stormaggedon." +
                 "\n They lost their game of stormjack!"
             ).then((newmsg) => {
-                if (newmsg.mentions.members.first().kick()) {
-                    console.log(newmsg.mentions.members.first().username + " was kicked.");
+                if (newmsg.mentions.members.first().kick().catch((err => { if (err.message == 'Missing Permissions') { console.log('Cannot Kick Admin.'); } else { console.log(err); }}))) {
+                    if (newmsg.mentions.members.first().username != undefined) {
+                        console.log(newmsg.mentions.members.first().username + " was kicked.");
+                    }
                 }
             })
         })

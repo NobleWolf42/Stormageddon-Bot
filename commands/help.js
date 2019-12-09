@@ -7,7 +7,7 @@ var stringHelper = require('../helpers/stringhelpers.js');
 var excludedcommands = ["Admin"];
 
 //#region Help function
-function getHelp(adminbool, message) {
+function getHelp(adminbool, message, serverAdmin) {
     var txt = "";
     var sections = Object.keys(cmdObj);
     var title = "Help";
@@ -20,7 +20,7 @@ function getHelp(adminbool, message) {
 
         for(var ind in sections){
             if (!adminbool && sections[ind] =="Admin") { continue; }
-            if (!message.member.hasPermission('ADMINISTRATOR') && sections[ind] == "Server Admin") { continue; }
+            if (!serverAdmin && sections[ind] == "Server Admin") { continue; }
             txt += ("`" + sections[ind] + "`");
             if (ind < sections.length-1){
                 txt +=", ";

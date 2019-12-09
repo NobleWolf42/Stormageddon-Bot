@@ -57,6 +57,7 @@ function messageHandling(client) {
         var userInput = message.content.toLowerCase().split(' ');
         var noncommand = '';
         var command = userInput[0];
+        var serverAdmin = message.member.hasPermission('ADMINISTRATOR');
         //#endregion
 
         //#region for all @ Commands
@@ -84,7 +85,7 @@ function messageHandling(client) {
 
         //#region setup command
         if (!(serverid in sconfig)) {
-            if ((command == (prefix + 'setup')) && (message.member.hasPermission('ADMINISTRATOR'))) {
+            if ((command == (prefix + 'setup')) && (serverAdmin)) {
                 set.setup(message);
             }
             else {
@@ -138,7 +139,7 @@ function messageHandling(client) {
         if (!message.content.startsWith(prefix)) return;
 
         //#region setting commands
-        if ((command == (prefix + 'set')) && (message.member.hasPermission('ADMINISTRATOR'))) {
+        if ((command == (prefix + 'set')) && (serverAdmin)) {
 
             if (userInput[1] == 'autorole') {
                 set.setAutorole(message);
@@ -164,7 +165,7 @@ function messageHandling(client) {
                 errormsg.custom(message, 'Invalid command, valid commands are `!set` `autorole, joinrole, general, and music`');
             }
         }
-        else if ((command == (prefix + 'set')) && (!message.member.hasPermission('ADMINISTRATOR'))) {
+        else if ((command == (prefix + 'set')) && (!serverAdmin)) {
             errormsg.noServerAdmin(message);
         }
         //#endregion
@@ -320,7 +321,7 @@ function messageHandling(client) {
 
         //#region help Command
         else if(command === (prefix + 'help')) {
-            Help.getHelp(adminTF, message);
+            Help.getHelp(adminTF, message, serverAdmin);
         }
         //#endregion
 
