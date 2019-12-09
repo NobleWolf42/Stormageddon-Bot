@@ -23,7 +23,6 @@ function combineArray (array, start) {
             }
         }
     }
-    console.log(text);
 
     return text;
 }
