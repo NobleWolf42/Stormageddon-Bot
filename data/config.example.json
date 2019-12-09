@@ -9,5 +9,6 @@
         "redirectUri": "YOUR REDIRECT URI",
         "registerLink": "YOUR REDIRECT LINK"
 
-    }
+    },
+    "devids": ["USER-ID"]
 }
