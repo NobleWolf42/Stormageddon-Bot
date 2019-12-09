@@ -23,7 +23,7 @@ function modMailSend (client, message, servername, content) {
             var modlist = sconfig[serverid].modmail.modlist;
 
             for (key in modlist) {
-                client.users.get(modlist[key]).send(content + '\n From - ' + message.author.tag + ' in Server - ' + servername);
+                client.users.get(modlist[key]).send('```' + content + '``` `From - ' + message.author.tag + ' in Server - ' + servername + '.`');
             }
         }
         else {
