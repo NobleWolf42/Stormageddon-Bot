@@ -52,7 +52,7 @@ function custom(message, text) {
 }
 //#endregion
 
-//#region No Server Admin Access
+//#region wrong channel
 function wrongChannel(message, correctChannel) {
     const embMsg = new Discord.RichEmbed()
         .setTitle('Error!')
@@ -63,6 +63,17 @@ function wrongChannel(message, correctChannel) {
 }
 //#endregion
 
+//#region Disabled
+function disabled(message, command) {
+    const embMsg = new Discord.RichEmbed()
+        .setTitle('Error!')
+        .setColor(0xb50000)
+        .setDescription(`This feature is currently disabled. To enable it, please run the !set ${command}. NOTE: Command is only avalible to a server admin.`);
+    message.author.send(embMsg);
+    message.delete().catch(O_o=>{});
+}
+//#endregion
+
 //#region exports
-module.exports = { noAdmin, noMod, noDJ, noServerAdmin, custom, wrongChannel };
+module.exports = { noAdmin, noMod, noDJ, noServerAdmin, custom, wrongChannel, disabled };
 //#endregion

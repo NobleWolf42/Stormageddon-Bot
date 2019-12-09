@@ -20,10 +20,12 @@
     var sconfig = JSON.parse(fs.readFileSync('./data/serverconfig.json', 'utf8'));
     var bconfig = require('../data/botconfig.json');
     var set = require('../commands/setsettings.js');
+    var stringHelper = require('../helpers/stringhelpers.js');
+    var mail = require('../commands/mail.js');
     //#endregion
 //#endregion
 
-//#region Message Handling
+//#region Message Handling for Server
 function messageHandling(client) {
     //Handels Messages and their responses
     client.on("message", message => {
@@ -100,22 +102,10 @@ function messageHandling(client) {
         var adminTF = userHandeling.adminCheck(userRoles, serverRoles, serverid);
         var modTF = userHandeling.modCheck(userRoles, serverRoles, serverid);
         var djTF = userHandeling.djCheck(userRoles, serverRoles, serverid);
+        var noncommand = stringHelper.combineArray(userInputNoLower, 1);
+        
+        console.log(noncommand);
 
-        for (i = 1; i <= userInputNoLower.length; i++) {
-            if (userInputNoLower.length != 2) {
-                if (i < (userInputNoLower.length - 1)) {
-                    noncommand += (userInputNoLower[i] + ' ');
-                }
-                else {
-                    noncommand += userInputNoLower[i-1];
-                }
-            }
-            else {
-                if (userInputNoLower[i] != undefined) {
-                    noncommand += userInputNoLower[i];
-                }
-            }
-        }
         //#endregion
 
         //#region replys to meow/mew/cat/kitty/squirrel
@@ -161,8 +151,12 @@ function messageHandling(client) {
                 updatesconfig();
                 return;
             }
+            else if (userInput[1] == 'modmail') {
+                set.setModMail(message);
+                updatesconfig();
+            }
             else {
-                errormsg.custom(message, 'Invalid command, valid commands are `!set` `autorole, joinrole, general, and music`');
+                errormsg.custom(message, 'Invalid command, valid commands are `!set` `autorole, joinrole, general, modmail, and music`');
                 return;
             }
         }
@@ -174,9 +168,15 @@ function messageHandling(client) {
         //#region AutoRole Commands
         //Runs AutoRole Message Generation
         if ((command === (prefix + 'createautorolemsg') && (adminTF))) {
-            AutoRole.sendRoleMessage(message, serverid, client);
-            message.delete().catch(O_o=>{});
-            return;
+            if (!sconfig[serverid].autorole.enable) {
+                errormsg.disabled(message, 'autorole');
+                return;
+            }
+            else {
+                AutoRole.sendRoleMessage(message, serverid, client);
+                message.delete().catch(O_o=>{});
+                return;
+            }
         }
         else if ((command === (prefix + 'createautorolemsg') && (!adminTF))) {
             errormsg.noAdmin(message);
@@ -207,9 +207,37 @@ function messageHandling(client) {
         }
         //#endregion
 
+        //#region addmod
+        if (command == (prefix + 'addmod') && (adminTF) && (message.mentions.members.first() != undefined)) {
+            // Call Torture helper function
+            message.mentions.members.forEach((member) => {
+                set.addMod(message, member);
+            });
+            updatesconfig();
+            return;
+        }
+        else if (command == (prefix + 'addmod') && (!adminTF)) {
+            errormsg.noAdmin(message);
+            return;
+        }
+        else if (command == (prefix + 'addmod') && (message.mentions.members.first() == undefined)) {
+            errormsg.custom(message, 'You must specify a user to torture. Command is !addmod @USERS.');
+            return;
+        }
+        //#endregion
+
+        //#region Info
+        if (command == (prefix + 'info')) {
+            Help.getInfo(message);
+        }
+        //#endregion
+
         //#region Music Bot Commands
         if (((command == (prefix + 'play') || (command == (prefix + 'skip')) || (command == (prefix + 'stop')) || (command == (prefix + 'pause')) || (command == (prefix + 'resume'))))) {
-            if (sconfig[serverid].music.textChannel != message.channel.name) {
+            if (!sconfig[serverid].music.enable) {
+                errormsg.disabled(message, 'music');
+            }
+            else if (sconfig[serverid].music.textChannel != message.channel.name) {
                 errormsg.wrongChannel(message, sconfig[serverid].music.textChannel);
                 return;
             }
@@ -221,6 +249,15 @@ function messageHandling(client) {
         else if ((command == (prefix + 'volume')) && (!modTF)) {
             errormsg.noMod(message);
             return;
+        }
+        else if ((command == (prefix + 'nowplaying')) || (command == (prefix + 'showqueue'))) {
+            if (!sconfig[serverid].music.enable) {
+                errormsg.disabled(message, 'music');
+            }
+            else if (sconfig[serverid].music.textChannel != message.channel.name) {
+                errormsg.wrongChannel(message, sconfig[serverid].music.textChannel);
+                return;
+            }
         }
 
         if (sconfig[serverid].music.textChannel == message.channel.name) {
@@ -371,12 +408,56 @@ function messageHandling(client) {
             return;
         }
         else if (command == (prefix + 'torture') && (message.mentions.members.first() == undefined)) {
-            errormsg.custom(message, 'You must specify a user to torture. Command is !torture @USER.');
+            errormsg.custom(message, 'You must specify a user to torture. Command is !torture @USERS.');
             return;
         }
         //#endregion
     });
 }
+//#endregion
+
+//#region Message Handeling for PM
+function PMHandeling (client) {
+    client.on("message", message => {
+
+        //#region Permission Checks
+        // Make sure the command can only be run in a server
+        if (message.guild) return;
+
+        // Make sure bots can't run this command
+        if (message.author.bot) return;
+        //#endregion
+
+        console.log("PM");
+        //#region varibles
+        var userInputNoLower = message.content.split(', ');
+        var userInput = message.content.toLowerCase().split(', ');
+        var command = userInput[0];
+        //#endregion
+
+        //#region modmail command
+        if (command == ('!modmail')) {
+            mail.modMailSend(client, message, userInputNoLower[1], userInputNoLower[2]);
+        }
+        //#endregion
+
+        //#region devSend command
+        if ((command == ('!devsend')) && (bconfig.devids.includes(message.author.id))) {
+            mail.devSend(client, userInputNoLower[1], userInputNoLower[2]);
+        }
+        else if ((command == ('!devsend')) && (!bconfig.devids.includes(message.author.id))) {
+            errormsg.custom(message, 'You do not have acces to that command. It is for the **BOT DEVS ONLY**. Your attempt has been logged.');
+            mail.bugReport(client, message, `${message.author.tag} has attempted to use devsend.`);
+        }
+        //#endregion
+
+        //#region modmail command
+        if (command == ('!bugreport')) {
+            mail.bugReport(client, message, userInputNoLower[1]);
+        }
+        //#endregion
+    })
+};
 //#endregion
 
 //#region updatesconfig function
@@ -386,5 +467,5 @@ async function updatesconfig() {
 //#endregion
 
 //#region exports
-module.exports = { messageHandling };
+module.exports = { messageHandling, PMHandeling };
 //#endregion

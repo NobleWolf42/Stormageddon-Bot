@@ -31,6 +31,7 @@ client.on("ready", () => {
     filecreate.createJSONfiles();
     AutoRole.autoroleListener(client);
     MessageHandler.messageHandling(client);
+    MessageHandler.PMHandeling(client);
     ServerJoin.serverJoin(client);
     client.user.setPresence({ game: { name: `@me for more info` } });
 });

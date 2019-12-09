@@ -6,6 +6,19 @@ var stringHelper = require('../helpers/stringhelpers.js');
 
 var excludedcommands = ["Admin"];
 
+//#region info command
+function getInfo(message) {
+    var txt = '**Bot Name:** Stormageddon Bot\n\n**Description:** All purpose bot, named after the worlds best Doggo, **MagmaHusky\'s** Stormageddon.\n\n**Designed and Bulit by:** *NobleWolf42, Captain Zendik, and CzRSpecV*\n\n**How To Help:** If you would like to assist with the bot, you can find us on Discord at https://discord.gg/tgJtK7f, and on GitHub at https://github.com/NobleWolf42/Stormageddon-Bot/.';
+
+    const embMsg = new Discord.RichEmbed()
+        .setTitle('Information')
+        .setColor(34449)
+        .setDescription(txt);
+    message.author.send(embMsg);
+    message.delete().catch(O_o=>{});
+}
+//#endregion
+
 //#region Help function
 function getHelp(adminbool, message, serverAdmin) {
     var txt = "";
@@ -59,7 +72,6 @@ function getHelp(adminbool, message, serverAdmin) {
 //#endregion
 
 //#region Help function helpers
-
 function getHelpSize(adminbool, sections){
     var size = sections.length;
     // if the user isn't an admin
@@ -75,4 +87,6 @@ function getHelpSize(adminbool, sections){
 }
 //#endregion
 
-module.exports = { getHelp };
+//#region exports
+module.exports = { getHelp, getInfo };
+//#endregion

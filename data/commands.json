@@ -1,16 +1,18 @@
 {
     "Help": {
-        "help PAGE"                                      : "Displays Help Message, specifying a page will show that help info."
+        "help PAGE"                                      : "Displays Help Message, specifying a page will show that help info.",
+        "info"                                           : "Displays information about the bot, it's creators, and where you can go if you would like to help code it."
     },
     "Server Admin": {
         "setup"                                         : "Fist time set up on a server.",
-        "set autorole/joinrole/general/music"           : "Allows you to change the settings you set during setup."
+        "set autorole/joinrole/general/music/modmail"   : "Allows you to change the settings you set during setup."
     },
     "Admin": {
         "changeprefix INSERT-SYMBOL"                     : "Changes the prefix the bot uses in your server. Available Symbols: ``~!$%^&*()_+-={}[]|\\:\";\\'<>?,.`",
         "createautorolemsg"                              : "Create the reactions for auto role assignment.",
-        "torture MENTION-USER"                           : "Stormagedon stalks user into playing Stormjack, where the user may or may not be kicked.",
-        "clear 1-99"                                     : "Clears the last 1-99 messages."
+        "torture MENTION-USERS"                          : "Stormagedon stalks user into playing Stormjack, where the user may or may not be kicked.",
+        "clear 1-99"                                     : "Clears the last 1-99 messages.",
+        "addmod MENTION-USERS"                           : "Adds users to the list of people that get the PM when someone whispers the bot with the !modmail command."
     },
     "Fun": {
         "agify INSERT-NAME"                              : "Estimates age of name.",
@@ -30,5 +32,9 @@
         "showqueue"                                      : "Shows the currently queued music.",
         "nowplaying"                                     : "Shows the currently playing song.",
         "volume 1-100"                                   : "Sets the bots volume in percent."
+    },
+    "Whisper": {
+        "!modmail SERVER-NAME MESSAGE"                   : "Sends a PM containg the message to all moderators for the specified server.",
+        "!bugreport MESSAGE"                             : "Reports a bug to the bot's developers."
     }
 }
