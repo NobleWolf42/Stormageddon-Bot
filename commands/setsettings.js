@@ -25,7 +25,7 @@ async function addMod(message, user) {
 
     message.channel.send("Mods Have Been Added!");
 }
-//#endreigon
+//#endregion
 
 //#region modmail settings
 async function setModMail(message) {

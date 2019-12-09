@@ -19,6 +19,7 @@ function modMailSend (client, message, servername, content) {
     })
 
     if ((serverid != 0) && (sconfig[serverid] != undefined)) {
+        console.log(sconfig[serverid].modmail.enable)
         if (sconfig[serverid].modmail.enable) {
             var modlist = sconfig[serverid].modmail.modlist;
 
