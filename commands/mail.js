@@ -35,8 +35,10 @@ function modMailSend (client, message, servername, content) {
 //#endregion
 
 //#region devSend
-function devSend(client, user, content) {
+function devSend(client, message, user, content) {
     client.users.get(user).send(content + '\n NOTE: You cannot reposnd to this message.');
+
+    message.channel.send('```Message Sent.```');
 }
 //#endregion
 
@@ -45,8 +47,10 @@ function bugReport(client, message, content) {
     var devlist = bconfig.devids;
 
     for (key in devlist) {
-        client.users.get(devlist[key]).send('```***BUG REPORT***```\n' + content + '\n From - ' + message.author.tag);
+        client.users.get(devlist[key]).send('```***BUG REPORT***``` ```\n' + content + '\n ````From - ' + message.author.tag + '`');
     }
+
+    message.channel.send('```Bug Report Recieved.```');
 }
 //#endregion
 

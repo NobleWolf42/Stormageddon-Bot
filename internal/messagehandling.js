@@ -430,20 +430,22 @@ function PMHandeling (client) {
 
         console.log("PM");
         //#region varibles
-        var userInputNoLower = message.content.split(', ');
-        var userInput = message.content.toLowerCase().split(', ');
+        var userInputNoLowerComma = message.content.split(', ');
+        var userInputComma = message.content.toLowerCase().split(', ');
+        var userInputNoLower = message.content.split(' ');
+        var userInput = message.content.toLowerCase().split(' ');
         var command = userInput[0];
         //#endregion
 
         //#region modmail command
         if (command == ('!modmail')) {
-            mail.modMailSend(client, message, userInputNoLower[1], userInputNoLower[2]);
+            mail.modMailSend(client, message, userInputNoLowerComma[1], userInputNoLowerComma[2]);
         }
         //#endregion
 
         //#region devSend command
         if ((command == ('!devsend')) && (bconfig.devids.includes(message.author.id))) {
-            mail.devSend(client, userInputNoLower[1], userInputNoLower[2]);
+            mail.devSend(client, message, userInputNoLower[1], userInputNoLower[2]);
         }
         else if ((command == ('!devsend')) && (!bconfig.devids.includes(message.author.id))) {
             errormsg.custom(message, 'You do not have acces to that command. It is for the **BOT DEVS ONLY**. Your attempt has been logged.');
