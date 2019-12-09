@@ -18,15 +18,20 @@ function modMailSend (client, message, servername, content) {
         }
     })
 
-    if ((serverid != 0) || (sconfig[serverid].modmail.enable)) {
-        var modlist = sconfig[serverid].modmail.modlist;
+    if ((serverid != 0) && (sconfig[serverid] != undefined)) {
+        if (sconfig[serverid].modmail.enable) {
+            var modlist = sconfig[serverid].modmail.modlist;
 
-        for (key in modlist) {
-            client.users.get(modlist[key]).send(content + '\n From - ' + message.author.tag + ' in Server - ' + servername);
+            for (key in modlist) {
+                client.users.get(modlist[key]).send(content + '\n From - ' + message.author.tag + ' in Server - ' + servername);
+            }
+        }
+        else {
+            errormsg.disabled(message, 'modmail');
         }
     }
-    else if (!sconfig[serverid].modmail.enable) {
-        errormsg.disabled(message, 'modmail')
+    else if (sconfig[serverid] == undefined) {
+        errormsg.custom(message, `The !setup command has not been run on ${servername} yet.`);
     }
     else {
         errormsg.custom(message, 'The server you specified does not exist, or you failed to specify a server.');

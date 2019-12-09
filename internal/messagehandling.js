@@ -437,7 +437,7 @@ function PMHandeling (client) {
         //#endregion
 
         //#region modmail command
-        if (command == ('!modmail')) {
+        if (userInputComma[0] == ('!modmail')) {
             mail.modMailSend(client, message, userInputNoLowerComma[1], userInputNoLowerComma[2]);
         }
         //#endregion

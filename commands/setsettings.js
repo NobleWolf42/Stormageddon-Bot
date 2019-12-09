@@ -18,11 +18,12 @@ async function addMod(message, user) {
 
     var modmail = {};
     modmail.modlist = array;
+    modmail.enable = true;
     cfg[serverid].modmail = modmail;
 
     await bulidConfigFile();
 
-    message.channel.send("Mod Added!");
+    message.channel.send("Mods Have Been Added!");
 }
 //#endreigon
 
