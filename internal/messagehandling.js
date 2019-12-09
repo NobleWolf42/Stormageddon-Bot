@@ -68,6 +68,7 @@ function messageHandling(client) {
                 var attachment = new Discord.Attachment('https://cdn.discordapp.com/attachments/254389303294165003/649734083366223895/kji50lq4nhq11.png');
                 message.channel.send('Nep Nep Nep Nep Nep Nep Nep');
                 message.channel.send(attachment);
+                return;
             }
 
             //@storm
@@ -79,6 +80,7 @@ function messageHandling(client) {
                 }
                 message.channel.send(`Woof Woof, My Prefix is \`${prefix}\`, for more commands, please use the ${prefix}help command.${firstime}`);
                 message.channel.send(attachment);
+                return;
             }
         }
         //#endregion
@@ -87,9 +89,6 @@ function messageHandling(client) {
         if (!(serverid in sconfig)) {
             if ((command == (prefix + 'setup')) && (serverAdmin)) {
                 set.setup(message);
-            }
-            else {
-                return;
             }
             return;
         };
@@ -132,6 +131,7 @@ function messageHandling(client) {
                 message.author.send("Bork Bork Bork Bork Bork");
                 message.author.send(attachment);
             }, 2000, 3)
+            return;
         }
         //#endregion
 
@@ -163,6 +163,7 @@ function messageHandling(client) {
             }
             else {
                 errormsg.custom(message, 'Invalid command, valid commands are `!set` `autorole, joinrole, general, and music`');
+                return;
             }
         }
         else if ((command == (prefix + 'set')) && (!serverAdmin)) {
@@ -179,6 +180,7 @@ function messageHandling(client) {
         }
         else if ((command === (prefix + 'createautorolemsg') && (!adminTF))) {
             errormsg.noAdmin(message);
+            return;
         }
         //#endregion
 
@@ -206,52 +208,61 @@ function messageHandling(client) {
         //#endregion
 
         //#region Music Bot Commands
-        if (((command == (prefix + 'play') || (command == (prefix + 'skip')) || (command == (prefix + 'stop')) || (command == (prefix + 'pause')) || (command == (prefix + 'resume'))) && (!djTF))) {
-            errormsg.noDJ(message);
-            return;
+        if (((command == (prefix + 'play') || (command == (prefix + 'skip')) || (command == (prefix + 'stop')) || (command == (prefix + 'pause')) || (command == (prefix + 'resume'))))) {
+            if (sconfig[serverid].music.textChannel != message.channel.name) {
+                errormsg.wrongChannel(message, sconfig[serverid].music.textChannel);
+                return;
+            }
+            else if (!djTF) {
+                errormsg.noDJ(message);
+                return;
+            }
         }
         else if ((command == (prefix + 'volume')) && (!modTF)) {
             errormsg.noMod(message);
             return;
         }
 
-        if (djTF == true) {
-            if (command == (prefix + 'play')) {
-                Music.execute(message, noncommand);
+        if (sconfig[serverid].music.textChannel == message.channel.name) {
+            if (djTF == true) {
+                if (command == (prefix + 'play')) {
+                    Music.execute(message, noncommand);
+                    return;
+                }
+                else if (command == (prefix + 'skip')) {
+                    Music.skip(message);
+                    return;
+                }
+                else if (command == (prefix + 'stop')) {
+                    Music.stop(message);
+                    return;
+                }
+                else if (command == (prefix + 'pause')) {
+                    Music.pause(message);
+                    return;
+                }
+                else if (command == (prefix + 'resume')) {
+                    Music.resume(message);
+                    return;
+                }
+            }
+            
+            if (command == (prefix + 'nowplaying')) {
+                Music.nowPlaying(message);
                 return;
             }
-            else if (command == (prefix + 'skip')) {
-                Music.skip(message);
-                return;
-            }
-            else if (command == (prefix + 'stop')) {
-                Music.stop(message);
-                return;
-            }
-            else if (command == (prefix + 'pause')) {
-                Music.pause(message);
-                return;
-            }
-            else if (command == (prefix + 'resume')) {
-                Music.resume(message);
+            else if (command == (prefix + 'showqueue')) {
+                Music.showQueue(message);
                 return;
             }
         }
-
-        if (modTF == true) {
-            if (command == (prefix + 'volume')) {
-                Music.volume(message, userInput[1]);
-                return;
+        else {
+            if(modTF == true) {
+                if (command == (prefix + 'volume')) {
+                    Music.volume(message, userInput[1]);
+                    return;
+                }
             }
-        }
-
-        if (command == (prefix + 'nowplaying')) {
-            Music.nowPlaying(message);
-            return;
-        }
-        else if (command == (prefix + 'showqueue')) {
-            Music.showQueue(message);
-            return;
         }
         //#endregion
 
@@ -296,14 +307,16 @@ function messageHandling(client) {
         //#endregion
 
         //#region iss command
-        else if (command == (prefix + 'iss')) {
+        if (command == (prefix + 'iss')) {
             ISS.iss(message);
+            return;
         }
         //#endregion
 
         //#region agify command
-        else if (command == (prefix + 'agify')) {
+        if (command == (prefix + 'agify')) {
             Agify.agify(message);
+            return;
         }
         //#endregion
 
@@ -322,15 +335,18 @@ function messageHandling(client) {
         //#region help Command
         else if(command === (prefix + 'help')) {
             Help.getHelp(adminTF, message, serverAdmin);
+            return;
         }
         //#endregion
 
         //#region Chat Clear
         if((command === (prefix + 'clear')) && (adminTF)) {
             Clear.clearMessages(message);
+            return;
         }
         else if ((command === (prefix + 'clear')) && (!adminTF)) {
             errormsg.noAdmin(message);
+            return;
         }
         //#endregion
 
@@ -338,11 +354,12 @@ function messageHandling(client) {
         if (command == (prefix + 'quote')) {
             // Get a random index (random quote) from list of quotes in quotes.json
             Quote.getRandomQuote(message);
+            return;
         }
         //#endregion
 
         //#region torture command
-        if (command == (prefix + 'torture') && (adminTF)) {
+        if (command == (prefix + 'torture') && (adminTF) && (message.mentions.members.first() != undefined)) {
             // Call Torture helper function
             message.mentions.members.forEach((member) => {
                 Torture.torture(message, member);
@@ -351,6 +368,11 @@ function messageHandling(client) {
         }
         else if (command == (prefix + 'torture') && (!adminTF)) {
             errormsg.noAdmin(message);
+            return;
+        }
+        else if (command == (prefix + 'torture') && (message.mentions.members.first() == undefined)) {
+            errormsg.custom(message, 'You must specify a user to torture. Command is !torture @USER.');
+            return;
         }
         //#endregion
     });

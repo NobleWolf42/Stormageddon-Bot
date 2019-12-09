@@ -52,6 +52,17 @@ function custom(message, text) {
 }
 //#endregion
 
+//#region No Server Admin Access
+function wrongChannel(message, correctChannel) {
+    const embMsg = new Discord.RichEmbed()
+        .setTitle('Error!')
+        .setColor(0xb50000)
+        .setDescription(`That was not the correct channel for that command. The correct channel for this command is #${correctChannel}`);
+    message.author.send(embMsg);
+    message.delete().catch(O_o=>{});
+}
+//#endregion
+
 //#region exports
-module.exports = { noAdmin, noMod, noDJ, noServerAdmin, custom };
+module.exports = { noAdmin, noMod, noDJ, noServerAdmin, custom, wrongChannel };
 //#endregion
