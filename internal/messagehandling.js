@@ -416,8 +416,8 @@ function messageHandling(client) {
 }
 //#endregion
 
-//#region Message Handeling for PM
-function PMHandeling (client) {
+//#region Message Handling for PM
+function PMHandling (client) {
     client.on("message", message => {
 
         //#region Permission Checks
@@ -468,5 +468,5 @@ async function updatesconfig() {
 //#endregion
 
 //#region exports
-module.exports = { messageHandling, PMHandeling };
+module.exports = { messageHandling, PMHandling };
 //#endregion
