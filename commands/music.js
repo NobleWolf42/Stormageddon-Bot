@@ -176,7 +176,7 @@ const youtube = new YouTube(config.auth.GOOGLE_API_KEY);
 
         if (!msg.member.voiceChannel) return msg.reply('You are not in a voice channel!');
 	    	if (!serverQueue) return msg.reply('There is nothing playing.');
-		    if (!volumePercent) return msg.channel.send(`The current volume is: **${serverQueue.volume}**`);
+		    if (!volumePercent) return msg.channel.send(`The current volume is: **${serverQueue.volume}%**`);
             if ((volumePercent >= 1) && (volumePercent <= 100)) {
                 serverQueue.volume = volumePercent;
 		        serverQueue.connection.dispatcher.setVolumeLogarithmic(volumePercent / 100);

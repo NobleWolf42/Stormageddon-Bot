@@ -299,12 +299,10 @@ function messageHandling(client) {
                 return;
             }
         }
-        else {
-            if(modTF == true || adminTF == true) {
-                if (command == (prefix + 'volume')) {
-                    Music.volume(message, userInput[1]);
-                    return;
-                }
+        if(modTF == true || adminTF == true) {
+            if (command == (prefix + 'volume')) {
+                Music.volume(message, userInput[1]);
+                return;
             }
         }
         //#endregion
