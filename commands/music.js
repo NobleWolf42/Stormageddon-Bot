@@ -49,10 +49,10 @@ const youtube = new YouTube(config.auth.GOOGLE_API_KEY);
         }
         else {
 		    try {
-			    var video = await youtube.getVideo(url);
+                var video = await youtube.getVideo(url);
             }
             catch (error) {
-            
+                
                 try {
 				    var videos = await youtube.searchVideos(url, 10);
 				    let index = 0;

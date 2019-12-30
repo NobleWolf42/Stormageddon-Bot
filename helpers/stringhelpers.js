@@ -23,7 +23,7 @@ function combineArray (array, start) {
             }
         }
     }
-
+    
     return text;
 }
 //#endregion

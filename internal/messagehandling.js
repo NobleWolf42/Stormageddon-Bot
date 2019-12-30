@@ -102,9 +102,15 @@ function messageHandling(client) {
         var adminTF = userHandeling.adminCheck(userRoles, serverRoles, serverid);
         var modTF = userHandeling.modCheck(userRoles, serverRoles, serverid);
         var djTF = userHandeling.djCheck(userRoles, serverRoles, serverid);
-        var noncommand = stringHelper.combineArray(userInputNoLower, 1);
         
-        console.log(noncommand);
+        if (userInput[1] != undefined) {
+            if (!userInput[1].startsWith('http')) {
+                var noncommand = stringHelper.combineArray(userInputNoLower, 1);
+            }
+            else {
+                var noncommand = userInputNoLower[1];
+            }
+        }
 
         //#endregion
 
@@ -294,7 +300,7 @@ function messageHandling(client) {
             }
         }
         else {
-            if(modTF == true) {
+            if(modTF == true || adminTF == true) {
                 if (command == (prefix + 'volume')) {
                     Music.volume(message, userInput[1]);
                     return;
