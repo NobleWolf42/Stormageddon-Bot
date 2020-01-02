@@ -36,15 +36,10 @@ const youtube = new YouTube(config.auth.GOOGLE_API_KEY);
 	    if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
             const playlist = await youtube.getPlaylist(url);
             const videos = await playlist.getVideos();
-            //console.log (videos);
-            console.log (videos.length);
-            temp = 0;
-            if (videos.length <= 30) {
+            
+            if (videos.length <= 30 || msg.author.id == "201665936049176576") {
 		        for (const video of Object.values(videos)) {
-                    //console.log (video);
-                    temp = temp + 1;
-                    console.log(temp)
-			        const video2 = await youtube.getVideoByID(video.id).catch(function(error) {console.log(error)}); // eslint-disable-line no-await-in-loop
+			        const video2 = await youtube.getVideoByID(video.id).catch(function(error) {console.log('Error Has Occured Loading Video.')}); // eslint-disable-line no-await-in-loop
                     if (video2 != undefined) {
                         await handleVideo(video2, msg, voiceChannel, true); // eslint-disable-line no-await-in-loop
                     }

@@ -53,8 +53,6 @@ function messageHandling(client) {
         else {
             var prefix = "!";
         }
-        console.log(serverid);
-        console.log(prefixFile[serverid]);
         //#endregion
 
         //#region Varible part 1
