@@ -205,7 +205,11 @@ const youtube = new YouTube(config.auth.GOOGLE_API_KEY);
         const serverQueue = queue.get(msg.guild.id);
 
         if (!serverQueue) return msg.reply('There is nothing playing.');
-		    return msg.channel.send(`__**Song queue:**__\n${serverQueue.songs.map(song => `**-** ${song.title}`).join('\n')}\n**Now playing:** ${serverQueue.songs[0].title}`);
+            
+        queueshow = `__**Song queue:**__\n${serverQueue.songs.map(song => `**-** ${song.title}`).join('\n')}\n**Now playing:** ${serverQueue.songs[0].title}`;
+        showqueuemsgs = queueshow.match(/[\s\S]{1,1900}/g);
+        showqueuemsgs.forEach(txtbody => msg.channel.send(txtbody));
+        return;
     }
     //#endregion
 
