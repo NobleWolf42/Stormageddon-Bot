@@ -36,10 +36,18 @@ const youtube = new YouTube(config.auth.GOOGLE_API_KEY);
 	    if (url.match(/^https?:\/\/(www.youtube.com|youtube.com)\/playlist(.*)$/)) {
             const playlist = await youtube.getPlaylist(url);
             const videos = await playlist.getVideos();
+            //console.log (videos);
+            console.log (videos.length);
+            temp = 0;
             if (videos.length <= 30) {
 		        for (const video of Object.values(videos)) {
-			        const video2 = await youtube.getVideoByID(video.id); // eslint-disable-line no-await-in-loop
-			        await handleVideo(video2, msg, voiceChannel, true); // eslint-disable-line no-await-in-loop
+                    //console.log (video);
+                    temp = temp + 1;
+                    console.log(temp)
+			        const video2 = await youtube.getVideoByID(video.id).catch(function(error) {console.log(error)}); // eslint-disable-line no-await-in-loop
+                    if (video2 != undefined) {
+                        await handleVideo(video2, msg, voiceChannel, true); // eslint-disable-line no-await-in-loop
+                    }
                 }
                 return msg.channel.send(`✅ Playlist: **${playlist.title}** has been added to the queue!`);
             }

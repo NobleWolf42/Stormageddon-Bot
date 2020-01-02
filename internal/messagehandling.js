@@ -39,7 +39,9 @@ function messageHandling(client) {
         //#endregion
 
         //#region prefix/defaultprefix set
+        var serverid = message.channel.guild.id;
         var prefixFile = JSON.parse(fs.readFileSync('./data/botprefix.json', 'utf8'));
+
         if (prefixFile[serverid] != undefined) {
             if (prefixFile[serverid].prefix != undefined) {
                 var prefix = prefixFile[serverid].prefix;
@@ -51,10 +53,11 @@ function messageHandling(client) {
         else {
             var prefix = "!";
         }
+        console.log(serverid);
+        console.log(prefixFile[serverid]);
         //#endregion
 
         //#region Varible part 1
-        var serverid = message.channel.guild.id;
         var userInputNoLower = message.content.split(' ');
         var userInput = message.content.toLowerCase().split(' ');
         var noncommand = '';
