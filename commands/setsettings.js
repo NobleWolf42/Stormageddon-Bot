@@ -69,7 +69,7 @@ async function setModMail(message) {
     modmail.enable = enable;
     modmail.modlist = modlist;
 
-    cfg[serverid].modlist = modlist;
+    cfg[serverid].modmail = modmail;
 
     await bulidConfigFile();
 
