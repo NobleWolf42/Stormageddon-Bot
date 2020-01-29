@@ -139,28 +139,23 @@ function messageHandling(client) {
         if ((command == (prefix + 'set')) && (serverAdmin)) {
 
             if (userInput[1] == 'autorole') {
-                set.setAutorole(message);
-                updatesconfig();
+                sconfig = set.setAutorole(message);
                 return;
             }
             else if (userInput[1] == 'joinrole') {
-                set.setJoinrole(message);
-                updatesconfig();
+                sconfig = set.setJoinrole(message);
                 return;
             }
             else if (userInput[1] == 'general') {
-                set.setGeneral(message);
-                updatesconfig();
+                sconfig = set.setGeneral(message);
                 return;
             }
             else if (userInput[1] == 'music') {
-                set.setMusic(message);
-                updatesconfig();
+                sconfig = set.setMusic(message);
                 return;
             }
             else if (userInput[1] == 'modmail') {
-                set.setModMail(message);
-                updatesconfig();
+                sconfig = set.setModMail(message);
             }
             else {
                 errormsg.custom(message, 'Invalid command, valid commands are `!set` `autorole, joinrole, general, modmail, and music`');
@@ -218,9 +213,8 @@ function messageHandling(client) {
         if (command == (prefix + 'addmod') && (adminTF) && (message.mentions.members.first() != undefined)) {
             // Call Torture helper function
             message.mentions.members.forEach((member) => {
-                set.addMod(message, member);
+                sconfig = set.addMod(message, member);
             });
-            updatesconfig();
             return;
         }
         else if (command == (prefix + 'addmod') && (!adminTF)) {

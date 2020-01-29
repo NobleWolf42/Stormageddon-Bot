@@ -24,6 +24,9 @@ async function addMod(message, user) {
     await bulidConfigFile();
 
     message.channel.send("Mods Have Been Added!");
+
+    config = updateConfigFile();
+    return config;
 }
 //#endregion
 
@@ -74,6 +77,9 @@ async function setModMail(message) {
     await bulidConfigFile();
 
     message.channel.send("Mod Mail Setup Complete!");
+
+    config = updateConfigFile();
+    return config;
 }
 //#endregion
 
@@ -171,6 +177,9 @@ async function setAutorole(message) {
     await bulidConfigFile();
 
     message.channel.send("Auto Role Setup Complete!");
+
+    config = updateConfigFile();
+    return config;
 }
 //#endregion
 
@@ -218,6 +227,9 @@ async function setJoinrole(message) {
     await bulidConfigFile();
 
     message.channel.send("Join Role Setup Complete!");
+
+    config = updateConfigFile();
+    return config;
 }
 //#endregion
 
@@ -279,6 +291,9 @@ async function setMusic(message) {
     await bulidConfigFile();
 
     message.channel.send("Music Setup Complete!");
+
+    config = updateConfigFile();
+    return config;
 }
 //#endregion
 
@@ -322,6 +337,9 @@ async function setGeneral(message) {
     await bulidConfigFile();
 
     message.channel.send("General Setup Complete!");
+
+    config = updateConfigFile();
+    return config;
 }
 //#endregion
 
@@ -334,6 +352,9 @@ async function setup(message) {
     await setMusic(message);
     await setModMail(message);
     message.channel.send('Server Setup Complete');
+    
+    config = updateConfigFile();
+    return config;
 }
 //#endregion
 
