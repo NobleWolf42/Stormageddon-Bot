@@ -254,6 +254,7 @@ function messageHandling(client) {
         else if ((command == (prefix + 'nowplaying')) || (command == (prefix + 'showqueue'))) {
             if (!sconfig[serverid].music.enable) {
                 errormsg.disabled(message, 'music');
+                return;
             }
             else if (sconfig[serverid].music.textChannel != message.channel.name) {
                 errormsg.wrongChannel(message, sconfig[serverid].music.textChannel);
