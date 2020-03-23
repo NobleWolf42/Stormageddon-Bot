@@ -421,7 +421,7 @@ function PMHandling (client) {
     client.on("message", message => {
 
         //#region Permission Checks
-        // Make sure the command can only be run in a server
+        // Make sure the command can only be run in a PM
         if (message.guild) return;
 
         // Make sure bots can't run this command
