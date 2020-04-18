@@ -112,7 +112,7 @@ function autoroleListener(client) {
         }
 
         let embedFooterText;
-        if (message.embeds[0]) embedFooterText = message.embeds[0].footer.text;
+        if (message.embeds[0] && message.embeds[0] != null) embedFooterText = message.embeds[0].footer.text;
 
         if (
             (message.author.id === client.user.id) && (message.content !== config[serverid].autorole.initialMessage || 

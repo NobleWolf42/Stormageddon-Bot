@@ -79,9 +79,9 @@ function messageHandling(client) {
                 var attachment = new Discord.Attachment(DoggoLinks.getRandomDoggo());
                 var firstime = '';
                 if (sconfig[serverid] == undefined) {
-                    firstime = ' Run !setup in an admin only chat channel to set up server.';
+                    firstime = ' Run \'!setup\' in an admin only chat channel to set up the bot on your server.';
                 }
-                message.channel.send(`Woof Woof, My Prefix is \`${prefix}\`, for more commands, please use the ${prefix}help command.${firstime}`);
+                message.channel.send(`Woof Woof, My Prefix is \`${prefix}\`, for more commands, please use the \'${prefix}help\' command.${firstime}`);
                 message.channel.send(attachment);
                 return;
             }
