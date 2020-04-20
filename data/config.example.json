@@ -1,6 +1,6 @@
 {
     "auth": {
-        "token": "YOUR BOT TKEN",
+        "token": "YOUR BOT TOKEN",
         "GOOGLE_API_KEY": "YOUR YOUTUBE API KEY",
         "clientSecret": "YOUR CLIENT SECRET"
     },
