@@ -31,10 +31,10 @@ function messageHandling(client) {
     client.on("message", message => {
 
         //#region Permission Checks
-        // Make sure bots can't run this command
+        // Make sure bots can't run commands
         if (message.author.bot) return;
 
-        // Make sure the command can only be run in a server
+        // Make sure the commands can only be run in a server
         if (!message.guild) return;
         //#endregion
 
@@ -68,8 +68,8 @@ function messageHandling(client) {
 
             //@magma
             if(message.mentions.users.first().id === '211865015592943616') {
-                var attachment = new Discord.Attachment('https://cdn.discordapp.com/attachments/254389303294165003/649734083366223895/kji50lq4nhq11.png');
-                message.channel.send('Nep Nep Nep Nep Nep Nep Nep');
+                var attachment = new Discord.Attachment('https://cdn.discordapp.com/attachments/254389303294165003/702774952092237915/2Q.png');
+                message.channel.send('IT\'S PIZZA TIME!!!');
                 message.channel.send(attachment);
                 return;
             }
