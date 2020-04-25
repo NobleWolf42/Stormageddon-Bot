@@ -5,7 +5,6 @@
     var config = require('./data/botconfig.json');
 
     var filecreate = require('./helpers/createfiles.js');
-    filecreate.createJSONfiles();
 
     var AutoRole = require('./internal/autorole.js');
     var MessageHandler = require('./internal/messagehandling.js');
