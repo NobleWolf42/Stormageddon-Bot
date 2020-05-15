@@ -115,7 +115,7 @@ function messageHandling(client) {
 
         //#endregion
 
-        //#region replys to meow/mew/cat/kitty/squirrel
+        //#region replys to meow/mew/cat/kitty/squirrel/kitten/furry terrorist
         if((userInput.includes('meow')) || (userInput.includes('mew')) || (userInput.includes('cat')) || (userInput.includes('kitty')) || (userInput.includes('squirrel')) || ((userInput.includes('fuzzy')) && (userInput.includes('terrorist'))) || (userInput.includes('kitten'))) {
             var attachment = new Discord.Attachment(DoggoLinks.getRandomDoggo());
 

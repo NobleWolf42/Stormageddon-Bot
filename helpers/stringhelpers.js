@@ -19,7 +19,7 @@ function combineArray (array, start) {
         }
         else {
             if (array[i] != undefined) {
-                text += array[i + 1];
+                text += array[i];
             }
         }
     }
