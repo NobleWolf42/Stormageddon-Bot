@@ -128,7 +128,7 @@ const youtube = new YouTube(config.auth.GOOGLE_API_KEY);
 
     //#region play function
     function play(guild, song) {
-	    const serverQueue = queue.get(guild.id);
+        const serverQueue = queue.get(guild.id);
 
 	    if (!song) {
 		    serverQueue.voiceChannel.leave();
