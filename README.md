@@ -14,5 +14,3 @@ Install Commands for Dependancies:
     - Mac: brew install ffmpeg
 
 You will have to change some variables for your own use, copy the botconfig.example.json to botconfig.json and enter your settings.
-
-Test Line, Will Remove
