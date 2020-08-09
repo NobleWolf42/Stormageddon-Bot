@@ -5,6 +5,7 @@
     const { join } = require("path");
     const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const { warnCustom, errorCustom } = require('../helpers/embedMessages.js');
+    const { getRandomDoggo } = require('../helpers/doggoLinks.js');
     //#endregion
 //#endregion
 
@@ -64,7 +65,7 @@ function messageHandling(client) {
 
             //@storm
             if(message.mentions.users.first().id === '645141555719569439') {
-                var attachment = new MessageAttachment(DoggoLinks.getRandomDoggo());
+                var attachment = new MessageAttachment(getRandomDoggo());
                 if (serverConfig[serverID] == undefined) {
                     message.channel.send(`Please run \`${prefix}setup\` in an admin only chat channel to set up the bot on your server.`);
                     message.channel.send(attachment);
