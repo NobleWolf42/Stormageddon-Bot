@@ -1,8 +1,8 @@
-const http = require('http');
-var DiscordOauth2 = require('discord-oauth2');
-const fs = require('fs');
-const url = require('url');
-var config = require('../data/botconfig.json');
+const https = require('https');
+const DiscordOauth2 = require('discord-oauth2');
+const { writeFileSync, readFileSync } = require('fs');
+const { parse } = require('url');
+const botConfig = require('../data/botconfig.json');
 var currentdate = new Date();
 var months = ['January', 'Feburary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
@@ -12,14 +12,14 @@ var oauth = new DiscordOauth2();
 
 async function saveUserInfo(accessCode){
     tokenInfo = await oauth.tokenRequest({
-		clientId: config.general.clientId,
-		clientSecret: config.auth.clientSecret,
+		clientId: botConfig.general.clientId,
+		clientSecret: botConfig.auth.clientSecret,
 	 
 		code: accessCode,
 		scope: "identify email connections",
 		grantType: "authorization_code",
 		
-		redirectUri: config.general.redirectUri
+		redirectUri: botConfig.general.redirectUri
 	});
 
 	userObj = await oauth.getUser(tokenInfo.access_token)
@@ -47,18 +47,22 @@ async function saveUserInfo(accessCode){
 
 	oldInfo[userID] = finalObj;
 
-	fs.writeFileSync("../data/userinfo.json", JSON.stringify(oldInfo), function(err) {
+	writeFileSync("../data/userinfo.json", JSON.stringify(oldInfo), function(err) {
 		if (err) {
 			console.log(err);
 		}
 	});
 }
 
-http.createServer((req, res) => {
+var privateKey  = fs.readFileSync(botConfig.oauth.privateKey, 'utf8');
+var certificate = fs.readFileSync(botConfig.oauth.publicKey, 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+
+https.createServer(credentials, (req, res) => {
 	let responseCode = 404;
 	let content = '404 Error';
 
-	const urlObj = url.parse(req.url, true);
+	const urlObj = parse(req.url, true);
 
 	if (urlObj.query.code) {
 		const accessCode = urlObj.query.code;
@@ -70,7 +74,7 @@ http.createServer((req, res) => {
 
 	if (urlObj.pathname === '/') {
 		responseCode = 200;
-		content = fs.readFileSync('./index.html');
+		content = readFileSync('./index.html');
 	}
 
 	res.writeHead(responseCode, {

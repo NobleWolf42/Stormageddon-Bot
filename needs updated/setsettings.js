@@ -6,8 +6,8 @@ var cfg = JSON.parse(fs.readFileSync('./data/serverconfig.json', 'utf8'));
 
 //#region addmod
 async function addMod(message, user) {
-    var serverid = message.channel.guild.id;
-    var array = cfg[serverid].modmail.modlist;
+    var serverID = message.channel.guild.id;
+    var array = cfg[serverID].modmail.modlist;
 
     if (user == undefined) {
         return;
@@ -19,7 +19,7 @@ async function addMod(message, user) {
     var modmail = {};
     modmail.modlist = array;
     modmail.enable = true;
-    cfg[serverid].modmail = modmail;
+    cfg[serverID].modmail = modmail;
 
     await bulidConfigFile();
 
@@ -32,7 +32,7 @@ async function addMod(message, user) {
 
 //#region modmail settings
 async function setModMail(message) {
-    var serverid = message.channel.guild.id;
+    var serverID = message.channel.guild.id;
     var modlist = [];
 
     message.channel.send('Please respond with `T` if you would like to enable DMing to bot to DM mods, respond with `F` if you do not.');
@@ -72,7 +72,7 @@ async function setModMail(message) {
     modmail.enable = enable;
     modmail.modlist = modlist;
 
-    cfg[serverid].modmail = modmail;
+    cfg[serverID].modmail = modmail;
 
     await bulidConfigFile();
 
@@ -85,9 +85,9 @@ async function setModMail(message) {
 
 //#region autorole settings
 async function setAutorole(message) {
-    var serverid = message.channel.guild.id;
+    var serverID = message.channel.guild.id;
     var timeout = false;
-    var embMsg = new Discord.RichEmbed()
+    var embMsg = new Discord.MessageEmbed()
         .setTitle('Role Message')
         .setColor(16776960)
         .setDescription('**React to the messages below to receive the associated role.**')
@@ -172,7 +172,7 @@ async function setAutorole(message) {
     autorole.roles = roles;
     autorole.reactions = reactions;
     
-    cfg[serverid].autorole = autorole;
+    cfg[serverID].autorole = autorole;
 
     await bulidConfigFile();
 
@@ -185,7 +185,7 @@ async function setAutorole(message) {
 
 //#region join role settings
 async function setJoinrole(message) {
-    var serverid = message.channel.guild.id;
+    var serverID = message.channel.guild.id;
 
     message.channel.send('Please respond with `T` if you would like to enable assigin a user a role on server join, respond with `F` if you do not.');
     
@@ -222,7 +222,7 @@ async function setJoinrole(message) {
     joinrole.role = role;
     joinrole.enabled = enable;
 
-    cfg[serverid].joinrole = joinrole;
+    cfg[serverID].joinrole = joinrole;
 
     await bulidConfigFile();
 
@@ -235,7 +235,7 @@ async function setJoinrole(message) {
 
 //#region music settings
 async function setMusic(message) {
-    var serverid = message.channel.guild.id;
+    var serverID = message.channel.guild.id;
 
     message.channel.send('Please respond with `T` if you would like to enable music functionality, respond with `F` if you do not.');
     
@@ -286,7 +286,7 @@ async function setMusic(message) {
     music.djRoles = djRoles;
     music.textChannel = textChannel;
 
-    cfg[serverid].music = music;
+    cfg[serverID].music = music;
 
     await bulidConfigFile();
 
@@ -299,7 +299,7 @@ async function setMusic(message) {
 
 //#region general settings
 async function setGeneral(message) {
-    var serverid = message.channel.guild.id;
+    var serverID = message.channel.guild.id;
 
     message.channel.send('Please respond with the roles you would like to use as Bot Admins. Format it with a comma, followed by a space (`, `) seperating the roles. Example: `Role 1, Role 2, Role 3`.');
     
@@ -332,7 +332,7 @@ async function setGeneral(message) {
     general.adminRoles = adminRoles;
     general.modRoles = modRoles;
 
-    cfg[serverid].general = general;
+    cfg[serverID].general = general;
 
     await bulidConfigFile();
 
@@ -371,22 +371,15 @@ async function bulidConfigFile() {
 //#endregion
 
 //#region add server to configfile
-function addServerConfig(serverid) {
-    if (cfg[serverid] == undefined) {
-        cfg[serverid] = {"autorole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinrole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modmail":{"enable":false,"modlist":[]}};
+function addServerConfig(serverID) {
+    if (cfg[serverID] == undefined) {
+        cfg[serverID] = {"autorole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinrole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modmail":{"enable":false,"modlist":[]}};
     }
 
     bulidConfigFile();
 }
 //#endregion
 
-//#region update configfile
-function updateConfigFile() {
-    cfg = JSON.parse(fs.readFileSync('./data/serverconfig.json', 'utf8'));
-    return cfg;
-}
-//#endregion
-
 //#region exports
-module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, updateConfigFile, addMod, setModMail };
+module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, addMod, setModMail };
 //#endregion

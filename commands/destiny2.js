@@ -1,26 +1,57 @@
-var Discord = require('discord.js');
-var xmlhttp = require("xmlhttprequest");
+//#region 
+const { XMLHttpRequest } = require("xmlhttprequest");
+const config = require('../data/botconfig.json');
+const { embedCustom, warnCustom, errorCustom } = require('../helpers/embedMessages.js');
+//#endregion
 
-var XMLHttpRequest = xmlhttp.XMLHttpRequest;
+//#region ISS Command
+module.exports = {
+    name: "destiny2",
+    type: ['DM', 'Gulid'],
+    aliases: ['d2'],
+    cooldown: 0,
+    class: 'gaming',
+    usage: 'destiny2 status INSERT-BUNGIE-NAME or destiny2 clan INSERT-CLAN-NAME',
+    description: "Status displays the Destiny 2 account's original creation date and last API update date. Clan displays Destiny 2 clan's bio, avatar, motto, and founder.",
+    execute(message, args) {
+        if (args[0] == 'status') {
+            getStatus(message, args[1]);
+        }
+        else if (args[0] == 'clan') {
+            var clanName = '';
+            
+            for (i = 1; i < args.length; i++) {
+                if (i != (args.length - 1)) {
+                    clanName += `${args[i]} `;
+                }
+                else {
+                    clanName += `${args[i]}`;
+                }
+            }
+            getClan(message, clanName);
+        }
+
+    }
+}
 
 function getStatus(message, pers_name) {
     // Request initialized and created
     var request = new XMLHttpRequest()
     request.open('GET', 'https://www.bungie.net/Platform//User/SearchUsers?q='+pers_name, true);
-    request.setRequestHeader('X-API-KEY', '671b3211756445cbb83b5d82f6682ebd');
+    request.setRequestHeader('X-API-KEY', config.auth.d2ApiKey);
     request.onload = function() {
-        // After request is recieved, parse it.
-        var data = JSON.parse(request.responseText)["Response"][0]
+        //After request is recieved, parse it.
+        var data = JSON.parse(request.responseText)["Response"][0];
 
         if (request.status >= 200 && request.status < 400 ) {
             if (data != null) {
-                message.reply("\n User was last updated at " + data["lastUpdate"] + "\n User began their journey at " + data["firstAccess"]);
+                embedCustom(message, 'User Information', '#F5F5F5', `User was last updated at ${data["lastUpdate"]}\n User began their journey at ${data["firstAccess"]}.`);
             }
             else {
-                message.reply("\n The Search for a user by that name returned no results. \n Try something else.");
+                warnCustom(message, `The Search for \`${pers_name}\` returned no results.\n Try something else.`);
             }
         } else {
-            message.reply("The Destiny API was unable to be reached at this time. \n Try again later.");
+            errorCustom(message, `The Destiny API was unable to be reached at this time.\n Try again later.`);
             }
     }
     request.send()
@@ -30,32 +61,30 @@ function getClan(message, clan_name){
     // Request initialized and created
     var request = new XMLHttpRequest()
     request.open('GET', 'https://www.bungie.net/Platform/GroupV2/Name/'+clan_name+'/1', true);
-    request.setRequestHeader('X-API-KEY', '671b3211756445cbb83b5d82f6682ebd');
+    request.setRequestHeader('X-API-KEY', config.auth.d2ApiKey);
     request.onload = function() {
         // After request is recieved, parse it.
-        var data = JSON.parse(request.responseText)["Response"]
+        var data = JSON.parse(request.responseText)["Response"];
+        var error = JSON.parse(request.responseText);
 
         if (request.status >= 200 && request.status < 400) {
-            if (data != null) {
+            if (data != null && data != undefined) {
                 var domain = "https://www.bungie.net/";
-                // Clan Avatar + about section
-                var attachment = new Discord.Attachment(domain + data["detail"]["avatarPath"]);
-                message.channel.send(data["detail"]["about"], attachment);
-                //Founder Profile pic + name
-                var attachment = new Discord.Attachment(domain + data["founder"]["bungieNetUserInfo"]["iconPath"]);
-                message.channel.send("The founder is " + data["founder"]["bungieNetUserInfo"]["displayName"],attachment);
-                // Clan Creation Date
-                message.reply("The clan was created on " + data["detail"]["creationDate"]);
+
+                var attachment = (domain + data["detail"]["avatarPath"]);
+                embedCustom(message, `${clan_name} Clan Information`, '#F5F5F5', `The clan was created on ${data["detail"]["creationDate"]}.\n The founder is ${data["founder"]["bungieNetUserInfo"]["displayName"]}.\n\n ${data["detail"]["about"]}`, attachment);
             }
             else {
-                message.reply("\n The Search for a clan by that name returned no results. \n Try something else.");
+                warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`);
             }
-        } else {
-            message.reply("The Destiny API was unable to be reached at this time. \n Try again later.");
+        }
+        else if (error.ErrorStatus == 'ClanNotFound') {
+            warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`);
+        }
+        else {
+            errorCustom(message, "The Destiny API was unable to be reached at this time.\n Try again later.");
         }
     }
 
     request.send()
 }
-
-module.exports = { getStatus, getClan };

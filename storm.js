@@ -1,24 +1,31 @@
-//#region Initial set-up
-    //#region dependecies
-    var Discord = require('discord.js');
+//#region Initial Set-Up
+    //#region Dependecies
+    const Discord = require('discord.js');
+    //#endregion
 
-    var config = require('./data/botconfig.json');
+    //#region Configs
+    const config = require('./data/botconfig.json');
+    //#endregion
 
-    var filecreate = require('./helpers/createfiles.js');
+    //#region Helpers
+    const filecreate = require('./helpers/createfiles.js');
+    //#endregion
 
-    var AutoRole = require('./internal/autorole.js');
-    var MessageHandler = require('./internal/messagehandling.js');
-    var ServerJoin = require('./internal/serverjoin.js');
+    //#region Internals
+    const AutoRole = require('./internal/autorole.js');
+    const MessageHandler = require('./internal/messagehandling.js');
+    const ServerJoin = require('./internal/serverjoin.js');
     //#endregion
 //#endregion
 
 //#region Login / Initialize
 // Initialize Discord Bot
-var client = new Discord.Client();
+const client = new Discord.Client();
+client.queue = new Map();
 
 //Throws Error if bot's token is not set.
 if (config.auth.token === 'YOUR BOT TOKEN' || config.auth.token === '') {
-    throw new Error("The 'auth.token' property is not set in the config.js file. Please do this!");
+    throw new Error("The 'auth.token' property is not set in the botconfig.json file. Please do this!");
 }
 
 //Logs the bot into discord, using it's auth token
@@ -32,9 +39,10 @@ client.on("ready", () => {
     MessageHandler.messageHandling(client);
     MessageHandler.PMHandling(client);
     ServerJoin.serverJoin(client);
-    client.user.setPresence({ game: { name: `@me for more info` } });
+    client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
 });
 
 //Logs Errors
+client.on('warn', (info) => console.log(info));
 client.on('error', console.error);
 //#endregion

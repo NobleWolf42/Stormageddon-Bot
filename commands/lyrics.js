@@ -1,0 +1,47 @@
+const { MessageEmbed } = require("discord.js");
+const serverConfig = require("../data/serverconfig.json");
+const lyricsFinder = require("lyrics-finder");
+const { warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
+
+module.exports = {
+    name: "lyrics",
+    type: ['Gulid'],
+    aliases: ["ly"],
+    cooldown: 0,
+    class: 'music',
+    usage: 'skip',
+    description: "Get lyrics for the currently playing song.",
+    async execute(message) {
+        if (!serverConfig[message.guild.id].music.enable) {
+            warnDisabled(message, 'music');
+            return;
+        }
+
+        if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
+            const queue = message.client.queue.get(message.guild.id);
+            if (!queue) return warnCustom(message, "There is nothing playing.");
+
+            let lyrics = null;
+
+            try {
+                lyrics = await lyricsFinder(queue.songs[0].title, "");
+                if (!lyrics) lyrics = `No lyrics found for ${queue.songs[0].title}.`;
+            } catch (error) {
+                lyrics = `No lyrics found for ${queue.songs[0].title}.`;
+            }
+
+            let lyricsEmbed = new MessageEmbed()
+                .setTitle("Lyrics")
+                .setDescription(lyrics)
+                .setColor("#0E4CB0")
+                .setTimestamp();
+
+            if (lyricsEmbed.description.length >= 2048)
+                lyricsEmbed.description = `${lyricsEmbed.description.substr(0, 2045)}...`;
+            return message.channel.send(lyricsEmbed).catch(console.error);
+        }
+        else {
+            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel);
+        }
+    }
+};
