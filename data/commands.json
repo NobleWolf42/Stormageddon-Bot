@@ -1,36 +1,37 @@
 {
     "Help": {
-        "help PAGE"                                      : "Displays Help Message, specifying a page will show that help info.",
-        "info"                                           : "Displays information about the bot, it's creators, and where you can go if you would like to help code it.",
-        "!modmail SERVER-NAME MESSAGE"                   : "Whisper via Stormageddon to all moderators for the specified server.",
-        "!bugreport MESSAGE"                             : "Whisper via Stormageddon to report a bug to the developers of Stormageddon."
+        "help PAGE"                                       : "Displays Help Message, specifying a page will show that help info. (Works in Direct Messages too.)",
+        "info"                                            : "Displays information about the bot, it's creators, and where you can go if you would like to help code it."        
     },
     "Admin": {
-        "changeprefix INSERT-SYMBOL"                     : "Changes the prefix the bot uses in your server. Available Symbols: ``~!$%^&*()_+-={}[]|\\:\";\\'<>?,.`",
-        "createautorolemsg"                              : "Create the reactions for auto role assignment.",
-        "torture MENTION-USERS"                          : "Stormageddon stalks user into playing Stormjack, where the user may or may not be kicked.",
-        "clear 1-99"                                     : "Clears the last 1-99 messages.",
-        "addmod MENTION-USERS"                           : "Adds users to the list of people that get the PM when someone whispers the bot with the !modmail command.",
-        "setup"                                         : "Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.",
-        "set autorole/joinrole/general/music/modmail"   : "Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS."
+        "changeprefix INSERT-SYMBOL"                      : "Changes the prefix the bot uses in your server. Available Symbols: `~!$%^&*()_+-={}[]|\\:\";\\'<>?,.",
+        "createautorolemsg"                               : "Create the reactions for auto role assignment.",
+        "clear NUMBER(1-99)"                              : "Bulk deletes the previous messages in a chat based on user input, up to 99 previous messages.",
+        "addmod MENTION-USERS"                            : "Adds users to the list of people that get the PM when someone whispers the bot with the !modmail command.",
+        "setup"                                           : "Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.",
+        "set autorole/joinrole/general/music/modmail"     : "Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS."
     },
     "Fun": {
-        "agify INSERT-NAME"                              : "Estimates age of name.",
-        "iss"                                            : "Displays the names of which astronauts are aboard the ISS",
-        "quote"                                          : "Display a random quote, picked by the developers of Stormageddon."
+        "agify INSERT-NAME"                               : "Estimates age of name.",
+        "iss"                                             : "Displays the names of which astronauts are aboard the ISS",
+        "quote"                                           : "Display a random quote, picked by the developers of Stormageddon."
     },
     "Gaming": {
-        "d2 status INSERT-BUNGIE-NAME"                   : "Displays Destiny 2 account's original creation date, and last API update date.",
-        "d2 clan INSERT-CLAN-NAME"                       : "Displays Destiny 2 clan's bio, avatar, motto, and founder"
+        "d2 status INSERT-BUNGIE-NAME"                    : "Displays Destiny 2 account's original creation date, and last API update date.",
+        "d2 clan INSERT-CLAN-NAME"                        : "Displays Destiny 2 clan's bio, avatar, motto, and founder."
     },
     "Music": {
-        "play SEARCH-TEARM/YOUTUBE-LINK/YOUTUBE-PLAYLIST": "Plays the selected music in the voice channel you are in, NOTE: Playlists have a maximum of 30 videos.",
-        "pause"                                          : "Pauses the music.",
-        "resume"                                         : "Resumes the paused music.",
-        "stop"                                           : "Stop playing music.",
-        "skip"                                           : "Skips current song.",
-        "showqueue"                                      : "Shows the currently queued music.",
-        "nowplaying"                                     : "Shows the currently playing song.",
-        "volume 1-100"                                   : "Sets the bots volume in percent."
+        "play SEARCH-TEARM/YOUTUBE-LINK/YOUTUBE-PLAYLIST" : "Plays the selected music in the voice channel you are in, NOTE: Playlists have a maximum of 30 videos.",
+        "pause"                                           : "Pauses the currently playing music.",
+        "resume"                                          : "Resumes the paused music.",
+        "stop"                                            : "Stop playing music.",
+        "skip"                                            : "Skips current song.",
+        "showqueue"                                       : "Shows the currently queued music.",
+        "nowplaying"                                      : "Shows the currently playing song.",
+        "volume 1-100"                                    : "Sets the bots volume in percent."
+    },
+    "PM": {
+        "!modmail, SERVER-NAME, MESSAGE"                  : "Whisper via Stormageddon to all moderators for the specified server.",
+        "!bugreport, MESSAGE"                             : "Whisper via Stormageddon to report a bug to the developers of Stormageddon."
     }
 }

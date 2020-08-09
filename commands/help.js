@@ -1,92 +1,180 @@
 //#region dependecies
-var Discord = require('discord.js');
-var cmdObj = require('../data/commands.json');
-var stringHelper = require('../helpers/stringhelpers.js');
-//#endregion
-
-var excludedcommands = ["Admin"];
-
-//#region info command
-function getInfo(message) {
-    var txt = '**Bot Name:** Stormageddon Bot\n\n**Description:** All purpose bot, named after the worlds best Doggo, **MagmaHusky\'s** Stormageddon.\n\n**Designed and Bulit by:** *NobleWolf42, Captain Zendik, and CzRSpecV*\n\n**How To Help:** If you would like to assist with the bot, you can find us on Discord at https://discord.gg/tgJtK7f, and on GitHub at https://github.com/NobleWolf42/Stormageddon-Bot/.';
-
-    const embMsg = new Discord.RichEmbed()
-        .setTitle('Information')
-        .setColor(34449)
-        .setDescription(txt);
-    message.author.send(embMsg);
-    message.delete().catch(O_o=>{});
-}
+const cmdObj = require('../data/commands.json');
+const { embedHelp, warnCustom, errorNoAdmin} = require('../helpers/embedMessages.js');
+const { adminCheck } = require('../helpers/userHandling.js');
+const { capitalize } = require('../helpers/stringhelpers.js');
 //#endregion
 
 //#region Help function
-function getHelp(adminbool, message, serverAdmin) {
-    var txt = "";
-    var sections = Object.keys(cmdObj);
-    var title = "Help";
-    var userInput = message.content.toLowerCase().split(' ');
-
-    if (userInput.length == 1 || stringHelper.capitalize(userInput[1]) == "Help") {
-        txt = "\
-        There are **" + getHelpSize(adminbool, sections) + "** pages of commands. \n \
-        The pages are ";
-
-        for(var ind in sections){
-            if (!adminbool && sections[ind] =="Admin") { continue; }
-            if (!serverAdmin && sections[ind] == "Server Admin") { continue; }
-            txt += ("`" + sections[ind] + "`");
-            if (ind < sections.length-1){
-                txt +=", ";
-            }
+module.exports = {
+    name: 'help',
+    type: ['DM', 'Gulid'],
+    cooldown: 0,
+    aliases: ['h'],
+    class: 'help',
+    usage: 'help ***PAGE***',
+    description: "Displays Help Message, specifying a page will show that help info, using the **\"All\"** page will display all commands, the **\"DM\"** page will display all commands that can be Direct Messaged to the bot, and the **\"Server\"** page will display all commands that can be used in a discord server.",
+    execute(message, args) {
+        const adminTF = adminCheck(message);
+        const commands = message.client.commands.array();
+        let commandClasses = [];
+        let helpMessageCommands = [];
+        if (adminTF) {
+            commands.forEach((cmd) => { if (!commandClasses.includes(capitalize(cmd.class))) { commandClasses.push(capitalize(cmd.class))} });
+        }
+        else {
+            commands.forEach((cmd) => { if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Admin') { commandClasses.push(capitalize(cmd.class))} });
         }
 
-        txt += ". \n \n **Commands**: \n";
-        for (key in cmdObj["Help"]) {
-            txt += key + ' - ' + cmdObj["Help"][key] + '\n';
+        commandClasses.sort();
+
+        if (args[0] == undefined || args[0] == 'help') {
+            commands.forEach((cmd) => { if (cmd.class == 'help' && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
+            title = 'Help';
+            makeHelpMsg(message, title, helpMessageCommands, commandClasses);
+            
+            if (message.channel.guild != undefined) {
+                message.delete();
+            }
+            
+            return;
+        }
+        else if (commandClasses.includes(capitalize(args[0])) || args[0] == 'all' || args[0] == 'dm' || args[0] == 'server') {
+            if (args[0] == 'admin') {
+                if (adminTF) {
+                    commands.forEach((cmd) => { if (cmd.class == args[0] && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
+                    title = `${capitalize(args[0])} Help`;
+                }
+                else {
+                    errorNoAdmin(message);
+                    return;
+                }
+            }
+            else if (args[0] == 'all') {
+                for (c = 0; c < commandClasses.length; c++) {
+                    helpMessageCommands = [];
+                    commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
+
+                    if (commandClasses[c].toLowerCase() != 'help'){
+                        title = `${capitalize(commandClasses[c])} Help`;
+                    }
+                    else {
+                        title = 'Help';
+                    }
+
+                    makeHelpMsg(message, title, helpMessageCommands, commandClasses);
+                }
+
+                return;
+            }
+            else if (args[0] == 'dm') {
+                commandClasses = commandClasses.filter(i => i.toLowerCase() != 'music');
+
+                for (c = 0; c < commandClasses.length; c++) {
+                    helpMessageCommands = [];
+                    commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('DM') && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
+
+                    if (commandClasses[c].toLowerCase() != 'help'){
+                        title = `${capitalize(commandClasses[c])} Help`;
+                    }
+                    else {
+                        title = 'Help';
+                    }
+
+                    makeHelpMsg(message, title, helpMessageCommands, commandClasses);
+                }
+
+                return;
+            }
+            else if (args[0] == 'server') {
+                for (c = 0; c < commandClasses.length; c++) {
+                    helpMessageCommands = [];
+                    commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('Gulid') && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
+
+                    if (commandClasses[c].toLowerCase() != 'help'){
+                        title = `${capitalize(commandClasses[c])} Help`;
+                    }
+                    else {
+                        title = 'Help';
+                    }
+
+                    makeHelpMsg(message, title, helpMessageCommands, commandClasses);
+                }
+            }
+            else {
+                commands.forEach((cmd) => { if (cmd.class == args[0] && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
+                title = `${capitalize(args[0])} Help`;
+
+                makeHelpMsg(message, title, helpMessageCommands, commandClasses);
+            }
+
+            if (message.channel.guild != undefined) {
+                message.delete();
+            }
+            
+            return;
+        }
+        else {
+            warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`**${makeCommandPageList(commandClasses)}**\``);
+            
+            if (message.channel.guild != undefined) {
+                message.delete({ timeout: 15000, reason: 'Cleanup.' });
+            }
+            
+            return;
         }
     }
-    else {
-        title = stringHelper.capitalize(userInput[1]);
-        if (sections.includes(title)) {
-            for (key in cmdObj[title]) {
-                txt += key + ' - ' + cmdObj[title][key] + '\n';
-            }
+}
+//#endregion
+
+//#region Function to create help message
+function makeHelpMsg(message, title, helpMessageCommands, commandClasses) {
+    var helpMsg = '';
+    commandClasses.sort();
+
+    for (i = 0; i < helpMessageCommands.length; i++) {
+        let key = helpMessageCommands[i];
+        let aliasesLength = key.aliases.length;
+
+        if (aliasesLength == 0) {
+            helpMsg += `${key.usage} - Aliases: None - ${key.description}`
         }
+        else if (aliasesLength == 1) {
+            helpMsg += `${key.usage} - Aliases: ${key.aliases[0]} - ${key.description}`
+        }
+        else {
+            let aliasList = '';
+            for (a = 0; a < aliasesLength; a++) {
+                if (a != (aliasesLength - 1)) {
+                    aliasList += `${key.aliases[a]}, `;
+                }
+                else {
+                    aliasList += key.aliases[a];
+                }
+            }
+            helpMsg += `${key.usage} - Aliases: ${aliasList} - ${key.description}`
+        }
+        if (i != (helpMessageCommands.length - 1)) {
+            helpMsg += `\n\n`;
+        }
+    };
+
+    var pageList = makeCommandPageList(commandClasses);
+
+    embedHelp(message, title, `\`Help Pages: ${pageList}\`\n${helpMsg}`);
+}
+//#endregion
+
+//#region Function to make list of command pages based off of their classes
+function makeCommandPageList(commandClasses) {
+    var pageList = '';
+
+    for (i = 0; i < commandClasses.length; i++) {
+        pageList += `${commandClasses[i]}, `;
     }
+
+    pageList += `DM, Server, and All.`
     
-    if (!adminbool && title =="Admin") { 
-        title="Access Denied";
-        txt="You do not have access to those commands.";
-    }
-    else {
-        title = (title=="Help"?title:"Help: "+title);
-    }
-
-    const embMsg = new Discord.RichEmbed()
-        .setTitle(title)
-        .setColor(0xb50000)
-        .setDescription(txt);
-    message.author.send(embMsg);
-    message.delete().catch(O_o=>{});
+    return pageList;
 }
-//#endregion
-
-//#region Help function helpers
-function getHelpSize(adminbool, sections){
-    var size = sections.length;
-    // if the user isn't an admin
-    if (!adminbool){
-        for(var index in excludedcommands){
-            if (sections.includes(excludedcommands[index])){
-                size--;
-            }
-        }
-    }
-
-    return size;
-}
-//#endregion
-
-//#region exports
-module.exports = { getHelp, getInfo };
 //#endregion

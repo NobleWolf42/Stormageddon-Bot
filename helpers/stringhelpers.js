@@ -1,6 +1,6 @@
 //#region capitalize
 function capitalize(word) {
-    return ("" + word.charAt(0).toUpperCase() + word.slice(1));
+    return (word.charAt(0).toUpperCase() + word.slice(1));
 }
 //#endregion
 
@@ -19,7 +19,7 @@ function combineArray (array, start) {
         }
         else {
             if (array[i] != undefined) {
-                text += array[i + 1];
+                text += array[i];
             }
         }
     }

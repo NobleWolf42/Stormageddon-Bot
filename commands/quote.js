@@ -1,14 +1,22 @@
-var math = require('../helpers/math.js');
-var quotedata = require('../data/quotes.json').data;
+//#region Dependancies
+const { getRandomInt } = require('../helpers/math.js');
+const { embedCustom } = require('../helpers/embedMessages.js');
+const quotedata = require('../data/quotes.json').data;
+//#endregion
 
-function getRandomQuote(message) {
-    var quote = quotedata[math.getRandomInt(quotedata.length)];
+//#region Quote Command
+module.exports = {
+    name: "quote",
+    type: ['DM', 'Gulid'],
+    aliases: [],
+    cooldown: 5,
+    class: 'fun',
+    usage: 'quote',
+    description: "Display a random quote, picked by the developers of Stormageddon.",
+    execute(message) {
+        var quote = quotedata[getRandomInt(quotedata.length)];
 
-    message.channel.send(
-        "\"" + quote.text + 
-        "\" \n Cited from " + quote.author + "." + 
-        " \n Picked by " + quote.submitter + "."
-    );
+        embedCustom(message, 'Quote', '#000000', `"${quote.text}"\n Cited from ${quote.author}.\n Picked by ${quote.submitter}.`);
+    }
 }
-
-module.exports = { getRandomQuote };
+//#endregion
