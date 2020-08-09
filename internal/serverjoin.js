@@ -1,12 +1,12 @@
 //#region Dependancies
-var fs = require('fs');
-var config = JSON.parse(fs.readFileSync('./data/serverconfig.json', 'utf8'));
-var set = require('../commands/setsettings.js');
+const { readFileSync } = require('fs');
+var config = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+const { updateConfigFile } = require('../helpers/currentsettings.js');
 //#endregion
 
 //#region code that happens when someone joins a server
 function serverJoin(client) {
-   config = set.updateConfigFile();
+   config = updateConfigFile();
    client.on('guildMemberAdd', (guildMember) => {
       if (config[guildMember.guild.id].autorole.joinroleenabled) {
          guildMember.addRole(guildMember.guild.roles.find(role => role.name === config[guildMember.guild.id].autorole.joinrole));
