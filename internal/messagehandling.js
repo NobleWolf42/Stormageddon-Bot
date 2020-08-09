@@ -6,6 +6,8 @@
     const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     const { warnCustom, errorCustom } = require('../helpers/embedMessages.js');
     const { getRandomDoggo } = require('../helpers/doggoLinks.js');
+    const { updateConfigFile } = require('../helpers/currentsettings.js');
+    var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
     //#endregion
 //#endregion
 
@@ -37,6 +39,7 @@ function messageHandling(client) {
         //#region prefix/defaultprefix set
         var serverID = message.channel.guild.id;
         var prefixFile = JSON.parse(readFileSync('./data/botprefix.json', 'utf8'));
+        serverConfig = updateConfigFile();
 
         if (prefixFile[serverID] != undefined) {
             if (prefixFile[serverID].prefix != undefined) {
