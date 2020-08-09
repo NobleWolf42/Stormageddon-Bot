@@ -54,8 +54,8 @@ async function saveUserInfo(accessCode){
 	});
 }
 
-var privateKey  = fs.readFileSync(botConfig.oauth.privateKey, 'utf8');
-var certificate = fs.readFileSync(botConfig.oauth.publicKey, 'utf8');
+var privateKey  = readFileSync(botConfig.oauth.privateKey, 'utf8');
+var certificate = readFileSync(botConfig.oauth.publicKey, 'utf8');
 var credentials = {key: privateKey, cert: certificate};
 
 https.createServer(credentials, (req, res) => {
