@@ -1,5 +1,5 @@
 const { canModifyQueue } = require("../helpers/music.js");
-const serverConfig = require("../data/serverconfig.json");
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require("../helpers/embedMessages.js");
 const { djCheck } = require("../helpers/userHandling.js");
 
@@ -11,7 +11,7 @@ module.exports = {
     cooldown: 0,
     class: 'music',
     usage: 'stop',
-    description: "Stops the music.",
+    description: "Stops the playing music.",
     execute(message) {
         if (!serverConfig[message.guild.id].music.enable) {
             warnDisabled(message, 'music');

@@ -9,7 +9,7 @@ module.exports = {
     aliases: [],
     cooldown: 0,
     class: 'direct',
-    usage: '!devsend USER-ID, MESSAGE',
+    usage: '!devsend ***USER-ID***, ***MESSAGE***',
     description: "Developer-only command for sending messages as the bot.",
     execute(message, args, client) {
         var argsString = args.join(' ');

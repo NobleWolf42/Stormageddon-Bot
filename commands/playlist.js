@@ -1,9 +1,10 @@
 const { MessageEmbed } = require("discord.js");
+const { readFileSync } = require('fs');
 const { play } = require("../helpers/music.js");
 const botConfig = require("../data/botconfig.json");
 const YouTubeAPI = require("simple-youtube-api");
 const youtube = new YouTubeAPI(botConfig.auth.youtubeApiKey);
-const serverConfig = require("../data/serverconfig.json");
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
 const { djCheck } = require("../helpers/userHandling.js");
 const { warnCustom, errorCustom, warnDisabled, errorNoDJ, warnWrongChannel } = require("../helpers/embedMessages.js");
 
@@ -13,8 +14,8 @@ module.exports = {
     aliases: ["pl"],
     cooldown: 3,
     class: 'music',
-    usage: 'skip',
-    description: "Play a playlist from youtube.",
+    usage: 'playlist ***YOUTUBE-PLAYLIST***',
+    description: "Plays a playlist from youtube.",
     async execute(message, args) {
         if (!serverConfig[message.guild.id].music.enable) {
             warnDisabled(message, 'music');

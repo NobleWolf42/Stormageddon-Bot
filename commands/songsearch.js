@@ -1,4 +1,5 @@
-const serverConfig = require("../data/serverconfig.json");
+const { readFileSync } = require('fs');
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require("../helpers/embedMessages.js");
 const { djCheck } = require("../helpers/userHandling.js");
 const { MessageEmbed } = require("discord.js");
@@ -12,8 +13,8 @@ module.exports = {
     aliases: [""],
     cooldown: 0,
     class: 'music',
-    usage: 'songsearch SEARCH-TERM',
-    description: "Search and select videos to play.",
+    usage: 'songsearch ***SEARCH-TERM***',
+    description: "Searches and selects videos to play.",
     async execute(message, args) {
         if (!serverConfig[message.guild.id].music.enable) {
             warnDisabled(message, 'music');

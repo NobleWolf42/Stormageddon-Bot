@@ -10,7 +10,7 @@ module.exports = {
     aliases: [],
     cooldown: 15,
     class: 'direct',
-    usage: '!modmail SERVER-NAME, MESSAGE ',
+    usage: '!modmail ***SERVER-NAME***, ***MESSAGE*** ',
     description: "Whisper via Stormageddon to all moderators for the specified server.",
     execute(message, args, client) {
         var argsString = args.join(' ');

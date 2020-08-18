@@ -1,5 +1,6 @@
 const { MessageEmbed } = require("discord.js");
-const serverConfig = require("../data/serverconfig.json");
+const { readFileSync } = require('fs');
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
 const lyricsFinder = require("lyrics-finder");
 const { warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
 
@@ -9,8 +10,8 @@ module.exports = {
     aliases: ["ly"],
     cooldown: 0,
     class: 'music',
-    usage: 'skip',
-    description: "Get lyrics for the currently playing song.",
+    usage: 'lyrics',
+    description: "Gets the lyrics for the currently playing song.",
     async execute(message) {
         if (!serverConfig[message.guild.id].music.enable) {
             warnDisabled(message, 'music');

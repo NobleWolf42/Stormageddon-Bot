@@ -1,6 +1,7 @@
 const { play } = require("../helpers/music.js");
 const botConfig = require("../data/botconfig.json");
-const serverConfig = require("../data/serverconfig.json");
+const { readFileSync } = require('fs');
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
 const ytdl = require("ytdl-core");
 const YouTubeAPI = require("simple-youtube-api");
 const youtube = new YouTubeAPI(botConfig.auth.youtubeApiKey);
@@ -15,7 +16,7 @@ module.exports = {
     cooldown: 3,
     class: 'music',
     usage: 'play SEARCH-TEARM/YOUTUBE-LINK/YOUTUBE-PLAYLIST',
-    description: "Plays the selected music in the voice channel you are in. NOTE: Playlists have a maximum of 30 videos.",
+    description: "Plays the selected music in the voice channel you are in.",
     async execute(message, args) {
 
         if (!serverConfig[message.guild.id].music.enable) {

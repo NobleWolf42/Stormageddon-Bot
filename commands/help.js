@@ -1,5 +1,4 @@
 //#region dependecies
-const cmdObj = require('../data/commands.json');
 const { embedHelp, warnCustom, errorNoAdmin} = require('../helpers/embedMessages.js');
 const { adminCheck } = require('../helpers/userHandling.js');
 const { capitalize } = require('../helpers/stringhelpers.js');
