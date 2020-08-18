@@ -4,8 +4,8 @@ const { readFileSync } = require('fs');
 
 //#region update configfile
 function updateConfigFile() {
-    cfg = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
-    return cfg;
+    serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+    return serverConfig;
 }
 //#endregion
 

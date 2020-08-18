@@ -1,27 +1,27 @@
 //#region Dependancices
 const { readFileSync } = require('fs');
-var config = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
 const { updateConfigFile } = require('../helpers/currentsettings.js');
 //#endregion
 
 //#region Autoroll
     //#region Function that generates embed feilds
     function generateEmbedFields(serverID) {
-        return config[serverID].autorole.roles.map((r, e) => {
+        return serverConfig[serverID].autorole.roles.map((r, e) => {
             return {
-                emoji: config[serverID].autorole.reactions[e],
+                emoji: serverConfig[serverID].autorole.reactions[e],
                 role: r
             };
         });
     }
     //#endregion
 
-    //#region Handles the creation of the role reactions. Will either send the role messages separately or in an embed, depending on your settings in config[serverID].json
+    //#region Handles the creation of the role reactions. Will either send the role messages separately or in an embed, depending on your settings in serverConfig[serverID].json
 //#endregion
 
 //#region Autorole Listener
 function autoroleListener(client) {
-    config = updateConfigFile();
+    serverConfig = updateConfigFile();
     //#region Redable constants
     // This makes the events used a bit more readable
     const events = {
@@ -55,8 +55,8 @@ function autoroleListener(client) {
         if (message.embeds[0] && message.embeds[0].footer != null) embedFooterText = message.embeds[0].footer.text;
 
         if (
-            (message.author.id === client.user.id) && (message.content !== config[serverID].autorole.initialMessage || 
-            (message.embeds[0] && (embedFooterText !== config[serverID].autorole.embedFooter)))
+            (message.author.id === client.user.id) && (message.content !== serverConfig[serverID].autorole.initialMessage || 
+            (message.embeds[0] && (embedFooterText !== serverConfig[serverID].autorole.embedFooter)))
         ) {
 
             if ((message.embeds.length >= 1)) {

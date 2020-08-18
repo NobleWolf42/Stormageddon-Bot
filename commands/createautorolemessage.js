@@ -11,7 +11,7 @@ module.exports = {
     cooldown: 60,
     class: 'admin',
     usage: 'createautorolemessage',
-    description: "Displays the names of all the astronauts that are aboard the ISS.",
+    description: "Create the reactions message for auto role assignment.",
     execute(message, args, client) {
         var serverID = message.guild.id;
 

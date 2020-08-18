@@ -11,7 +11,7 @@ module.exports = {
     aliases: ['d2'],
     cooldown: 0,
     class: 'gaming',
-    usage: 'destiny2 status INSERT-BUNGIE-NAME or destiny2 clan INSERT-CLAN-NAME',
+    usage: 'destiny2 status ***INSERT-BUNGIE-NAME*** or destiny2 clan ***INSERT-CLAN-NAME***',
     description: "Status displays the Destiny 2 account's original creation date and last API update date. Clan displays Destiny 2 clan's bio, avatar, motto, and founder.",
     execute(message, args) {
         if (args[0] == 'status') {

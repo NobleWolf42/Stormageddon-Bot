@@ -1,5 +1,6 @@
 const { canModifyQueue } = require("../helpers/music.js");
-const serverConfig = require("../data/serverconfig.json");
+const { readFileSync } = require('fs');
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoMod } = require("../helpers/embedMessages.js");
 const { modCheck, adminCheck } = require("../helpers/userHandling");
 
@@ -9,8 +10,8 @@ module.exports = {
     aliases: ["v"],
     cooldown: 0,
     class: 'music',
-    usage: 'volume 1-100',
-    description: "Displays volume of currently playing music if no numbers anre entered. Can change volume if numbers are entered.",
+    usage: 'volume ***NUMBER(1-100)***',
+    description: "Displays volume of currently playing music if no numbers anre entered. Can change volume percent if numbers are entered.",
     execute(message, args) {
 
         if (!serverConfig[message.guild.id].music.enable) {

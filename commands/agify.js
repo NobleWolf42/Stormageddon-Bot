@@ -5,7 +5,7 @@ const { XMLHttpRequest } = require("xmlhttprequest");
 //#region Agify Command
 module.exports = {
     name: "agify",
-    type: ['Gulid'],
+    type: ['Gulid', 'DM'],
     aliases: [],
     cooldown: 0,
     class: 'fun',
