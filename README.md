@@ -219,7 +219,7 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
         `!devsend ***USER-ID***, ***MESSAGE*** i.e. (645141555719569439, Test Message.)`
 
 - Command Handler from [discordjs.guide](https://discordjs.guide/)
-- Media Controls via Reactions
+- Media Controls via Reactions  
 ![reactions](https://i.imgur.com/memZ7Fi.png)
 
 ## 🤝 Contributing
