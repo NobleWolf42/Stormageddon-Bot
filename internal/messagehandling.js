@@ -1,5 +1,4 @@
-//#region Initalize
-    //#region Dependancies
+//#region Dependancies
     const { Collection, MessageAttachment } = require('discord.js');
     const { readdirSync, readFileSync } = require('fs');
     const { join } = require("path");
@@ -8,16 +7,15 @@
     const { getRandomDoggo } = require('../helpers/doggoLinks.js');
     const { updateConfigFile } = require('../helpers/currentsettings.js');
     var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
-    //#endregion
 //#endregion
 
 //#region Message Handling for Server
 function messageHandling(client) {
-    //
+
     client.commands = new Collection();
     const cooldowns = new Collection();
 
-    //#region Gulid Commands Import
+    //#region Commands Import
     const commandFiles = readdirSync(join(__dirname, "../commands")).filter((file) => file.endsWith(".js"));
     for (const file of commandFiles) {
         const command = require(join(__dirname, "../commands", `${file}`));
@@ -96,7 +94,7 @@ function messageHandling(client) {
             //Checks to see if it is a valid command and ignores message if it is not
             const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
             if (!command) return;
-            //console.log(command);
+
             if (!command.type.includes('Gulid')) return;
             //#endregion
 
@@ -133,68 +131,8 @@ function messageHandling(client) {
         //#endregion
     });
 };
+//#endregion
 
-
-
-        /*//#region setup command
-        if (!(serverID in serverConfig)) {
-            if ((command == (prefix + 'setup')) && (serverAdmin)) {
-                set.setup(message);
-            }
-            return;
-        };
-        //#endregion
-
-        //#region setting commands
-        if ((command == (prefix + 'set')) && (serverAdmin)) {
-
-            if (userInput[1] == 'autorole') {
-                serverConfig = set.setAutorole(message);
-                return;
-            }
-            else if (userInput[1] == 'joinrole') {
-                serverConfig = set.setJoinrole(message);
-                return;
-            }
-            else if (userInput[1] == 'general') {
-                serverConfig = set.setGeneral(message);
-                return;
-            }
-            else if (userInput[1] == 'music') {
-                serverConfig = set.setMusic(message);
-                return;
-            }
-            else if (userInput[1] == 'modmail') {
-                serverConfig = set.setModMail(message);
-            }
-            else {
-                errormsg.custom(message, 'Invalid command, valid commands are `!set` `autorole, joinrole, general, modmail, and music`');
-                return;
-            }
-        }
-        else if ((command == (prefix + 'set')) && (!serverAdmin)) {
-            errormsg.noServerAdmin(message);
-        }
-        //#endregion
-
-        //#region addmod
-        if (command == (prefix + 'addmod') && (adminTF) && (message.mentions.members.first() != undefined)) {
-            // Call Torture helper function
-            message.mentions.members.forEach((member) => {
-                serverConfig = set.addMod(message, member);
-            });
-            return;
-        }
-        else if (command == (prefix + 'addmod') && (!adminTF)) {
-            errormsg.noAdmin(message);
-            return;
-        }
-        else if (command == (prefix + 'addmod') && (message.mentions.members.first() == undefined)) {
-            errormsg.custom(message, 'You must specify a user to add as a Moderator. Command is !addmod @USERS.');
-            return;
-        }
-        //#endregion
-*/
 //#region Message Handling for PM
 function PMHandling (client) {
     client.on("message", message => {

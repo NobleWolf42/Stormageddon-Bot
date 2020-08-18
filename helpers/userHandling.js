@@ -1,6 +1,6 @@
 //#region Dependancies
-const fs = require('fs');
-var config = JSON.parse(fs.readFileSync('./data/serverconfig.json', 'utf8'));
+const { readFileSync } = require('fs');
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
 
 var adminRoleIDs = [];
 var djRoleIDs = [];
@@ -9,8 +9,8 @@ var modRoleIDs = [];
 
 //#region Function that updates the config file
 function updateConfigFile() {
-    cfg = JSON.parse(fs.readFileSync('./data/serverconfig.json', 'utf8'));
-    return cfg;
+    serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+    return serverConfig;
 }
 //#endregion
 
@@ -22,7 +22,7 @@ function serverRoleUpdate(sRole, serverID) {
     djRoleIDs = [];
     modRoleIDs = [];
     
-    config = updateConfigFile();
+    serverConfig = updateConfigFile();
     //Sets Local Varibles
     var basicServerRoles = {};
 
@@ -33,36 +33,36 @@ function serverRoleUpdate(sRole, serverID) {
     }
 
     //Loops through the Admin Role Names, pushing them to an array
-    for (key in config[serverID].general.adminRoles) {
+    for (key in serverConfig[serverID].general.adminRoles) {
 
-        //Pushes role IDs to Admin if they Match config[serverID].general.adminRoles
-        if (basicServerRoles[config[serverID].general.adminRoles[key]]){
-            adminRoleIDs.push(basicServerRoles[config[serverID].general.adminRoles[key]]);
+        //Pushes role IDs to Admin if they Match serverConfig[serverID].general.adminRoles
+        if (basicServerRoles[serverConfig[serverID].general.adminRoles[key]]){
+            adminRoleIDs.push(basicServerRoles[serverConfig[serverID].general.adminRoles[key]]);
         }
     }
 
     //Loops throught the Mod Role Names, pushing them to an array
-    for (key in config[serverID].general.modRoles) {
+    for (key in serverConfig[serverID].general.modRoles) {
         
-        //Pushes role IDs to Mods if they Match config[serverID].general.modRoles
-        if (basicServerRoles[config[serverID].general.modRoles[key]]){
-            modRoleIDs.push(basicServerRoles[config[serverID].general.modRoles[key]]);
+        //Pushes role IDs to Mods if they Match serverConfig[serverID].general.modRoles
+        if (basicServerRoles[serverConfig[serverID].general.modRoles[key]]){
+            modRoleIDs.push(basicServerRoles[serverConfig[serverID].general.modRoles[key]]);
         }
     }
 
     //Loops throught the DJ Role Names, pushing them to an array
-    for (key in config[serverID].music.djRoles) {
+    for (key in serverConfig[serverID].music.djRoles) {
         
-        //Pushes role IDs to DJs if they Match config[serverID].music.djRoles
-        if (basicServerRoles[config[serverID].music.djRoles[key]]){
-            djRoleIDs.push(basicServerRoles[config[serverID].music.djRoles[key]]);
+        //Pushes role IDs to DJs if they Match serverConfig[serverID].music.djRoles
+        if (basicServerRoles[serverConfig[serverID].music.djRoles[key]]){
+            djRoleIDs.push(basicServerRoles[serverConfig[serverID].music.djRoles[key]]);
         }
     }
 }
 //#endregion
 
 //#region Admin / Mod / DJ Check
-//Function that returns boolean for if the user who sent the message is an Admin (based off config[serverID].connection.adminRoles)
+//Function that returns boolean for if the user who sent the message is an Admin (based off serverConfig[serverID].connection.adminRoles)
 function adminCheck(message) {
     var userRolesArray = [];
     var serverRolesArray = [];
@@ -77,7 +77,7 @@ function adminCheck(message) {
         return false;
     }
     
-    config = updateConfigFile();
+    serverConfig = updateConfigFile();
     //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverID);
     
@@ -96,7 +96,7 @@ function adminCheck(message) {
     return false;
 }
 
-//Function that returns boolean for if the user who sent the message is a Moderator (based off config[serverID].connection.modRoles)
+//Function that returns boolean for if the user who sent the message is a Moderator (based off serverConfig[serverID].connection.modRoles)
 function modCheck(message) {
     var userRolesArray = [];
     var serverRolesArray = [];
@@ -112,7 +112,7 @@ function modCheck(message) {
     }
 
 
-    config = updateConfigFile();
+    serverConfig = updateConfigFile();
     //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverID);
     
@@ -131,7 +131,7 @@ function modCheck(message) {
     return false;
 }
 
-//Function that returns boolean for if the user who sent the message is a DJ (based off config[serverID].connection.djRole)
+//Function that returns boolean for if the user who sent the message is a DJ (based off serverConfig[serverID].connection.djRole)
 function djCheck(message) {
     var userRolesArray = [];
     var serverRolesArray = [];
@@ -146,7 +146,7 @@ function djCheck(message) {
         return false;
     }
     
-    config = updateConfigFile();
+    serverConfig = updateConfigFile();
     //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverID);
     
@@ -174,7 +174,7 @@ function djCheck(message) {
 
 //#region Refresh User Account Info
 function refreshUser() {
-    userAccountInfo = JSON.parse(fs.readFileSync('./data/userinfo.json', 'utf8'));
+    userAccountInfo = JSON.parse(readFileSync('./data/userinfo.json', 'utf8'));
 }
 //#endregion
 

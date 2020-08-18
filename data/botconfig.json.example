@@ -1,14 +1,29 @@
 {
     "auth": {
         "token": "YOUR BOT TOKEN",
-        "GOOGLE_API_KEY": "YOUR YOUTUBE API KEY",
-        "clientSecret": "YOUR CLIENT SECRET"
+        "clientSecret": "YOUR CLIENT SECRET",
+        "youtubeApiKey": "YOUR YOUTUBE API KEY",
+        "soundcloudApiKey": "YOUR SOUND CLOUD API KEY",
+        "imgurApiKey" : "YOUR IMGUR API KEY",
+        "d2ApiKey": "YOUR DESTINY 2 API KEY"
+    },
+    "oauth": {
+        "privateKey": "LOCATION OF PRIVATE HTTPS KEY",
+        "publicKey": "LOCATION OF PUBLIC HTTPS KEY"
     },
     "general": {
         "clientId": "YOUR CLIENT ID",
-        "redirectUri": "YOUR REDIRECT URI",
-        "registerLink": "YOUR REDIRECT LINK"
+        "redirectUri": "YOUR REDIRECT URI:3000",
+        "registerLink": "YOUR REGISTER URL"
 
     },
-    "devids": ["USER-ID"]
+    "imgur": {
+        "clientID" : "YOUR IMGUR CLIENT ID",
+        "apiCall" : "IMGUR API CALL"
+    },
+    "music": {
+        "maxPlatlistSize": NUMBER OF MAX PLAYLIST LENGTH,
+        "pruning": TRUE OR FALSE TO ENABLE OR DISABLE PRUNING
+    },
+    "devids": ["YOUR DISCORD IDS"]
 }

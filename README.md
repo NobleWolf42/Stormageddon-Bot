@@ -7,9 +7,11 @@
 ## Requirements
 
 1. Discord Bot Token **[Guide](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot)**
-2. YouTube Data API v3 Key **[Guide](https://developers.google.com/youtube/v3/getting-started)**  
-2.1 **(Optional)** Soundcloud Client ID **[Guide](https://github.com/zackradisic/node-soundcloud-downloader#client-id)**
-3. Node.js v12.0.0 or newer
+2. Discord OAUTH2 redirectURI. You will need identify, email, and connections infromation **[Guide](https://discordjs.guide/oauth2/#setting-up-a-basic-web-server)**  
+2.1  Register HTTPS, a great free website is **[Lets Encrypt](https://letsencrypt.org/docs/)**
+3. YouTube Data API v3 Key **[Guide](https://developers.google.com/youtube/v3/getting-started)**  
+3.1 **(Optional)** Soundcloud Client ID **[Guide](https://github.com/zackradisic/node-soundcloud-downloader#client-id)**
+4. Node.js v12.0.0 or newer
 
 ## 🚀 Getting Started
 
@@ -28,59 +30,197 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
 
 ```json
 {
-  "TOKEN": "",
-  "YOUTUBE_API_KEY": "",
-  "SOUNDCLOUD_CLIENT_ID": "",
-  "MAX_PLAYLIST_SIZE": 10,
-  "PREFIX": "/",
-  "PRUNING": false
+    "auth": {
+        "token": "YOUR BOT TOKEN",
+        "clientSecret": "YOUR CLIENT SECRET",
+        "youtubeApiKey": "YOUR YOUTUBE API KEY",
+        "soundcloudApiKey": "YOUwR SOUND CLOUD API KEY",
+        "imgurApiKey" : "YOUR IMGUR API KEY",
+        "d2ApiKey": "YOUR DESTINY 2 API KEY"
+    },
+    "oauth": {
+        "privateKey": "LOCATION OF PRIVATE HTTPS KEY",
+        "publicKey": "LOCATION OF PUBLIC HTTPS KEY"
+    },
+    "general": {
+        "clientId": "YOUR CLIENT ID",
+        "redirectUri": "YOUR REDIRECT URI:3000",
+        "registerLink": "YOUR REGISTER URL"
+
+    },
+    "imgur": {
+        "clientID" : "YOUR IMGUR CLIENT ID",
+        "apiCall" : "IMGUR API CALL"
+    },
+    "music": {
+        "maxPlatlistSize": NUMBER OF MAX PLAYLIST LENGTH,
+        "pruning": TRUE OR FALSE TO ENABLE OR DISABLE PRUNING
+    },
+    "devids": ["YOUR DISCORD IDS"]
 }
 ```
 
-## 📝 Features & Commands    UPDATE ME
+## 📝 Features & Commands
 
-UPDATE ME
 
 > Note: The default prefix is '!'
 
-* 🎶 Play music from YouTube via url
 
-`/play https://www.youtube.com/watch?v=GLvohMXgcBo`
+- Help Commands
 
-* 🔎 Play music from YouTube via search query
+    - Displays Help Message, specifying a page will show that help info, using the **\"All\"** page will display all commands, the **\"DM\"** page will display all commands that can be Direct Messaged to the bot, and the **\"Server\"** page will display all commands that can be used in a discord server. (Works in Direct Messages Too.)
 
-`/play under the bridge red hot chili peppers`
+        `!help ***PAGE*** i.e. (All)` 
 
-* 🎶 Play music from Soundcloud via url
+    - Displays information about the bot, it's creators, and where you can go if you would like to contribute to it. (Works in Direct Messages Too.)
 
-`/play https://soundcloud.com/blackhorsebrigade/pearl-jam-alive`
+        `!info`
 
-* 🔎 Search and select music to play
+    - Lets you know if you are registered and gives you the link to register/update you info. (Works in Direct Message Too.)
 
-`/search Pearl Jam`
+        `!register`
 
-* 📃 Play youtube playlists via url
+- Admin Commands
+  
+  -  Changes the prefix the bot uses in your server. Available Symbols: `~!$%^&*()_+-={}[]|\\:\";\\'<>?,.
 
-`/playlist https://www.youtube.com/watch?v=YlUKcNNmywk&list=PL5RNCwK3GIO13SR_o57bGJCEmqFAwq82c`
+        `!changeprefix ***INSERT-SYMBOL*** i.e. (!)`
 
-* 🔎 Play youtube playlists via search query
+    - Create the reactions message for auto role assignment.
 
-`/playlist linkin park meteora`
-* Now Playing (/np)
-* Queue system (/queue, /q)
-* Loop / Repeat (/loop)
-* Shuffle (/shuffle)
-* Volume control (/volume, /v)
-* Lyircs (/lyrics, /ly)
-* Pause (/pause)
-* Resume (/resume, /r)
-* Skip (/skip, /s)
-* Skip to song # in queue (/skipto, /st)
-* Toggle pruning of bot messages (/pruning)
-* Help (/help, /h)
-* Command Handler from [discordjs.guide](https://discordjs.guide/)
-* Media Controls via Reactions
-CHANGEME![reactions](https://i.imgur.com/j7CevsH.png)
+        `!createautorolemsg`
+
+    - Bulk deletes the previous messages in a chat based on user input, up to 99 previous messages.
+
+        `!clear ***NUMBER(1-99)*** i.e. (99)`
+
+    - Adds users to the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.
+
+        `!addmod ***MENTION-USERS*** i.e. (@NobleWolf42)`
+
+    - Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.
+
+        `!setup`
+
+    - Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.
+
+        `!set autorole/joinrole/general/music/modmail`
+
+- Fun Commands
+
+    - Estimates someone's age based off of their name. (Works in Direct Messages Too.)
+
+        `!agify ***INSERT-NAME*** i.e. (Steve)`
+
+    - Displays the names of which astronauts are aboard the ISS. (Works in Direct Messages Too.)
+
+        `!iss`
+
+    - Display a random quote, picked by the developers of Stormageddon. (works in Direct Messages Too.)
+
+        `!quote`
+
+- Gaming Commands
+
+    - Displays the Destiny 2 account's original creation date and last API update date. (Works in Direct Messages Too.)
+
+        `!destiny2 status ***INSERT-BUNGIE-NAME*** i.e. (NobleWolf42)`
+
+    - Displays Destiny 2 clan's bio, avatar, motto, and founder. (Works in Direct Messages Too.)
+
+        `!destiny2 clan ***INSERT-CLAN-NAME** i.e. (The Taken Clan Name)`
+
+- Music Commands
+
+    - 🎶 Play music from YouTube via url
+
+        `!play ***YOUTUBE-URL*** i.e. (https://www.youtube.com/watch?v=GLvohMXgcBo)`
+
+    - 🔎 Play music from YouTube via search query
+
+        `!play ***SEARCH-TERM*** i.e. (under the bridge red hot chili peppers)`
+
+    - 🎶 Play music from Soundcloud via url
+
+        `!play ***SOUNDCLOUD-URL*** i.e. (https://soundcloud.com/blackhorsebrigade/pearl-jam-alive)`
+
+    - 🔎 Search and select music to play
+
+        `!songsearch ***SEARCH-TERM** i.e. (Pearl Jam)`
+
+    - 📃 Play youtube playlists via url
+
+        `!playlist ***YOUTUBE-URL*** i.e. (https://www.youtube.com/watch?v=YlUKcNNmywk&list=PL5RNCwK3GIO13SR_o57bGJCEmqFAwq82c)`
+
+    - 🔎 Play youtube playlists via search query
+
+        `!playlist ***SEARCH-TERM*** i.e. (linkin park meteora)`
+
+    - Shows the currently playing song
+
+        `!nowplaying`
+
+    - Pauses the currently playing music.
+
+        `!pause`
+
+    - Resumes the currently paused music.
+
+        `!resume`
+
+    - Removes selected song from the queue.
+
+        `!remove ***QUEUE-NUMBER*** i.e. (5)`
+
+    - Toggle music loop on/off.
+
+        `!loop`
+
+    - Gets the lyrics for the currently playing song.
+
+        `!lyrics`
+
+    - Stops the playing music.
+
+        `!stop`
+
+    - Skips the currently playing song.
+
+        `!skip`
+
+    - Skips to the selected queue number.\
+
+        `skipto ***QUEUE-NUMBER*** i.e. (5)`
+    
+    - Shuffles the currently queued music.
+
+        `!shuffle`
+
+    - Shows the music queue and now playing.
+
+        `!showqueue`
+
+    - Displays volume of currently playing music if no numbers anre entered. Can change volume percent if numbers are entered.
+
+        `volume ***NUMBER(1-100)*** i.e. (100)`
+    
+- Direct Message Commands
+
+    - Whisper via Stormageddon to all moderators for the specified server.
+
+        `!modmail, ***SERVER-NAME***, ***MESSAGE*** i.e. (The Wolf Pack, Test Message.`
+
+    - Whisper via Stormageddon to report a bug to the developers of Stormageddon.
+
+        `!bugreport ***MESSAGE*** i.e. (Test Message.)`
+
+    - Developer-only command for sending messages as the bot.
+
+        `!devsend ***USER-ID***, ***MESSAGE*** i.e. (645141555719569439, Test Message.)`
+
+- Command Handler from [discordjs.guide](https://discordjs.guide/)
+- Media Controls via Reactions
+![reactions](https://i.imgur.com/memZ7Fi.png)
 
 ## 🤝 Contributing
 

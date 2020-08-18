@@ -1,33 +1,7 @@
 //#region Dependancies
-var Discord = require('discord.js');
-var fs = require('fs');
-var cfg = JSON.parse(fs.readFileSync('./data/serverconfig.json', 'utf8'));
-//#endregion
-
-//#region addmod
-async function addMod(message, user) {
-    var serverID = message.channel.guild.id;
-    var array = cfg[serverID].modmail.modlist;
-
-    if (user == undefined) {
-        return;
-    }
-    else {
-        array.push(user.id);
-    }
-
-    var modmail = {};
-    modmail.modlist = array;
-    modmail.enable = true;
-    cfg[serverID].modmail = modmail;
-
-    await bulidConfigFile();
-
-    message.channel.send("Mods Have Been Added!");
-
-    config = updateConfigFile();
-    return config;
-}
+var { MessageEmbed } = require('discord.js');
+var { writeFileSync, readFileSync } = require('fs');
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
 //#endregion
 
 //#region modmail settings
@@ -72,7 +46,7 @@ async function setModMail(message) {
     modmail.enable = enable;
     modmail.modlist = modlist;
 
-    cfg[serverID].modmail = modmail;
+    serverConfig[serverID].modmail = modmail;
 
     await bulidConfigFile();
 
@@ -87,7 +61,7 @@ async function setModMail(message) {
 async function setAutorole(message) {
     var serverID = message.channel.guild.id;
     var timeout = false;
-    var embMsg = new Discord.MessageEmbed()
+    var embMsg = new MessageEmbed()
         .setTitle('Role Message')
         .setColor(16776960)
         .setDescription('**React to the messages below to receive the associated role.**')
@@ -172,7 +146,7 @@ async function setAutorole(message) {
     autorole.roles = roles;
     autorole.reactions = reactions;
     
-    cfg[serverID].autorole = autorole;
+    serverConfig[serverID].autorole = autorole;
 
     await bulidConfigFile();
 
@@ -222,7 +196,7 @@ async function setJoinrole(message) {
     joinrole.role = role;
     joinrole.enabled = enable;
 
-    cfg[serverID].joinrole = joinrole;
+    serverConfig[serverID].joinrole = joinrole;
 
     await bulidConfigFile();
 
@@ -286,7 +260,7 @@ async function setMusic(message) {
     music.djRoles = djRoles;
     music.textChannel = textChannel;
 
-    cfg[serverID].music = music;
+    serverConfig[serverID].music = music;
 
     await bulidConfigFile();
 
@@ -332,7 +306,7 @@ async function setGeneral(message) {
     general.adminRoles = adminRoles;
     general.modRoles = modRoles;
 
-    cfg[serverID].general = general;
+    serverConfig[serverID].general = general;
 
     await bulidConfigFile();
 
@@ -360,7 +334,7 @@ async function setup(message) {
 
 //#region bulid configfile
 async function bulidConfigFile() {
-    await fs.writeFileSync('./data/serverconfig.json', JSON.stringify(cfg), function(err) {
+    await writeFileSync('./data/serverconfig.json', JSON.stringify(serverConfig), function(err) {
         if (err) {
             console.log(err);
         }
@@ -372,8 +346,8 @@ async function bulidConfigFile() {
 
 //#region add server to configfile
 function addServerConfig(serverID) {
-    if (cfg[serverID] == undefined) {
-        cfg[serverID] = {"autorole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinrole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modmail":{"enable":false,"modlist":[]}};
+    if (serverConfig[serverID] == undefined) {
+        serverConfig[serverID] = {"autorole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinrole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modmail":{"enable":false,"modlist":[]}};
     }
 
     bulidConfigFile();
@@ -381,5 +355,5 @@ function addServerConfig(serverID) {
 //#endregion
 
 //#region exports
-module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, addMod, setModMail };
+module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile };
 //#endregion

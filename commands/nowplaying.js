@@ -1,6 +1,7 @@
 const createBar = require("string-progressbar");
 const { MessageEmbed } = require("discord.js");
-const serverConfig = require("../data/serverconfig.json");
+const { readFileSync } = require('fs');
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
 const { warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
 
 module.exports = {
@@ -10,7 +11,7 @@ module.exports = {
     cooldown: 0,
     class: 'music',
     usage: 'nowplaying',
-    description: "Show the currently playing song.",
+    description: "Shows the currently playing song.",
     execute(message) {
         if (!serverConfig[message.guild.id].music.enable) {
             warnDisabled(message, 'music');
