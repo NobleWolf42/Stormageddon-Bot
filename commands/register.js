@@ -1,7 +1,6 @@
 //#region Dependancies
-const { MessageEmbed } = require('discord.js');
 const { refreshUser } = require('../helpers/userHandling.js');
-const { embedCustomDM, embedCustom } = require('../helpers/embedMessages.js');
+const { embedCustomDM } = require('../helpers/embedMessages.js');
 const botConfig = require('../data/botconfig.json');
 //#endregion
 
@@ -12,7 +11,7 @@ module.exports = {
     cooldown: 60,
     class: 'help',
     usage: 'register',
-    description: "Displays the names of all the astronauts that are aboard the ISS.",
+    description: "Lets you know if you are registered and gives you the link to register/update you info.",
     execute(message) {
         refreshUser();
         if (message.author.id in userAccountInfo) {

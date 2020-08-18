@@ -8,7 +8,7 @@ module.exports = {
     cooldown: 60,
     class: 'music',
     usage: 'showqueue',
-    description: "Show the music queue and now playing.",
+    description: "Shows the music queue and now playing.",
     execute(message) {
         const queue = message.client.queue.get(message.guild.id);
         if (!queue) return warnCustom(message, "There is nothing playing.");

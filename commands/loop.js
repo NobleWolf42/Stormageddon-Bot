@@ -1,5 +1,6 @@
 const { canModifyQueue } = require("../helpers/music.js");
-const serverConfig = require("../data/serverconfig.json");
+const { readFileSync } = require('fs');
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require("../helpers/embedMessages.js");
 const { djCheck } = require("../helpers/userHandling.js");
 
@@ -10,7 +11,7 @@ module.exports = {
     cooldown: 0,
     class: 'music',
     usage: 'loop',
-    description: "Toggle music loop.",
+    description: "Toggle music loop on/off.",
     execute(message) {
         if (!serverConfig[message.guild.id].music.enable) {
             warnDisabled(message, 'music');

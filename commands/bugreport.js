@@ -1,6 +1,5 @@
 //#regions dependancies
 const { MessageEmbed } = require('discord.js');
-const { readFileSync } = require('fs');
 const { embedCustom } = require('../helpers/embedMessages.js');
 const botConfig = require('../data/botconfig.json');
 //#endregion
@@ -11,9 +10,9 @@ module.exports = {
     aliases: [],
     cooldown: 60,
     class: 'direct',
-    usage: '!bugreport MESSAGE ',
-    description: "Whisper via Stormageddon to all moderators for the specified server.",
-    execute(message, args, client) {(client, message, content)
+    usage: '!bugreport ***MESSAGE***',
+    description: "Whisper via Stormageddon to report a bug to the developers of Stormageddon.",
+    execute(message, args, client) {
         var argsString = args.join(' ');
         var arguments = argsString.split(', ');
         var content = arguments[0];
