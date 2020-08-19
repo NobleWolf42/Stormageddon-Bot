@@ -1,5 +1,5 @@
 //#region Dependancies
-var { MessageEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 //#endregion
 
 //#region Custom Embed

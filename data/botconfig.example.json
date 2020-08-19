@@ -9,11 +9,12 @@
     },
     "oauth": {
         "privateKey": "LOCATION OF PRIVATE HTTPS KEY",
-        "publicKey": "LOCATION OF PUBLIC HTTPS KEY"
+        "publicKey": "LOCATION OF PUBLIC HTTPS KEY",
+        "port": "PORT YOU WANT THE OAUTH SERVER TO USE"
     },
     "general": {
         "clientId": "YOUR CLIENT ID",
-        "redirectUri": "YOUR REDIRECT URI:3000",
+        "redirectUri": "YOUR REDIRECT URI",
         "registerLink": "YOUR REGISTER URL"
 
     },

@@ -40,7 +40,8 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
     },
     "oauth": {
         "privateKey": "LOCATION OF PRIVATE HTTPS KEY",
-        "publicKey": "LOCATION OF PUBLIC HTTPS KEY"
+        "publicKey": "LOCATION OF PUBLIC HTTPS KEY",
+        "port": "PORT YOU WANT THE OAUTH SERVER TO USE"
     },
     "general": {
         "clientId": "YOUR CLIENT ID",

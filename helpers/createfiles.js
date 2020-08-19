@@ -1,5 +1,5 @@
 //#region Dependancies
-var { existsSync, writeFileSync } = require('fs');
+const { existsSync, writeFileSync } = require('fs');
 //#endregion
 
 //#region Creates missing files on start

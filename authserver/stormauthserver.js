@@ -4,11 +4,14 @@ const { writeFileSync, readFileSync } = require('fs');
 const { parse } = require('url');
 const botConfig = require('../data/botconfig.json');
 var currentdate = new Date();
-var months = ['January', 'Feburary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const months = ['January', 'Feburary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-const port = 3000;
+var privateKey  = readFileSync(botConfig.oauth.privateKey, 'utf8');
+var certificate = readFileSync(botConfig.oauth.publicKey, 'utf8');
+var credentials = {key: privateKey, cert: certificate};
+const port = botConfig.oauth.port;
 
-var oauth = new DiscordOauth2();
+const oauth = new DiscordOauth2();
 
 async function saveUserInfo(accessCode){
     tokenInfo = await oauth.tokenRequest({
@@ -53,10 +56,6 @@ async function saveUserInfo(accessCode){
 		}
 	});
 }
-
-var privateKey  = readFileSync(botConfig.oauth.privateKey, 'utf8');
-var certificate = readFileSync(botConfig.oauth.publicKey, 'utf8');
-var credentials = {key: privateKey, cert: certificate};
 
 https.createServer(credentials, (req, res) => {
 	let responseCode = 404;
