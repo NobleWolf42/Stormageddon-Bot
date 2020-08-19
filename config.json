@@ -1,0 +1,33 @@
+{
+    "auth": {
+        "token": "NjQ5MTIzNzI5ODAwMTY3NDU2.Xd4OlA.EpPdOB1tHQ-uDcyoogv7E3tNj9A"
+    },
+    "644966355875135499": {
+        "autorole" : {
+            "setupCMD": "createautorole",
+            "deleteSetupCMD": true,
+            "initialMessage": "`**React to the messages below to receive the associated role. If you would like to remove the role, simply remove your reaction!**`",
+            "embedMessage": "`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`",
+            "embedFooter": "Role Reactions",
+            "roles": ["Computer"],
+            "reactions": ["💻"],
+            "embed": true,
+            "embedColor": "#dd9323",
+            "embedThumbnail": false,
+            "embedThumbnailLink": ""
+        },
+        "general": {
+            "adminRoles": [
+                "Server Admin",
+                "Stormageddon Bot Contributor"
+            ],
+            "modRoles": [
+                "Bot Mod"
+            ],
+            "allowedChannels": [
+                "botspam",
+                "cz-general"
+            ]
+        }
+    }
+}
