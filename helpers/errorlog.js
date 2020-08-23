@@ -15,7 +15,14 @@ function addToLog(logtype, command, user, server, channel, client, error) {
         console.log('');
     
         logadd = {};
-        logadd.Log = `${logtype} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel}`;
+        
+        if (logtype.toLowerCase() === 'success') {
+            logadd.Log = `${logtype} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel}`;
+        }
+        else {
+            logadd.Log = `${logtype} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel} --- Error: ${error}`;
+        }
+
         logadd.Date = d;
         logadd.Code = logtype;
         logFile.logging[i] = logadd;
@@ -27,7 +34,7 @@ function addToLog(logtype, command, user, server, channel, client, error) {
                 const embMsg = new MessageEmbed()
                     .setTitle('Fatal Errors Detected!')
                     .setColor('#FF0084')
-                    .setDescription(`${logadd.Log} \n Console Error: ${error}`)
+                    .setDescription(`${logadd.Log}`)
                     .setFooter(logadd.Date)
                     .attachFiles(['./data/errorlog.json']);
                 client.users.cache.get(devList[key]).send(embMsg);
