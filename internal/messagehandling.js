@@ -6,6 +6,7 @@
     const { warnCustom, errorCustom } = require('../helpers/embedMessages.js');
     const { getRandomDoggo } = require('../helpers/doggoLinks.js');
     const { updateConfigFile } = require('../helpers/currentsettings.js');
+    const { addToLog } = require('../helpers/errorlog.js');
     var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
 //#endregion
 
@@ -123,9 +124,10 @@ function messageHandling(client) {
 
             try {
                 command.execute(message, args, client);
+                addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name, client);
             }
             catch (error) {
-                console.error(error);
+                addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, client, error);
                 errorCustom(message, "There was an error executing that command.");
             }
         //#endregion
@@ -190,9 +192,10 @@ function PMHandling (client) {
 
             try {
                 command.execute(message, args, client);
+                addToLog('Success', command.name, message.author.tag, 'Direct Message', 'Direct Message', client);
             }
             catch (error) {
-                console.error(error);
+                addToLog('Fatal Error', command.name, message.author.tag, 'Direct Message', 'Direct Message', client, error);
                 errorCustom(message, "There was an error executing that command.");
             }
         //#endregion

@@ -1,5 +1,6 @@
 //#region Dependancies
-var { MessageEmbed } = require('discord.js');
+const { MessageEmbed } = require('discord.js');
+const { addToLog } = require('../helpers/errorlog.js');
 //#endregion
 
 //#region Custom Embed
@@ -13,7 +14,7 @@ function embedCustom(message, title, color, text, img) {
 }
 //#endregion
 
-//#region Custom Embed
+//#region Custom Direct Message Embed
 function embedCustomDM(message, title, color, text, img) {
     const embMsg = new MessageEmbed()
         .setTitle(title)
@@ -45,7 +46,11 @@ function warnCustom(message, text) {
         .setDescription(text);
     message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        addToLog('Warning', command.name, message.author.tag, message.guild.name, message.channel.name, client, text);
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
+    }
+    else {
+        addToLog('Warning', command.name, message.author.tag, 'Direct Message', 'Direct Message', client, text);
     }
 }
 //#endregion
@@ -58,7 +63,11 @@ function errorNoAdmin(message) {
         .setDescription('You do not have permission to use this command. This command requires *BOT ADMIN* access to use!');
     message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        addToLog('Warning', command.name, message.author.tag, message.guild.name, message.channel.name, client, "Not Bot Admin!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
+    }
+    else {
+        addToLog('Warning', command.name, message.author.tag, 'Direct Message', 'Direct Message', client, "Not Bot Admin!");
     }
 }
 //#endregion
@@ -71,7 +80,11 @@ function errorNoMod(message) {
         .setDescription('You do not have permission to use this command. This command requires *BOT MOD* access to use!');
     message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        addToLog('Warning', command.name, message.author.tag, message.guild.name, message.channel.name, client, "Not Bot Moderator!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
+    }
+    else {
+        addToLog('Warning', command.name, message.author.tag, 'Direct Message', 'Direct Message', client, "Not Bot Moderator!");
     }
 }
 //#endregion
@@ -84,7 +97,11 @@ function errorNoDJ(message) {
         .setDescription('You do not have permission to use this command. This command requires *DJ* access to use!');
     message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        addToLog('Warning', command.name, message.author.tag, message.guild.name, message.channel.name, client, "Not DJ!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
+    }
+    else {
+        addToLog('Warning', command.name, message.author.tag, 'Direct Message', 'Direct Message', client, "Not DJ!");
     }
 }
 //#endregion
@@ -97,7 +114,11 @@ function errorNoServerAdmin(message) {
         .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!');
     message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        addToLog('Warning', command.name, message.author.tag, message.guild.name, message.channel.name, client, "Not Server Admin!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
+    }
+    else {
+        addToLog('Warning', command.name, message.author.tag, 'Direct Message', 'Direct Message', client, "Not Server Admin!");
     }
 }
 //#endregion
@@ -110,7 +131,11 @@ function errorCustom(message, text) {
         .setDescription(text);
     message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        addToLog('Warning', command.name, message.author.tag, message.guild.name, message.channel.name, client, text);
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
+    }
+    else {
+        addToLog('Warning', command.name, message.author.tag, 'Direct Message', 'Direct Message', client, text);
     }
 }
 //#endregion
@@ -123,7 +148,11 @@ function warnWrongChannel(message, correctChannel) {
         .setDescription(`That was not the correct channel for that command. The correct channel for this command is #${correctChannel}`);
     message.author.send(embMsg);
     if (message.channel.guild != undefined) {
+        addToLog('Warning', command.name, message.author.tag, message.guild.name, message.channel.name, client, "Wrong Text Channel");
         message.delete();
+    }
+    else {
+        addToLog('Warning', command.name, message.author.tag, 'Direct Message', 'Direct Message', client, "Wrong Text Channel");
     }
 }
 //#endregion
@@ -136,7 +165,11 @@ function warnDisabled(message, command) {
         .setDescription(`This feature is currently disabled. To enable it, please run the !set ${command}. NOTE: Command is only avalible to a server admin.`);
     message.author.send(embMsg);
     if (message.channel.guild != undefined) {
+        addToLog('Warning', command.name, message.author.tag, message.guild.name, message.channel.name, client, "Feature Disabled");
         message.delete();
+    }
+    else {
+        addToLog('Warning', command.name, message.author.tag, 'Direct Message', 'Direct Message', client, "Feature Disabled");
     }
 }
 //#endregion
