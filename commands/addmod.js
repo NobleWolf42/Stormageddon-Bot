@@ -13,7 +13,6 @@ module.exports = {
     usage: 'addmod ***MENTION-USERS***',
     description: "Adds users to the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
     execute(message) {
-        try {
         if (message.member.hasPermission('ADMINISTRATOR'))
             if ((message.channel.guild.id in serverConfig)) {
                 message.mentions.members.forEach(async (user) => {
@@ -46,8 +45,4 @@ module.exports = {
             errorNoServerAdmin(message, module.name);
         }
     }
-    catch (err) {
-        console.log(err);
-    }
-}
 };
