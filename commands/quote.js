@@ -7,7 +7,7 @@ const quotedata = require('../data/quotes.json').data;
 //#region Quote Command
 module.exports = {
     name: "quote",
-    type: ['DM', 'Gulid'],
+    type: ['DM', 'Guild'],
     aliases: [],
     cooldown: 5,
     class: 'fun',

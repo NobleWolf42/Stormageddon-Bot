@@ -10,7 +10,7 @@ var prefixFile = JSON.parse(readFileSync('./data/botprefix.json'));
 //#region Change Prefix Command
 module.exports = {
     name: "changeprefix",
-    type: ['Gulid'],
+    type: ['Guild'],
     aliases: [],
     cooldown: 3,
     class: 'admin',
@@ -34,17 +34,17 @@ module.exports = {
                     return;
                 }
                 else {
-                    warnCustom(message, 'Bot Prefix Must be one of the following: ````~!$%^&*()_+-={}[]|\:";\'<>?,./```');
+                    warnCustom(message, 'Bot Prefix Must be one of the following: ````~!$%^&*()_+-={}[]|\:";\'<>?,./```', module.name);
                     return;
                 }
             }
             else {
-                warnCustom(message, 'You must define a bot prefix.');
+                warnCustom(message, 'You must define a bot prefix.', module.name);
                 return;
             }
         }
         else {
-            errorNoAdmin(message);
+            errorNoAdmin(message, module.name);
             return;
         }
     }

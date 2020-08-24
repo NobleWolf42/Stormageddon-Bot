@@ -6,7 +6,7 @@ const { warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embed
 
 module.exports = {
     name: "nowplaying",
-    type: ['Gulid'],
+    type: ['Guild'],
     aliases: ["np"],
     cooldown: 0,
     class: 'music',
@@ -14,13 +14,13 @@ module.exports = {
     description: "Shows the currently playing song.",
     execute(message) {
         if (!serverConfig[message.guild.id].music.enable) {
-            warnDisabled(message, 'music');
+            warnDisabled(message, 'music', module.name);
             return;
         }
 
         if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
             const queue = message.client.queue.get(message.guild.id);
-            if (!queue) return warnCustom(message, "There is nothing playing.");
+            if (!queue) return warnCustom(message, "There is nothing playing.", module.name);
             const song = queue.songs[0];
             const seek = (queue.connection.dispatcher.streamTime - queue.connection.dispatcher.pausedTime) / 1000;
             const left = song.duration - seek;
@@ -37,7 +37,7 @@ module.exports = {
             return message.channel.send(nowPlaying);
         }
         else {
-            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel);
+            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
 };

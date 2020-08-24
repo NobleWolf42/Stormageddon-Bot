@@ -7,7 +7,7 @@ const { capitalize } = require('../helpers/stringhelpers.js');
 //#region Help function
 module.exports = {
     name: 'help',
-    type: ['DM', 'Gulid'],
+    type: ['DM', 'Guild'],
     cooldown: 0,
     aliases: ['h'],
     class: 'help',
@@ -45,7 +45,7 @@ module.exports = {
                     title = `${capitalize(args[0])} Help`;
                 }
                 else {
-                    errorNoAdmin(message);
+                    errorNoAdmin(message, module.name);
                     return;
                 }
             }
@@ -88,7 +88,7 @@ module.exports = {
             else if (args[0] == 'server') {
                 for (c = 0; c < commandClasses.length; c++) {
                     helpMessageCommands = [];
-                    commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('Gulid') && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
+                    commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('Guild') && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
 
                     if (commandClasses[c].toLowerCase() != 'help'){
                         title = `${capitalize(commandClasses[c])} Help`;
@@ -114,7 +114,7 @@ module.exports = {
             return;
         }
         else {
-            warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`**${makeCommandPageList(commandClasses)}**\``);
+            warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`**${makeCommandPageList(commandClasses)}**\``, module.name);
             
             if (message.channel.guild != undefined) {
                 message.delete({ timeout: 15000, reason: 'Cleanup.' });

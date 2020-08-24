@@ -6,7 +6,7 @@ var logFile = JSON.parse(readFileSync('./data/errorlog.json'));
 const botConfig  = require('../data/botconfig.json');
 //#endregion
 
-function addToLog(logtype, command, user, server, channel, client, error) {
+function addToLog(logtype, command, user, server, channel, error, client) {
     try {
         reloadLog();
         var d = new Date();

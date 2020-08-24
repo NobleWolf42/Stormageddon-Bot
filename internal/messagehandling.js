@@ -96,7 +96,7 @@ function messageHandling(client) {
             const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
             if (!command) return;
 
-            if (!command.type.includes('Gulid')) return;
+            if (!command.type.includes('Guild')) return;
             //#endregion
 
             //#region Anti-Spam (Cooldown) Code
@@ -114,7 +114,7 @@ function messageHandling(client) {
 
                 if (now < expirationTime) {
                     const timeLeft = (expirationTime - now) / 1000;
-                    return warnCustom(message, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+                    return warnCustom(message, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`, command.name);
                 }
             }
 
@@ -124,11 +124,11 @@ function messageHandling(client) {
 
             try {
                 command.execute(message, args, client);
-                addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name, client);
+                addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
             }
             catch (error) {
-                addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, client, error);
-                errorCustom(message, "There was an error executing that command.");
+                addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+                errorCustom(message, "There was an error executing that command.", command.name);
             }
         //#endregion
     });
@@ -182,7 +182,7 @@ function PMHandling (client) {
 
                 if (now < expirationTime) {
                     const timeLeft = (expirationTime - now) / 1000;
-                    return warnCustom(message, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+                    return warnCustom(message, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`, command.name);
                 }
             }
 
@@ -192,11 +192,11 @@ function PMHandling (client) {
 
             try {
                 command.execute(message, args, client);
-                addToLog('Success', command.name, message.author.tag, 'Direct Message', 'Direct Message', client);
+                addToLog('Success', command.name, message.author.tag, 'Direct Message', 'Direct Message');
             }
             catch (error) {
-                addToLog('Fatal Error', command.name, message.author.tag, 'Direct Message', 'Direct Message', client, error);
-                errorCustom(message, "There was an error executing that command.");
+                addToLog('Fatal Error', command.name, message.author.tag, 'Direct Message', 'Direct Message', error, client);
+                errorCustom(message, "There was an error executing that command.", command.name);
             }
         //#endregion
     })

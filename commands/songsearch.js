@@ -9,7 +9,7 @@ const youtube = new YouTubeAPI(botConfig.auth.youtubeApiKey);
 
 module.exports = {
     name: "songsearch",
-    type: ['Gulid'],
+    type: ['Guild'],
     aliases: [""],
     cooldown: 0,
     class: 'music',
@@ -17,22 +17,22 @@ module.exports = {
     description: "Searches and selects videos to play.",
     async execute(message, args) {
         if (!serverConfig[message.guild.id].music.enable) {
-            warnDisabled(message, 'music');
+            warnDisabled(message, 'music', module.name);
             return;
         }
 
         if (!djCheck(message)) {
-            errorNoDJ(message);
+            errorNoDJ(message, module.name);
             return;
         }
 
         if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
             if (!args.length)
-                return warnCustom(message, `Usage: ${message.prefix}${module.exports.name} <Video Name>`);
+                return warnCustom(message, `Usage: ${message.prefix}${module.exports.name} <Video Name>`, module.name);
             if (message.channel.activeCollector)
-                return warnCustom(message, "A message collector is already active in this channel.");
+                return warnCustom(message, "A message collector is already active in this channel.", module.name);
             if (!message.member.voice.channel)
-                return warnCustom(message, "You need to join a voice channel first!");
+                return warnCustom(message, "You need to join a voice channel first!", module.name);
 
             const search = args.join(" ");
 
@@ -65,7 +65,7 @@ module.exports = {
             }
         }
         else {
-            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel);
+            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
 };
