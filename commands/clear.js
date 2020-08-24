@@ -1,5 +1,5 @@
 //#region Dependancies
-var { errorCustom, embedCustom, warnCustom } = require('../helpers/embedMessages.js');
+const { errorCustom, embedCustom, warnCustom } = require('../helpers/embedMessages.js');
 //#endregion
 
 //#region Clear Messages Command

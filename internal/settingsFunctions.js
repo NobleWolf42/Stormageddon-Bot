@@ -1,6 +1,6 @@
 //#region Dependancies
-var { MessageEmbed } = require('discord.js');
-var { writeFileSync, readFileSync } = require('fs');
+const { MessageEmbed } = require('discord.js');
+const { writeFileSync, readFileSync } = require('fs');
 var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
 //#endregion
 

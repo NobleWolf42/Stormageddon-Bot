@@ -10,9 +10,9 @@ module.exports = {
     class: 'admin',
     usage: 'addmod ***MENTION-USERS***',
     description: "Adds users to the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
-    async execute(message) {
+    execute(message) {
         if (!(message.channel.gulid.id in serverConfig)) {
-            message.mentions.members.forEach((user) => {
+            message.mentions.members.forEach(async (user) => {
                 var serverID = message.channel.guild.id;
                 var array = serverConfig[serverID].modmail.modlist;
         
