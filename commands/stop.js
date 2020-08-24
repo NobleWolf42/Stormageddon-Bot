@@ -7,7 +7,7 @@ const { djCheck } = require("../helpers/userHandling.js");
 
 module.exports = {
     name: "stop",
-    type: ['Gulid'],
+    type: ['Guild'],
     aliases: [""],
     cooldown: 0,
     class: 'music',
@@ -15,27 +15,27 @@ module.exports = {
     description: "Stops the playing music.",
     execute(message) {
         if (!serverConfig[message.guild.id].music.enable) {
-            warnDisabled(message, 'music');
+            warnDisabled(message, 'music', module.name);
             return;
         }
 
         if (!djCheck(message)) {
-            errorNoDJ(message);
+            errorNoDJ(message, module.name);
             return;
         }
 
         if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
             const queue = message.client.queue.get(message.guild.id);
     
-            if (!queue) return warnCustom(message, "There is nothing playing.");
-            if (!canModifyQueue(message.member, message)) return;
+            if (!queue) return warnCustom(message, "There is nothing playing.", module.name);
+            if (!canModifyQueue(message.member, message, module.name)) return;
 
             queue.songs = [];
             queue.connection.dispatcher.end();
             queue.textChannel.send(`\`${message.author.tag}\` ⏹ stopped the music!`).catch(console.error);
         }
         else {
-            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel);
+            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
 };

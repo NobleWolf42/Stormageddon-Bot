@@ -34,14 +34,14 @@ module.exports = {
                 }
             }
             else {
-                warnDisabled(message, 'modmail');
+                warnDisabled(message, 'modmail', module.name);
             }
         }
         else if (serverConfig[serverID] == undefined) {
-            errorCustom(message, `The \`!setup\` command has not been run on \`${servername}\` yet.`);
+            errorCustom(message, `The \`!setup\` command has not been run on \`${servername}\` yet.`, module.name);
         }
         else {
-            warnCustom(message, 'The server you specified does not have this bot, or you failed to specify a server.');
+            warnCustom(message, 'The server you specified does not have this bot, or you failed to specify a server.', module.name);
         }
     }
 };

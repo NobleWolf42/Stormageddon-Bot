@@ -3,7 +3,7 @@ const { warnCustom } = require("../helpers/embedMessages.js");
 
 module.exports = {
     name: "showqueue",
-    type: ['Gulid'],
+    type: ['Guild'],
     aliases: ["q"],
     cooldown: 60,
     class: 'music',
@@ -11,7 +11,7 @@ module.exports = {
     description: "Shows the music queue and now playing.",
     execute(message) {
         const queue = message.client.queue.get(message.guild.id);
-        if (!queue) return warnCustom(message, "There is nothing playing.");
+        if (!queue) return warnCustom(message, "There is nothing playing.", module.name);
 
         const description = queue.songs.map((song, index) => `${index + 1}. ${escapeMarkdown(song.title)}`);
 
