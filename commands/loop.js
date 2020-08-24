@@ -6,7 +6,7 @@ const { djCheck } = require("../helpers/userHandling.js");
 
 module.exports = {
     name: "loop",
-    type: ['Gulid'],
+    type: ['Guild'],
     aliases: ['l'],
     cooldown: 0,
     class: 'music',
@@ -14,19 +14,19 @@ module.exports = {
     description: "Toggle music loop on/off.",
     execute(message) {
         if (!serverConfig[message.guild.id].music.enable) {
-            warnDisabled(message, 'music');
+            warnDisabled(message, 'music', module.name);
             return;
         }
 
         if (!djCheck(message)) {
-            errorNoDJ(message);
+            errorNoDJ(message, module.name);
             return;
         }
 
         if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
             const queue = message.client.queue.get(message.guild.id);
-            if (!queue) return warnCustom(message, "There is nothing playing.");
-            if (!canModifyQueue(message.member, message)) return;
+            if (!queue) return warnCustom(message, "There is nothing playing.", module.name);
+            if (!canModifyQueue(message.member, message, module.name)) return;
 
             // toggle from false to true and reverse
             queue.loop = !queue.loop;
@@ -35,7 +35,7 @@ module.exports = {
                 .catch(console.error);
         }
         else {
-            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel);
+            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
 };

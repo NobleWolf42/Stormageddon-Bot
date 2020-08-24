@@ -6,7 +6,7 @@ const { djCheck } = require("../helpers/userHandling.js");
 
 module.exports = {
     name: "shuffle",
-    type: ['Gulid'],
+    type: ['Guild'],
     cooldown: 10,
     aliases: [''],
     class: 'music',
@@ -14,19 +14,19 @@ module.exports = {
     description: "Shuffles the currently queued music.",
     execute(message) {
         if (!serverConfig[message.guild.id].music.enable) {
-            warnDisabled(message, 'music');
+            warnDisabled(message, 'music', module.name);
             return;
         }
 
         if (!djCheck(message)) {
-            errorNoDJ(message);
+            errorNoDJ(message, module.name);
             return;
         }
 
         if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
             const queue = message.client.queue.get(message.guild.id);
-            if (!queue) return warnCustom("There is no queue.");
-            if (!canModifyQueue(message.member)) return;
+            if (!queue) return warnCustom("There is no queue.", module.name);
+            if (!canModifyQueue(message.member, message, module.name)) return;
 
             let songs = queue.songs;
             for (let i = songs.length - 1; i > 1; i--) {
@@ -38,7 +38,7 @@ module.exports = {
             queue.textChannel.send(`\`${message.author.tag}\` 🔀 shuffled the queue`);
         }
         else {
-            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel);
+            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
 };

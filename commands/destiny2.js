@@ -7,7 +7,7 @@ const { embedCustom, warnCustom, errorCustom } = require('../helpers/embedMessag
 //#region ISS Command
 module.exports = {
     name: "destiny2",
-    type: ['DM', 'Gulid'],
+    type: ['DM', 'Guild'],
     aliases: ['d2'],
     cooldown: 0,
     class: 'gaming',
@@ -48,10 +48,10 @@ function getStatus(message, pers_name) {
                 embedCustom(message, 'User Information', '#F5F5F5', `User was last updated at ${data["lastUpdate"]}\n User began their journey at ${data["firstAccess"]}.`);
             }
             else {
-                warnCustom(message, `The Search for \`${pers_name}\` returned no results.\n Try something else.`);
+                warnCustom(message, `The Search for \`${pers_name}\` returned no results.\n Try something else.`, module.name);
             }
         } else {
-            errorCustom(message, `The Destiny API was unable to be reached at this time.\n Try again later.`);
+            errorCustom(message, `The Destiny API was unable to be reached at this time.\n Try again later.`, module.name);
             }
     }
     request.send()
@@ -75,14 +75,14 @@ function getClan(message, clan_name){
                 embedCustom(message, `${clan_name} Clan Information`, '#F5F5F5', `The clan was created on ${data["detail"]["creationDate"]}.\n The founder is ${data["founder"]["bungieNetUserInfo"]["displayName"]}.\n\n ${data["detail"]["about"]}`, attachment);
             }
             else {
-                warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`);
+                warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
             }
         }
         else if (error.ErrorStatus == 'ClanNotFound') {
-            warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`);
+            warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
         }
         else {
-            errorCustom(message, "The Destiny API was unable to be reached at this time.\n Try again later.");
+            errorCustom(message, "The Destiny API was unable to be reached at this time.\n Try again later.", module.name);
         }
     }
 

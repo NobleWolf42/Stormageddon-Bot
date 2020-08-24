@@ -3,7 +3,7 @@ const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js
 
 module.exports = {
     name: "set",
-    type: ['Gulid'],
+    type: ['Guild'],
     aliases: [""],
     cooldown: 0,
     class: 'admin',
@@ -27,11 +27,11 @@ module.exports = {
                 setModMail(message);
             }
             else {
-                errorCustom(message, "Not a valid settings catagory!");
+                errorCustom(message, "Not a valid settings catagory!", module.name);
             }
         }
         else {
-            errorNoServerAdmin(message);
+            errorNoServerAdmin(message, module.name);
         };
         return;
     }

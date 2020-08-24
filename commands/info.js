@@ -5,7 +5,7 @@ const { embedCustom } = require('../helpers/embedMessages.js');
 //#region info command
 module.exports = {
     name: "info",
-    type: ['DM', 'Gulid'],
+    type: ['DM', 'Guild'],
     aliases: [],
     cooldown: 60,
     class: 'help',

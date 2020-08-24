@@ -6,7 +6,7 @@ const { errorCustom, embedCustom } = require('../helpers/embedMessages.js');
 //#region ISS Command
 module.exports = {
     name: "iss",
-    type: ['DM', 'Gulid'],
+    type: ['DM', 'Guild'],
     aliases: [],
     cooldown: 60,
     class: 'fun',
@@ -28,7 +28,7 @@ module.exports = {
          
                 embedCustom(message, 'Astronaut Information: ', '#000000', response);
             } else {
-                errorCustom(message, 'The ISS API was unable to be reached at this time. \n Try again later.');
+                errorCustom(message, 'The ISS API was unable to be reached at this time. \n Try again later.', module.name);
             }
         }
 
