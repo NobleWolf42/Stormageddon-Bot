@@ -1,6 +1,7 @@
 //#region Dependancies
-var { MessageEmbed } = require('discord.js');
-var { writeFileSync, readFileSync } = require('fs');
+const { MessageEmbed } = require('discord.js');
+const { writeFileSync, readFileSync } = require('fs');
+const { updateConfigFile } = require('../helpers/currentsettings.js');
 var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
 //#endregion
 
@@ -48,7 +49,7 @@ async function setModMail(message) {
 
     serverConfig[serverID].modmail = modmail;
 
-    await bulidConfigFile();
+    await bulidConfigFile(serverConifg);
 
     message.channel.send("Mod Mail Setup Complete!");
 
@@ -148,7 +149,7 @@ async function setAutorole(message) {
     
     serverConfig[serverID].autorole = autorole;
 
-    await bulidConfigFile();
+    await bulidConfigFile(serverConifg);
 
     message.channel.send("Auto Role Setup Complete!");
 
@@ -198,7 +199,7 @@ async function setJoinrole(message) {
 
     serverConfig[serverID].joinrole = joinrole;
 
-    await bulidConfigFile();
+    await bulidConfigFile(serverConifg);
 
     message.channel.send("Join Role Setup Complete!");
 
@@ -262,7 +263,7 @@ async function setMusic(message) {
 
     serverConfig[serverID].music = music;
 
-    await bulidConfigFile();
+    await bulidConfigFile(serverConifg);
 
     message.channel.send("Music Setup Complete!");
 
@@ -308,7 +309,7 @@ async function setGeneral(message) {
 
     serverConfig[serverID].general = general;
 
-    await bulidConfigFile();
+    await bulidConfigFile(serverConifg);
 
     message.channel.send("General Setup Complete!");
 
@@ -333,8 +334,8 @@ async function setup(message) {
 //#endregion
 
 //#region bulid configfile
-async function bulidConfigFile() {
-    await writeFileSync('./data/serverconfig.json', JSON.stringify(serverConfig), function(err) {
+async function bulidConfigFile(config) {
+    await writeFileSync('./data/serverconfig.json', JSON.stringify(config), function(err) {
         if (err) {
             console.log(err);
         }
@@ -350,7 +351,7 @@ function addServerConfig(serverID) {
         serverConfig[serverID] = {"autorole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinrole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modmail":{"enable":false,"modlist":[]}};
     }
 
-    bulidConfigFile();
+    bulidConfigFile(serverConifg);
 }
 //#endregion
 

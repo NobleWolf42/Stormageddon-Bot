@@ -1,11 +1,11 @@
 //#region Dependancies
-var { errorCustom, embedCustom, warnCustom } = require('../helpers/embedMessages.js');
+const { errorCustom, embedCustom, warnCustom } = require('../helpers/embedMessages.js');
 //#endregion
 
 //#region Clear Messages Command
 module.exports = {
     name: "clear",
-    type: ['Gulid'],
+    type: ['Guild'],
     aliases: ['clr', 'delete', 'remove'],
     cooldown: 0,
     class: 'admin',
@@ -16,17 +16,17 @@ module.exports = {
         var passed = true;
 
         if(isNaN(amount)) {
-            warnCustom(message, `That is not a valid number for the \`${message.prefix}clear\` command!`);
+            warnCustom(message, `That is not a valid number for the \`${message.prefix}clear\` command!`, module.name);
             passed = false;
         }
         else if (amount < 1 || amount > 99) {
-            warnCustom(message, `${args[0]} is an invalid number! __**Number must be between 1 and 99!**__`);
+            warnCustom(message, `${args[0]} is an invalid number! __**Number must be between 1 and 99!**__`, module.name);
             passed = false;
         }
         else if(amount >= 1 && amount <= 99) {
             message.channel.bulkDelete((amount + 1), true).catch(err => {
                 console.error(err);
-                errorCustom(message, 'An error occurred while attempting to delete!')
+                errorCustom(message, 'An error occurred while attempting to delete!', module.name)
                 passed = false;
             });
             if(passed == true) {

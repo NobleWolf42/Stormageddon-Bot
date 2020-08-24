@@ -6,7 +6,7 @@ const { generateEmbedFields } = require('../internal/autorole.js');
 
 module.exports = {
     name: "createautorolemessage",
-    type: ['Gulid'],
+    type: ['Guild'],
     aliases: [],
     cooldown: 60,
     class: 'admin',

@@ -11,7 +11,7 @@ const { djCheck } = require("../helpers/userHandling.js");
 
 module.exports = {
     name: "play",
-    type: ['Gulid'],
+    type: ['Guild'],
     aliases: ["p"],
     cooldown: 3,
     class: 'music',
@@ -20,12 +20,12 @@ module.exports = {
     async execute(message, args) {
 
         if (!serverConfig[message.guild.id].music.enable) {
-            warnDisabled(message, 'music');
+            warnDisabled(message, 'music', module.name);
             return;
         }
 
         if (!djCheck(message)) {
-            errorNoDJ(message);
+            errorNoDJ(message, module.name);
             return;
         }
 
@@ -33,18 +33,18 @@ module.exports = {
             const { channel } = message.member.voice;
 
             const serverQueue = message.client.queue.get(message.guild.id);
-            if (!channel) return warnCustom(message, "You need to join a voice channel first!").catch(console.error);
+            if (!channel) return warnCustom(message, "You need to join a voice channel first!", module.name).catch(console.error);
             if (serverQueue && channel !== message.guild.me.voice.channel)
-                return warnCustom(message, `You must be in the same channel as ${message.client.user}`).catch(console.error);
+                return warnCustom(message, `You must be in the same channel as ${message.client.user}`, module.name).catch(console.error);
 
             if (!args.length)
-                return warnCustom(message, `Usage: ${message.prefix}play <YouTube URL | Video Name | Soundcloud URL>`);
+                return warnCustom(message, `Usage: ${message.prefix}play <YouTube URL | Video Name | Soundcloud URL>`, module.name);
 
             const permissions = channel.permissionsFor(message.client.user);
             if (!permissions.has("CONNECT"))
-                return errorCustom(message, "Cannot connect to voice channel, missing permissions!");
+                return errorCustom(message, "Cannot connect to voice channel, missing permissions!", module.name);
             if (!permissions.has("SPEAK"))
-                return errorCustom(message, "I cannot speak in this voice channel, make sure I have the proper permissions!");
+                return errorCustom(message, "I cannot speak in this voice channel, make sure I have the proper permissions!", module.name);
 
             const search = args.join(" ");
             const videoPattern = /^(https?:\/\/)?(www\.)?(m\.)?(youtube\.com|youtu\.?be)\/.+$/gi;
@@ -81,7 +81,7 @@ module.exports = {
                     };
                 } catch (error) {
                     console.error(error);
-                    return errorCustom(message, error.message);
+                    return errorCustom(message, error.message, module.name);
                 }
             } else if (scRegex.test(url)) {
                 try {
@@ -93,8 +93,8 @@ module.exports = {
                     };
                 } catch (error) {
                     if (error.statusCode === 404)
-                        return errorCustom(message, "Could not find that Soundcloud track.");
-                        return errorCustom(message, "There was an error playing that Soundcloud track.");
+                        return errorCustom(message, "Could not find that Soundcloud track.", module.name);
+                        return errorCustom(message, "There was an error playing that Soundcloud track.", module.name);
                     }
             } else {
                 try {
@@ -107,7 +107,7 @@ module.exports = {
                     };
                 } catch (error) {
                     console.error(error);
-                        return errorCustom(message, "No video was found with a matching title");
+                        return errorCustom(message, "No video was found with a matching title", module.name);
                 }
             }
 
@@ -124,16 +124,16 @@ module.exports = {
             try {
                 queueConstruct.connection = await channel.join();
                 await queueConstruct.connection.voice.setSelfDeaf(true);
-                play(queueConstruct.songs[0], message);
+                play(queueConstruct.songs[0], message, module.name);
             } catch (error) {
                 console.error(error);
                 message.client.queue.delete(message.guild.id);
                 await channel.leave();
-                return errorCustom(message, `Could not join the channel: ${error}`);
+                return errorCustom(message, `Could not join the channel: ${error}`, module.name);
             }
         }
         else {
-            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel);
+            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
 };

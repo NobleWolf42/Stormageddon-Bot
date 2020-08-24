@@ -6,7 +6,7 @@ const { warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embed
 
 module.exports = {
     name: "lyrics",
-    type: ['Gulid'],
+    type: ['Guild'],
     aliases: ["ly"],
     cooldown: 0,
     class: 'music',
@@ -14,13 +14,13 @@ module.exports = {
     description: "Gets the lyrics for the currently playing song.",
     async execute(message) {
         if (!serverConfig[message.guild.id].music.enable) {
-            warnDisabled(message, 'music');
+            warnDisabled(message, 'music', module.name);
             return;
         }
 
         if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
             const queue = message.client.queue.get(message.guild.id);
-            if (!queue) return warnCustom(message, "There is nothing playing.");
+            if (!queue) return warnCustom(message, "There is nothing playing.", module.name);
 
             let lyrics = null;
 
@@ -42,7 +42,7 @@ module.exports = {
             return message.channel.send(lyricsEmbed).catch(console.error);
         }
         else {
-            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel);
+            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
 };

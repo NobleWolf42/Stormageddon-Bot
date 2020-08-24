@@ -34,7 +34,7 @@ async function play(song, message) {
         }
 
         console.error(error);
-        return errorCustom(message, `Error: ${error.message ? error.message : error}`);
+        return errorCustom(message, `Error: ${error.message ? error.message : error}`, 'Music Helper');
     }
 
     queue.connection.on("disconnect", () => message.client.queue.delete(message.guild.id));
@@ -86,7 +86,7 @@ async function play(song, message) {
             case "⏭":
                 queue.playing = true;
                 reaction.users.remove(user).catch(console.error);
-                if (!canModifyQueue(member, message)) return;
+                if (!canModifyQueue(member, message, 'Music Helper')) return;
                 queue.connection.dispatcher.end();
                 queue.textChannel.send(`\`${user.tag}\` ⏩ skipped the song`).catch(console.error);
                 collector.stop();
@@ -94,7 +94,7 @@ async function play(song, message) {
 
             case "⏯":
                 reaction.users.remove(user).catch(console.error);
-                if (!canModifyQueue(member, message)) return;
+                if (!canModifyQueue(member, message, 'Music Helper')) return;
                 if (queue.playing) {
                     queue.playing = !queue.playing;
                     queue.connection.dispatcher.pause(true);
@@ -108,14 +108,14 @@ async function play(song, message) {
 
             case "🔁":
                 reaction.users.remove(user).catch(console.error);
-                if (!canModifyQueue(member, message)) return;
+                if (!canModifyQueue(member, message, 'Music Helper')) return;
                 queue.loop = !queue.loop;
                 queue.textChannel.send(`\`${user.tag}\` has turned the loop ${queue.loop ? "**on**" : "**off**"}.`).catch(console.error);
                 break;
 
             case "⏹":
                 reaction.users.remove(user).catch(console.error);
-                if (!canModifyQueue(member, message)) return console.log('Not In Voicechat');
+                if (!canModifyQueue(member, message, 'Music Helper')) return console.log('Not In Voicechat');
                 queue.songs = [];
                 queue.textChannel.send(`\`${user.tag}\` ⏹ stopped the music!`).catch(console.error);
                 try {
@@ -141,12 +141,12 @@ async function play(song, message) {
     });
 };
 
-function canModifyQueue(member, message) {
+function canModifyQueue(member, message, commandName) {
     const { channel } = member.voice;
     const botChannel = member.guild.me.voice.channel;
 
     if (channel !== botChannel) {
-        warnCustom(message, "You need to join the voice channel first!").catch(console.error);
+        warnCustom(message, "You need to join the voice channel first!", commandName).catch(console.error);
         return false;
     }
     return true;

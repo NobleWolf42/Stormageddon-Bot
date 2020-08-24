@@ -6,7 +6,7 @@ const botConfig = require('../data/botconfig.json');
 
 module.exports = {
     name: "register",
-    type: ['DM', 'Gulid'],
+    type: ['DM', 'Guild'],
     aliases: [],
     cooldown: 60,
     class: 'help',

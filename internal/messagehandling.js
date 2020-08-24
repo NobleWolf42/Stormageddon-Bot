@@ -6,6 +6,7 @@
     const { warnCustom, errorCustom } = require('../helpers/embedMessages.js');
     const { getRandomDoggo } = require('../helpers/doggoLinks.js');
     const { updateConfigFile } = require('../helpers/currentsettings.js');
+    const { addToLog } = require('../helpers/errorlog.js');
     var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
 //#endregion
 
@@ -95,7 +96,7 @@ function messageHandling(client) {
             const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
             if (!command) return;
 
-            if (!command.type.includes('Gulid')) return;
+            if (!command.type.includes('Guild')) return;
             //#endregion
 
             //#region Anti-Spam (Cooldown) Code
@@ -113,7 +114,7 @@ function messageHandling(client) {
 
                 if (now < expirationTime) {
                     const timeLeft = (expirationTime - now) / 1000;
-                    return warnCustom(message, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+                    return warnCustom(message, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`, command.name);
                 }
             }
 
@@ -123,10 +124,11 @@ function messageHandling(client) {
 
             try {
                 command.execute(message, args, client);
+                addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
             }
             catch (error) {
-                console.error(error);
-                errorCustom(message, "There was an error executing that command.");
+                addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+                errorCustom(message, "There was an error executing that command.", command.name);
             }
         //#endregion
     });
@@ -180,7 +182,7 @@ function PMHandling (client) {
 
                 if (now < expirationTime) {
                     const timeLeft = (expirationTime - now) / 1000;
-                    return warnCustom(message, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`);
+                    return warnCustom(message, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`, command.name);
                 }
             }
 
@@ -190,10 +192,11 @@ function PMHandling (client) {
 
             try {
                 command.execute(message, args, client);
+                addToLog('Success', command.name, message.author.tag, 'Direct Message', 'Direct Message');
             }
             catch (error) {
-                console.error(error);
-                errorCustom(message, "There was an error executing that command.");
+                addToLog('Fatal Error', command.name, message.author.tag, 'Direct Message', 'Direct Message', error, client);
+                errorCustom(message, "There was an error executing that command.", command.name);
             }
         //#endregion
     })

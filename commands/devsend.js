@@ -23,7 +23,7 @@ module.exports = {
             embedCustom(message, 'Message Sent.', '#0B6E29', `**Message:** \`${content}\` \n**Sent To:** \`${client.users.cache.get(user).tag}\``);
         }
         else {
-            errorCustom(message, 'You do not have permission to use this command!');
+            errorCustom(message, 'You do not have permission to use this command!', module.name);
         }
     }
 };
