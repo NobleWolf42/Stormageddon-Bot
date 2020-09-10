@@ -15,20 +15,15 @@ module.exports = {
     description: "Sends messege as bot.",
     execute(message, args, client) {
         if (adminCheck(message)) {
-            try {
-                var argsString = args.join(' ');
+            var argsString = args.join(' ');
                 
-                if (argsString != '') {
-                    message.channel.send(argsString);
-                }
-                else {
-                    errorCustom(message, "Cannot send an empty message!", module.name);
-                }
-                message.delete();
+            if (argsString != '') {
+                message.channel.send(argsString);
             }
-            catch (error) {
-                addToLog('Fatal Error', module.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+            else {
+                errorCustom(message, "Cannot send an empty message!", module.name);
             }
+            message.delete();
         }
         else {
             errorNoAdmin(message, module.name);
