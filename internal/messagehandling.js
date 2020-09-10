@@ -66,7 +66,7 @@ function messageHandling(client) {
             }
 
             //@storm
-            if(message.mentions.users.first().id === '645141555719569439') {
+            if(message.mentions.users.first().id === client.user.id) {
                 var attachment = new MessageAttachment(getRandomDoggo());
                 if (serverConfig[serverID] == undefined) {
                     message.channel.send(`Please run \`${prefix}setup\` in an admin only chat channel to set up the bot on your server.`);
