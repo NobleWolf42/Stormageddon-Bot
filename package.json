@@ -1,6 +1,6 @@
 {
     "name": "stormageddon-bot",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "description": "Custom Discord Bot Made for My Server",
     "main": "storm.js",
     "author": "Ben Carpenter (NobleWolf42) <bencarpenterit@gmail.com>",

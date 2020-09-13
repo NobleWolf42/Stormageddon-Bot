@@ -149,7 +149,7 @@ function warnWrongChannel(message, correctChannel, commandName) {
     message.author.send(embMsg);
     if (message.channel.guild != undefined) {
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Wrong Text Channel");
-        message.delete();
+        message.delete({ timeout: 1500, reason: 'Cleanup.' });
     }
     else {
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Wrong Text Channel");
@@ -166,7 +166,7 @@ function warnDisabled(message, command, commandName) {
     message.author.send(embMsg);
     if (message.channel.guild != undefined) {
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Feature Disabled");
-        message.delete();
+        message.delete({ timeout: 1500, reason: 'Cleanup.' });
     }
     else {
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Feature Disabled");
