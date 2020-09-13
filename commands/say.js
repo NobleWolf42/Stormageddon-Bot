@@ -23,7 +23,7 @@ module.exports = {
             else {
                 errorCustom(message, "Cannot send an empty message!", module.name);
             }
-            message.delete();
+            message.delete({ timeout: 1500, reason: 'Cleanup.' });
         }
         else {
             errorNoAdmin(message, module.name);
