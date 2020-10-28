@@ -58,13 +58,6 @@ function messageHandling(client) {
         //#region for all @ Commands
         if(message.mentions.users.first() !== undefined) {
 
-            //@magma
-            if(message.mentions.users.first().id === '211865015592943616') {
-                var attachment = new MessageAttachment('https://cdn.discordapp.com/attachments/254389303294165003/702774952092237915/2Q.png');
-                message.channel.send('IT\'S PIZZA TIME!!!');
-                message.channel.send(attachment);
-            }
-
             //@storm
             if(message.mentions.users.first().id === client.user.id) {
                 var attachment = new MessageAttachment(getRandomDoggo());
