@@ -1,4 +1,4 @@
-const ytdlDiscord = require("ytdl-core-discord");
+const ytdl = require("erit-ytdl");
 const scdl = require("soundcloud-downloader");
 const botConfig = require("../data/botconfig.json");
 const { warnCustom, errorCustom } = require('../helpers/embedMessages.js')
@@ -8,9 +8,13 @@ async function play(song, message) {
     const queue = message.client.queue.get(message.guild.id);
 
     if (!song) {
-        queue.channel.leave();
-        message.client.queue.delete(message.guild.id);
-        return queue.textChannel.send("🚫 Music queue ended.").catch(console.error);
+        setTimeout(function () {
+        if (queue.connection.dispatcher && message.guild.me.voice.channel) return;
+            queue.channel.leave();
+            queue.textChannel.send("Leaving voice channel...");
+        }, 5 * 1000);
+        queue.textChannel.send("❌ Music queue ended.").catch(console.error);
+        return message.client.queue.delete(message.guild.id);
     }
 
     let stream = null;
@@ -18,7 +22,7 @@ async function play(song, message) {
 
     try {
         if (song.url.includes("youtube.com")) {
-            stream = await ytdlDiscord(song.url, { highWaterMark: 1 << 25 });
+            stream = await ytdl(song.url, { highWaterMark: 1 << 25 });
         } else if (song.url.includes("soundcloud.com")) {
             try {
                 stream = await scdl.downloadFormat(song.url, scdl.FORMATS.OPUS, botConfig.auth.soundcloudApiKey ? botConfig.auth.soundcloudApiKey : undefined);
@@ -67,6 +71,9 @@ async function play(song, message) {
         var playingMessage = await queue.textChannel.send(`🎶 Started playing: **${song.title}** ${song.url}`);
         await playingMessage.react("⏭");
         await playingMessage.react("⏯");
+        await playingMessage.react("🔇");
+        await playingMessage.react("🔉");
+        await playingMessage.react("🔊");
         await playingMessage.react("🔁");
         await playingMessage.react("⏹");
     } catch (error) {
@@ -104,6 +111,42 @@ async function play(song, message) {
                     queue.connection.dispatcher.resume();
                     queue.textChannel.send(`\`${user.tag}\` ▶ resumed the music!`).catch(console.error);
                 }
+                break;
+
+            case "🔇":
+                reaction.users.remove(user).catch(console.error);
+                if (!canModifyQueue(member)) return;
+                if (queue.volume <= 0) {
+                    queue.volume = 100;
+                    queue.connection.dispatcher.setVolumeLogarithmic(20 / 100);
+                    queue.textChannel.send(`\`${user.tag}\` 🔊 unmuted the music!`).catch(console.error);
+                } else {
+                    queue.volume = 0;
+                    queue.connection.dispatcher.setVolumeLogarithmic(0);
+                    queue.textChannel.send(`\`${user.tag}\` 🔇 muted the music!`).catch(console.error);
+                }
+                break;
+          
+            case "🔉":
+                reaction.users.remove(user).catch(console.error);
+                if (!canModifyQueue(member) || queue.volume == 0) return;
+                if (queue.volume - 10 <= 0) queue.volume = 0;
+                else queue.volume = queue.volume - 10;
+                queue.connection.dispatcher.setVolumeLogarithmic(queue.volume / 100);
+                queue.textChannel
+                    .send(`\`${user.tag}\` 🔉 decreased the volume, the volume is now ${queue.volume}%`)
+                    .catch(console.error);
+                break;
+          
+            case "🔊":
+                reaction.users.remove(user).catch(console.error);
+                if (!canModifyQueue(member) || queue.volume == 100) return;
+                if (queue.volume + 10 >= 100) queue.volume = 100;
+                else queue.volume = queue.volume + 10;
+                queue.connection.dispatcher.setVolumeLogarithmic(queue.volume / 100);
+                queue.textChannel
+                    .send(`\`${user.tag}\` 🔊 increased the volume, the volume is now ${queue.volume}%`)
+                    .catch(console.error);
                 break;
 
             case "🔁":
