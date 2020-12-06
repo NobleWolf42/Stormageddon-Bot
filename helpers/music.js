@@ -117,7 +117,7 @@ async function play(song, message) {
                 reaction.users.remove(user).catch(console.error);
                 if (!canModifyQueue(member)) return;
                 if (queue.volume <= 0) {
-                    queue.volume = 100;
+                    queue.volume = 20;
                     queue.connection.dispatcher.setVolumeLogarithmic(20 / 100);
                     queue.textChannel.send(`\`${user.tag}\` 🔊 unmuted the music!`).catch(console.error);
                 } else {
