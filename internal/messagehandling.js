@@ -122,6 +122,7 @@ function messageHandling(client) {
             catch (error) {
                 addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
                 errorCustom(message, "There was an error executing that command.", command.name);
+                console.log(error);
             }
         //#endregion
     });

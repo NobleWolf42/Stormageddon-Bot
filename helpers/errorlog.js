@@ -11,8 +11,6 @@ function addToLog(logtype, command, user, server, channel, error, client) {
         reloadLog();
         var d = new Date();
         var i = logFile.logging.length;
-        console.log(`${logtype} - Command: ${capitalize(command)} Attempted By: ${user} in ${server}'s #${channel} channel at ${d.toDateString()}`);
-        console.log('');
     
         logadd = {};
         
@@ -22,6 +20,9 @@ function addToLog(logtype, command, user, server, channel, error, client) {
         else {
             logadd.Log = `${logtype} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel} --- Error: ${error}`;
         }
+
+        console.log(logadd.Log);
+        console.log('');
 
         logadd.Date = d;
         logadd.Code = logtype;

@@ -131,11 +131,11 @@ function errorCustom(message, text, commandName) {
         .setDescription(text);
     message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
-        addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, text);
+        addToLog('Fatal Error', commandName, message.author.tag, message.guild.name, message.channel.name, text);
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
-        addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
+        addToLog('Fatal Error', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
     }
 }
 //#endregion

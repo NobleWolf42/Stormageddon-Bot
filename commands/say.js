@@ -1,7 +1,6 @@
 //#region Dependancies
 const { adminCheck } = require('../helpers/userHandling.js');
 const { errorNoAdmin, errorCustom } = require('../helpers/embedMessages.js');
-const { addToLog } = require('../helpers/errorlog.js');
 //#endregion
 
 //#region say command
