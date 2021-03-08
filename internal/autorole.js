@@ -2,6 +2,7 @@
 const { readFileSync } = require('fs');
 var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
 const { updateConfigFile } = require('../helpers/currentsettings.js');
+const { Emoji, MessageReaction } = require("discord.js");
 //#endregion
 
 //#region Autoroll
@@ -15,8 +16,6 @@ const { updateConfigFile } = require('../helpers/currentsettings.js');
         });
     }
     //#endregion
-
-    //#region Handles the creation of the role reactions. Will either send the role messages separately or in an embed, depending on your settings in serverConfig[serverID].json
 //#endregion
 
 //#region Autorole Listener
@@ -47,8 +46,7 @@ function autoroleListener(client) {
 
         if (!reaction) {
             // Create an object that can be passed through the event like normal
-            const emoji = new Emoji(client.guilds.get(data.guild_id), data.emoji);
-            reaction = new MessageReaction(message, emoji, 1, data.user_id === client.user.id);
+            reaction = new MessageReaction(client, data, message, 1, data.user_id === client.user.id);
         }
 
         let embedFooterText;
