@@ -46,11 +46,13 @@ client.on("ready", () => {
 //Adds New Servers to Config
 client.on("guildCreate", newGuild => {
     addServerConfig(newGuild.id);
+    console.log(`Joined New Server: ${newGuild.name}#${newGuild.id}`);
 })
 
 //Removes Server from Config
 client.on("guildDelete", oldGuild => {
     removeServerConfig(oldGuild.id);
+    console.log(`Left Server: ${newGuild.name}#${newGuild.id}`);
 })
 
 //Logs Errors
