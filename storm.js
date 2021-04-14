@@ -52,7 +52,7 @@ client.on("guildCreate", newGuild => {
 //Removes Server from Config
 client.on("guildDelete", oldGuild => {
     removeServerConfig(oldGuild.id);
-    console.log(`Left Server: ${newGuild.name}#${newGuild.id}`);
+    console.log(`Left Server: ${oldGuild.name}#${oldGuild.id}`);
 })
 
 //Logs Errors
