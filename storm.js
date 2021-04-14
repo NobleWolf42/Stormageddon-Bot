@@ -13,7 +13,7 @@
     //#endregion
 
     //#region Internals
-    const { addServerConfig } = require('./internal/settingsFunctions.js');
+    const { addServerConfig, removeServerConfig } = require('./internal/settingsFunctions.js');
     const { autoroleListener } = require('./internal/autorole.js');
     const { PMHandling, messageHandling } = require('./internal/messagehandling.js');
     const { serverJoin } = require('./internal/serverjoin.js');

@@ -366,5 +366,5 @@ function removeServerConfig(serverID) {
 //#endregion
 
 //#region exports
-module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile, removeServerConfig };
+module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile, removeServerConfig, addServerConfig };
 //#endregion
