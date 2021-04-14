@@ -231,7 +231,7 @@ async function setMusic(message) {
                 return message.channel.send('Timeout Occured. Process Terminated.')
             }
         
-            message.channel.send('Please respont with the name of the text channel you would like the music commands to be used in.')
+            message.channel.send('Please d with the name of the text channel you would like the music commands to be used in.')
         
             try {
                 var musictxtin = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
@@ -366,5 +366,5 @@ function removeServerConfig(serverID) {
 //#endregion
 
 //#region exports
-module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile, removeServerConfig };
+module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile, removeServerConfig, addServerConfig };
 //#endregion
