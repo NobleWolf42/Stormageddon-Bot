@@ -1,6 +1,6 @@
 //#region Initial Set-Up
     //#region Dependecies
-    const { Client } = require('discord.js');
+    const { Client, Guild } = require('discord.js');
     //#endregion
 
     //#region Configs
@@ -13,6 +13,7 @@
     //#endregion
 
     //#region Internals
+    const { addServerConfig } = require('./internal/settingsFunctions.js');
     const { autoroleListener } = require('./internal/autorole.js');
     const { PMHandling, messageHandling } = require('./internal/messagehandling.js');
     const { serverJoin } = require('./internal/serverjoin.js');
@@ -41,6 +42,16 @@ client.on("ready", () => {
     serverJoin(client);
     client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
 });
+
+//Adds New Servers to Config
+client.on("guildCreate", newGuild => {
+    addServerConfig(newGuild.id);
+})
+
+//Removes Server from Config
+client.on("guildDelete", oldGuild => {
+    removeServerConfig(oldGuild.id);
+})
 
 //Logs Errors
 client.on('warn', (info) => console.log(info));

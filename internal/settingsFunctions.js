@@ -355,6 +355,16 @@ function addServerConfig(serverID) {
 }
 //#endregion
 
+//#region add server to configfile
+function removeServerConfig(serverID) {
+    if (serverConfig[serverID] !== undefined) {
+        serverConfig[serverID] = undefined;
+    }
+
+    bulidConfigFile(serverConifg);
+}
+//#endregion
+
 //#region exports
-module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile };
+module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile, removeServerConfig };
 //#endregion
