@@ -1,6 +1,6 @@
 //#region Initial Set-Up
     //#region Dependecies
-    const { Client, Guild } = require('discord.js');
+    const { Client } = require('discord.js');
     //#endregion
 
     //#region Configs
