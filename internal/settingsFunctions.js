@@ -49,7 +49,7 @@ async function setModMail(message) {
 
     serverConfig[serverID].modmail = modmail;
 
-    await bulidConfigFile(serverConifg);
+    await bulidConfigFile(serverConfig);
 
     message.channel.send("Mod Mail Setup Complete!");
 
@@ -149,7 +149,7 @@ async function setAutorole(message) {
     
     serverConfig[serverID].autorole = autorole;
 
-    await bulidConfigFile(serverConifg);
+    await bulidConfigFile(serverConfig);
 
     message.channel.send("Auto Role Setup Complete!");
 
@@ -199,7 +199,7 @@ async function setJoinrole(message) {
 
     serverConfig[serverID].joinrole = joinrole;
 
-    await bulidConfigFile(serverConifg);
+    await bulidConfigFile(serverConfig);
 
     message.channel.send("Join Role Setup Complete!");
 
@@ -231,7 +231,7 @@ async function setMusic(message) {
                 return message.channel.send('Timeout Occured. Process Terminated.')
             }
         
-            message.channel.send('Please respont with the name of the text channel you would like the music commands to be used in.')
+            message.channel.send('Please d with the name of the text channel you would like the music commands to be used in.')
         
             try {
                 var musictxtin = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
@@ -263,7 +263,7 @@ async function setMusic(message) {
 
     serverConfig[serverID].music = music;
 
-    await bulidConfigFile(serverConifg);
+    await bulidConfigFile(serverConfig);
 
     message.channel.send("Music Setup Complete!");
 
@@ -309,7 +309,7 @@ async function setGeneral(message) {
 
     serverConfig[serverID].general = general;
 
-    await bulidConfigFile(serverConifg);
+    await bulidConfigFile(serverConfig);
 
     message.channel.send("General Setup Complete!");
 
@@ -351,10 +351,20 @@ function addServerConfig(serverID) {
         serverConfig[serverID] = {"autorole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinrole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modmail":{"enable":false,"modlist":[]}};
     }
 
-    bulidConfigFile(serverConifg);
+    bulidConfigFile(serverConfig);
+}
+//#endregion
+
+//#region add server to configfile
+function removeServerConfig(serverID) {
+    if (serverConfig[serverID] !== undefined) {
+        serverConfig[serverID] = undefined;
+    }
+
+    bulidConfigFile(serverConfig);
 }
 //#endregion
 
 //#region exports
-module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile };
+module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile, removeServerConfig, addServerConfig };
 //#endregion

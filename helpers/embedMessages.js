@@ -131,11 +131,11 @@ function errorCustom(message, text, commandName) {
         .setDescription(text);
     message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
-        addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, text);
+        addToLog('Fatal Error', commandName, message.author.tag, message.guild.name, message.channel.name, text);
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
-        addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
+        addToLog('Fatal Error', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
     }
 }
 //#endregion
@@ -149,7 +149,7 @@ function warnWrongChannel(message, correctChannel, commandName) {
     message.author.send(embMsg);
     if (message.channel.guild != undefined) {
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Wrong Text Channel");
-        message.delete();
+        message.delete({ timeout: 1500, reason: 'Cleanup.' });
     }
     else {
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Wrong Text Channel");
@@ -166,7 +166,7 @@ function warnDisabled(message, command, commandName) {
     message.author.send(embMsg);
     if (message.channel.guild != undefined) {
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Feature Disabled");
-        message.delete();
+        message.delete({ timeout: 1500, reason: 'Cleanup.' });
     }
     else {
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Feature Disabled");

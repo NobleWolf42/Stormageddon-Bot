@@ -33,7 +33,7 @@ module.exports = {
             makeHelpMsg(message, title, helpMessageCommands, commandClasses);
             
             if (message.channel.guild != undefined) {
-                message.delete();
+                message.delete({ timeout: 1500, reason: 'Cleanup.' });
             }
             
             return;
@@ -108,7 +108,7 @@ module.exports = {
             }
 
             if (message.channel.guild != undefined) {
-                message.delete();
+                message.delete({ timeout: 1500, reason: 'Cleanup.' });
             }
             
             return;

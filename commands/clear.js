@@ -6,7 +6,7 @@ const { errorCustom, embedCustom, warnCustom } = require('../helpers/embedMessag
 module.exports = {
     name: "clear",
     type: ['Guild'],
-    aliases: ['clr', 'delete', 'remove'],
+    aliases: ['clr', 'delete', 'remove', 'clean'],
     cooldown: 0,
     class: 'admin',
     usage: 'clear ***NUMBER(1-99)***',
