@@ -2,7 +2,6 @@ const { updateConfigFile } = require("../helpers/currentsettings.js");
 const { setup } = require("../internal/settingsFunctions.js");
 var serverConfig = updateConfigFile();
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
-console.log(serverConfig);
 
 module.exports = {
     name: "setup",
