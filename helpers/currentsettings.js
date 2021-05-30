@@ -4,7 +4,12 @@ const { readFile } = require('fs');
 
 //#region update configfile
 function updateConfigFile() {
-    serverConfig = JSON.parse(readFile('./data/serverconfig.json', 'utf8'));
+    serverConfig = JSON.parse(readFile('./data/serverconfig.json', 'utf8', function(err, data) {
+        if (err) {
+            console.log(err)
+        }
+        return data;
+    }));
     return serverConfig;
 }
 //#endregion
