@@ -2,6 +2,7 @@
 const { MessageEmbed } = require('discord.js');
 const { updateConfigFile } = require('../helpers/currentsettings.js');
 const { generateEmbedFields } = require('../internal/autorole.js');
+const { warnCustom } = require('../helpers/embedMessages.js');
 //#endregion
 
 module.exports = {
@@ -12,7 +13,7 @@ module.exports = {
     class: 'admin',
     usage: 'createautorolemessage',
     description: "Create the reactions message for auto role assignment.",
-    execute(message, args, client) {
+    execute(message, args, client, prefix) {
         var serverID = message.guild.id;
 
         config = updateConfigFile();
@@ -34,6 +35,12 @@ module.exports = {
             throw "The 'embedMessage' property is not set in the config[serverID].js file. Please do this!";
         if (!config[serverID].autorole.embedFooter || (config[serverID].autorole.embedMessage === ''))
             throw "The 'embedFooter' property is not set in the config[serverID].js file. Please do this!";
+        
+        // Checks to see if the module is enabled
+        if (!config[serverID].autorole.enable) {
+            warnDisabled(message, 'autorole', module.name);
+            return
+        }
 
         const roleEmbed = new MessageEmbed()
             .setTitle('Role Message')

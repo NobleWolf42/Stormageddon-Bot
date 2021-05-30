@@ -49,14 +49,10 @@ function serverRoleUpdate(sRole, serverID) {
             modRoleIDs.push(basicServerRoles[serverConfig[serverID].general.modRoles[key]]);
         }
     }
-
-    //Loops throught the DJ Role Names, pushing them to an array
-    for (key in serverConfig[serverID].music.djRoles) {
         
-        //Pushes role IDs to DJs if they Match serverConfig[serverID].music.djRoles
-        if (basicServerRoles[serverConfig[serverID].music.djRoles[key]]){
-            djRoleIDs.push(basicServerRoles[serverConfig[serverID].music.djRoles[key]]);
-        }
+    //Pushes role IDs to DJs if they Match serverConfig[serverID].music.djRoles
+    if (basicServerRoles[String(serverConfig[serverID].music.djRoles)] != undefined){
+        djRoleIDs.push(basicServerRoles[String(serverConfig[serverID].music.djRoles)]);
     }
 }
 //#endregion
@@ -141,6 +137,8 @@ function djCheck(message) {
         userRolesArray = message.author.lastMessage.member._roles;
         serverRolesArray = message.channel.guild.roles;
         serverID = message.channel.guild.id;
+        //console.log(userRolesArray);
+        //console.log(serverRolesArray);
     }
     else {
         return false;
@@ -149,7 +147,7 @@ function djCheck(message) {
     serverConfig = updateConfigFile();
     //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverID);
-    
+    //console.log(djRoleIDs);
     //Checks to see if user role ids match any of the mod role ids
     if (djRoleIDs != []) {
         for (key in userRolesArray) {
