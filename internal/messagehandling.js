@@ -10,6 +10,20 @@
     var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
 //#endregion
 
+//#region Function for trying a command and catching the error if it fails
+function trycommand(client, message, command, args, prefix) {
+    try {
+        command.execute(message, args, client, prefix);
+        addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
+    }
+    catch (error) {
+        addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+        errorCustom(message, "There was an error executing that command.", command.name);
+        console.log(error);
+    }
+}
+//#endregion
+
 //#region Message Handling for Server
 function messageHandling(client) {
 
@@ -61,7 +75,7 @@ function messageHandling(client) {
             //@storm
             if(message.mentions.users.first().id === client.user.id) {
                 var attachment = new MessageAttachment(getRandomDoggo());
-                if (serverConfig[serverID] == undefined) {
+                if (serverConfig[serverID].setupneeded) {
                     message.channel.send(`Please run \`${prefix}setup\` in an admin only chat channel to set up the bot on your server.`);
                     message.channel.send(attachment);
                 }
@@ -115,15 +129,17 @@ function messageHandling(client) {
             setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
             //#endregion
 
-            try {
-                command.execute(message, args, client);
-                addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
+            //#region Checks to see if server is set up
+            if (command.name == "setup") {
+                trycommand(client, message, command, args, prefix);
+                return
             }
-            catch (error) {
-                addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
-                errorCustom(message, "There was an error executing that command.", command.name);
-                console.log(error);
+            else if (serverConfig[serverID].setupneeded) {
+                return warnCustom(message, `You Must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in and Admin Only chat.`, command.name);
             }
+            //#endregion
+
+            trycommand(client, message, command, args, prefix);
         //#endregion
     });
 };
@@ -184,14 +200,7 @@ function PMHandling (client) {
             setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
             //#endregion
 
-            try {
-                command.execute(message, args, client);
-                addToLog('Success', command.name, message.author.tag, 'Direct Message', 'Direct Message');
-            }
-            catch (error) {
-                addToLog('Fatal Error', command.name, message.author.tag, 'Direct Message', 'Direct Message', error, client);
-                errorCustom(message, "There was an error executing that command.", command.name);
-            }
+            trycommand(client, message, command, args, prefix);
         //#endregion
     })
 }

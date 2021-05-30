@@ -15,7 +15,7 @@ module.exports = {
     aliases: ["p"],
     cooldown: 3,
     class: 'music',
-    usage: 'play SEARCH-TEARM/YOUTUBE-LINK/YOUTUBE-PLAYLIST',
+    usage: 'play SEARCH-TEARM/YOUTUBE-LINK/YOUTUBE-PLAYLIST/SPOTIFY-LINK/SPOTIFY-PLAYLIST',
     description: "Plays the selected music in the voice channel you are in.",
     async execute(message, args) {
 
@@ -38,7 +38,7 @@ module.exports = {
                 return warnCustom(message, `You must be in the same channel as ${message.client.user}`, module.name).catch(console.error);
 
             if (!args.length)
-                return warnCustom(message, `Usage: ${message.prefix}play <YouTube URL | Video Name | Soundcloud URL>`, module.name);
+                return warnCustom(message, `Usage: ${message.prefix}play <YouTube URL | Video/Song Name | Soundcloud URL | Spotify URL>`, module.name);
 
             const permissions = channel.permissionsFor(message.client.user);
             if (!permissions.has("CONNECT"))
