@@ -8,6 +8,7 @@
     const { updateConfigFile } = require('../helpers/currentsettings.js');
     const { addToLog } = require('../helpers/errorlog.js');
     var serverConfig = updateConfigFile();
+    console.log(serverConfig)
 //#endregion
 
 //#region Function for trying a command and catching the error if it fails

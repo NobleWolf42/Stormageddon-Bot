@@ -131,18 +131,13 @@ function djCheck(message) {
         userRolesArray = message.author.lastMessage.member._roles;
         serverRolesArray = message.channel.guild.roles;
         serverID = message.channel.guild.id;
-        //console.log(userRolesArray);
-        //console.log(serverRolesArray);
     }
     else {
         return false;
     }
     
     serverConfig = updateConfigFile();
-    //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverID);
-    //console.log(djRoleIDs);
-    //Checks to see if user role ids match any of the mod role ids
     if (djRoleIDs != []) {
         for (key in userRolesArray) {
         
