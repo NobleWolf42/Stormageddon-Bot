@@ -1,6 +1,6 @@
-const { readFileSync } = require('fs');
+const { updateConfigFile } = require("../helpers/currentsettings.js");
 const { setup } = require("../internal/settingsFunctions.js");
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+var serverConfig = updateConfigFile();
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
 
 module.exports = {

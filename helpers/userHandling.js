@@ -1,6 +1,7 @@
 //#region Dependancies
 const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+const { updateConfigFile } = require("../helpers/currentsettings.js");
+var serverConfig = updateConfigFile();
 
 var adminRoleIDs = [];
 var djRoleIDs = [];
