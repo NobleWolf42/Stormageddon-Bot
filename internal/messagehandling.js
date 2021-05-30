@@ -52,7 +52,6 @@ function messageHandling(client) {
         //#region prefix/defaultprefix set
         var serverID = message.channel.guild.id;
         var prefixFile = JSON.parse(readFileSync('./data/botprefix.json', 'utf8'));
-        serverConfig = updateConfigFile();
 
         if (prefixFile[serverID] != undefined) {
             if (prefixFile[serverID].prefix != undefined) {
