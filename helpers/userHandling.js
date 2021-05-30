@@ -8,13 +8,6 @@ var djRoleIDs = [];
 var modRoleIDs = [];
 //#endregion
 
-//#region Function that updates the config file
-function updateConfigFile() {
-    serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
-    return serverConfig;
-}
-//#endregion
-
 //#region Server Roles
 //Function that calls the server roles
 function serverRoleUpdate(sRole, serverID) {
