@@ -2,7 +2,7 @@
 const { MessageEmbed } = require('discord.js');
 const { updateConfigFile } = require('../helpers/currentsettings.js');
 const { generateEmbedFields } = require('../internal/autorole.js');
-const { warnCustom } = require('../helpers/embedMessages.js');
+const { warnDisabled } = require('../helpers/embedMessages.js');
 //#endregion
 
 module.exports = {
