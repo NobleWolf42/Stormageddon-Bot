@@ -1,7 +1,7 @@
 //#regions dependancies
-const { readFileSync } = require('fs');
+const { updateConfigFile } = require("../helpers/currentsettings.js");
 const { errorCustom, warnCustom,warnDisabled } = require('../helpers/embedMessages.js');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+var serverConfig = updateConfigFile();
 //#endregion
 
 module.exports = {

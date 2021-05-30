@@ -7,7 +7,7 @@
     const { getRandomDoggo } = require('../helpers/doggoLinks.js');
     const { updateConfigFile } = require('../helpers/currentsettings.js');
     const { addToLog } = require('../helpers/errorlog.js');
-    var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+    var serverConfig = updateConfigFile();
 //#endregion
 
 //#region Function for trying a command and catching the error if it fails

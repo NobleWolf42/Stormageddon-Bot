@@ -1,7 +1,6 @@
 //#region Dependancies
-const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
-const { updateConfigFile } = require('../helpers/currentsettings.js');
+const { updateConfigFile } = require("../helpers/currentsettings.js");
+var serverConfig = updateConfigFile();
 //#endregion
 
 //#region code that happens when someone joins a server

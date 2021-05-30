@@ -2,7 +2,7 @@
 const { MessageEmbed } = require('discord.js');
 const { writeFileSync, readFileSync } = require('fs');
 const { updateConfigFile } = require('../helpers/currentsettings.js');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+var serverConfig = updateConfigFile();
 //#endregion
 
 //#region modmail settings

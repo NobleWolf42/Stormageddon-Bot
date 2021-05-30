@@ -1,8 +1,7 @@
 const { bulidConfigFile } = require("../internal/settingsFunctions.js");
 const { updateConfigFile } = require("../helpers/currentsettings.js");
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
-const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+var serverConfig = updateConfigFile();
 
 module.exports = {
     name: "addmod",
