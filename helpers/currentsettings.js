@@ -1,18 +1,10 @@
 //#region Dependancies
-const { readFile } = require('fs');
+const { readFileSync } = require('fs');
 //#endregion
 
 //#region update configfile
 function updateConfigFile() {
-    var serverConfig = {};
-    readFile('./data/serverconfig.json', 'utf8', function(err, data) {
-        if (err) {
-            console.log(err)
-        }
-        else {
-            serverConfig = JSON.parse(data);
-        }
-    });
+    serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
     return serverConfig;
 }
 //#endregion
