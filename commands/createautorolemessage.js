@@ -76,6 +76,7 @@ module.exports = {
                 else await m.react(customCheck.id);
             }
         });
+        message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
 }
 //#endregion
