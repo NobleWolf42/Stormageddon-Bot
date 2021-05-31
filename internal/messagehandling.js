@@ -199,7 +199,15 @@ function PMHandling (client) {
             setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
             //#endregion
 
-            trycommand(client, message, command, args, prefix);
+            try {
+                command.execute(message, args, client, prefix);
+                addToLog('Success', command.name, message.author.tag, "DM", "Private Message");
+            }
+            catch (error) {
+                addToLog('Fatal Error', command.name, message.author.tag, "DM", "Private Message", error, client);
+                errorCustom(message, "There was an error executing that command.", command.name);
+                console.log(error);
+            }
         //#endregion
     })
 }
