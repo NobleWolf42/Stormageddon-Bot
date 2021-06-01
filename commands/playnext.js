@@ -50,9 +50,6 @@ module.exports = {
             let songInfo = null;
             let song = null;
 
-            console.log(url);
-            console.log(urlValid);
-
             if (isInteger(args[0])) {
                 if (args[0] > queue.songs.length)
                     return warnCustom(message, `The queue is only ${queue.songs.length} songs long!`, module.name);
@@ -95,7 +92,7 @@ module.exports = {
                     return errorCustom(message, error.message, module.name);
                 }
             } else {
-                /*try {
+                try {
                     const results = await youtube.searchVideos(search, 1);
                     songInfo = await ytdl.getInfo(results[0].url);
                     song = {
@@ -107,7 +104,7 @@ module.exports = {
                 } catch (error) {
                     console.error(error);
                         return errorCustom(message, "No video was found with a matching title", module.name);
-                }*/
+                }
             }
         }
         else {
