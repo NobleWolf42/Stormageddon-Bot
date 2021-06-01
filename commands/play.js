@@ -29,9 +29,9 @@ function getSpotAPIAuth() {
             console.log('Something went wrong when retrieving an access token', err);
         }
     );
+    setTimeout(function () {getSpotAPIAuth()}, 3599990);
 }
 getSpotAPIAuth();
-setTimeout(function () {getSpotAPIAuth()}, 3599990);
 const spotToYoutube = SpotifyToYoutube(spotifyApi);
 
 module.exports = {
