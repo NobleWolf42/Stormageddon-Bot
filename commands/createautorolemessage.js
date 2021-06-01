@@ -13,7 +13,7 @@ module.exports = {
     class: 'admin',
     usage: 'createautorolemessage',
     description: "Create the reactions message for auto role assignment.",
-    execute(message, args, client, prefix) {
+    execute(message, args, client) {
         var serverID = message.guild.id;
 
         config = updateConfigFile();

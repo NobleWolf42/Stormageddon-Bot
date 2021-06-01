@@ -11,9 +11,9 @@
 //#endregion
 
 //#region Function for trying a command and catching the error if it fails
-function trycommand(client, message, command, args, prefix) {
+function trycommand(client, message, command, args) {
     try {
-        command.execute(message, args, client, prefix);
+        command.execute(message, args, client);
         addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
     }
     catch (error) {
@@ -130,7 +130,7 @@ function messageHandling(client) {
 
             //#region Checks to see if server is set up
             if (command.name == "setup") {
-                trycommand(client, message, command, args, prefix);
+                trycommand(client, message, command, args);
                 return
             }
             else if (serverConfig[serverID].setupneeded) {
@@ -138,7 +138,7 @@ function messageHandling(client) {
             }
             //#endregion
 
-            trycommand(client, message, command, args, prefix);
+            trycommand(client, message, command, args);
         //#endregion
     });
 };
@@ -200,7 +200,7 @@ function PMHandling (client) {
             //#endregion
 
             try {
-                command.execute(message, args, client, prefix);
+                command.execute(message, args, client);
                 addToLog('Success', command.name, message.author.tag, "DM", "Private Message");
             }
             catch (error) {

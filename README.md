@@ -170,6 +170,10 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
 
         `!playlist ***SEARCH-TERM*** i.e. (linkin park meteora)`
 
+    - 🎶 Play music from YouTube via url
+
+        `!playnext ***QUEUE-NUMBER/SEARCH-TEARM/YOUTUBE-LINK/SPOTIFY-LINK*** (NOTE: Bot Moderator Command ONLY)`
+
     - Shows the currently playing song
 
         `!nowplaying`
@@ -202,7 +206,7 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
 
         `!skip`
 
-    - Skips to the selected queue number.\
+    - Skips to the selected queue number.
 
         `!skipto ***QUEUE-NUMBER*** i.e. (5)`
     
