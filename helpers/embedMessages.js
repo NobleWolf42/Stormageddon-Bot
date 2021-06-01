@@ -44,12 +44,13 @@ function warnCustom(message, text, commandName) {
         .setTitle('Warning!')
         .setColor('#F8AA2A')
         .setDescription(text);
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, text);
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send(embMsg);
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
     }
 }
@@ -61,12 +62,13 @@ function errorNoAdmin(message, commandName) {
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *BOT ADMIN* access to use!');
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Bot Admin!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send(embMsg);
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not Bot Admin!");
     }
 }
@@ -78,12 +80,13 @@ function errorNoMod(message, commandName) {
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *BOT MOD* access to use!');
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Bot Moderator!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send(embMsg);
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not Bot Moderator!");
     }
 }
@@ -95,12 +98,13 @@ function errorNoDJ(message, commandName) {
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *DJ* access to use!');
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not DJ!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send(embMsg);
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not DJ!");
     }
 }
@@ -112,12 +116,13 @@ function errorNoServerAdmin(message, commandName) {
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!');
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Server Admin!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send(embMsg);
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not Server Admin!");
     }
 }
@@ -129,12 +134,13 @@ function errorCustom(message, text, commandName) {
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription(text);
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Fatal Error', commandName, message.author.tag, message.guild.name, message.channel.name, text);
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send(embMsg);
         addToLog('Fatal Error', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
     }
 }
