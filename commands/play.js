@@ -155,9 +155,7 @@ module.exports = {
                       })
                       .then(
                         async function(data) {
-                            var playlistArray = [];
                             for (key in data.body.items) {
-                                console.log(key)
                                 try {
                                     songInfo = await ytdl.getInfo(`https://www.youtube.com/watch?v=${await spotToYoutube(data.body.items[key].track)}`);
                                     song = {
