@@ -13,6 +13,7 @@
     //#endregion
 
     //#region Internals
+    const { addServerConfig, removeServerConfig } = require('./internal/settingsFunctions.js');
     const { autoroleListener } = require('./internal/autorole.js');
     const { PMHandling, messageHandling } = require('./internal/messagehandling.js');
     const { serverJoin } = require('./internal/serverjoin.js');
@@ -41,6 +42,18 @@ client.on("ready", () => {
     serverJoin(client);
     client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
 });
+
+//Adds New Servers to Config
+client.on("guildCreate", newGuild => {
+    addServerConfig(newGuild.id);
+    console.log(`Joined New Server: ${newGuild.name}#${newGuild.id}`);
+})
+
+//Removes Server from Config
+client.on("guildDelete", oldGuild => {
+    removeServerConfig(oldGuild.id);
+    console.log(`Left Server: ${oldGuild.name}#${oldGuild.id}`);
+})
 
 //Logs Errors
 client.on('warn', (info) => console.log(info));

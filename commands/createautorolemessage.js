@@ -2,6 +2,7 @@
 const { MessageEmbed } = require('discord.js');
 const { updateConfigFile } = require('../helpers/currentsettings.js');
 const { generateEmbedFields } = require('../internal/autorole.js');
+const { warnDisabled } = require('../helpers/embedMessages.js');
 //#endregion
 
 module.exports = {
@@ -34,6 +35,12 @@ module.exports = {
             throw "The 'embedMessage' property is not set in the config[serverID].js file. Please do this!";
         if (!config[serverID].autorole.embedFooter || (config[serverID].autorole.embedMessage === ''))
             throw "The 'embedFooter' property is not set in the config[serverID].js file. Please do this!";
+        
+        // Checks to see if the module is enabled
+        if (!config[serverID].autorole.enable) {
+            warnDisabled(message, 'autorole', module.name);
+            return
+        }
 
         const roleEmbed = new MessageEmbed()
             .setTitle('Role Message')
@@ -69,6 +76,7 @@ module.exports = {
                 else await m.react(customCheck.id);
             }
         });
+        message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
 }
 //#endregion

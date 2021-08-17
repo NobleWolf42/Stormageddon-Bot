@@ -1,7 +1,6 @@
 //#region Dependancies
 const { adminCheck } = require('../helpers/userHandling.js');
 const { errorNoAdmin, errorCustom } = require('../helpers/embedMessages.js');
-const { addToLog } = require('../helpers/errorlog.js');
 //#endregion
 
 //#region say command
@@ -23,7 +22,7 @@ module.exports = {
             else {
                 errorCustom(message, "Cannot send an empty message!", module.name);
             }
-            message.delete();
+            message.delete({ timeout: 1500, reason: 'Cleanup.' });
         }
         else {
             errorNoAdmin(message, module.name);

@@ -14,6 +14,7 @@ module.exports = {
     usage: 'help ***PAGE***',
     description: "Displays Help Message, specifying a page will show that help info, using the **\"All\"** page will display all commands, the **\"DM\"** page will display all commands that can be Direct Messaged to the bot, and the **\"Server\"** page will display all commands that can be used in a discord server.",
     execute(message, args) {
+        var args = args.map(v => v.toLowerCase());
         const adminTF = adminCheck(message);
         const commands = message.client.commands.array();
         let commandClasses = [];
@@ -33,7 +34,7 @@ module.exports = {
             makeHelpMsg(message, title, helpMessageCommands, commandClasses);
             
             if (message.channel.guild != undefined) {
-                message.delete();
+                message.delete({ timeout: 1500, reason: 'Cleanup.' });
             }
             
             return;
@@ -108,7 +109,7 @@ module.exports = {
             }
 
             if (message.channel.guild != undefined) {
-                message.delete();
+                message.delete({ timeout: 1500, reason: 'Cleanup.' });
             }
             
             return;

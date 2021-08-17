@@ -1,6 +1,6 @@
-const { readFileSync } = require('fs');
+const { updateConfigFile } = require("../helpers/currentsettings.js");
 const { setup } = require("../internal/settingsFunctions.js");
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+var serverConfig = updateConfigFile();
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
 
 module.exports = {
@@ -11,10 +11,11 @@ module.exports = {
     class: 'admin',
     usage: 'setup',
     description: "Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.",
-    execute(message) {
-        if (!(message.channel.guild.id in serverConfig)) {
+    async execute(message) {
+        console.log(serverConfig[message.channel.guild.id].setupneeded)
+        if (serverConfig[message.channel.guild.id].setupneeded) {
             if (message.member.hasPermission('ADMINISTRATOR')) {
-                setup(message);
+                await setup(message);
             }
             else {
                 errorNoServerAdmin(message, module.name);
