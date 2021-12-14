@@ -62,8 +62,8 @@ module.exports = {
             roleEmbed.setThumbnail(message.guild.iconURL);
 
         const fields = generateEmbedFields(serverID);
-        if (fields.length > 50) throw "That maximum roles that can be set for an embed is 50!";
-        if (fields.length > 25) {
+        if (fields.length > 40) throw "That maximum roles that can be set for an embed is 40!";
+        if (fields.length > 20) {
             secondmsg = false
         }
         else {
