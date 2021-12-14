@@ -92,6 +92,8 @@ module.exports = {
                 const r = config[serverID].autorole.reactions
                 r1 = r.slice(0,20)
                 r2 = r.slice(20,40)
+                console.log(r1)
+                console.log(r2)
                 for (const a of r1) {
                     const emoji = a;
                     const customCheck = client.emojis.cache.find(e => e.name === emoji);
