@@ -76,7 +76,7 @@ module.exports = {
 
             const customEmote = client.emojis.cache.find(e => e.name === emoji);
             
-            if (roleEmbed.fields.length > 25) {
+            if (roleEmbed.fields.length > 20) {
                 if (!customEmote) roleEmbed.addField(emoji, role, true);
                 else roleEmbed.addField(customEmote, role, true);
             }
