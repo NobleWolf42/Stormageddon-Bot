@@ -49,13 +49,26 @@ module.exports = {
 
         roleEmbed.setColor('#dd9323');
 
+        const roleEmbed2 = new MessageEmbed()
+            .setTitle('Role Message')
+            .setDescription("Continued form Previous Message")
+            .setFooter(config[serverID].autorole.embedFooter);
+
+        roleEmbed2.setColor('#dd9323');
+
         if (config[serverID].autorole.embedThumbnail && (config[serverID].autorole.embedThumbnailLink !== '')) 
             roleEmbed.setThumbnail(config[serverID].autorole.embedThumbnailLink);
         else if (config[serverID].autorole.embedThumbnail && message.guild.icon)
             roleEmbed.setThumbnail(message.guild.iconURL);
 
         const fields = generateEmbedFields(serverID);
-        if (fields.length > 25) throw "That maximum roles that can be set for an embed is 25!";
+        if (fields.length > 50) throw "That maximum roles that can be set for an embed is 50!";
+        if (fields.length > 25) {
+            secondmsg = false
+        }
+        else {
+            secondmsg = true;
+        }
 
         for (const { emoji, role } of fields) {
             if (!message.guild.roles.cache.find(r => r.name === role))
@@ -63,8 +76,14 @@ module.exports = {
 
             const customEmote = client.emojis.cache.find(e => e.name === emoji);
             
-            if (!customEmote) roleEmbed.addField(emoji, role, true);
-            else roleEmbed.addField(customEmote, role, true);
+            if (roleEmbed.fields.length > 25) {
+                if (!customEmote) roleEmbed.addField(emoji, role, true);
+                else roleEmbed.addField(customEmote, role, true);
+            }
+            else {
+                if (!customEmote) roleEmbed2.addField(emoji, role, true);
+                else roleEmbed2.addField(customEmote, role, true);
+            }
         }
 
         message.channel.send(roleEmbed).then(async m => {
@@ -76,6 +95,18 @@ module.exports = {
                 else await m.react(customCheck.id);
             }
         });
+        if (secondmsg) {
+            message.channel.send(roleEmbed2).then(async m => {
+                for (const r of config[serverID].autorole.reactions) {
+                    const emoji = r;
+                    const customCheck = client.emojis.cache.find(e => e.name === emoji);
+                    
+                    if (!customCheck) await m.react(emoji);
+                    else await m.react(customCheck.id);
+                }
+            });
+        }
+
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
 }
