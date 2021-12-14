@@ -86,17 +86,32 @@ module.exports = {
             }
         }
 
-        message.channel.send(roleEmbed).then(async m => {
-            for (const r of config[serverID].autorole.reactions) {
-                const emoji = r;
-                const customCheck = client.emojis.cache.find(e => e.name === emoji);
-                
-                if (!customCheck) await m.react(emoji);
-                else await m.react(customCheck.id);
-            }
-        });
+        
         if (secondmsg) {
+            message.channel.send(roleEmbed).then(async m => {
+                const r = config[serverID].autorole.reactions
+                r1 = r.slice(0,20)
+                r2 = r.slice(20,40)
+                for (const a of r1) {
+                    const emoji = a;
+                    const customCheck = client.emojis.cache.find(e => e.name === emoji);
+                    
+                    if (!customCheck) await m.react(emoji);
+                    else await m.react(customCheck.id);
+                }
+            });
             message.channel.send(roleEmbed2).then(async m => {
+                for (const b of r2) {
+                    const emoji = b;
+                    const customCheck = client.emojis.cache.find(e => e.name === emoji);
+                    
+                    if (!customCheck) await m.react(emoji);
+                    else await m.react(customCheck.id);
+                }
+            });
+        }
+        else {
+            message.channel.send(roleEmbed).then(async m => {
                 for (const r of config[serverID].autorole.reactions) {
                     const emoji = r;
                     const customCheck = client.emojis.cache.find(e => e.name === emoji);
@@ -105,7 +120,7 @@ module.exports = {
                     else await m.react(customCheck.id);
                 }
             });
-        }
+        };
 
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
