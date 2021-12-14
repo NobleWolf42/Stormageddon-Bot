@@ -39,7 +39,7 @@ module.exports = {
             
             return;
         }
-        else if (commandClasses.includes(capitalize(args[0])) || args[0] == 'all' || args[0] == 'dm' || args[0] == 'server') {
+        else if (commandClasses.includes(toLowerCase(args[0])) || args[0] == 'all' || args[0] == 'dm' || args[0] == 'server') {
             if (args[0] == 'admin') {
                 if (adminTF) {
                     commands.forEach((cmd) => { if (cmd.class == args[0] && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
