@@ -1,3 +1,4 @@
+/.vscode
 /node_modules
 /data/botconfig.json
 /data/serverconfig.json

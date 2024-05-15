@@ -1,10 +1,17 @@
-//#region Dependancies
+//#region Dependencies
 const { MessageEmbed } = require('discord.js');
+//#endregion
+
+//#region Helpers
 const { updateConfigFile } = require('../helpers/currentsettings.js');
-const { generateEmbedFields } = require('../internal/autorole.js');
 const { warnDisabled } = require('../helpers/embedMessages.js');
 //#endregion
 
+//#region Internals
+const { generateEmbedFields } = require('../internal/autorole.js');
+//#endregion
+
+//#region This exports the createautorolemessage command with the information about it
 module.exports = {
     name: "createautorolemessage",
     type: ['Guild'],

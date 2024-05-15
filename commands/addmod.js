@@ -1,8 +1,16 @@
-const { bulidConfigFile } = require("../internal/settingsFunctions.js");
+//#region Helpers
 const { updateConfigFile } = require("../helpers/currentsettings.js");
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
+//##endregion
+
+//#region Internals
+const { bulidConfigFile } = require("../internal/settingsFunctions.js");
+//#endregion
+
+//Gets current config file
 var serverConfig = updateConfigFile();
 
+//#region This exports the addmod command with the information about it
 module.exports = {
     name: "addmod",
     type: ['Guild'],
@@ -45,4 +53,5 @@ module.exports = {
             errorNoServerAdmin(message, module.name);
         }
     }
-};
+}
+//#endregion
