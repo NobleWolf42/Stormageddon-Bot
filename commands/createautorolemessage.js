@@ -1,9 +1,17 @@
-//#region Dependancies
+//#region Dependencies
 const { MessageEmbed } = require('discord.js');
+//#endregion
+
+//#region Helpers
 const { updateConfigFile } = require('../helpers/currentsettings.js');
+const { warnDisabled } = require('../helpers/embedMessages.js');
+//#endregion
+
+//#region Internals
 const { generateEmbedFields } = require('../internal/autorole.js');
 //#endregion
 
+//#region This exports the createautorolemessage command with the information about it
 module.exports = {
     name: "createautorolemessage",
     type: ['Guild'],
@@ -34,6 +42,12 @@ module.exports = {
             throw "The 'embedMessage' property is not set in the config[serverID].js file. Please do this!";
         if (!config[serverID].autorole.embedFooter || (config[serverID].autorole.embedMessage === ''))
             throw "The 'embedFooter' property is not set in the config[serverID].js file. Please do this!";
+        
+        // Checks to see if the module is enabled
+        if (!config[serverID].autorole.enable) {
+            warnDisabled(message, 'autorole', module.name);
+            return
+        }
 
         const roleEmbed = new MessageEmbed()
             .setTitle('Role Message')
@@ -42,13 +56,20 @@ module.exports = {
 
         roleEmbed.setColor('#dd9323');
 
+        const roleEmbed2 = new MessageEmbed()
+            .setTitle('Role Message')
+            .setDescription("Continued form Previous Message")
+            .setFooter(config[serverID].autorole.embedFooter);
+
+        roleEmbed2.setColor('#dd9323');
+
         if (config[serverID].autorole.embedThumbnail && (config[serverID].autorole.embedThumbnailLink !== '')) 
             roleEmbed.setThumbnail(config[serverID].autorole.embedThumbnailLink);
         else if (config[serverID].autorole.embedThumbnail && message.guild.icon)
             roleEmbed.setThumbnail(message.guild.iconURL);
 
         const fields = generateEmbedFields(serverID);
-        if (fields.length > 25) throw "That maximum roles that can be set for an embed is 25!";
+        if (fields.length > 20) throw "That maximum roles that can be set for an embed is 20!";
 
         for (const { emoji, role } of fields) {
             if (!message.guild.roles.cache.find(r => r.name === role))
@@ -60,15 +81,19 @@ module.exports = {
             else roleEmbed.addField(customEmote, role, true);
         }
 
+        
+
         message.channel.send(roleEmbed).then(async m => {
             for (const r of config[serverID].autorole.reactions) {
                 const emoji = r;
                 const customCheck = client.emojis.cache.find(e => e.name === emoji);
-                
+                    
                 if (!customCheck) await m.react(emoji);
                 else await m.react(customCheck.id);
             }
         });
+
+        message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
 }
 //#endregion

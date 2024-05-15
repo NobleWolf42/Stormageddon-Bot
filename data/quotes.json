@@ -17,7 +17,7 @@
         },
         {
             "author" : "Neil DeGrasse Tyson",
-            "text" : "Creativity is seeing what everyone else sees, but then thinking a new thought that has never been thought before and exquotessing it somehow.",
+            "text" : "Creativity is seeing what everyone else sees, but then thinking a new thought that has never been thought before and expressing it somehow.",
             "submitter" : "Captain"
         },
         {
@@ -74,6 +74,11 @@
             "author" : "Thomas Paine",
             "text" : "To argue with a man who has renounced the use and authority of reason, and whose philosophy consists in holding humanity in contempt, \n is like administering medicine to the dead, or endeavoring to convert an atheist by scripture.",
             "submitter" : "Captain"
+        }
+        {
+            "author" : "Raymond Reddington (Fictional)",
+            "text" : "(Talking about loss) There is nothing that can take the pain away, but eventually you will find a way to live with it. There will be nightmares, and everyday when you wake up, it will be the first thing you think of. Until one day, it will be the second thing.",
+            "submitter" : "NobleWolf42"
         }
     ],
     "success": true,

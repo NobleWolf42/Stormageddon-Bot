@@ -1,8 +1,8 @@
-//#region Dependancies
+//#region Helpers
 const { embedCustom } = require('../helpers/embedMessages.js');
 //#endregion
 
-//#region info command
+//#region This exports the info command with the information about it
 module.exports = {
     name: "info",
     type: ['DM', 'Guild'],

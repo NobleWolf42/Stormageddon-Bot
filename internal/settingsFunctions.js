@@ -2,7 +2,7 @@
 const { MessageEmbed } = require('discord.js');
 const { writeFileSync, readFileSync } = require('fs');
 const { updateConfigFile } = require('../helpers/currentsettings.js');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+var serverConfig = updateConfigFile();
 //#endregion
 
 //#region modmail settings
@@ -19,7 +19,7 @@ async function setModMail(message) {
         if (enabletxt == 't') {
             enable = true,
 
-            message.channel.send('Please respond by @ the people you want to recieve mod mail.')
+            message.channel.send('Please @ the people you want to recieve mod mail.')
     
             try {
                 var rolein = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
@@ -49,7 +49,7 @@ async function setModMail(message) {
 
     serverConfig[serverID].modmail = modmail;
 
-    await bulidConfigFile(serverConifg);
+    await bulidConfigFile(serverConfig);
 
     message.channel.send("Mod Mail Setup Complete!");
 
@@ -61,12 +61,11 @@ async function setModMail(message) {
 //#region autorole settings
 async function setAutorole(message) {
     var serverID = message.channel.guild.id;
-    var timeout = false;
     var embMsg = new MessageEmbed()
         .setTitle('Role Message')
         .setColor(16776960)
         .setDescription('**React to the messages below to receive the associated role.**')
-        .setFooter('React to Recieve Role');
+        .setFooter('If you do not recieve the role try reacting again.');
     message.channel.send('Example Message:');
     await message.channel.send(embMsg);
 
@@ -89,27 +88,20 @@ async function setAutorole(message) {
                 return message.channel.send('Timeout Occured. Process Terminated.')
             }
         
-            message.channel.send('Please respond with the text you would like to display for the footer. Replaces (`React to Recieve Role`) in example message.')
-
-            try {
-                var embfootin = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
-                var embedFooter = embfootin.first().content;
-            }
-            catch (err) {
-                return message.channel.send('Timeout Occured. Process Terminated.')
-            }
+            var embedFooter = 'If you do not recieve the role try reacting again.';
         
-            message.channel.send('Please respond to this message with the list of roles you would like users to be able to assign to themselves. Format the list with comma, followed by a space (`, `) seperating the roles, like this: `role 1, Role 2, Role 3`.')
+            message.channel.send('Please @ the roles you would like users to be able to assign to themselves.')
         
             try {
                 var embrolein = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
-                var roles = embrolein.first().content.split(', ');
+                var roles = [];
+                embrolein.first().content.split(' ').forEach (role => roles.push(message.guild.roles.cache.get(role.substring(3, role.length-1)).name));
             }
             catch (err) {
                 return message.channel.send('Timeout Occured. Process Terminated.')
             }
         
-            message.channel.send('Please respond to this message with the list of reactions you want to be used for the roles above, matching their order. Format the list with spaces seperating the reactions, like this: `🐕 🎩 👾`.')
+            message.channel.send('Please respond to this message with the list of reactions you want to be used for the roles above, matching their order. Format the list with spaces seperating the reactions, like this: `🐕 🎩 👾`. (NOTE: You can use custome reactions as long as they are not animated and belong to this server)')
         
             try {
                 var embreactin = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
@@ -128,7 +120,7 @@ async function setAutorole(message) {
         embedMessage = "`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`";
     }
     if (embedFooter == undefined) {
-        embedFooter = "Role Reactions";
+        embedFooter = "If you do not recieve the role try reacting again.";
     }
     if (roles == undefined) {
         roles = [];
@@ -149,7 +141,7 @@ async function setAutorole(message) {
     
     serverConfig[serverID].autorole = autorole;
 
-    await bulidConfigFile(serverConifg);
+    await bulidConfigFile(serverConfig);
 
     message.channel.send("Auto Role Setup Complete!");
 
@@ -171,11 +163,11 @@ async function setJoinrole(message) {
         if (enabletxt == 't') {
             enable = true,
 
-            message.channel.send('Please respond with the role you would like to assign users when they join your server.')
+            message.channel.send('Please @ the role you would like to assign users when they join your server.')
     
             try {
                 var rolein = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
-                var role = rolein.first().content;
+                var role = message.guild.roles.cache.get(rolein.first().content.substring(3, rolein.first().content.length-1)).name;
             }
             catch (err) {
                 return message.channel.send('Timeout Occured. Process Terminated.')
@@ -194,12 +186,12 @@ async function setJoinrole(message) {
     }
 
     joinrole = {};
-    joinrole.role = role;
     joinrole.enabled = enable;
+    joinrole.role = role;
 
     serverConfig[serverID].joinrole = joinrole;
 
-    await bulidConfigFile(serverConifg);
+    await bulidConfigFile(serverConfig);
 
     message.channel.send("Join Role Setup Complete!");
 
@@ -221,21 +213,21 @@ async function setMusic(message) {
         if (enabletxt == 't') {
             enable = true;
             
-            message.channel.send('Please respond with the role you would like to use as a DJ role.');
+            message.channel.send('Please @ the role you would like to use as a DJ role.');
     
             try {
                 var djrolein = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
-                var djRoles = djrolein.first().content.split(', ');
+                var djRoles = message.guild.roles.cache.get(djrolein.first().content.substring(3, djrolein.first().content.length-1)).name;
             }
             catch (err) {
                 return message.channel.send('Timeout Occured. Process Terminated.')
             }
         
-            message.channel.send('Please respont with the name of the text channel you would like the music commands to be used in.')
+            message.channel.send('Please link the text channel you would like the music commands to be used in. \`You can do that by typing "#" followed by the channel name.\`')
         
             try {
                 var musictxtin = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
-                var textChannel = musictxtin.first().content;
+                var textChannel = message.guild.channels.cache.get(musictxtin.first().content.substring(2, musictxtin.first().content.length-1)).name;
             }
             catch (err) {
                 return message.channel.send('Timeout Occured. Process Terminated.')
@@ -263,7 +255,7 @@ async function setMusic(message) {
 
     serverConfig[serverID].music = music;
 
-    await bulidConfigFile(serverConifg);
+    await bulidConfigFile(serverConfig);
 
     message.channel.send("Music Setup Complete!");
 
@@ -276,21 +268,28 @@ async function setMusic(message) {
 async function setGeneral(message) {
     var serverID = message.channel.guild.id;
 
-    message.channel.send('Please respond with the roles you would like to use as Bot Admins. Format it with a comma, followed by a space (`, `) seperating the roles. Example: `Role 1, Role 2, Role 3`.');
+    message.channel.send('Please @ the roles you would like to use as Bot Admins.');
     
     try {
         var adminrolesin = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
-        var adminRoles = adminrolesin.first().content.split(', ');
+        var adminRoles = [];
+        adminrolesin.first().content.split(' ').forEach (role => adminRoles.push(message.guild.roles.cache.get(role.substring(3, role.length-1)).name));
     }
     catch (err) {
         return message.channel.send('Timeout Occured. Process Terminated.')
     }
 
-    message.channel.send('Please respond with the roles you would like to use as Bot Mods. Format it with a comma, followed by a space (`, `) seperating the roles. Example: `Role 1, Role 2,Role 3`.');
+    message.channel.send('Please @ the roles you would like to use as Bot Mods. These automaticaly include you admin roles, if you wish to add none, simply reply `None`.');
 
     try {
         var modrolesin = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
-        var modRoles = modrolesin.first().content.split(', ');
+        var modRoles = adminRoles.map((x) => x);
+        if (modrolesin.first().content.toLowerCase() == 'none') {
+            var modRoles = adminRoles.map((x) => x);
+        }
+        else {
+            modrolesin.first().content.split(' ').forEach (role => modRoles.push(message.guild.roles.cache.get(role.substring(3, role.length-1)).name));
+        }
     }
     catch (err) {
         return message.channel.send('Timeout Occured. Process Terminated.')
@@ -300,7 +299,7 @@ async function setGeneral(message) {
         adminRoles = [];
     }
     if (modRoles == undefined) {
-        modRoles = [];
+        modRoles = adminRoles.map((x) => x);
     }
 
     general = {};
@@ -309,7 +308,7 @@ async function setGeneral(message) {
 
     serverConfig[serverID].general = general;
 
-    await bulidConfigFile(serverConifg);
+    await bulidConfigFile(serverConfig);
 
     message.channel.send("General Setup Complete!");
 
@@ -320,16 +319,21 @@ async function setGeneral(message) {
 
 //#region setup command
 async function setup(message) {
-    await addServerConfig(message.channel.guild.id);
+    var serverID = message.channel.guild.id;
+
+    //Sets up all commands
     await setAutorole(message);
     await setGeneral(message);
     await setJoinrole(message);
     await setMusic(message);
     await setModMail(message);
-    message.channel.send('Server Setup Complete');
-    
-    config = updateConfigFile();
-    return config;
+
+    //Removes the Setup Needed Tag
+    serverConfig[serverID].setupneeded = false;
+    await bulidConfigFile(serverConfig);
+    message.channel.send('Server Setup Complete, \`MAKE SURE TO PUT THE ROLE FOR THIS BOT ABOVE ROLES YOU WANT THE BOT TO MANAGE, if you don\'t the bot will not work properly!\`');
+    updateConfigFile();
+    return;
 }
 //#endregion
 
@@ -348,13 +352,23 @@ async function bulidConfigFile(config) {
 //#region add server to configfile
 function addServerConfig(serverID) {
     if (serverConfig[serverID] == undefined) {
-        serverConfig[serverID] = {"autorole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinrole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modmail":{"enable":false,"modlist":[]}};
+        serverConfig[serverID] = {"setupneeded":true,"autorole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinrole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modmail":{"enable":false,"modlist":[]}};
     }
 
-    bulidConfigFile(serverConifg);
+    bulidConfigFile(serverConfig);
+}
+//#endregion
+
+//#region remove server from configfile
+function removeServerConfig(serverID) {
+    if (serverConfig[serverID] !== undefined) {
+        serverConfig[serverID] = undefined;
+    }
+
+    bulidConfigFile(serverConfig);
 }
 //#endregion
 
 //#region exports
-module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile };
+module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile, removeServerConfig, addServerConfig };
 //#endregion

@@ -1,12 +1,12 @@
-//#region Dependancies
+//#region Helpers
 const { errorCustom, embedCustom, warnCustom } = require('../helpers/embedMessages.js');
 //#endregion
 
-//#region Clear Messages Command
+//#region This exports the clear command with the information about it
 module.exports = {
     name: "clear",
     type: ['Guild'],
-    aliases: ['clr', 'delete', 'remove'],
+    aliases: ['clr', 'delete', 'remove', 'clean'],
     cooldown: 0,
     class: 'admin',
     usage: 'clear ***NUMBER(1-99)***',
@@ -35,3 +35,4 @@ module.exports = {
         }
     }
 }
+//#endregion

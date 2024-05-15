@@ -1,17 +1,11 @@
 //#region Dependancies
 const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+const { updateConfigFile } = require("../helpers/currentsettings.js");
+var serverConfig = updateConfigFile();
 
 var adminRoleIDs = [];
 var djRoleIDs = [];
 var modRoleIDs = [];
-//#endregion
-
-//#region Function that updates the config file
-function updateConfigFile() {
-    serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
-    return serverConfig;
-}
 //#endregion
 
 //#region Server Roles
@@ -49,14 +43,10 @@ function serverRoleUpdate(sRole, serverID) {
             modRoleIDs.push(basicServerRoles[serverConfig[serverID].general.modRoles[key]]);
         }
     }
-
-    //Loops throught the DJ Role Names, pushing them to an array
-    for (key in serverConfig[serverID].music.djRoles) {
         
-        //Pushes role IDs to DJs if they Match serverConfig[serverID].music.djRoles
-        if (basicServerRoles[serverConfig[serverID].music.djRoles[key]]){
-            djRoleIDs.push(basicServerRoles[serverConfig[serverID].music.djRoles[key]]);
-        }
+    //Pushes role IDs to DJs if they Match serverConfig[serverID].music.djRoles
+    if (basicServerRoles[String(serverConfig[serverID].music.djRoles)] != undefined){
+        djRoleIDs.push(basicServerRoles[String(serverConfig[serverID].music.djRoles)]);
     }
 }
 //#endregion
@@ -147,10 +137,7 @@ function djCheck(message) {
     }
     
     serverConfig = updateConfigFile();
-    //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverID);
-    
-    //Checks to see if user role ids match any of the mod role ids
     if (djRoleIDs != []) {
         for (key in userRolesArray) {
         

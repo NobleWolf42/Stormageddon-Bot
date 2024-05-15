@@ -1,8 +1,8 @@
-//#region Dependcies
+//#region Dependencies
 const { XMLHttpRequest } = require("xmlhttprequest");
 //#endregion
 
-//#region Agify Command
+//#region This exports the agify command with the information about it
 module.exports = {
     name: "agify",
     type: ['Guild', 'DM'],

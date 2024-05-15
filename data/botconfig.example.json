@@ -5,7 +5,9 @@
         "youtubeApiKey": "YOUR YOUTUBE API KEY",
         "soundcloudApiKey": "YOUR SOUND CLOUD API KEY",
         "imgurApiKey" : "YOUR IMGUR API KEY",
-        "d2ApiKey": "YOUR DESTINY 2 API KEY"
+        "d2ApiKey": "YOUR DESTINY 2 API KEY",
+        "spotifyToken": "YOUR SPOTIFY TOKEN",
+        "spotifySecret": "YOUR SPOTIFY SECRET"
     },
     "oauth": {
         "privateKey": "LOCATION OF PRIVATE HTTPS KEY",
@@ -26,5 +28,5 @@
         "maxPlatlistSize": NUMBER OF MAX PLAYLIST LENGTH,
         "pruning": TRUE OR FALSE TO ENABLE OR DISABLE PRUNING
     },
-    "devids": ["YOUR DISCORD IDS"]
+    "devids": ["YOUR DISCORD IDS 1", "YOUR DISCORD IDS 2", "YOUR DISCORD IDS 3"]
 }
