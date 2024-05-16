@@ -147,6 +147,7 @@ function messageHandling(client) {
 //#region Message Handling for PM
 function PMHandling (client) {
     client.on("message", message => {
+        console.log("messageseen!");
         var prefix = '!';
         const cooldowns = new Collection();
 
