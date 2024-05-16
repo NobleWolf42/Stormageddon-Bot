@@ -1,31 +1,27 @@
-//#region Dependencies
-const { MessageEmbed } = require('discord.js');
-//#endregion
-
 //#region Helpers
-const { updateConfigFile } = require('../helpers/currentsettings.js');
+const { updateConfigFile } = require('../helpers/currentSettings.js');
 const { warnDisabled } = require('../helpers/embedMessages.js');
 //#endregion
 
 //#region Internals
-const { generateEmbedFields } = require('../internal/autorole.js');
+const { generateEmbedFields } = require('../internal/autoRole.js');
 //#endregion
 
 //#region This exports the createautorolemessage command with the information about it
 module.exports = {
-    name: "createautorolemessage",
+    name: "createrolemessage",
     type: ['Guild'],
-    aliases: [],
-    cooldown: 60,
+    aliases: ['creatermsg'],
+    coolDown: 60,
     class: 'admin',
-    usage: 'createautorolemessage',
+    usage: 'createrolemessage',
     description: "Create the reactions message for auto role assignment.",
     execute(message, args, client) {
         var serverID = message.guild.id;
 
         config = updateConfigFile();
         //Checks to make sure your roles and reactions match up
-        if (config[serverID].autorole.roles.length !== config[serverID].autorole.reactions.length) {
+        if (config[serverID].autoRole.roles.length !== config[serverID].autoRole.reactions.length) {
             throw new Error("Roles list and reactions list are not the same length! Please double check this in the config[serverID].js file");
         }  
 
@@ -38,35 +34,25 @@ module.exports = {
         if (missing.includes('ADD_REACTIONS'))
             throw new Error("I need permission to add reactions to these messages! Please assign the 'Add Reactions' permission to me in this channel!");
 
-        if (!config[serverID].autorole.embedMessage || (config[serverID].autorole.embedMessage === ''))
+        if (!config[serverID].autoRole.embedMessage || (config[serverID].autoRole.embedMessage === ''))
             throw "The 'embedMessage' property is not set in the config[serverID].js file. Please do this!";
-        if (!config[serverID].autorole.embedFooter || (config[serverID].autorole.embedMessage === ''))
+        if (!config[serverID].autoRole.embedFooter || (config[serverID].autoRole.embedMessage === ''))
             throw "The 'embedFooter' property is not set in the config[serverID].js file. Please do this!";
         
         // Checks to see if the module is enabled
-        if (!config[serverID].autorole.enable) {
-            warnDisabled(message, 'autorole', module.name);
+        if (!config[serverID].autoRole.enable) {
+            warnDisabled(message, 'autoRole', module.name);
             return
         }
 
-        const roleEmbed = new MessageEmbed()
-            .setTitle('Role Message')
-            .setDescription(config[serverID].autorole.embedMessage)
-            .setFooter(config[serverID].autorole.embedFooter);
+        var thumbnail = "";
+        var fieldsOut = [];
 
-        roleEmbed.setColor('#dd9323');
-
-        const roleEmbed2 = new MessageEmbed()
-            .setTitle('Role Message')
-            .setDescription("Continued form Previous Message")
-            .setFooter(config[serverID].autorole.embedFooter);
-
-        roleEmbed2.setColor('#dd9323');
-
-        if (config[serverID].autorole.embedThumbnail && (config[serverID].autorole.embedThumbnailLink !== '')) 
-            roleEmbed.setThumbnail(config[serverID].autorole.embedThumbnailLink);
-        else if (config[serverID].autorole.embedThumbnail && message.guild.icon)
-            roleEmbed.setThumbnail(message.guild.iconURL);
+        if (config[serverID].autoRole.embedThumbnail && (config[serverID].autoRole.embedThumbnailLink !== '')) {
+            thumbnail = config[serverID].autoRole.embedThumbnailLink;
+        } else if (config[serverID].autoRole.embedThumbnail && message.guild.icon) {
+            thumbnail = message.guild.iconURL;
+        }
 
         const fields = generateEmbedFields(serverID);
         if (fields.length > 20) throw "That maximum roles that can be set for an embed is 20!";
@@ -77,14 +63,17 @@ module.exports = {
 
             const customEmote = client.emojis.cache.find(e => e.name === emoji);
             
-            if (!customEmote) roleEmbed.addField(emoji, role, true);
-            else roleEmbed.addField(customEmote, role, true);
+            if (!customEmote) { 
+                fieldsOut.push({ name: emoji, value: role, inline: true });
+            } else {
+                fieldsOut.push({ name: customEmote, value: role, inline: true });
+            }
         }
 
         
 
-        message.channel.send(roleEmbed).then(async m => {
-            for (const r of config[serverID].autorole.reactions) {
+        embedCustom(message, 'Role Message', '#dd9323', config[serverID].autoRole.embedMessage, config[serverID].autoRole.embedFooter, "", fieldsOut, "", thumbnail).then(async m => {
+            for (const r of config[serverID].autoRole.reactions) {
                 const emoji = r;
                 const customCheck = client.emojis.cache.find(e => e.name === emoji);
                     

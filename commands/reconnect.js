@@ -1,8 +1,9 @@
+//#region This exports the reconnect command with the information about it
 module.exports = {
     name: "reconnect",
     type: ['Guild'],
     aliases: ["rc"],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'reconnect',
     description: "Reconnects the bot to the voice chat you are in.",
@@ -10,4 +11,5 @@ module.exports = {
         const { channel } = message.member.voice;
         channel.join();
     }
-};
+}
+//#endregion

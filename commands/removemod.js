@@ -1,12 +1,18 @@
-const { bulidConfigFile } = require("../internal/settingsFunctions.js");
-const { updateConfigFile } = require("../helpers/currentsettings.js");
+//#region Helpers
+const { updateConfigFile } = require("../helpers/currentSettings.js");
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
+//#endregion
 
+//#region Internals
+const { buildConfigFile } = require("../internal/settingsFunctions.js");
+//#endregion
+
+//#region This exports the removemod command with the information about it
 module.exports = {
     name: "removemod",
     type: ['Guild'],
     aliases: [""],
-    cooldown: 0,
+    coolDown: 0,
     class: 'admin',
     usage: 'removemod ***MENTION-USERS***',
     description: "Removes users freom the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
@@ -29,7 +35,7 @@ module.exports = {
                     modmail.enable = true;
                     serverConfig[serverID].modmail = modmail;
             
-                    await bulidConfigFile(serverConfig);
+                    await buildConfigFile(serverConfig);
             
                     message.channel.send("Mods Have Been Removed!");
             
@@ -44,4 +50,5 @@ module.exports = {
             errorNoServerAdmin(message, module.name);
         }
     }
-};
+}
+//#endregion

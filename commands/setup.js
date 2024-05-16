@@ -1,13 +1,22 @@
-const { updateConfigFile } = require("../helpers/currentsettings.js");
-const { setup } = require("../internal/settingsFunctions.js");
-var serverConfig = updateConfigFile();
-const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
 
+//#region Helpers
+const { updateConfigFile } = require("../helpers/currentSettings.js");
+const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
+//#endregion
+
+//#region Internals
+const { setup } = require("../internal/settingsFunctions.js");
+//#endregion
+
+//Loads current server config settings
+var serverConfig = updateConfigFile();
+
+//#region This exports the setup command with the information about it
 module.exports = {
     name: "setup",
     type: ['Guild'],
     aliases: [""],
-    cooldown: 0,
+    coolDown: 0,
     class: 'admin',
     usage: 'setup',
     description: "Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.",
@@ -26,4 +35,5 @@ module.exports = {
         };
         return;
     }
-};
+}
+//#endregion

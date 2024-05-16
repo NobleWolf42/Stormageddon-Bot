@@ -1,14 +1,22 @@
-const createBar = require("string-progressbar");
-const { MessageEmbed } = require("discord.js");
+//region Dependencies
 const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
-const { warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
+const createBar = require("string-progressbar");
+//#endregion
 
+//#region Data Files
+var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
+//#endregion
+
+//region Helpers
+const { embedCustom, warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
+//#endregion
+
+//#region This exports the nowplaying command with the information about it
 module.exports = {
     name: "nowplaying",
     type: ['Guild'],
     aliases: ["np"],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'nowplaying',
     description: "Shows the currently playing song.",
@@ -24,20 +32,17 @@ module.exports = {
             const song = queue.songs[0];
             const seek = (queue.connection.dispatcher.streamTime - queue.connection.dispatcher.pausedTime) / 1000;
             const left = song.duration - seek;
+            var footerTXT = "";
 
-            let nowPlaying = new MessageEmbed()
-                .setTitle("Now playing")
-                .setDescription(`${song.title}\n${song.url}`)
-                .setColor("#0E4CB0")
-                .setAuthor("Stormageddon")
-                .addField("\u200b", new Date(seek * 1000).toISOString().substr(11, 8) + "[" + createBar((song.duration == 0 ? seek : song.duration), seek, 20)[0] + "]" + (song.duration == 0 ? " ◉ LIVE" : new Date(song.duration * 1000).toISOString().substr(11, 8)), false);
+            if (song.duration > 0) {
+                footerTXT = "Time Remaining: " + new Date(left * 1000).toISOString().substring(11, 8);
+            };
 
-            if (song.duration > 0) nowPlaying.setFooter("Time Remaining: " + new Date(left * 1000).toISOString().substr(11, 8));
-
-            return message.channel.send(nowPlaying);
+            return embedCustom(message, "Now playing", "#0E4CB0", `${song.title}\n${song.url}`, footerTXT, "", [{ name: "\u200b", value: new Date(seek * 1000).toISOString().substring(11, 8) + "[" + createBar((song.duration == 0 ? seek : song.duration), seek, 20)[0] + "]" + (song.duration == 0 ? " ◉ LIVE" : new Date(song.duration * 1000).toISOString().substring(11, 8)), inline: false }]);
         }
         else {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+}
+//#endregion

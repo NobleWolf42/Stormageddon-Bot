@@ -1,14 +1,14 @@
 //#region Initial Set-Up
     //#region Dependencies
-    const { Client, GatewayIntentBits} = require('discord.js');
+    const { Client, GatewayIntentBits } = require('discord.js');
     //#endregion
 
     //#region Data Files
-    const botConfig = require('./data/botconfig.json');
+    const botConfig = require('./data/botConfig.json');
     //#endregion
 
     //#region Helpers
-    const { createJSONfiles } = require('./helpers/createfiles.js');
+    const { createJSONfiles } = require('./helpers/createFiles.js');
     //#endregion
 
     //Creates config and other required JSON files if they do not exist
@@ -16,14 +16,13 @@
 
     //#region Internals
     const { addServerConfig, removeServerConfig } = require('./internal/settingsFunctions.js');
-    const { autoroleListener } = require('./internal/autorole.js');
-    const { PMHandling, messageHandling } = require('./internal/messagehandling.js');
-    const { serverJoin } = require('./internal/serverjoin.js');
+    const { autoRoleListener } = require('./internal/autoRole.js');
+    const { PMHandling, messageHandling } = require('./internal/messageHandling.js');
+    const { serverJoin } = require('./internal/serverJoin.js');
     //#endregion
 //#endregion
 
-
-// Initialize Discord Bot
+//#region Initialize Discord Bot
 const client = new Client({ intents: [
     GatewayIntentBits.DirectMessagePolls,
     GatewayIntentBits.DirectMessageReactions,
@@ -46,10 +45,11 @@ const client = new Client({ intents: [
     GatewayIntentBits.MessageContent
   ]});
 client.queue = new Map();
+//#endregion
 
 //Throws Error if bot's token is not set.
 if (botConfig.auth.token === 'YOUR BOT TOKEN' || botConfig.auth.token === '') {
-    throw new Error("The 'auth.token' property is not set in the botconfig.json file. Please do this!");
+    throw new Error("The 'auth.token' property is not set in the botConfig.json file. Please do this!");
 }
 
 //Logs the bot into discord, using it's auth token
@@ -58,7 +58,7 @@ client.login(botConfig.auth.token);
 //Logs the Bot info when bot starts
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}!`);
-    autoroleListener(client);
+    autoRoleListener(client);
     messageHandling(client);
     PMHandling(client);
     serverJoin(client);
