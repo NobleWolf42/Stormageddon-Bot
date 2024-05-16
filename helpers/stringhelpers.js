@@ -1,36 +1,17 @@
-//#region capitalize
+//#region Function that capitalizes the first letter of a passed word
+/**
+ * This function capitalizes the first letter of a passed word.
+ * @param {string} word - String that is a single lowercase word
+ * @returns {string} A capitalized version of the word passed in, or void if no word is passed
+ */
 function capitalize(word) {
     if (word != undefined) {
         return (word.charAt(0).toUpperCase() + word.slice(1));
     }
-    return
-}
-//#endregion
-
-//#region combineArray
-function combineArray (array, start) {
-    var text = '';
-
-    for (i = start; i < array.length; i++) {
-        if (array.length != (start + 1)) {
-            if (i < (array.length - start + 1)) {
-                text += (array[i] + ' ');
-            }
-            else {
-                text += array[i];
-            }
-        }
-        else {
-            if (array[i] != undefined) {
-                text += array[i];
-            }
-        }
-    }
-    
-    return text;
+    return;
 }
 //#endregion
 
 //#region exports
-module.exports = { capitalize, combineArray };
+module.exports = { capitalize };
 //#endregion

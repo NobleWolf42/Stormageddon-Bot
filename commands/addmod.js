@@ -1,8 +1,16 @@
-const { bulidConfigFile } = require("../internal/settingsFunctions.js");
-const { updateConfigFile } = require("../helpers/currentsettings.js");
+//#region Helpers
+const { updateConfigFile } = require("../helpers/currentSettings.js");
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
+//##endregion
+
+//#region Internals
+const { buildConfigFile } = require("../internal/settingsFunctions.js");
+//#endregion
+
+//Gets current config file
 var serverConfig = updateConfigFile();
 
+//#region This exports the addmod command with the information about it
 module.exports = {
     name: "addmod",
     type: ['Guild'],
@@ -30,7 +38,7 @@ module.exports = {
                     modmail.enable = true;
                     serverConfig[serverID].modmail = modmail;
             
-                    await bulidConfigFile(serverConfig);
+                    await buildConfigFile(serverConfig);
             
                     message.channel.send("Mods Have Been Added!");
             
@@ -45,4 +53,5 @@ module.exports = {
             errorNoServerAdmin(message, module.name);
         }
     }
-};
+}
+//#endregion

@@ -1,8 +1,12 @@
-//#regions dependancies
+//#regions Dependencies
 const { errorCustom, embedCustom } = require('../helpers/embedMessages.js');
-const botConfig = require('../data/botconfig.json');
 //#endregion
 
+//#region Data Files
+const botConfig = require('../data/botConfig.json');
+//#endregion
+
+//#region This exports the devsend command with the information about it
 module.exports = {
     name: "devsend",
     type: ['DM'],
@@ -26,4 +30,5 @@ module.exports = {
             errorCustom(message, 'You do not have permission to use this command!', module.name);
         }
     }
-};
+}
+//#endregion

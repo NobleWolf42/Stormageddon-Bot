@@ -1,10 +1,16 @@
-//#region 
+//#region Dependencies
 const { XMLHttpRequest } = require("xmlhttprequest");
-const config = require('../data/botconfig.json');
+//#endregion
+
+//#region Data Files
+const config = require('../data/botConfig.json');
+//#endregion
+
+//#region Helpers
 const { embedCustom, warnCustom, errorCustom } = require('../helpers/embedMessages.js');
 //#endregion
 
-//#region ISS Command
+//#region This exports the destiny2 command with the information about it
 module.exports = {
     name: "destiny2",
     type: ['DM', 'Guild'],
@@ -33,14 +39,16 @@ module.exports = {
 
     }
 }
+//#endregion
 
+//#region Gets the status of destiny 2 players by username
 function getStatus(message, pers_name) {
     // Request initialized and created
-    var request = new XMLHttpRequest()
+    var request = new XMLHttpRequest();
     request.open('GET', 'https://www.bungie.net/Platform//User/SearchUsers?q='+pers_name, true);
     request.setRequestHeader('X-API-KEY', config.auth.d2ApiKey);
     request.onload = function() {
-        //After request is recieved, parse it.
+        //After request is received, parse it.
         var data = JSON.parse(request.responseText)["Response"][0];
 
         if (request.status >= 200 && request.status < 400 ) {
@@ -56,7 +64,9 @@ function getStatus(message, pers_name) {
     }
     request.send()
 }
+//#endregion
 
+//#region Gets the information of the destiny 2 clan by name
 function getClan(message, clan_name){
     // Request initialized and created
     var request = new XMLHttpRequest()
@@ -88,3 +98,4 @@ function getClan(message, clan_name){
 
     request.send()
 }
+//#endregion

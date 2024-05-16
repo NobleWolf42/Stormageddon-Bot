@@ -1,13 +1,23 @@
+//#region Dependencies
 const { MessageEmbed } = require("discord.js");
 const { readFileSync } = require('fs');
-const { play } = require("../helpers/music.js");
-const botConfig = require("../data/botconfig.json");
 const YouTubeAPI = require("simple-youtube-api");
-const youtube = new YouTubeAPI(botConfig.auth.youtubeApiKey);
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
+//#endregion
+
+//#region Data Files
+const botConfig = require("../data/botConfig.json");
+var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
+//#endregion
+
+//#region Helpers
+const { play } = require("../helpers/music.js");
 const { djCheck } = require("../helpers/userHandling.js");
 const { warnCustom, errorCustom, warnDisabled, errorNoDJ, warnWrongChannel } = require("../helpers/embedMessages.js");
+//#endregion
 
+const youtube = new YouTubeAPI(botConfig.auth.youtubeApiKey);
+
+//#region This exports the playlist command with the information about it
 module.exports = {
     name: "playlist",
     type: ['Guild'],
@@ -135,4 +145,5 @@ module.exports = {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+}
+//#endregion

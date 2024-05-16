@@ -1,16 +1,16 @@
 {
     "Help": {
         "help ***PAGE***"                                                                       : "Displays Help Message, specifying a page will show that help info, using the **\"All\"** page will display all commands, the **\"DM\"** page will display all commands that can be Direct Messaged to the bot, and the **\"Server\"** page will display all commands that can be used in a discord server. (Works in Direct Messages Too.)",
-        "info"                                                                                  : "Displays information about the bot, it's creators, and where you can go if you would like to contribute to it. (Works in Direct Messages Too.)"        ,
+        "info"                                                                                  : "Displays information about the bot, it's creators, and where you can go if you would like to contribute to it. (Works in Direct Messages Too.)",
         "register"                                                                              : "Lets you know if you are registered and gives you the link to register/update you info. (Works in Direct Message Too.)"
     },
     "Admin": {
         "changeprefix ***INSERT-SYMBOL***"                                                      : "Changes the prefix the bot uses in your server. Available Symbols: `~!$%^&*()_+-={}[]|\\:\";\\'<>?,.",
-        "createautorolemsg"                                                                     : "Create the reactions message for auto role assignment.",
+        "createautoRolemsg"                                                                     : "Create the reactions message for auto role assignment.",
         "clear ***NUMBER(1-99)***"                                                              : "Bulk deletes the previous messages in a chat based on user input, up to 99 previous messages.",
         "addmod ***MENTION-USERS***"                                                            : "Adds users to the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
         "setup"                                                                                 : "Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.",
-        "set autorole/joinrole/general/music/modmail"                                           : "Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS."
+        "set autoRole/joinrole/general/music/modmail"                                           : "Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS."
     },
     "Fun": {
         "agify ***INSERT-NAME***"                                                               : "Estimates someone's age based off of their name. (Works in Direct Messages Too.)",
@@ -21,7 +21,7 @@
         "destiny2 status ***INSERT-BUNGIE-NAME*** or destiny2 clan ***INSERT-CLAN-NAME***"      : "Status displays the Destiny 2 account's original creation date and last API update date. Clan displays Destiny 2 clan's bio, avatar, motto, and founder. (Works in Direct Messages Too.)"
     },
     "Music": {
-        "play ***YOUTUBE-LINK***"                                 : "Plays the selected music in the voice channel you are in.",
+        "play ***YOUTUBE-LINK***"                                                               : "Plays the selected music in the voice channel you are in.",
         "playlist ***YOUTUBE-LINK***"                                                           : "Plays a playlist from youtube.",
         "pause"                                                                                 : "Pauses the currently playing music.",
         "resume"                                                                                : "Resumes the currently paused music.",

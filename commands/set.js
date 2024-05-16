@@ -1,18 +1,24 @@
-const { setAutorole, setJoinrole, setMusic, setGeneral, setModMail } = require("../internal/settingsFunctions.js");
+//#region Helpers
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
+//#endregion
 
+//#region Internals
+const { setautoRole, setJoinrole, setMusic, setGeneral, setModMail } = require("../internal/settingsFunctions.js");
+//#endregion
+
+//#region This exports the set command with the information about it
 module.exports = {
     name: "set",
     type: ['Guild'],
     aliases: [""],
     cooldown: 0,
     class: 'admin',
-    usage: 'set autorole/joinrole/general/music/modmail',
+    usage: 'set autoRole/joinrole/general/music/modmail',
     description: "Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.",
     execute(message, args) {
         if (message.member.hasPermission('ADMINISTRATOR')) {
-            if (args[0] == 'autorole') {
-                setAutorole(message);
+            if (args[0] == 'autoRole') {
+                setautoRole(message);
             }
             else if (args[0] == 'joinrole') {
                 setJoinrole(message);
@@ -35,4 +41,5 @@ module.exports = {
         };
         return;
     }
-};
+}
+//#endregion

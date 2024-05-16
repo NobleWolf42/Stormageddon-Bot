@@ -1,8 +1,8 @@
-//#region Dependcies
+//#region Dependencies
 const { XMLHttpRequest } = require("xmlhttprequest");
 //#endregion
 
-//#region Agify Command
+//#region This exports the agify command with the information about it
 module.exports = {
     name: "agify",
     type: ['Guild', 'DM'],
@@ -21,7 +21,7 @@ module.exports = {
             var data = JSON.parse(request.responseText)
 
             if (request.status >= 200 && request.status < 400) {
-                // Capitalizing the first lettter of the returned name
+                // Capitalizing the first letter of the returned name
                 var capitalizedname = userInput[1].charAt(0).toUpperCase() + userInput[1].slice(1);
 
                 message.reply("\n The age of " + capitalizedname + " is estimated at " + data.age + ".");

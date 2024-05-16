@@ -1,8 +1,24 @@
+//#region Dependencies
 const ytdl = require("erit-ytdl");
 const scdl = require("soundcloud-downloader");
-const botConfig = require("../data/botconfig.json");
-const { warnCustom, errorCustom } = require('../helpers/embedMessages.js')
+//#endregion
 
+//#region Data Files
+const botConfig = require("../data/botConfig.json");
+//#endregion
+
+//#region Helpers
+const { warnCustom, errorCustom } = require('../helpers/embedMessages.js');
+const { Message, GuildMember } = require("discord.js");
+//#endregion
+
+//#region Function that handles playing and searching for a song and sends the control embedded message
+/**
+ * This function handles playing and searching for a song and sends the control embedded message
+ * @param {string} song - String of the song URL or name to be searched
+ * @param {Message} message - Discord.js Message Object
+ * @returns {*} Will return a variety of things, probably needs a rewrite
+ */
 async function play(song, message) {
 
     const queue = message.client.queue.get(message.guild.id);
@@ -76,6 +92,7 @@ async function play(song, message) {
         await playingMessage.react("🔊");
         await playingMessage.react("🔁");
         await playingMessage.react("⏹");
+        await playingMessage.react("🔀");
     } catch (error) {
         console.error(error);
     }
@@ -169,6 +186,18 @@ async function play(song, message) {
                 }
                 collector.stop();
                 break;
+            case "🔀":
+                reaction.users.remove(user).catch(console.error);
+                if (!canModifyQueue(member, message, 'Music Helper')) return console.log('Not In Voicechat');
+                let songs = queue.songs;
+                for (let i = songs.length - 1; i > 1; i--) {
+                    let j = 1 + Math.floor(Math.random() * i);
+                    [songs[i], songs[j]] = [songs[j], songs[i]];
+                }
+                queue.songs = songs;
+                message.client.queue.set(message.guild.id, queue);
+                queue.textChannel.send(`\`${user.tag}\` 🔀 shuffeled the music!`).catch(console.error);
+                break;
 
             default:
                 reaction.users.remove(user).catch(console.error);
@@ -182,8 +211,17 @@ async function play(song, message) {
             playingMessage.delete({ timeout: 3000 }).catch(console.error);
         }
     });
-};
+}
+//#endregion
 
+//#region Function that checks to see if the bot is in the same channel as the user
+/**
+ * This function checks to see if the bot is in the same channel as the user.
+ * @param {GuildMember} member - Discord.js Member Object
+ * @param {Message} message - Discord.js Message Object
+ * @param {string} commandName - String of the command name
+ * @returns {boolean} Returns true if the user is in the same voice channel as the bot, false if they are not
+ */
 function canModifyQueue(member, message, commandName) {
     const { channel } = member.voice;
     const botChannel = member.guild.me.voice.channel;
@@ -194,5 +232,6 @@ function canModifyQueue(member, message, commandName) {
     }
     return true;
 }
+//#endregion
 
 module.exports = { play, canModifyQueue }

@@ -1,152 +1,221 @@
-//#region Dependancies
-const { MessageEmbed } = require('discord.js');
-const { addToLog } = require('../helpers/errorlog.js');
+//#region Dependencies
+const { EmbedBuilder, Message } = require('discord.js');
 //#endregion
 
-//#region Custom Embed
+//#region Helpers
+const { addToLog } = require('./errorLog.js');
+//#endregion
+
+//#region Function that takes several inputs and creates an embedded message and sends it in the channel that is attached to the Message Object
+/**
+ * This function takes several inputs and creates an embed message and then sends it in a server.
+ * @param {Message} message - A Discord.js Message Object 
+ * @param {string} title - String for the Title/Header of the message
+ * @param {string} color - String Hex Code for the color of the border 
+ * @param {string} text - String for the body of the embedded message
+ * @param {URL} img - URL to an Image to include (optional) 
+ */
 function embedCustom(message, title, color, text, img) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor(color)
         .setDescription(text)
         .setImage(img);
-    message.channel.send(embMsg);
+    message.channel.send({ embeds: [embMsg] });
 }
 //#endregion
 
-//#region Custom Direct Message Embed
+//#region Function that takes several inputs and creates an embedded message and dms the user that is attached to the Message Object
+/**
+ * This function takes several inputs and creates an embed message and then sends it in a DM.
+ * @param {Message} message - A Discord.js Message Object 
+ * @param {string} title - String for the Title/Header of the message
+ * @param {string} color - String Hex Code for the color of the border 
+ * @param {string} text - String for the body of the embedded message
+ * @param {URL} img - URL to an Image to include (optional) 
+ */
 function embedCustomDM(message, title, color, text, img) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor(color)
         .setDescription(text)
         .setImage(img);
-    message.author.send(embMsg);
+    message.author.send({ embeds: [embMsg] });
     if (message.channel.guild != undefined) {
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
 }
 //#endregion
 
-//#region Help Embed
+//#region Function that takes several inputs and creates an embedded message for the help command
+/**
+ * This function takes several inputs and creates an embed message for the help command.
+ * @param {Message} message - A Discord.js Message Object
+ * @param {string} title - String for the Title/Header of the message
+ * @param {string} text - String for the body of the embedded message
+ */
 function embedHelp(message, title, text) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor('#1459C7')
         .setDescription(text);
-    message.author.send(embMsg);
+    message.author.send({ embeds: [embMsg] });
 }
 //#endregion
 
-//#region Custom Warning
+//#region Function that takes several inputs and creates an embedded message for a custom warning
+/**
+ * This function takes several inputs and creates an embed message for a custom warning.
+ * @param {Message} message - A Discord.js Message Object
+ * @param {string} text - String for the body of the embedded message
+ * @param {string} commandName - String of the name of the command
+ */
 function warnCustom(message, text, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
         .setDescription(text);
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, text);
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send({ embeds: [embMsg] });
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
     }
 }
 //#endregion
 
-//#region No Admin Access
+//#region Function that takes several inputs and creates an embedded message for a lack of bot admin privileges
+/**
+ * This function takes several inputs and creates an embed message for an Error stating a lack of bot admin privileges.
+ * @param {Message} message - A Discord.js Message Object
+ * @param {string} commandName - String of the name of the command
+ */
 function errorNoAdmin(message, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *BOT ADMIN* access to use!');
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Bot Admin!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send({ embeds: [embMsg] });
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not Bot Admin!");
     }
 }
 //#endregion
 
-//#region No Mod Access
+//#region Function that takes several inputs and creates an embedded message for a lack of mod privileges
+/**
+ * This function takes several inputs and creates an embed message for an Error stating a lack of mod privileges.
+ * @param {Message} message - A Discord.js Message Object
+ * @param {string} commandName - String of the name of the command
+ */
 function errorNoMod(message, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *BOT MOD* access to use!');
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Bot Moderator!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send({ embeds: [embMsg] });
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not Bot Moderator!");
     }
 }
 //#endregion
 
-//#region No DJ Access
+//#region Function that takes several inputs and creates an embedded message for a lack of DJ privileges
+/**
+ * This function takes several inputs and creates an embed message for an Error stating a lack of DJ privileges.
+ * @param {Message} message - A Discord.js Message Object
+ * @param {string} commandName - String of the name of the command
+ */
 function errorNoDJ(message, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *DJ* access to use!');
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not DJ!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send({ embeds: [embMsg] });
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not DJ!");
     }
 }
 //#endregion
 
-//#region No Server Admin Access
+//#region Function that takes several inputs and creates an embedded message for a lack of server admin privileges
+/**
+ * This function takes several inputs and creates an embed message for an Error stating a lack of server admin privileges.
+ * @param {Message} message - A Discord.js Message Object
+ * @param {string} commandName - String of the name of the command
+ */
 function errorNoServerAdmin(message, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!');
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Server Admin!");
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send({ embeds: [embMsg] });
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not Server Admin!");
     }
 }
 //#endregion
 
-//#region Custom Error
+//#region Function that takes several inputs and creates an embedded message for a custom error
+/**
+ * This function takes several inputs and creates an embed message for a custom error.
+ * @param {Message} message - A Discord.js Message Object
+ * @param {string} text - String for the body of the embedded message
+ * @param {string} commandName - String of the name of the command
+ */
 function errorCustom(message, text, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription(text);
-    message.channel.send(embMsg).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
     if (message.channel.guild != undefined) {
+        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
         addToLog('Fatal Error', commandName, message.author.tag, message.guild.name, message.channel.name, text);
         message.delete({ timeout: 15000, reason: 'Cleanup.' });
     }
     else {
+        message.channel.send({ embeds: [embMsg] });
         addToLog('Fatal Error', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
     }
 }
 //#endregion
 
-//#region Wrong Channel
+//#region Function that takes several inputs and creates an embedded message for a wrong channel error
+/**
+ * This function takes several inputs and creates an embed message for a custom error.
+ * @param {Message} message - A Discord.js Message Object
+ * @param {string} correctChannel - String for the correct channel to send the command in
+ * @param {string} commandName - String of the name of the command
+ */
 function warnWrongChannel(message, correctChannel, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
         .setDescription(`That was not the correct channel for that command. The correct channel for this command is #${correctChannel}`);
-    message.author.send(embMsg);
+    message.author.send({ embeds: [embMsg] });
     if (message.channel.guild != undefined) {
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Wrong Text Channel");
         message.delete({ timeout: 1500, reason: 'Cleanup.' });
@@ -157,13 +226,19 @@ function warnWrongChannel(message, correctChannel, commandName) {
 }
 //#endregion
 
-//#region Disabled
-function warnDisabled(message, command, commandName) {
-    const embMsg = new MessageEmbed()
+//#region Function that takes several inputs and creates an embedded message for a disabled command error
+/**
+ * This function takes several inputs and creates an embed message for a custom error.
+ * @param {Message} message - A Discord.js Message Object
+ * @param {string} feature - String for the name of the feature
+ * @param {string} commandName - String of the name of the command
+ */
+function warnDisabled(message, feature, commandName) {
+    const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
-        .setDescription(`This feature is currently disabled. To enable it, please run the !set ${command}. NOTE: Command is only avalible to a server admin.`);
-    message.author.send(embMsg);
+        .setDescription(`This feature is currently disabled. To enable it, please run the !set ${feature}. NOTE: This command is only available to a server admin.`);
+    message.author.send({ embeds: [embMsg] });
     if (message.channel.guild != undefined) {
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Feature Disabled");
         message.delete({ timeout: 1500, reason: 'Cleanup.' });

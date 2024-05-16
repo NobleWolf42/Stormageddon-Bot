@@ -1,9 +1,18 @@
-const createBar = require("string-progressbar");
+//region Dependencies
 const { MessageEmbed } = require("discord.js");
 const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
-const { warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
+const createBar = require("string-progressbar");
+//#endregion
 
+//#region Data Files
+var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
+//#endregion
+
+//region Helpers
+const { warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
+//#endregion
+
+//#region This exports the nowplaying command with the information about it
 module.exports = {
     name: "nowplaying",
     type: ['Guild'],
@@ -40,4 +49,5 @@ module.exports = {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+}
+//#endregion

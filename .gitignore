@@ -1,8 +1,8 @@
+/.vscode
 /node_modules
-/data/botconfig.json
-/data/serverconfig.json
-/data/botprefix.json
-/data/errorlog.json
-/commands/log.js
-userinfo.json
+/data/botConfig.json
+/data/serverConfig.json
+/data/botPrefix.json
+/data/errorLog.json
+userInfo.json
 package-lock.json

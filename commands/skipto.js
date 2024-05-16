@@ -1,9 +1,18 @@
-const { canModifyQueue } = require("../helpers/music.js");
+//#region Dependencies
 const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
+//#endregion
+
+//#region Data Files
+var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
+//#endregion
+
+//#region Helpers
+const { canModifyQueue } = require("../helpers/music.js");
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require("../helpers/embedMessages.js");
 const { djCheck } = require("../helpers/userHandling.js");
+//#endregion
 
+//#region This exports the skipto command with the information about it
 module.exports = {
     name: "skipto",
     type: ['Guild'],
@@ -25,10 +34,10 @@ module.exports = {
 
         if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
             if (!args.length)
-                return warnCustom(message, `Usage: ${message.client.prefix}${module.exports.name} <Queue Number>`, module.name);
+                return warnCustom(message, `Usage: ${message.prefix}${module.exports.name} <Queue Number>`, module.name);
 
             if (isNaN(args[0]))
-                return warnCustom(message, `Usage: ${message.client.prefix}${module.exports.name} <Queue Number>`, module.name);
+                return warnCustom(message, `Usage: ${message.prefix}${module.exports.name} <Queue Number>`, module.name);
 
             const queue = message.client.queue.get(message.guild.id);
             if (!queue) return warnCustom(message, "There is no queue.", module.name);
@@ -52,4 +61,5 @@ module.exports = {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+}
+//#endregion

@@ -1,13 +1,20 @@
-//#region Dependancies
+//#region Dependencies
 const { readFileSync, writeFileSync} = require('fs');
-const { errorNoAdmin, warnCustom, embedCustom } = require("../helpers/embedMessages.js");
-const { adminCheck } = require('../helpers/userHandling.js');
-const isSymbol = /[`~!$%^&*()_+\-={}[\]\|\\:";'<>?,.\/]/;
-
-var prefixFile = JSON.parse(readFileSync('./data/botprefix.json'));
 //#endregion
 
-//#region Change Prefix Command
+//#region Data Files
+var prefixFile = JSON.parse(readFileSync('./data/botPrefix.json'));
+//#endregion
+
+//#region Helpers
+const { errorNoAdmin, warnCustom, embedCustom } = require("../helpers/embedMessages.js");
+const { adminCheck } = require('../helpers/userHandling.js');
+//#endregion
+
+//Regex that should eliminate anything that is not ~!$%^&*()_+-={}[]|:";'<>?,.
+const isSymbol = /[~!$%^&*()_+\-={}[\]\|:";'<>?,.]/;
+
+//#region This exports the changeprefix command with the information about it
 module.exports = {
     name: "changeprefix",
     type: ['Guild'],
@@ -15,7 +22,7 @@ module.exports = {
     cooldown: 3,
     class: 'admin',
     usage: 'changeprefix ***INSERT-SYMBOL***',
-    description: "Changes the prefix the bot uses in your server. Available Symbols: ``~!$%^&*()_+-={}[]|\\:\";\\'<>?,.`",
+    description: "Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-={}[]|:\";\'<>?,.```",
     execute(message, args) {
         var serverID = message.channel.guild.id;
 
@@ -24,7 +31,7 @@ module.exports = {
                 if ((args[0].length == 1) && (isSymbol.test(args[0]))) {
                     prefixFile[serverID] = {"prefix": args[0]};
 
-                    writeFileSync("./data/botprefix.json", JSON.stringify(prefixFile), (err) => {
+                    writeFileSync("./data/botPrefix.json", JSON.stringify(prefixFile), (err) => {
                         if (err) {
                             console.error(err);
                         };
@@ -34,7 +41,7 @@ module.exports = {
                     return;
                 }
                 else {
-                    warnCustom(message, 'Bot Prefix Must be one of the following: ````~!$%^&*()_+-={}[]|\:";\'<>?,./```', module.name);
+                    warnCustom(message, 'Bot Prefix Must be one of the following: ```~!$%^&*()_+-={}[]|\:";\'<>?,./```', module.name);
                     return;
                 }
             }
@@ -48,5 +55,5 @@ module.exports = {
             return;
         }
     }
-};
+}
 //#endregion

@@ -1,9 +1,13 @@
-//#regions dependancies
-const { updateConfigFile } = require("../helpers/currentsettings.js");
+//#regions Helpers
+const { updateConfigFile } = require("../helpers/currentSettings.js");
 const { errorCustom, warnCustom,warnDisabled } = require('../helpers/embedMessages.js');
+//#endregion
+
+//#region loads current server config file
 var serverConfig = updateConfigFile();
 //#endregion
 
+//#region This exports the modmail command with the information about it
 module.exports = {
     name: "modmail",
     type: ['DM'],
@@ -44,4 +48,5 @@ module.exports = {
             warnCustom(message, 'The server you specified does not have this bot, or you failed to specify a server.', module.name);
         }
     }
-};
+}
+//#endregion

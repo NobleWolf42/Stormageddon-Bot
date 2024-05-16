@@ -1,6 +1,12 @@
+//#region Dependencies
 const { MessageEmbed, splitMessage, escapeMarkdown } = require("discord.js");
-const { warnCustom } = require("../helpers/embedMessages.js");
+//#endregion
 
+//#region Helpers
+const { warnCustom } = require("../helpers/embedMessages.js");
+//#endregion
+
+//#region This exports the showqueue command with the information about it
 module.exports = {
     name: "showqueue",
     type: ['Guild'],
@@ -32,4 +38,5 @@ module.exports = {
             message.channel.send(queueEmbed);
         });
     }
-};
+}
+//#endregion

@@ -1,43 +1,60 @@
-//#region Dependancies
+//#region Dependencies
+const { MessageEmbed, Client } = require('discord.js');
 const { readFileSync, writeFileSync, existsSync} = require('fs');
-const { MessageEmbed } = require('discord.js');
-const { capitalize } = require('../helpers/stringhelpers.js')
-var logFile = JSON.parse(readFileSync('./data/errorlog.json'));
-const botConfig  = require('../data/botconfig.json');
 //#endregion
 
-function addToLog(logtype, command, user, server, channel, error, client) {
+//#region Data Files
+const botConfig  = require('../data/botConfig.json');
+var logFile = JSON.parse(readFileSync('./data/errorLog.json'));
+//#endregion
+
+//#region Helpers
+const { capitalize } = require('./stringHelpers.js')
+//#endregion
+
+//#region Function that adds an item to the log file and sends any fatal errors to the bot developers
+/**
+ * This function adds an item to the log file and sends any fatal errors to the bot developers.
+ * @param {string} logType - Type of log "Success", "Warning", or "Fatal Error"
+ * @param {string} command String of the command name that was executed
+ * @param {string} user - String of the user who executed the command
+ * @param {string} server - String of the server name that the command was executed in
+ * @param {string} channel - String of the channel name that the command was executed in
+ * @param {string} error - String containing error
+ * @param {Client} client - Discord.js Client Object
+ */
+function addToLog(logType, command, user, server, channel, error, client) {
     try {
         reloadLog();
         var d = new Date();
         var i = logFile.logging.length;
     
-        logadd = {};
+        logAdd = {};
         
-        if (logtype.toLowerCase() === 'success') {
-            logadd.Log = `${logtype} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel}`;
+        if (logType.toLowerCase() === 'success') {
+            logAdd.Log = `${logType} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel}`;
         }
         else {
-            logadd.Log = `${logtype} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel} --- Error: ${error}`;
+            logAdd.Log = `${logType} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel} --- Error: ${error}`;
         }
 
-        console.log(logadd.Log);
+        console.log(logAdd.Log);
         console.log('');
 
-        logadd.Date = d;
-        logadd.Code = logtype;
-        logFile.logging[i] = logadd;
+        logAdd.Date = d;
+        logAdd.Code = logType;
+        logFile.logging[i] = logAdd;
 
-        if (logtype.toLowerCase() === 'fatal error') {
+        if (logType.toLowerCase() === 'fatal error') {
             
             var devList = botConfig.devids;
             for(key in devList) {
                 const embMsg = new MessageEmbed()
                     .setTitle('Fatal Errors Detected!')
                     .setColor('#FF0084')
-                    .setDescription(`${logadd.Log}`)
-                    .setFooter(logadd.Date)
-                    .attachFiles(['./data/errorlog.json']);
+                    .setDescription(`${logAdd.Log}`)
+                    .setFooter(logAdd.Date)
+                    .attachFiles(['./data/errorLog.json']);
                 client.users.cache.get(devList[key]).send(embMsg);
             }
         }
@@ -49,9 +66,14 @@ function addToLog(logtype, command, user, server, channel, error, client) {
         console.log('');
     }
 }
+//#endregion
 
+//#region Function that saves the current state of the logFile buffer to ./data/errorLog.json 
+/**
+ * This function saves the current state of the logFile buffer to ./data/errorLog.json.
+ */
 function addInput() {
-    writeFileSync('./data/errorlog.json', JSON.stringify(logFile, null, 2), function(err){
+    writeFileSync('./data/errorLog.json', JSON.stringify(logFile, null, 2), function(err){
         if(err) {
             console.log(err);
             console.log('');
@@ -64,25 +86,40 @@ function addInput() {
         resetLog();
     }
 }
+//#endregion
 
+//#region Function that reset the log file to empty (intended to keep the file from getting too large)
+/**
+ * This function resets the log file to empty (intended to keep the file from getting too large).
+ */
 function resetLog() {
-    var diddelete = false;
+    var didDelete = false;
 
-    if(existsSync("./data/errorlog.json")) {
+    if(existsSync("./data/errorLog.json")) {
         buildLog();
-        diddelete = true;
+        didDelete = true;
     }
 
-    if(diddelete === true) { console.log('Successfuly Rebuilt the errorlog.json\n');
-    } else if(diddelete === false){ console.log('Failed Rebuild of the errorlog.json.\n'); }
+    if(didDelete === true) { console.log('Successfully Rebuilt the errorLog.json\n');
+    } else if(didDelete === false){ console.log('Failed Rebuild of the errorLog.json.\n'); }
 }
+//#endregion
 
+//#region Reloads the log file into internal var
+/**
+ * This function reloads the log file into internal var.
+ */
 function reloadLog() {
-    if(existsSync("./data/errorlog.json")) {
-        logFile = JSON.parse(readFileSync('./data/errorlog.json', 'utf8'));
+    if(existsSync("./data/errorLog.json")) {
+        logFile = JSON.parse(readFileSync('./data/errorLog.json', 'utf8'));
     }
 }
+//#endregion
 
+//#region Builds An empty log file with the date and time of build logged at the top
+/**
+ * This function builds An empty log file with the date and time of build logged at the top.
+ */
 function buildLog() {
     var d = new Date();
     var f = { "logging": [{
@@ -90,12 +127,13 @@ function buildLog() {
         "Date": d,
         "Code": "None"
     }]};
-    writeFileSync('./data/errorlog.json', JSON.stringify(f, null, 2), function(err){
+    writeFileSync('./data/errorLog.json', JSON.stringify(f, null, 2), function(err){
         if(err) {
             console.log(err);
             console.log('');
         }
     });
 }
+//#endregion
 
 module.exports = { addToLog };

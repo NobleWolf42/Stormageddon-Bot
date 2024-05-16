@@ -1,9 +1,18 @@
-const { canModifyQueue } = require("../helpers/music.js");
+//#region Dependencies
 const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
+//#endregion
+
+//#region Data Files
+var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
+//#endregion
+
+//#region Helpers
+const { canModifyQueue } = require("../helpers/music.js");
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoMod } = require("../helpers/embedMessages.js");
 const { modCheck, adminCheck } = require("../helpers/userHandling");
+//#endregion
 
+//#region This exports the volume command with the information about it
 module.exports = {
     name: "volume",
     type: ['Guild'],
@@ -11,7 +20,7 @@ module.exports = {
     cooldown: 0,
     class: 'music',
     usage: 'volume ***NUMBER(1-100)***',
-    description: "Displays volume of currently playing music if no numbers anre entered. Can change volume percent if numbers are entered.",
+    description: "Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered.",
     execute(message, args) {
 
         if (!serverConfig[message.guild.id].music.enable) {
@@ -46,4 +55,5 @@ module.exports = {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+}
+//#endregion
