@@ -26,7 +26,6 @@ function trycommand(client, message, command, args) {
 
 //#region Message Handling for Server
 function messageHandling(client) {
-
     client.commands = new Collection();
     const cooldowns = new Collection();
 
@@ -39,7 +38,7 @@ function messageHandling(client) {
     //#endregion
 
     //Handles messages from guilds and their responses
-    client.on("message", message => {
+    client.on("messageCreate", message => {
 
         //#region Permission Checks
         // Make sure bots can't run commands
@@ -52,7 +51,7 @@ function messageHandling(client) {
         //#region prefix/defaultprefix set
         var serverID = message.channel.guild.id;
         var prefixFile = JSON.parse(readFileSync('./data/botprefix.json', 'utf8'));
-
+        
         if (prefixFile[serverID] != undefined) {
             if (prefixFile[serverID].prefix != undefined) {
                 var prefix = prefixFile[serverID].prefix;
