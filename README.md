@@ -88,7 +88,7 @@ Copy or Rename `botConfig.example.json` located in the `data` folder to `botConf
 
 - Admin Commands
   
-  -  Changes the prefix the bot uses in your server. Available Symbols: `~!$%^&*()_+-={}[]|\\:\";\\'<>?,.
+  -  Changes the prefix the bot uses in your server. Available Symbols: ~!$%^&*()_+-=[];',.{}|:"<>?
 
         `!changeprefix ***INSERT-SYMBOL*** i.e. (!)`
 
