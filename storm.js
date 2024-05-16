@@ -11,6 +11,9 @@
     const { createJSONfiles } = require('./helpers/createfiles.js');
     //#endregion
 
+    //Creates config and other required JSON files if they do not exist
+    createJSONfiles();
+
     //#region Internals
     const { addServerConfig, removeServerConfig } = require('./internal/settingsFunctions.js');
     const { autoroleListener } = require('./internal/autorole.js');
@@ -19,10 +22,6 @@
     //#endregion
 //#endregion
 
-//#region Login / Initialize
-
-//Creates config and other required JSON files if they do not exist
-createJSONfiles();
 
 // Initialize Discord Bot
 const client = new Client({ intents: [
