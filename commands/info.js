@@ -7,7 +7,7 @@ module.exports = {
     name: "info",
     type: ['DM', 'Guild'],
     aliases: [],
-    cooldown: 60,
+    coolDown: 60,
     class: 'help',
     usage: 'info',
     description: "Displays information about the bot, it's creators, and where you can go if you would like to contribute to it.",

@@ -1,17 +1,27 @@
+//#region Dependencies
 const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
-const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require("../helpers/embedMessages.js");
-const { djCheck } = require("../helpers/userHandling.js");
-const { MessageEmbed } = require("discord.js");
-const botConfig = require("../data/botconfig.json");
 const YouTubeAPI = require("simple-youtube-api");
+//#endregion
+
+//#region Data Files
+var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
+const botConfig = require("../data/botConfig.json");
+//#endregion
+
+//#region Helpers
+const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } = require("../helpers/embedMessages.js");
+const { djCheck } = require("../helpers/userHandling.js");
+//#endregion
+
+//Initiates youtube api connection
 const youtube = new YouTubeAPI(botConfig.auth.youtubeApiKey);
 
+//#region This exports the songsearch command with the information about it
 module.exports = {
     name: "songsearch",
     type: ['Guild'],
     aliases: [""],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'songsearch ***SEARCH-TERM***',
     description: "Searches and selects videos to play.",
@@ -36,16 +46,13 @@ module.exports = {
 
             const search = args.join(" ");
 
-            let resultsEmbed = new MessageEmbed()
-                .setTitle(`**Reply with the song number you want to play**`)
-                .setDescription(`Results for: ${search}`)
-                .setColor("#0E4CB0");
+            var resultsEmbedField = "";
 
             try {
                 const results = await youtube.searchVideos(search, 10);
-                results.map((video, index) => resultsEmbed.addField(video.shortURL, `${index + 1}. ${video.title}`));
+                results.map((video, index) => resultsEmbedField.push({ name: `${video.shortURL}`, value: `${index + 1}. ${video.title}` }));
 
-                var resultsMessage = await message.channel.send(resultsEmbed);
+                var resultsMessage = await embedCustom(message, `**Reply with the song number you want to play**`, "#0E4CB0", `Results for: ${search}`, "", "", resultsEmbedField);
 
                 function filter(msg) {
                     const pattern = /(^[1-9][0-9]{0,1}$)/g;
@@ -68,4 +75,5 @@ module.exports = {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+}
+//#endregion

@@ -3,7 +3,7 @@ const { readFileSync } = require('fs');
 //#endregion
 
 //#region Data File
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 
 //#region Helpers
@@ -17,7 +17,7 @@ module.exports = {
     name: "loop",
     type: ['Guild'],
     aliases: ['l'],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'loop',
     description: "Toggle music loop on/off.",

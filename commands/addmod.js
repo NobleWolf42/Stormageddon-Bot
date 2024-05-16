@@ -1,10 +1,10 @@
 //#region Helpers
-const { updateConfigFile } = require("../helpers/currentsettings.js");
+const { updateConfigFile } = require("../helpers/currentSettings.js");
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
 //##endregion
 
 //#region Internals
-const { bulidConfigFile } = require("../internal/settingsFunctions.js");
+const { buildConfigFile } = require("../internal/settingsFunctions.js");
 //#endregion
 
 //Gets current config file
@@ -15,7 +15,7 @@ module.exports = {
     name: "addmod",
     type: ['Guild'],
     aliases: [""],
-    cooldown: 0,
+    coolDown: 0,
     class: 'admin',
     usage: 'addmod ***MENTION-USERS***',
     description: "Adds users to the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
@@ -38,7 +38,7 @@ module.exports = {
                     modmail.enable = true;
                     serverConfig[serverID].modmail = modmail;
             
-                    await bulidConfigFile(serverConfig);
+                    await buildConfigFile(serverConfig);
             
                     message.channel.send("Mods Have Been Added!");
             

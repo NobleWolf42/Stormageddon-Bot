@@ -1,4 +1,4 @@
-//Under construction need to add log to manuall log i think ill figure it out later
+//Under construction need to add log to manually log i think ill figure it out later
 
 
 //#region This exports the log command with the information about it
@@ -6,7 +6,7 @@ module.exports = {
     name: "log",
     type: ['Guild'],
     aliases: [""],
-    cooldown: 0,
+    coolDown: 0,
     class: 'admin',
     usage: 'addmod ***MENTION-USERS***',
     description: "Adds users to the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",

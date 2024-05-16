@@ -11,7 +11,7 @@ module.exports = {
     name: "iss",
     type: ['DM', 'Guild'],
     aliases: [],
-    cooldown: 60,
+    coolDown: 60,
     class: 'fun',
     usage: 'iss',
     description: "Displays the names of all the astronauts that are aboard the ISS.",
@@ -29,7 +29,7 @@ module.exports = {
                 response += "\n " + people.name + " : " + people.craft;
                 });
          
-                embedCustom(message, 'Astronaut Information: ', '#000000', response);
+                embedCustom(message, 'Astronaut Information: ', '#000000', "", response);
             } else {
                 errorCustom(message, 'The ISS API was unable to be reached at this time. \n Try again later.', module.name);
             }

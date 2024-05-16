@@ -1,5 +1,5 @@
 //#regions Helpers
-const { updateConfigFile } = require("../helpers/currentsettings.js");
+const { updateConfigFile } = require("../helpers/currentSettings.js");
 const { errorCustom, warnCustom,warnDisabled } = require('../helpers/embedMessages.js');
 //#endregion
 
@@ -12,7 +12,7 @@ module.exports = {
     name: "modmail",
     type: ['DM'],
     aliases: [],
-    cooldown: 15,
+    coolDown: 15,
     class: 'direct',
     usage: '!modmail ***SERVER-NAME***, ***MESSAGE*** ',
     description: "Whisper via Stormageddon to all moderators for the specified server.",

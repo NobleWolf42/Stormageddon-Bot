@@ -1,15 +1,18 @@
-//#region Dependancies
-const { getRandomInt } = require('../helpers/math.js');
-const { embedCustom } = require('../helpers/embedMessages.js');
+//#region Data Files
 const quotedata = require('../data/quotes.json').data;
 //#endregion
 
-//#region Quote Command
+//#region Helpers
+const { getRandomInt } = require('../helpers/math.js');
+const { embedCustom } = require('../helpers/embedMessages.js');
+//endregion
+
+//#region This exports the quote command with the information about it
 module.exports = {
     name: "quote",
     type: ['DM', 'Guild'],
     aliases: [],
-    cooldown: 5,
+    coolDown: 5,
     class: 'fun',
     usage: 'quote',
     description: "Display a random quote, picked by the developers of Stormageddon.",

@@ -1,14 +1,23 @@
-const { canModifyQueue } = require("../helpers/music.js");
+//#region Dependencies
 const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
+//#endregion
+
+//#region Data Files
+var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
+//#endregion
+
+//#region Helpers
+const { canModifyQueue } = require("../helpers/music.js");
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require("../helpers/embedMessages.js");
 const { djCheck } = require("../helpers/userHandling.js");
+//#endregion
 
+//#region This exports the pause command with the information about it
 module.exports = {
     name: "pause",
     type: ['Guild'],
     aliases: [],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'pause',
     description: "Pauses the currently playing music.",
@@ -38,4 +47,5 @@ module.exports = {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+}
+//#endregion
