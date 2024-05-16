@@ -1,7 +1,7 @@
 //#region Helpers
 const { embedHelp, warnCustom, errorNoAdmin} = require('../helpers/embedMessages.js');
 const { adminCheck } = require('../helpers/userHandling.js');
-const { capitalize } = require('../helpers/stringhelpers.js');
+const { capitalize } = require('../helpers/stringHelpers.js');
 //#endregion
 
 //#region This exports the help command with the information about it

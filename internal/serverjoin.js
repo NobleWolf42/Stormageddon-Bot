@@ -1,5 +1,5 @@
 //#region Dependancies
-const { updateConfigFile } = require("../helpers/currentsettings.js");
+const { updateConfigFile } = require("../helpers/currentSettings.js");
 var serverConfig = updateConfigFile();
 //#endregion
 
@@ -7,8 +7,8 @@ var serverConfig = updateConfigFile();
 function serverJoin(client) {
    serverConfig = updateConfigFile();
    client.on('guildMemberAdd', (guildMember) => {
-      if (serverConfig[guildMember.guild.id].autorole.joinroleenabled) {
-         guildMember.addRole(guildMember.guild.roles.find(role => role.name === serverConfig[guildMember.guild.id].autorole.joinrole));
+      if (serverConfig[guildMember.guild.id].autoRole.joinroleenabled) {
+         guildMember.addRole(guildMember.guild.roles.find(role => role.name === serverConfig[guildMember.guild.id].autoRole.joinrole));
       }
    });
 }

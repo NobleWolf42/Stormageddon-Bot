@@ -1,6 +1,6 @@
 
 //#region Helpers
-const { updateConfigFile } = require("../helpers/currentsettings.js");
+const { updateConfigFile } = require("../helpers/currentSettings.js");
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
 //#endregion
 

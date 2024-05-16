@@ -1,5 +1,5 @@
 //#region Dependancices
-const { updateConfigFile } = require("../helpers/currentsettings.js");
+const { updateConfigFile } = require("../helpers/currentSettings.js");
 var serverConfig = updateConfigFile();
 const { MessageReaction } = require("discord.js");
 //#endregion

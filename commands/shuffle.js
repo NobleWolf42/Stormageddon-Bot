@@ -3,7 +3,7 @@ const { readFileSync } = require('fs');
 //#endregion
 
 //#region Data Files
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 
 //#region Helpers

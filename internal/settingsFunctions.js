@@ -1,7 +1,7 @@
 //#region Dependancies
 const { MessageEmbed } = require('discord.js');
 const { writeFileSync } = require('fs');
-const { updateConfigFile } = require('../helpers/currentsettings.js');
+const { updateConfigFile } = require('../helpers/currentSettings.js');
 var serverConfig = updateConfigFile();
 //#endregion
 
@@ -58,8 +58,8 @@ async function setModMail(message) {
 }
 //#endregion
 
-//#region autorole settings
-async function setAutorole(message) {
+//#region autoRole settings
+async function setautoRole(message) {
     var serverID = message.channel.guild.id;
     var embMsg = new MessageEmbed()
         .setTitle('Role Message')
@@ -132,14 +132,14 @@ async function setAutorole(message) {
         enable = false;
     }
 
-    autorole = {};
-    autorole.enable = enable;
-    autorole.embedMessage = embedMessage;
-    autorole.embedFooter = embedFooter;
-    autorole.roles = roles;
-    autorole.reactions = reactions;
+    autoRole = {};
+    autoRole.enable = enable;
+    autoRole.embedMessage = embedMessage;
+    autoRole.embedFooter = embedFooter;
+    autoRole.roles = roles;
+    autoRole.reactions = reactions;
     
-    serverConfig[serverID].autorole = autorole;
+    serverConfig[serverID].autoRole = autoRole;
 
     await buildConfigFile(serverConfig);
 
@@ -322,7 +322,7 @@ async function setup(message) {
     var serverID = message.channel.guild.id;
 
     //Sets up all commands
-    await setAutorole(message);
+    await setautoRole(message);
     await setGeneral(message);
     await setJoinrole(message);
     await setMusic(message);
@@ -339,7 +339,7 @@ async function setup(message) {
 
 //#region bulid configfile
 async function buildConfigFile(config) {
-    await writeFileSync('./data/serverconfig.json', JSON.stringify(config), function(err) {
+    await writeFileSync('./data/serverConfig.json', JSON.stringify(config), function(err) {
         if (err) {
             console.log(err);
         }
@@ -352,7 +352,7 @@ async function buildConfigFile(config) {
 //#region add server to configfile
 function addServerConfig(serverID) {
     if (serverConfig[serverID] == undefined) {
-        serverConfig[serverID] = {"setupneeded":true,"autorole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinrole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modmail":{"enable":false,"modlist":[]}};
+        serverConfig[serverID] = {"setupneeded":true,"autoRole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinrole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modmail":{"enable":false,"modlist":[]}};
     }
 
     buildConfigFile(serverConfig);
@@ -370,5 +370,5 @@ function removeServerConfig(serverID) {
 //#endregion
 
 //#region exports
-module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, buildConfigFile, removeServerConfig, addServerConfig };
+module.exports = { setautoRole, setJoinrole, setMusic, setGeneral, setup, setModMail, buildConfigFile, removeServerConfig, addServerConfig };
 //#endregion

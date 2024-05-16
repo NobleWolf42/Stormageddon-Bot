@@ -3,7 +3,7 @@ const { XMLHttpRequest } = require("xmlhttprequest");
 //#endregion
 
 //#region Data Files
-const config = require('../data/botconfig.json');
+const config = require('../data/botConfig.json');
 //#endregion
 
 //#region Helpers

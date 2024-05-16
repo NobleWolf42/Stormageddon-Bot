@@ -3,7 +3,7 @@ const { MessageEmbed } = require('discord.js');
 //#endregion
 
 //#region Data Files
-const botConfig = require('../data/botconfig.json');
+const botConfig = require('../data/botConfig.json');
 //#endregion
 
 //#region Helpers

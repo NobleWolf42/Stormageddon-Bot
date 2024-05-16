@@ -27,7 +27,7 @@ After installation finishes you can use `node storm.js` to start the bot.
 
 ## ⚙️ Configuration
 
-Copy or Rename `botconfig.example.json` located in the `data` folder to `botconfig.json` and fill out the values:
+Copy or Rename `botConfig.example.json` located in the `data` folder to `botConfig.json` and fill out the values:
 
 ⚠️ **Note: Never commit or share your token or api keys publicly** ⚠️
 
@@ -94,7 +94,7 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
 
     - Create the reactions message for auto role assignment.
 
-        `!createautorolemsg`
+        `!createautoRolemsg`
 
     - Bulk deletes the previous messages in a chat based on user input, up to 99 previous messages.
 
@@ -110,7 +110,7 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
 
     - Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.
 
-        `!set autorole/joinrole/general/music/modmail`
+        `!set autoRole/joinrole/general/music/modmail`
 
 - Fun Commands
 

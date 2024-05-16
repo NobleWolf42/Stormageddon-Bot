@@ -3,7 +3,7 @@ const { readFileSync, writeFileSync} = require('fs');
 //#endregion
 
 //#region Data Files
-var prefixFile = JSON.parse(readFileSync('./data/botprefix.json'));
+var prefixFile = JSON.parse(readFileSync('./data/botPrefix.json'));
 //#endregion
 
 //#region Helpers
@@ -31,7 +31,7 @@ module.exports = {
                 if ((args[0].length == 1) && (isSymbol.test(args[0]))) {
                     prefixFile[serverID] = {"prefix": args[0]};
 
-                    writeFileSync("./data/botprefix.json", JSON.stringify(prefixFile), (err) => {
+                    writeFileSync("./data/botPrefix.json", JSON.stringify(prefixFile), (err) => {
                         if (err) {
                             console.error(err);
                         };

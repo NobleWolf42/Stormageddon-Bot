@@ -3,6 +3,9 @@ const { existsSync, writeFileSync } = require('fs');
 //#endregion
 
 //#region Creates missing files on start
+/**
+ * This function creates the JSON files the bot requires to function if they do not already exist.
+ */
 function createJSONfiles() {
 
     var emptyfile = {};
@@ -15,24 +18,24 @@ function createJSONfiles() {
         }]
     };
 
-    if (!existsSync("./data/botprefix.json")) {
-        writeFileSync("./data/botprefix.json", JSON.stringify(emptyfile), function (err) {
+    if (!existsSync("./data/botPrefix.json")) {
+        writeFileSync("./data/botPrefix.json", JSON.stringify(emptyfile), function (err) {
             if (err) {
                 console.log(err);
             }
         });
     }
 
-    if (!existsSync("./data/serverconfig.json")) {
-        writeFileSync("./data/serverconfig.json", JSON.stringify(emptyfile), function (err) {
+    if (!existsSync("./data/serverConfig.json")) {
+        writeFileSync("./data/serverConfig.json", JSON.stringify(emptyfile), function (err) {
             if (err) {
                 console.log(err);
             }
         });
     }
 
-    if (!existsSync("./data/errorlog.json")) {
-        writeFileSync("./data/errorlog.json", JSON.stringify(emptyLog), function (err) {
+    if (!existsSync("./data/errorLog.json")) {
+        writeFileSync("./data/errorLog.json", JSON.stringify(emptyLog), function (err) {
             if (err) {
                 console.log(err);
             }

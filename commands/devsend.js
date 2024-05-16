@@ -3,7 +3,7 @@ const { errorCustom, embedCustom } = require('../helpers/embedMessages.js');
 //#endregion
 
 //#region Data Files
-const botConfig = require('../data/botconfig.json');
+const botConfig = require('../data/botConfig.json');
 //#endregion
 
 //#region This exports the devsend command with the information about it

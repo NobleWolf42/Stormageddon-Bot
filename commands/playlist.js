@@ -5,8 +5,8 @@ const YouTubeAPI = require("simple-youtube-api");
 //#endregion
 
 //#region Data Files
-const botConfig = require("../data/botconfig.json");
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+const botConfig = require("../data/botConfig.json");
+var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 
 //#region Helpers

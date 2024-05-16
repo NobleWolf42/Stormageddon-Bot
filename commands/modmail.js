@@ -1,5 +1,5 @@
 //#regions Helpers
-const { updateConfigFile } = require("../helpers/currentsettings.js");
+const { updateConfigFile } = require("../helpers/currentSettings.js");
 const { errorCustom, warnCustom,warnDisabled } = require('../helpers/embedMessages.js');
 //#endregion
 
