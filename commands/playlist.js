@@ -1,5 +1,4 @@
 //#region Dependencies
-const { MessageEmbed } = require("discord.js");
 const { readFileSync } = require('fs');
 const YouTubeAPI = require("simple-youtube-api");
 //#endregion
@@ -12,7 +11,7 @@ var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#region Helpers
 const { play } = require("../helpers/music.js");
 const { djCheck } = require("../helpers/userHandling.js");
-const { warnCustom, errorCustom, warnDisabled, errorNoDJ, warnWrongChannel } = require("../helpers/embedMessages.js");
+const { warnCustom, errorCustom, warnDisabled, errorNoDJ, warnWrongChannel, embedCustom } = require("../helpers/embedMessages.js");
 //#endregion
 
 const youtube = new YouTubeAPI(botConfig.auth.youtubeApiKey);
@@ -22,7 +21,7 @@ module.exports = {
     name: "playlist",
     type: ['Guild'],
     aliases: ["pl"],
-    cooldown: 3,
+    coolDown: 3,
     class: 'music',
     usage: 'playlist ***YOUTUBE-PLAYLIST***',
     description: "Plays a playlist from youtube.",
@@ -111,20 +110,17 @@ module.exports = {
                 }
             });
 
-            let playlistEmbed = new MessageEmbed()
-                .setTitle(`${playlist.title}`)
-                .setURL(playlist.url)
-                .setColor("#0E4CB0")
-                .setTimestamp();
+            var embedDesc = "";
 
             if (!PRUNING) {
-                playlistEmbed.setDescription(queueConstruct.songs.map((song, index) => `${index + 1}. ${song.title}`));
-                if (playlistEmbed.description.length >= 2048)
-                    playlistEmbed.description =
-                        playlistEmbed.description.substr(0, 2007) + "\nPlaylist larger than character limit...";
+                embedDesc = queueConstruct.songs.map((song, index) => `${index + 1}. ${song.title}`);
+                if (embedDesc >= 2048)
+                    embedDesc = embedDesc.substring(0, 2007) + "\nPlaylist larger than character limit...";
             }
 
-            message.channel.send(`\`${message.author.tag}\` Started a playlist`, playlistEmbed);
+            message.channel.send(`\`${message.author.tag}\` Started a playlist`);
+
+            await embedCustom(message, `${playlist.title}`, "#0E4CB0", embedDesc, "", "", "", playlist.url);
 
             if (!serverQueue) message.client.queue.set(message.guild.id, queueConstruct);
 

@@ -17,7 +17,7 @@ module.exports = {
     name: "skipto",
     type: ['Guild'],
     aliases: ["st"],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'skipto ***QUEUE-NUMBER***',
     description: "Skips to the selected queue number.",

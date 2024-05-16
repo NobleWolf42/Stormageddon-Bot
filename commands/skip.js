@@ -17,7 +17,7 @@ module.exports = {
     name: "skip",
     type: ['Guild'],
     aliases: ["s"],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'skip',
     description: "Skips the currently playing song.",

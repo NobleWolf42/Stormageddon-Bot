@@ -11,7 +11,7 @@ module.exports = {
     name: "devsend",
     type: ['DM'],
     aliases: [],
-    cooldown: 0,
+    coolDown: 0,
     class: 'direct',
     usage: '!devsend ***USER-ID***, ***MESSAGE***',
     description: "Developer-only command for sending messages as the bot.",

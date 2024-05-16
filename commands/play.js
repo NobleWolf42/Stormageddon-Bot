@@ -51,7 +51,7 @@ module.exports = {
     name: "play",
     type: ['Guild'],
     aliases: ["p"],
-    cooldown: 3,
+    coolDown: 3,
     class: 'music',
     usage: 'play SEARCH-TEARM/YOUTUBE-LINK/YOUTUBE-PLAYLIST/SPOTIFY-LINK/SPOTIFY-PLAYLIST',
     description: "Plays the selected music in the voice channel you are in.",

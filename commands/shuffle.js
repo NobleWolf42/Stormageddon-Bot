@@ -16,7 +16,7 @@ const { djCheck } = require("../helpers/userHandling.js");
 module.exports = {
     name: "shuffle",
     type: ['Guild'],
-    cooldown: 10,
+    coolDown: 10,
     aliases: [''],
     class: 'music',
     usage: 'shuffle',

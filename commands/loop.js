@@ -17,7 +17,7 @@ module.exports = {
     name: "loop",
     type: ['Guild'],
     aliases: ['l'],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'loop',
     description: "Toggle music loop on/off.",

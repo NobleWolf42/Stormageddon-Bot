@@ -17,7 +17,7 @@ module.exports = {
     name: "resume",
     type: ['Guild'],
     aliases: ["r"],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'resume',
     description: "Resumes the currently paused music.",

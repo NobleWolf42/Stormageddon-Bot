@@ -16,7 +16,7 @@ module.exports = {
     name: "setup",
     type: ['Guild'],
     aliases: [""],
-    cooldown: 0,
+    coolDown: 0,
     class: 'admin',
     usage: 'setup',
     description: "Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.",

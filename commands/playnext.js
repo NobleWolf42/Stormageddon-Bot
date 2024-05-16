@@ -19,7 +19,7 @@ module.exports = {
     name: "playnext",
     type: ['Guild'],
     aliases: ["pn"],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'playnext ***QUEUE-NUMBER/SEARCH-TEARM/YOUTUBE-LINK/SPOTIFY-LINK*** (NOTE: Bot Moderator Command ONLY)',
     description: "Plays the selected song next.",

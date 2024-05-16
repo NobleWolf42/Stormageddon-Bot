@@ -7,7 +7,7 @@ module.exports = {
     name: "clear",
     type: ['Guild'],
     aliases: ['clr', 'delete', 'remove', 'clean'],
-    cooldown: 0,
+    coolDown: 0,
     class: 'admin',
     usage: 'clear ***NUMBER(1-99)***',
     description: "Bulk deletes the previous messages in a chat based on user input, up to 99 previous messages.",
@@ -30,7 +30,7 @@ module.exports = {
                 passed = false;
             });
             if(passed == true) {
-                embedCustom(message, 'Sucess!', '#008000', `As Per \`${message.author.tag}\`, successfully deleted ${amount} messages!`);
+                embedCustom(message, 'Success!', '#008000', `As Per \`${message.author.tag}\`, successfully deleted ${amount} messages!`);
             }
         }
     }

@@ -17,7 +17,7 @@ module.exports = {
     name: "volume",
     type: ['Guild'],
     aliases: ["v"],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'volume ***NUMBER(1-100)***',
     description: "Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered.",
