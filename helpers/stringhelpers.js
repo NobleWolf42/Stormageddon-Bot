@@ -1,6 +1,9 @@
 //#region capitalize
 function capitalize(word) {
-    return (word.charAt(0).toUpperCase() + word.slice(1));
+    if (word != undefined) {
+        return (word.charAt(0).toUpperCase() + word.slice(1));
+    }
+    return
 }
 //#endregion
 

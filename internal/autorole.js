@@ -1,8 +1,7 @@
 //#region Dependancices
-const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
-const { updateConfigFile } = require('../helpers/currentsettings.js');
-const { Emoji, MessageReaction } = require("discord.js");
+const { updateConfigFile } = require("../helpers/currentsettings.js");
+var serverConfig = updateConfigFile();
+const { MessageReaction } = require("discord.js");
 //#endregion
 
 //#region Autoroll

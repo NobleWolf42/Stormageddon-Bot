@@ -12,7 +12,7 @@ async function play(song, message) {
         if (queue.connection.dispatcher && message.guild.me.voice.channel) return;
             queue.channel.leave();
             queue.textChannel.send("Leaving voice channel...");
-        }, 5 * 1000);
+        }, 10 * 1000);
         queue.textChannel.send("❌ Music queue ended.").catch(console.error);
         return message.client.queue.delete(message.guild.id);
     }
@@ -76,6 +76,7 @@ async function play(song, message) {
         await playingMessage.react("🔊");
         await playingMessage.react("🔁");
         await playingMessage.react("⏹");
+        await playingMessage.react("🔀");
     } catch (error) {
         console.error(error);
     }
@@ -168,6 +169,18 @@ async function play(song, message) {
                     queue.connection.disconnect();
                 }
                 collector.stop();
+                break;
+            case "🔀":
+                reaction.users.remove(user).catch(console.error);
+                if (!canModifyQueue(member, message, 'Music Helper')) return console.log('Not In Voicechat');
+                let songs = queue.songs;
+                for (let i = songs.length - 1; i > 1; i--) {
+                    let j = 1 + Math.floor(Math.random() * i);
+                    [songs[i], songs[j]] = [songs[j], songs[i]];
+                }
+                queue.songs = songs;
+                message.client.queue.set(message.guild.id, queue);
+                queue.textChannel.send(`\`${user.tag}\` 🔀 shuffeled the music!`).catch(console.error);
                 break;
 
             default:

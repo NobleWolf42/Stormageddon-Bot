@@ -1,9 +1,17 @@
-//#regions dependancies
+//#regions Dependencies
 const { MessageEmbed } = require('discord.js');
-const { embedCustom } = require('../helpers/embedMessages.js');
+//#endregion
+
+//#region Data Files
 const botConfig = require('../data/botconfig.json');
 //#endregion
 
+//#region Helpers
+const { embedCustom } = require('../helpers/embedMessages.js');
+//#endregion
+
+
+//#region This exports the bugreport command with the information about it
 module.exports = {
     name: "bugreport",
     type: ['DM'],
@@ -31,4 +39,5 @@ module.exports = {
         
         embedCustom(message, 'Bug Report Sent.', '#0B6E29', `**Bug Report:** \`${content}\` \n**Sent To:** \`🐺 The Developers 🐺\``);
     }
-};
+}
+//#endregion

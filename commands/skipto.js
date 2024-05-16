@@ -25,10 +25,10 @@ module.exports = {
 
         if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
             if (!args.length)
-                return warnCustom(message, `Usage: ${message.client.prefix}${module.exports.name} <Queue Number>`, module.name);
+                return warnCustom(message, `Usage: ${message.prefix}${module.exports.name} <Queue Number>`, module.name);
 
             if (isNaN(args[0]))
-                return warnCustom(message, `Usage: ${message.client.prefix}${module.exports.name} <Queue Number>`, module.name);
+                return warnCustom(message, `Usage: ${message.prefix}${module.exports.name} <Queue Number>`, module.name);
 
             const queue = message.client.queue.get(message.guild.id);
             if (!queue) return warnCustom(message, "There is no queue.", module.name);

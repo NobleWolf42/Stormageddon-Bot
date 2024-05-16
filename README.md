@@ -8,9 +8,12 @@
 
 1. Discord Bot Token **[Guide](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot)**
 2. Discord OAUTH2 redirectURI. You will need identify, email, and connections infromation **[Guide](https://discordjs.guide/oauth2/#setting-up-a-basic-web-server)**  
-2.1  Register HTTPS, a great free website is **[Lets Encrypt](https://letsencrypt.org/docs/)**
-3. YouTube Data API v3 Key **[Guide](https://developers.google.com/youtube/v3/getting-started)**  
-3.1 **(Optional)** Soundcloud Client ID **[Guide](https://github.com/zackradisic/node-soundcloud-downloader#client-id)**
+   1. Register HTTPS, a great free website is **[Lets Encrypt](https://letsencrypt.org/docs/)**
+
+3.  Get your API access Keys
+    1.  YouTube Data API v3 Key **[Guide](https://developers.google.com/youtube/v3/getting-started)**
+    2. Spotify API Client Keys **[Guide](https://developer.spotify.com/documentation/general/guides/app-settings/#register-your-app)**
+    3. **(Optional)** Soundcloud Client ID **[Guide](https://github.com/zackradisic/node-soundcloud-downloader#client-id)**
 4. Node.js v12.0.0 or newer
 
 ## 🚀 Getting Started
@@ -36,7 +39,9 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
         "youtubeApiKey": "YOUR YOUTUBE API KEY",
         "soundcloudApiKey": "YOUwR SOUND CLOUD API KEY",
         "imgurApiKey" : "YOUR IMGUR API KEY",
-        "d2ApiKey": "YOUR DESTINY 2 API KEY"
+        "d2ApiKey": "YOUR DESTINY 2 API KEY",
+        "spotifyToken": "YOUR SPOTIFY TOKEN",
+        "spotifySecret": "YOUR SPOTIFY SECRET"
     },
     "oauth": {
         "privateKey": "LOCATION OF PRIVATE HTTPS KEY",
@@ -57,7 +62,7 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
         "maxPlatlistSize": NUMBER OF MAX PLAYLIST LENGTH,
         "pruning": TRUE OR FALSE TO ENABLE OR DISABLE PRUNING
     },
-    "devids": ["YOUR DISCORD IDS"]
+    "devids": ["YOUR DISCORD IDS 1", "YOUR DISCORD IDS 2", "YOUR DISCORD IDS 3"]
 }
 ```
 
@@ -141,6 +146,10 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
 
         `!play ***SEARCH-TERM*** i.e. (under the bridge red hot chili peppers)`
 
+    - 🎶 Play music from Spotify via url
+
+        `!play ***SPOTIFY-URL*** i.e. (https://open.spotify.com/track/64UmuvjJk7CxLZB6pKTrsS?si=6e3eccebb9a048f6)`
+
     - 🎶 Play music from Soundcloud via url
 
         `!play ***SOUNDCLOUD-URL*** i.e. (https://soundcloud.com/blackhorsebrigade/pearl-jam-alive)`
@@ -153,9 +162,17 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
 
         `!playlist ***YOUTUBE-URL*** i.e. (https://www.youtube.com/watch?v=YlUKcNNmywk&list=PL5RNCwK3GIO13SR_o57bGJCEmqFAwq82c)`
 
+    - 📃 Play spotify playlists via url
+
+        `!play ***SPOTIFY-URL*** i.e. (https://open.spotify.com/playlist/2x75Df1nc0aRCxKoVorpcI?si=dae40d03326d4e86)`
+
     - 🔎 Play youtube playlists via search query
 
         `!playlist ***SEARCH-TERM*** i.e. (linkin park meteora)`
+
+    - 🎶 Play music from YouTube via url
+
+        `!playnext ***QUEUE-NUMBER/SEARCH-TEARM/YOUTUBE-LINK/SPOTIFY-LINK*** (NOTE: Bot Moderator Command ONLY)`
 
     - Shows the currently playing song
 
@@ -189,9 +206,9 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
 
         `!skip`
 
-    - Skips to the selected queue number.\
+    - Skips to the selected queue number.
 
-        `skipto ***QUEUE-NUMBER*** i.e. (5)`
+        `!skipto ***QUEUE-NUMBER*** i.e. (5)`
     
     - Shuffles the currently queued music.
 
@@ -203,7 +220,15 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
 
     - Displays volume of currently playing music if no numbers anre entered. Can change volume percent if numbers are entered.
 
-        `volume ***NUMBER(1-100)*** i.e. (100)`
+        `!volume ***NUMBER(1-100)*** i.e. (100)`
+
+    - Force the bot to disconnect from the voice chat.
+
+        `!disconnect`
+
+    - Force the bot to reconnect to the voice chat.
+
+        `!reconnect`
     
 - Direct Message Commands
 
@@ -221,7 +246,7 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
 
 - Command Handler from [discordjs.guide](https://discordjs.guide/)
 - Media Controls via Reactions  
-![reactions](https://i.imgur.com/memZ7Fi.png)
+![reactions](https://i.imgur.com/KKzNGxL.png)
 
 ## 🤝 Contributing
 
@@ -234,4 +259,4 @@ Copy or Rename `botconfig.example.json` located in the `data` folder to `botconf
 
 ## 📝 Credits
 
-[@eritislami](https://github.com/eritislami) For the base music system used in this application which was adapted from [@eritislami/evobot](https://github.com/eritislami/evobot)
+[@eritislami](https://github.com/eritislami) For the base music system used in this application which was adapted from [@eritislami/evobot](https://github.com/eritislami/evobot) (Also Borrowed ReadMe Style from Them)

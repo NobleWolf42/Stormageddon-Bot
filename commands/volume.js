@@ -11,7 +11,7 @@ module.exports = {
     cooldown: 0,
     class: 'music',
     usage: 'volume ***NUMBER(1-100)***',
-    description: "Displays volume of currently playing music if no numbers anre entered. Can change volume percent if numbers are entered.",
+    description: "Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered.",
     execute(message, args) {
 
         if (!serverConfig[message.guild.id].music.enable) {

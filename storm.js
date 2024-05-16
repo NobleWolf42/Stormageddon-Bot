@@ -1,15 +1,14 @@
 //#region Initial Set-Up
-    //#region Dependecies
-    const { Client } = require('discord.js');
+    //#region Dependencies
+    const { Client, GatewayIntentBits} = require('discord.js');
     //#endregion
 
-    //#region Configs
+    //#region Data Files
     const botConfig = require('./data/botconfig.json');
     //#endregion
 
     //#region Helpers
     const { createJSONfiles } = require('./helpers/createfiles.js');
-    createJSONfiles();
     //#endregion
 
     //#region Internals
@@ -21,8 +20,32 @@
 //#endregion
 
 //#region Login / Initialize
+
+//Creates config and other required JSON files if they do not exist
+createJSONfiles();
+
 // Initialize Discord Bot
-const client = new Client();
+const client = new Client({ intents: [
+    GatewayIntentBits.DirectMessagePolls,
+    GatewayIntentBits.DirectMessageReactions,
+    GatewayIntentBits.DirectMessageTyping,
+    GatewayIntentBits.DirectMessages,
+    GatewayIntentBits.GuildEmojisAndStickers,
+    GatewayIntentBits.GuildIntegrations,
+    GatewayIntentBits.GuildInvites,
+    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMessagePolls,
+    GatewayIntentBits.GuildMessageReactions,
+    GatewayIntentBits.GuildMessageTyping,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.GuildModeration,
+    GatewayIntentBits.GuildPresences,
+    GatewayIntentBits.GuildScheduledEvents,
+    GatewayIntentBits.GuildVoiceStates,
+    GatewayIntentBits.GuildWebhooks,
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.MessageContent
+  ]});
 client.queue = new Map();
 
 //Throws Error if bot's token is not set.

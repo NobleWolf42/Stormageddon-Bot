@@ -11,7 +11,6 @@ module.exports = {
     usage: 'removemod ***MENTION-USERS***',
     description: "Removes users freom the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
     execute(message) {
-        console.log("didwork");
         if (message.member.hasPermission('ADMINISTRATOR')) {
             if ((message.channel.guild.id in serverConfig)) {
                 message.mentions.members.forEach(async (user) => {

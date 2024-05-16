@@ -1,6 +1,6 @@
 const { canModifyQueue } = require("../helpers/music.js");
-const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+const { updateConfigFile } = require("../helpers/currentsettings.js");
+var serverConfig = updateConfigFile();
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require("../helpers/embedMessages.js");
 const { djCheck } = require("../helpers/userHandling.js");
 
