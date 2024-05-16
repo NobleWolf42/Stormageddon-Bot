@@ -1,4 +1,4 @@
-//Under construction need to add log to manuall log i think ill figure it out later
+//Under construction need to add log to manually log i think ill figure it out later
 
 
 //#region This exports the log command with the information about it

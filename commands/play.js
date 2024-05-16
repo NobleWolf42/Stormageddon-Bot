@@ -1,26 +1,37 @@
-const { play } = require("../helpers/music.js");
-const botConfig = require("../data/botconfig.json");
-const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
-const ytdl = require("ytdl-core");
-const YouTubeAPI = require("simple-youtube-api");
-const youtube = new YouTubeAPI(botConfig.auth.youtubeApiKey);
+//#region Dependencies
+const SpotifyToYoutube = require('spotify-to-youtube');
+const SpotifyWebApi = require('spotify-web-api-node');
 const scdl = require("soundcloud-downloader");
+const YouTubeAPI = require("simple-youtube-api");
+const { readFileSync } = require('fs');
+const ytdl = require("ytdl-core");
+//#endregion
+
+//#region Data Files
+const botConfig = require("../data/botconfig.json");
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+//#endregion
+
+//#region Helpers
+const { play } = require("../helpers/music.js");
 const { errorCustom, warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require('../helpers/embedMessages.js');
 const { djCheck } = require("../helpers/userHandling.js");
-const SpotifyToYoutube = require('spotify-to-youtube')
-const SpotifyWebApi = require('spotify-web-api-node')
+//#endregion
+
+//Initiates connection to youtube api
+const youtube = new YouTubeAPI(botConfig.auth.youtubeApiKey);
+
 //Sets up needed connection to spotify api
 const spotifyApi = new SpotifyWebApi({
     clientId: botConfig.auth.spotifyToken,
     clientSecret: botConfig.auth.spotifySecret
 });
 
+//#region Initiates a connection to the spotify API
 function getSpotAPIAuth() {
     spotifyApi.clientCredentialsGrant().then(
         function(data) {
-            console.log('The access token expires in ' + data.body['expires_in']);
-            console.log('The access token is ' + data.body['access_token']);
+            console.log('The spotify access token expires in ' + data.body['expires_in']);
   
             // Save the access token so that it's used in future calls
             spotifyApi.setAccessToken(data.body['access_token']);
@@ -33,7 +44,9 @@ function getSpotAPIAuth() {
 }
 getSpotAPIAuth();
 const spotToYoutube = SpotifyToYoutube(spotifyApi);
+//#endregion
 
+//#region This exports the play command with the information about it
 module.exports = {
     name: "play",
     type: ['Guild'],
@@ -228,4 +241,5 @@ module.exports = {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+}
+//#endregion

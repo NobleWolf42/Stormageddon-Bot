@@ -4,7 +4,7 @@ const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js
 //##endregion
 
 //#region Internals
-const { bulidConfigFile } = require("../internal/settingsFunctions.js");
+const { buildConfigFile } = require("../internal/settingsFunctions.js");
 //#endregion
 
 //Gets current config file
@@ -38,7 +38,7 @@ module.exports = {
                     modmail.enable = true;
                     serverConfig[serverID].modmail = modmail;
             
-                    await bulidConfigFile(serverConfig);
+                    await buildConfigFile(serverConfig);
             
                     message.channel.send("Mods Have Been Added!");
             

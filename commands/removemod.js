@@ -1,7 +1,13 @@
-const { bulidConfigFile } = require("../internal/settingsFunctions.js");
+//#region Helpers
 const { updateConfigFile } = require("../helpers/currentsettings.js");
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
+//#endregion
 
+//#region Internals
+const { buildConfigFile } = require("../internal/settingsFunctions.js");
+//#endregion
+
+//#region This exports the removemod command with the information about it
 module.exports = {
     name: "removemod",
     type: ['Guild'],
@@ -29,7 +35,7 @@ module.exports = {
                     modmail.enable = true;
                     serverConfig[serverID].modmail = modmail;
             
-                    await bulidConfigFile(serverConfig);
+                    await buildConfigFile(serverConfig);
             
                     message.channel.send("Mods Have Been Removed!");
             
@@ -44,4 +50,5 @@ module.exports = {
             errorNoServerAdmin(message, module.name);
         }
     }
-};
+}
+//#endregion

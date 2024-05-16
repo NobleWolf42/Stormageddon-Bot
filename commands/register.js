@@ -1,9 +1,13 @@
-//#region Dependancies
-const { refreshUser } = require('../helpers/userHandling.js');
-const { embedCustomDM } = require('../helpers/embedMessages.js');
+//#region Data Files
 const botConfig = require('../data/botconfig.json');
 //#endregion
 
+//#region Helpers
+const { refreshUser } = require('../helpers/userHandling.js');
+const { embedCustomDM } = require('../helpers/embedMessages.js');
+//#endregion
+
+//#region This exports the register command with the information about it
 module.exports = {
     name: "register",
     type: ['DM', 'Guild'],
@@ -26,4 +30,5 @@ module.exports = {
         embedCustomDM(message, 'Register', color, txt);
         return;
     }
-};
+}
+//#endregion

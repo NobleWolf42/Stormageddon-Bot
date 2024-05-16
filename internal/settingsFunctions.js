@@ -49,7 +49,7 @@ async function setModMail(message) {
 
     serverConfig[serverID].modmail = modmail;
 
-    await bulidConfigFile(serverConfig);
+    await buildConfigFile(serverConfig);
 
     message.channel.send("Mod Mail Setup Complete!");
 
@@ -141,7 +141,7 @@ async function setAutorole(message) {
     
     serverConfig[serverID].autorole = autorole;
 
-    await bulidConfigFile(serverConfig);
+    await buildConfigFile(serverConfig);
 
     message.channel.send("Auto Role Setup Complete!");
 
@@ -191,7 +191,7 @@ async function setJoinrole(message) {
 
     serverConfig[serverID].joinrole = joinrole;
 
-    await bulidConfigFile(serverConfig);
+    await buildConfigFile(serverConfig);
 
     message.channel.send("Join Role Setup Complete!");
 
@@ -255,7 +255,7 @@ async function setMusic(message) {
 
     serverConfig[serverID].music = music;
 
-    await bulidConfigFile(serverConfig);
+    await buildConfigFile(serverConfig);
 
     message.channel.send("Music Setup Complete!");
 
@@ -308,7 +308,7 @@ async function setGeneral(message) {
 
     serverConfig[serverID].general = general;
 
-    await bulidConfigFile(serverConfig);
+    await buildConfigFile(serverConfig);
 
     message.channel.send("General Setup Complete!");
 
@@ -330,7 +330,7 @@ async function setup(message) {
 
     //Removes the Setup Needed Tag
     serverConfig[serverID].setupneeded = false;
-    await bulidConfigFile(serverConfig);
+    await buildConfigFile(serverConfig);
     message.channel.send('Server Setup Complete, \`MAKE SURE TO PUT THE ROLE FOR THIS BOT ABOVE ROLES YOU WANT THE BOT TO MANAGE, if you don\'t the bot will not work properly!\`');
     updateConfigFile();
     return;
@@ -338,7 +338,7 @@ async function setup(message) {
 //#endregion
 
 //#region bulid configfile
-async function bulidConfigFile(config) {
+async function buildConfigFile(config) {
     await writeFileSync('./data/serverconfig.json', JSON.stringify(config), function(err) {
         if (err) {
             console.log(err);
@@ -355,7 +355,7 @@ function addServerConfig(serverID) {
         serverConfig[serverID] = {"setupneeded":true,"autorole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinrole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modmail":{"enable":false,"modlist":[]}};
     }
 
-    bulidConfigFile(serverConfig);
+    buildConfigFile(serverConfig);
 }
 //#endregion
 
@@ -365,10 +365,10 @@ function removeServerConfig(serverID) {
         serverConfig[serverID] = undefined;
     }
 
-    bulidConfigFile(serverConfig);
+    buildConfigFile(serverConfig);
 }
 //#endregion
 
 //#region exports
-module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, bulidConfigFile, removeServerConfig, addServerConfig };
+module.exports = { setAutorole, setJoinrole, setMusic, setGeneral, setup, setModMail, buildConfigFile, removeServerConfig, addServerConfig };
 //#endregion

@@ -1,12 +1,23 @@
+//#region Dependencies
+const { MessageEmbed } = require("discord.js");
 const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
+const YouTubeAPI = require("simple-youtube-api");
+//#endregion
+
+//#region Data Files
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'));
+const botConfig = require("../data/botconfig.json");
+//#endregion
+
+//#region Helpers
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require("../helpers/embedMessages.js");
 const { djCheck } = require("../helpers/userHandling.js");
-const { MessageEmbed } = require("discord.js");
-const botConfig = require("../data/botconfig.json");
-const YouTubeAPI = require("simple-youtube-api");
+//#endregion
+
+//Initiates youtube api connection
 const youtube = new YouTubeAPI(botConfig.auth.youtubeApiKey);
 
+//#region This exports the songsearch command with the information about it
 module.exports = {
     name: "songsearch",
     type: ['Guild'],
@@ -68,4 +79,5 @@ module.exports = {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+}
+//#endregion

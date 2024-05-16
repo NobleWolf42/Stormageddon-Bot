@@ -1,6 +1,12 @@
-const { setAutorole, setJoinrole, setMusic, setGeneral, setModMail } = require("../internal/settingsFunctions.js");
+//#region Helpers
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
+//#endregion
 
+//#region Internals
+const { setAutorole, setJoinrole, setMusic, setGeneral, setModMail } = require("../internal/settingsFunctions.js");
+//#endregion
+
+//#region This exports the set command with the information about it
 module.exports = {
     name: "set",
     type: ['Guild'],
@@ -35,4 +41,5 @@ module.exports = {
         };
         return;
     }
-};
+}
+//#endregion

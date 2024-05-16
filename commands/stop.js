@@ -1,10 +1,14 @@
+//#region Helpers
 const { canModifyQueue } = require("../helpers/music.js");
 const { updateConfigFile } = require("../helpers/currentsettings.js");
-var serverConfig = updateConfigFile();
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require("../helpers/embedMessages.js");
 const { djCheck } = require("../helpers/userHandling.js");
+//#endregion
 
+//Loads current server config settings
+var serverConfig = updateConfigFile();
 
+//#region This exports the stop command with the information about it
 module.exports = {
     name: "stop",
     type: ['Guild'],
@@ -38,4 +42,5 @@ module.exports = {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+}
+//#endregion
