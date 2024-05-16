@@ -1,10 +1,10 @@
-//#region dependecies
+//#region Helpers
 const { embedHelp, warnCustom, errorNoAdmin} = require('../helpers/embedMessages.js');
 const { adminCheck } = require('../helpers/userHandling.js');
 const { capitalize } = require('../helpers/stringhelpers.js');
 //#endregion
 
-//#region Help function
+//#region This exports the help command with the information about it
 module.exports = {
     name: 'help',
     type: ['DM', 'Guild'],

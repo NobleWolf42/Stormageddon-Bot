@@ -1,4 +1,4 @@
-//#region Dependancies
+//#region Dependencies
     const { Collection, MessageAttachment } = require('discord.js');
     const { readdirSync, readFileSync } = require('fs');
     const { join } = require("path");
@@ -38,7 +38,7 @@ function messageHandling(client) {
     }
     //#endregion
 
-    //Handels messages from guilds and their responses
+    //Handles messages from guilds and their responses
     client.on("message", message => {
 
         //#region Permission Checks
@@ -106,7 +106,7 @@ function messageHandling(client) {
             //#endregion
 
             //#region Anti-Spam (Cooldown) Code
-            //Checks to see if command has a cooldown set and if it does executes the code to prevent oveuse of command
+            //Checks to see if command has a cooldown set and if it does executes the code to prevent overuse of command
             if (!cooldowns.has(command.name)) {
                 cooldowns.set(command.name, new Collection());
             }
