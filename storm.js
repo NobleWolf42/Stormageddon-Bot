@@ -1,6 +1,6 @@
 //#region Initial Set-Up
     //#region Dependencies
-    const { Client, GatewayIntentBits} = require('discord.js');
+    const { Client, GatewayIntentBits } = require('discord.js');
     //#endregion
 
     //#region Data Files
@@ -13,7 +13,7 @@
 
     //Creates config and other required JSON files if they do not exist
     createJSONfiles();
-    
+
     //#region Internals
     const { addServerConfig, removeServerConfig } = require('./internal/settingsFunctions.js');
     const { autoroleListener } = require('./internal/autorole.js');
@@ -22,7 +22,7 @@
     //#endregion
 //#endregion
 
-// Initialize Discord Bot
+//#region Initialize Discord Bot
 const client = new Client({ intents: [
     GatewayIntentBits.DirectMessagePolls,
     GatewayIntentBits.DirectMessageReactions,
@@ -45,6 +45,7 @@ const client = new Client({ intents: [
     GatewayIntentBits.MessageContent
   ]});
 client.queue = new Map();
+//#endregion
 
 //Throws Error if bot's token is not set.
 if (botConfig.auth.token === 'YOUR BOT TOKEN' || botConfig.auth.token === '') {

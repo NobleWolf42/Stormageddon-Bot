@@ -1,4 +1,4 @@
-//#region Dependancies
+//#region Dependencies
 const { existsSync, writeFileSync } = require('fs');
 //#endregion
 

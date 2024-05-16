@@ -1,9 +1,18 @@
+//#region Dependencies
 const { MessageEmbed } = require("discord.js");
 const { readFileSync } = require('fs');
-var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
 const lyricsFinder = require("lyrics-finder");
-const { warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
+//#endregion
 
+//#region Data Files
+var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
+//#endregion
+
+//#region Helpers
+const { warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
+//#endregion
+
+//#region This exports the lyrics command with the information about it
 module.exports = {
     name: "lyrics",
     type: ['Guild'],
@@ -45,4 +54,5 @@ module.exports = {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+}
+//#endregion

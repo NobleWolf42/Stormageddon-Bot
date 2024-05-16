@@ -1,6 +1,6 @@
 //#region Dependancies
 const { MessageEmbed } = require('discord.js');
-const { writeFileSync, readFileSync } = require('fs');
+const { writeFileSync } = require('fs');
 const { updateConfigFile } = require('../helpers/currentsettings.js');
 var serverConfig = updateConfigFile();
 //#endregion

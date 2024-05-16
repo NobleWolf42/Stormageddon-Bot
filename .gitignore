@@ -4,6 +4,5 @@
 /data/serverconfig.json
 /data/botprefix.json
 /data/errorlog.json
-/commands/log.js
 userinfo.json
 package-lock.json

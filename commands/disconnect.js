@@ -1,3 +1,4 @@
+//#region This exports the disconnect command with the information about it
 module.exports = {
     name: "disconnect",
     type: ['Guild'],
@@ -9,4 +10,5 @@ module.exports = {
     execute(message) {
         message.guild.me.voice.channel.leave();
     }
-};
+}
+//#endregion

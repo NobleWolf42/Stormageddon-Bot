@@ -1,9 +1,12 @@
-//#region Dependancies
+//#region Dependencies
 const { XMLHttpRequest } = require("xmlhttprequest");
+//#endregion
+
+//#region Helpers
 const { errorCustom, embedCustom } = require('../helpers/embedMessages.js');
 //#endregion
 
-//#region ISS Command
+//#region This exports the iss command with the information about it
 module.exports = {
     name: "iss",
     type: ['DM', 'Guild'],
