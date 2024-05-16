@@ -182,7 +182,7 @@ function PMHandling (client) {
         //#region Handles DM commands
             //#region Prefix and Command Validation
             //Escapes if message does not start with prefix
-            const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
+            const prefixRegex = new RegExp(`^(<@?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
             if (!prefixRegex.test(message.content)) return;
         
             //Gets command name as typed by user

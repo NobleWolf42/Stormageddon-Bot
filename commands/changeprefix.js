@@ -22,7 +22,7 @@ module.exports = {
     coolDown: 3,
     class: 'admin',
     usage: 'changeprefix ***INSERT-SYMBOL***',
-    description: "Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-={}[]|:\";\'<>?,.```",
+    description: "Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-=[];',.{}|:\"<>?```",
     execute(message, args) {
         var serverID = message.channel.guild.id;
 
