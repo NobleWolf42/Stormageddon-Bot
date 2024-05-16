@@ -6,3 +6,8 @@
 
 //class
 'help',
+'admin',
+'fun',
+'direct',
+'gaming',
+'music',
