@@ -1,4 +1,4 @@
-const { MessageEmbed } = require("discord.js");
+/*const { MessageEmbed } = require("discord.js");
 const { readFileSync } = require('fs');
 var serverConfig = JSON.parse(readFileSync('./data/serverconfig.json', 'utf8'))
 const lyricsFinder = require("lyrics-finder");
@@ -45,4 +45,4 @@ module.exports = {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }
-};
+};*/

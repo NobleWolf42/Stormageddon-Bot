@@ -1,0 +1,8 @@
+//type
+['DM', 'Guild']
+
+
+
+
+//class
+'help',

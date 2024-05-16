@@ -1,22 +1,22 @@
 //#region Dependancies
-const { MessageEmbed } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 const { addToLog } = require('../helpers/errorlog.js');
 //#endregion
 
 //#region Custom Embed
 function embedCustom(message, title, color, text, img) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor(color)
         .setDescription(text)
         .setImage(img);
-    message.channel.send(embMsg);
+    message.channel.send({ embeds: [embMsg] });
 }
 //#endregion
 
 //#region Custom Direct Message Embed
 function embedCustomDM(message, title, color, text, img) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor(color)
         .setDescription(text)
@@ -30,7 +30,7 @@ function embedCustomDM(message, title, color, text, img) {
 
 //#region Help Embed
 function embedHelp(message, title, text) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor('#1459C7')
         .setDescription(text);
@@ -40,7 +40,7 @@ function embedHelp(message, title, text) {
 
 //#region Custom Warning
 function warnCustom(message, text, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
         .setDescription(text);
@@ -58,7 +58,7 @@ function warnCustom(message, text, commandName) {
 
 //#region No Admin Access
 function errorNoAdmin(message, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *BOT ADMIN* access to use!');
@@ -76,7 +76,7 @@ function errorNoAdmin(message, commandName) {
 
 //#region No Mod Access
 function errorNoMod(message, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *BOT MOD* access to use!');
@@ -94,7 +94,7 @@ function errorNoMod(message, commandName) {
 
 //#region No DJ Access
 function errorNoDJ(message, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *DJ* access to use!');
@@ -112,7 +112,7 @@ function errorNoDJ(message, commandName) {
 
 //#region No Server Admin Access
 function errorNoServerAdmin(message, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!');
@@ -130,7 +130,7 @@ function errorNoServerAdmin(message, commandName) {
 
 //#region Custom Error
 function errorCustom(message, text, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription(text);
@@ -148,7 +148,7 @@ function errorCustom(message, text, commandName) {
 
 //#region Wrong Channel
 function warnWrongChannel(message, correctChannel, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
         .setDescription(`That was not the correct channel for that command. The correct channel for this command is #${correctChannel}`);
@@ -165,7 +165,7 @@ function warnWrongChannel(message, correctChannel, commandName) {
 
 //#region Disabled
 function warnDisabled(message, command, commandName) {
-    const embMsg = new MessageEmbed()
+    const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
         .setDescription(`This feature is currently disabled. To enable it, please run the !set ${command}. NOTE: Command is only avalible to a server admin.`);
