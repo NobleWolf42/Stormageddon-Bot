@@ -23,7 +23,7 @@ function createJSONfiles() {
         });
     }
 
-    if (!existsSync("./data/serverconfig.json")) {
+    if (!existsSync("./data/serverconfig.json")) { 
         writeFileSync("./data/serverconfig.json", JSON.stringify(emptyfile), function (err) {
             if (err) {
                 console.log(err);
