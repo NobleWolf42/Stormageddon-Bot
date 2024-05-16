@@ -1,5 +1,5 @@
 //#region Dependencies
-const { MessageEmbed, Client } = require('discord.js');
+const { EmbedBuilder, Client } = require('discord.js');
 const { readFileSync, writeFileSync, existsSync} = require('fs');
 //#endregion
 
@@ -47,9 +47,9 @@ function addToLog(logType, command, user, server, channel, error, client) {
 
         if (logType.toLowerCase() === 'fatal error') {
             
-            var devList = botConfig.devids;
+            var devList = botConfig.devIDs;
             for(key in devList) {
-                const embMsg = new MessageEmbed()
+                const embMsg = new EmbedBuilder()
                     .setTitle('Fatal Errors Detected!')
                     .setColor('#FF0084')
                     .setDescription(`${logAdd.Log}`)

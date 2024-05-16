@@ -11,7 +11,7 @@ module.exports = {
     name: "set",
     type: ['Guild'],
     aliases: [""],
-    cooldown: 0,
+    coolDown: 0,
     class: 'admin',
     usage: 'set autoRole/joinrole/general/music/modmail',
     description: "Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.",

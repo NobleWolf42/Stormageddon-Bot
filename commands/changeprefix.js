@@ -19,7 +19,7 @@ module.exports = {
     name: "changeprefix",
     type: ['Guild'],
     aliases: [],
-    cooldown: 3,
+    coolDown: 3,
     class: 'admin',
     usage: 'changeprefix ***INSERT-SYMBOL***',
     description: "Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-={}[]|:\";\'<>?,.```",

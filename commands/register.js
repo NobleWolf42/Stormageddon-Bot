@@ -12,7 +12,7 @@ module.exports = {
     name: "register",
     type: ['DM', 'Guild'],
     aliases: [],
-    cooldown: 60,
+    coolDown: 60,
     class: 'help',
     usage: 'register',
     description: "Lets you know if you are registered and gives you the link to register/update you info.",

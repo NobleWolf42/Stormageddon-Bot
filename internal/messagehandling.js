@@ -1,17 +1,31 @@
 //#region Dependencies
-    const { Collection, MessageAttachment } = require('discord.js');
-    const { readdirSync, readFileSync } = require('fs');
-    const { join } = require("path");
-    const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-    const { warnCustom, errorCustom } = require('../helpers/embedMessages.js');
-    const { getRandomDoggo } = require('../helpers/doggoLinks.js');
-    const { updateConfigFile } = require('../helpers/currentSettings.js');
-    const { addToLog } = require('../helpers/errorLog.js');
-    var serverConfig = updateConfigFile();
+const { Collection, MessageAttachment, Client, Message } = require('discord.js');
+const { readdirSync, readFileSync } = require('fs');
+const { join } = require("path");
 //#endregion
 
+//#region Helpers
+const { warnCustom, errorCustom } = require('../helpers/embedMessages.js');
+const { getRandomDoggo } = require('../helpers/doggoLinks.js');
+const { updateConfigFile } = require('../helpers/currentSettings.js');
+const { addToLog } = require('../helpers/errorLog.js');
+//#endregion
+
+//Refreshing the serverConfig from serverConfig.json
+var serverConfig = updateConfigFile();
+
+//Regex that tests for str (prefix)
+const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
 //#region Function for trying a command and catching the error if it fails
-function trycommand(client, message, command, args) {
+/**
+ * This function tryS a command and catches the error if it fails.
+ * @param {Client} client - Discord.js Client Object
+ * @param {Message} message - Discord.js Message Object
+ * @param {string} command - String of command keyword
+ * @param {Array} args - Array of the words after the command keyword
+ */
+function tryCommand(client, message, command, args) {
     try {
         command.execute(message, args, client);
         addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
@@ -24,12 +38,16 @@ function trycommand(client, message, command, args) {
 }
 //#endregion
 
-//#region Message Handling for Server
+//#region Function that starts the listener that handles executing all commands in servers
+/**
+ * This function starts the listener that handles executing all commands in a server.
+ * @param {Client} client - Discord.js Client Object
+ */
 function messageHandling(client) {
     client.commands = new Collection();
-    const cooldowns = new Collection();
+    const coolDowns = new Collection();
 
-    //#region Commands Import
+    //#region Imports commands from ./commands
     const commandFiles = readdirSync(join(__dirname, "../commands")).filter((file) => file.endsWith(".js"));
     for (const file of commandFiles) {
         const command = require(join(__dirname, "../commands", `${file}`));
@@ -40,7 +58,7 @@ function messageHandling(client) {
     //Handles messages from guilds and their responses
     client.on("messageCreate", message => {
 
-        //#region Permission Checks
+        //#region Checks permissions
         // Make sure bots can't run commands
         if (message.author.bot) return;
 
@@ -48,7 +66,7 @@ function messageHandling(client) {
         if (!message.guild) return;
         //#endregion
 
-        //#region prefix/defaultprefix set
+        //#region Sets prefix/defaultPrefix
         var serverID = message.channel.guild.id;
         var prefixFile = JSON.parse(readFileSync('./data/botPrefix.json', 'utf8'));
         
@@ -67,13 +85,13 @@ function messageHandling(client) {
         message.prefix = prefix;
         //#endregion
 
-        //#region for all @ Commands
+        //#region Handles all @ Commands
         if(message.mentions.users.first() !== undefined) {
 
-            //@storm
+            //@bot
             if(message.mentions.users.first().id === client.user.id) {
                 var attachment = new MessageAttachment(getRandomDoggo());
-                if (serverConfig[serverID].setupneeded) {
+                if (serverConfig[serverID].setUpNeeded) {
                     message.channel.send(`Please run \`${prefix}setup\` in an admin only chat channel to set up the bot on your server.`);
                     message.channel.send(attachment);
                 }
@@ -86,7 +104,7 @@ function messageHandling(client) {
         }
         //#endregion
 
-        //#region Command Handeling
+        //#region Handles all commands triggered by prefix
             //#region Prefix and Command Validation
             //Escapes if message does not start with prefix
             const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
@@ -104,18 +122,18 @@ function messageHandling(client) {
             if (!command.type.includes('Guild')) return;
             //#endregion
 
-            //#region Anti-Spam (Cooldown) Code
-            //Checks to see if command has a cooldown set and if it does executes the code to prevent overuse of command
-            if (!cooldowns.has(command.name)) {
-                cooldowns.set(command.name, new Collection());
+            //#region Anti-Spam (CoolDown) Code
+            //Checks to see if command has a coolDown set and if it does executes the code to prevent overuse of command
+            if (!coolDowns.has(command.name)) {
+                coolDowns.set(command.name, new Collection());
             }
 
             const now = Date.now();
-            const timestamps = cooldowns.get(command.name);
-            const cooldownAmount = (command.cooldown || 1) * 1000;
+            const timestamps = coolDowns.get(command.name);
+            const coolDownAmount = (command.coolDown || 1) * 1000;
         
             if (timestamps.has(message.author.id)) {
-                const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+                const expirationTime = timestamps.get(message.author.id) + coolDownAmount;
 
                 if (now < expirationTime) {
                     const timeLeft = (expirationTime - now) / 1000;
@@ -124,32 +142,36 @@ function messageHandling(client) {
             }
 
             timestamps.set(message.author.id, now);
-            setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+            setTimeout(() => timestamps.delete(message.author.id), coolDownAmount);
             //#endregion
 
             //#region Checks to see if server is set up
             if (command.name == "setup") {
-                trycommand(client, message, command, args);
+                tryCommand(client, message, command, args);
                 return
             }
-            else if (serverConfig[serverID].setupneeded) {
-                return warnCustom(message, `You Must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in and Admin Only chat.`, command.name);
+            else if (serverConfig[serverID].setUpNeeded) {
+                return warnCustom(message, `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in and Admin Only chat.`, command.name);
             }
             //#endregion
 
-            trycommand(client, message, command, args);
+            tryCommand(client, message, command, args);
         //#endregion
     });
 };
 //#endregion
 
-//#region Message Handling for PM
+//#region Function that starts the listener that handles executing all commands in DMs
+/**
+ * This function starts the listener that handles executing all commands in DMs.
+ * @param {Client} client - Discord.js Client Object
+ */
 function PMHandling (client) {
     client.on("message", message => {
         var prefix = '!';
-        const cooldowns = new Collection();
+        const coolDowns = new Collection();
 
-        //#region Permission Checks
+        //#region Check permissions
         // Make sure the command can only be run in a PM
         if (message.guild) return;
 
@@ -157,7 +179,7 @@ function PMHandling (client) {
         if (message.author.bot) return;
         //#endregion
 
-        //#region DM Command Handeling
+        //#region Handles DM commands
             //#region Prefix and Command Validation
             //Escapes if message does not start with prefix
             const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
@@ -175,18 +197,18 @@ function PMHandling (client) {
             if (!command.type.includes('DM')) return;
             //#endregion
 
-            //#region Anti-Spam (Cooldown) Code
-            //Checks to see if command has a cooldown set and if it does executes the code to prevent oveuse of command
-            if (!cooldowns.has(command.name)) {
-                cooldowns.set(command.name, new Collection());
+            //#region Anti-Spam (CoolDown) Code
+            //Checks to see if command has a coolDown set and if it does executes the code to prevent overuse of command
+            if (!coolDowns.has(command.name)) {
+                coolDowns.set(command.name, new Collection());
             }
 
             const now = Date.now();
-            const timestamps = cooldowns.get(command.name);
-            const cooldownAmount = (command.cooldown || 1) * 1000;
+            const timestamps = coolDowns.get(command.name);
+            const coolDownAmount = (command.coolDown || 1) * 1000;
         
             if (timestamps.has(message.author.id)) {
-                const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+                const expirationTime = timestamps.get(message.author.id) + coolDownAmount;
 
                 if (now < expirationTime) {
                     const timeLeft = (expirationTime - now) / 1000;
@@ -195,7 +217,7 @@ function PMHandling (client) {
             }
 
             timestamps.set(message.author.id, now);
-            setTimeout(() => timestamps.delete(message.author.id), cooldownAmount);
+            setTimeout(() => timestamps.delete(message.author.id), coolDownAmount);
             //#endregion
 
             try {

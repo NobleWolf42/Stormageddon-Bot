@@ -8,7 +8,7 @@ const { capitalize } = require('../helpers/stringHelpers.js');
 module.exports = {
     name: 'help',
     type: ['DM', 'Guild'],
-    cooldown: 0,
+    coolDown: 0,
     aliases: ['h'],
     class: 'help',
     usage: 'help ***PAGE***',

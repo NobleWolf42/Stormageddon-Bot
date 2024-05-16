@@ -15,7 +15,7 @@ module.exports = {
     name: "destiny2",
     type: ['DM', 'Guild'],
     aliases: ['d2'],
-    cooldown: 0,
+    coolDown: 0,
     class: 'gaming',
     usage: 'destiny2 status ***INSERT-BUNGIE-NAME*** or destiny2 clan ***INSERT-CLAN-NAME***',
     description: "Status displays the Destiny 2 account's original creation date and last API update date. Clan displays Destiny 2 clan's bio, avatar, motto, and founder.",
@@ -82,7 +82,7 @@ function getClan(message, clan_name){
                 var domain = "https://www.bungie.net/";
 
                 var attachment = (domain + data["detail"]["avatarPath"]);
-                embedCustom(message, `${clan_name} Clan Information`, '#F5F5F5', `The clan was created on ${data["detail"]["creationDate"]}.\n The founder is ${data["founder"]["bungieNetUserInfo"]["displayName"]}.\n\n ${data["detail"]["about"]}`, attachment);
+                embedCustom(message, `${clan_name} Clan Information`, '#F5F5F5', `The clan was created on ${data["detail"]["creationDate"]}.\n The founder is ${data["founder"]["bungieNetUserInfo"]["displayName"]}.\n\n ${data["detail"]["about"]}`, "", attachment);
             }
             else {
                 warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);

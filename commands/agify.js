@@ -7,7 +7,7 @@ module.exports = {
     name: "agify",
     type: ['Guild', 'DM'],
     aliases: [],
-    cooldown: 0,
+    coolDown: 0,
     class: 'fun',
     usage: 'agify ***INSERT-NAME***',
     description: "Estimates someone's age based off of their name.",

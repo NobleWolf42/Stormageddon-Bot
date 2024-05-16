@@ -1,5 +1,4 @@
 //#region Dependencies
-const { MessageEmbed } = require("discord.js");
 const { readFileSync } = require('fs');
 const lyricsFinder = require("lyrics-finder");
 //#endregion
@@ -9,7 +8,7 @@ var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 
 //#region Helpers
-const { warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
+const { embedCustom, warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
 //#endregion
 
 //#region This exports the lyrics command with the information about it
@@ -17,7 +16,7 @@ module.exports = {
     name: "lyrics",
     type: ['Guild'],
     aliases: ["ly"],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'lyrics',
     description: "Gets the lyrics for the currently playing song.",
@@ -40,15 +39,11 @@ module.exports = {
                 lyrics = `No lyrics found for ${queue.songs[0].title}.`;
             }
 
-            let lyricsEmbed = new MessageEmbed()
-                .setTitle("Lyrics")
-                .setDescription(lyrics)
-                .setColor("#0E4CB0")
-                .setTimestamp();
+            if (lyrics >= 2048) {
+                lyrics = `${lyrics.substring(0, 2045)}...`;
+            }
 
-            if (lyricsEmbed.description.length >= 2048)
-                lyricsEmbed.description = `${lyricsEmbed.description.substr(0, 2045)}...`;
-            return message.channel.send(lyricsEmbed).catch(console.error);
+            return await embedCustom(message, "Lyrics", "#0E4CB0", lyrics).catch(console.error);
         }
         else {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);

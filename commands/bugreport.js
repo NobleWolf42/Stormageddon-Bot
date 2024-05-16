@@ -1,7 +1,3 @@
-//#regions Dependencies
-const { MessageEmbed } = require('discord.js');
-//#endregion
-
 //#region Data Files
 const botConfig = require('../data/botConfig.json');
 //#endregion
@@ -16,7 +12,7 @@ module.exports = {
     name: "bugreport",
     type: ['DM'],
     aliases: [],
-    cooldown: 60,
+    coolDown: 60,
     class: 'direct',
     usage: '!bugreport ***MESSAGE***',
     description: "Whisper via Stormageddon to report a bug to the developers of Stormageddon.",
@@ -25,16 +21,10 @@ module.exports = {
         var arguments = argsString.split(', ');
         var content = arguments[0];
         
-        var devlist = botConfig.devids;
+        var devList = botConfig.devIDs;
         
-        const embMsg = new MessageEmbed()
-            .setTitle('Bug Report')
-            .setColor('#F8AA2A')
-            .setFooter(`From - ${message.author.tag}.`)
-            .setDescription(content)
-
-        for (key in devlist) {
-            client.users.cache.get(devlist[key]).send(embMsg);
+        for (key in devList) {
+            embedCustom(message, "Bug Report", "#F8AA2A", content, `From - ${message.author.tag}.`);
         }
         
         embedCustom(message, 'Bug Report Sent.', '#0B6E29', `**Bug Report:** \`${content}\` \n**Sent To:** \`🐺 The Developers 🐺\``);

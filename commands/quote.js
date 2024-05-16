@@ -12,7 +12,7 @@ module.exports = {
     name: "quote",
     type: ['DM', 'Guild'],
     aliases: [],
-    cooldown: 5,
+    coolDown: 5,
     class: 'fun',
     usage: 'quote',
     description: "Display a random quote, picked by the developers of Stormageddon.",

@@ -13,7 +13,7 @@ module.exports = {
     name: "stop",
     type: ['Guild'],
     aliases: [""],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'stop',
     description: "Stops the playing music.",

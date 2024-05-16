@@ -17,7 +17,7 @@ module.exports = {
     name: "pause",
     type: ['Guild'],
     aliases: [],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'pause',
     description: "Pauses the currently playing music.",

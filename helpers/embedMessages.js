@@ -1,5 +1,5 @@
 //#region Dependencies
-const { EmbedBuilder, Message } = require('discord.js');
+const { EmbedBuilder } = require('discord.js');
 //#endregion
 
 //#region Helpers
@@ -13,15 +13,26 @@ const { addToLog } = require('./errorLog.js');
  * @param {string} title - String for the Title/Header of the message
  * @param {string} color - String Hex Code for the color of the border 
  * @param {string} text - String for the body of the embedded message
+ * @param {string} footer - String for the footer of the embedded message
  * @param {URL} img - URL to an Image to include (optional) 
+ * @param {array} fields - addField arguments 
+ * @param {URL} url - URL to add as the embedURL 
+ * @param {URL} thumbnail - URL to thumbnail 
+ * @returns {*} message.channel.send({ embeds: [embMsg] }) (pretty sure its another Message Object but needs testing)
  */
-function embedCustom(message, title, color, text, img) {
+function embedCustom(message, title, color, text, footer, img, fields, url, thumbnail) {
     const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor(color)
         .setDescription(text)
-        .setImage(img);
-    message.channel.send({ embeds: [embMsg] });
+        .setFooter(footer)
+        .setImage(img)
+        .addFields(fields)
+        .setURL(url)
+        .setThumbnail(thumbnail)
+        .setTimestamp();
+
+    return message.channel.send({ embeds: [embMsg] });
 }
 //#endregion
 

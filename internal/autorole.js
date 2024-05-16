@@ -1,24 +1,36 @@
-//#region Dependancices
+//#region Dependencies
+const { MessageReaction, Client } = require("discord.js");
+//#endregion
+
+//#region Helpers
 const { updateConfigFile } = require("../helpers/currentSettings.js");
+//#endregion
+
+//Refreshing the serverConfig from serverConfig.json
 var serverConfig = updateConfigFile();
-const { MessageReaction } = require("discord.js");
+
+//#region Function that generates embed fields
+/**
+ * Generates the embed fields and ties the emoji to their respective role from serverCOnfig.json.
+ * @param {number} serverID - Server ID for the server the command is run in
+ * @returns not sure, probably need to recode it
+ */
+function generateEmbedFields(serverID) {
+    return serverConfig[serverID].autorole.roles.map((r, e) => {
+        return {
+            emoji: serverConfig[serverID].autorole.reactions[e],
+            role: r
+        };
+    });
+}
 //#endregion
 
-//#region Autoroll
-    //#region Function that generates embed feilds
-    function generateEmbedFields(serverID) {
-        return serverConfig[serverID].autorole.roles.map((r, e) => {
-            return {
-                emoji: serverConfig[serverID].autorole.reactions[e],
-                role: r
-            };
-        });
-    }
-    //#endregion
-//#endregion
-
-//#region Autorole Listener
-function autoroleListener(client) {
+//#region Function that starts the listening to see if a user hits a reaction, and gives them the role when they do react
+/**
+ * This function starts the listening to see if a user hits a reaction, and gives them the role when they do react.
+ * @param {Client} client - Discord.js Client Object
+ */
+function autoRoleListener(client) {
     serverConfig = updateConfigFile();
     //#region Redable constants
     // This makes the events used a bit more readable
@@ -83,5 +95,5 @@ function autoroleListener(client) {
 //#endregion
 
 //#region exports
-module.exports = { autoroleListener, generateEmbedFields };
+module.exports = { autoRoleListener, generateEmbedFields };
 //#endregion

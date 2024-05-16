@@ -17,7 +17,7 @@ module.exports = {
     name: "remove",
     type: ['Guild'],
     aliases: [""],
-    cooldown: 0,
+    coolDown: 0,
     class: 'music',
     usage: 'remove ***QUEUE-NUMBER***',
     description: "Removes selected song from the queue.",

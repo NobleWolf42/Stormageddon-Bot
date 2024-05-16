@@ -1,9 +1,9 @@
 //#region Dependencies
-const { MessageEmbed, splitMessage, escapeMarkdown } = require("discord.js");
+const { escapeMarkdown } = require("discord.js");
 //#endregion
 
 //#region Helpers
-const { warnCustom } = require("../helpers/embedMessages.js");
+const { embedCustom, warnCustom } = require("../helpers/embedMessages.js");
 //#endregion
 
 //#region This exports the showqueue command with the information about it
@@ -11,7 +11,7 @@ module.exports = {
     name: "showqueue",
     type: ['Guild'],
     aliases: ["q"],
-    cooldown: 60,
+    coolDown: 60,
     class: 'music',
     usage: 'showqueue',
     description: "Shows the music queue and now playing.",
@@ -21,21 +21,18 @@ module.exports = {
 
         const description = queue.songs.map((song, index) => `${index + 1}. ${escapeMarkdown(song.title)}`);
 
-        let queueEmbed = new MessageEmbed()
-            .setTitle("Stormageddon Music Queue")
-            .setDescription(description)
-            .setColor("#0E4CB0");
+        const splitDescription = [];
 
-        const splitDescription = splitMessage(description, {
-            maxLength: 2048,
-            char: "\n",
-            prepend: "",
-            append: ""
-        });
+        if (description.length > 2048) {
+            var runTimes = Math.ceil(description.length / 2048);
+            for (var i = 0; i < runTimes; i++) {
+                splitDescription.push(description.substring(0, 2047));
+                description = description.substring(2047);
+            }
+        }
 
         splitDescription.forEach(async (m) => {
-            queueEmbed.setDescription(m);
-            message.channel.send(queueEmbed);
+            embedCustom(message, "Stormageddon Music Queue", "#0E4CB0", m);
         });
     }
 }

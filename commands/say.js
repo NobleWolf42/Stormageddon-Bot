@@ -8,7 +8,7 @@ module.exports = {
     name: "say",
     type: ['Guild'],
     aliases: [],
-    cooldown: 0,
+    coolDown: 0,
     class: 'admin',
     usage: 'say ***MESSAGE-CONTENT***',
     description: "Sends messege as bot.",
