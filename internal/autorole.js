@@ -16,9 +16,9 @@ var serverConfig = updateConfigFile();
  * @returns not sure, probably need to recode it
  */
 function generateEmbedFields(serverID) {
-    return serverConfig[serverID].autorole.roles.map((r, e) => {
+    return serverConfig[serverID].autoRole.roles.map((r, e) => {
         return {
-            emoji: serverConfig[serverID].autorole.reactions[e],
+            emoji: serverConfig[serverID].autoRole.reactions[e],
             role: r
         };
     });
@@ -64,8 +64,8 @@ function autoRoleListener(client) {
         if (message.embeds[0] && message.embeds[0].footer != null) embedFooterText = message.embeds[0].footer.text;
 
         if (
-            (message.author.id === client.user.id) && (message.content !== serverConfig[serverID].autorole.initialMessage || 
-            (message.embeds[0] && (embedFooterText !== serverConfig[serverID].autorole.embedFooter)))
+            (message.author.id === client.user.id) && (message.content !== serverConfig[serverID].autoRole.initialMessage || 
+            (message.embeds[0] && (embedFooterText !== serverConfig[serverID].autoRole.embedFooter)))
         ) {
 
             if ((message.embeds.length >= 1)) {

@@ -30,7 +30,7 @@ module.exports = {
                 passed = false;
             });
             if(passed == true) {
-                embedCustom(message, 'Success!', '#008000', `As Per \`${message.author.tag}\`, successfully deleted ${amount} messages!`);
+                embedCustom(message, 'Success!', '#008000', `As Per \`${message.author.tag}\`, successfully deleted ${amount} messages!`, { text: null, iconURL: null }, null, [], null, null);
             }
         }
     }
