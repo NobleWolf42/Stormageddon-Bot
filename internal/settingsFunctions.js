@@ -360,7 +360,7 @@ async function setup(message) {
     setModMail(message);
 
     //Removes the Setup Needed Tag
-    serverConfig[serverID].setUpNeeded = false;
+    serverConfig[serverID].setupNeeded = false;
     await buildConfigFile(serverConfig);
     message.channel.send('Server Setup Complete, \`MAKE SURE TO PUT THE ROLE FOR THIS BOT ABOVE ROLES YOU WANT THE BOT TO MANAGE, if you don\'t the bot will not work properly!\`');
     updateConfigFile();
@@ -391,7 +391,7 @@ async function buildConfigFile(config) {
  */
 function addServerConfig(serverID) {
     if (serverConfig[serverID] == undefined) {
-        serverConfig[serverID] = {"setUpNeeded":true,"autoRole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinRole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modMail":{"enable":false,"modList":[]}};
+        serverConfig[serverID] = {"setupNeeded":true,"autoRole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinRole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modMail":{"enable":false,"modList":[]}};
     }
 
     buildConfigFile(serverConfig);

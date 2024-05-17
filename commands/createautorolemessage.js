@@ -82,7 +82,7 @@ module.exports = {
             }
         });
 
-        message.delete({ timeout: 15000, reason: 'Cleanup.' });
+        setTimeout( () => message.delete(), 15000);
     }
 }
 //#endregion

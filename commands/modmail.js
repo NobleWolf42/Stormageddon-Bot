@@ -30,15 +30,15 @@ module.exports = {
         })
     
         if ((serverID != 0) && (serverConfig[serverID] != undefined)) {
-            if (serverConfig[serverID].modmail.enable) {
-                var modlist = serverConfig[serverID].modmail.modlist;
+            if (serverConfig[serverID].modMail.enable) {
+                var modList = serverConfig[serverID].modMail.modList;
     
-                for (key in modlist) {
-                    client.users.cache.get(modlist[key]).send('```' + content + '``` `From - ' + message.author.tag + ' in Server - ' + servername + '.`');
+                for (key in modList) {
+                    client.users.cache.get(modList[key]).send('```' + content + '``` `From - ' + message.author.tag + ' in Server - ' + servername + '.`');
                 }
             }
             else {
-                warnDisabled(message, 'modmail', module.name);
+                warnDisabled(message, 'modMail', module.name);
             }
         }
         else if (serverConfig[serverID] == undefined) {

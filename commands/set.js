@@ -13,7 +13,7 @@ module.exports = {
     aliases: [""],
     coolDown: 0,
     class: 'admin',
-    usage: 'set autoRole/joinrole/general/music/modmail',
+    usage: 'set autorole/joinrole/general/music/modmail',
     description: "Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.",
     execute(message, args) {
         if (message.member.hasPermission('ADMINISTRATOR')) {

@@ -1,6 +1,6 @@
 //#region Initial Set-Up
     //#region Dependencies
-    const { Client, GatewayIntentBits } = require('discord.js');
+    const { Client, GatewayIntentBits, Partials } = require('discord.js');
     //#endregion
 
     //#region Data Files
@@ -23,27 +23,33 @@
 //#endregion
 
 //#region Initialize Discord Bot
-const client = new Client({ intents: [
-    GatewayIntentBits.DirectMessagePolls,
-    GatewayIntentBits.DirectMessageReactions,
-    GatewayIntentBits.DirectMessageTyping,
-    GatewayIntentBits.DirectMessages,
-    GatewayIntentBits.GuildEmojisAndStickers,
-    GatewayIntentBits.GuildIntegrations,
-    GatewayIntentBits.GuildInvites,
-    GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.GuildMessagePolls,
-    GatewayIntentBits.GuildMessageReactions,
-    GatewayIntentBits.GuildMessageTyping,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.GuildModeration,
-    GatewayIntentBits.GuildPresences,
-    GatewayIntentBits.GuildScheduledEvents,
-    GatewayIntentBits.GuildVoiceStates,
-    GatewayIntentBits.GuildWebhooks,
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.MessageContent
-  ]});
+const client = new Client({ 
+    partials: [
+        Partials.Channel,
+        Partials.Message
+    ],
+    intents: [
+        GatewayIntentBits.DirectMessagePolls,
+        GatewayIntentBits.DirectMessageReactions,
+        GatewayIntentBits.DirectMessageTyping,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildEmojisAndStickers,
+        GatewayIntentBits.GuildIntegrations,
+        GatewayIntentBits.GuildInvites,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessagePolls,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.GuildMessageTyping,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildModeration,
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.GuildScheduledEvents,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildWebhooks,
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.MessageContent
+    ]
+});
 client.queue = new Map();
 //#endregion
 

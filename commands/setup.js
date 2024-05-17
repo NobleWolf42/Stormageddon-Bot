@@ -21,8 +21,8 @@ module.exports = {
     usage: 'setup',
     description: "Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.",
     async execute(message) {
-        console.log(serverConfig[message.channel.guild.id].setupneeded)
-        if (serverConfig[message.channel.guild.id].setupneeded) {
+        console.log(serverConfig[message.channel.guild.id].setupNeeded)
+        if (serverConfig[message.channel.guild.id].setupNeeded) {
             if (message.member.hasPermission('ADMINISTRATOR')) {
                 await setup(message);
             }

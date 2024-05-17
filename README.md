@@ -14,7 +14,7 @@
     1.  YouTube Data API v3 Key **[Guide](https://developers.google.com/youtube/v3/getting-started)**
     2. Spotify API Client Keys **[Guide](https://developer.spotify.com/documentation/general/guides/app-settings/#register-your-app)**
     3. **(Optional)** Soundcloud Client ID **[Guide](https://github.com/zackradisic/node-soundcloud-downloader#client-id)**
-4. Node.js v12.0.0 or newer
+4. Node.js v22.2.0 or newer
 
 ## 🚀 Getting Started
 
@@ -88,7 +88,7 @@ Copy or Rename `botConfig.example.json` located in the `data` folder to `botConf
 
 - Admin Commands
   
-  -  Changes the prefix the bot uses in your server. Available Symbols: `~!$%^&*()_+-={}[]|\\:\";\\'<>?,.
+  -  Changes the prefix the bot uses in your server. Available Symbols: ~!$%^&*()_+-=[];',.{}|:"<>?
 
         `!changeprefix ***INSERT-SYMBOL*** i.e. (!)`
 
