@@ -13,14 +13,14 @@ const { addToLog } = require('./errorLog.js');
  * @param {string} title - String for the Title/Header of the message
  * @param {string} color - String Hex Code for the color of the border 
  * @param {string} text - String for the body of the embedded message
- * @param {string} footer - String for the footer of the embedded message
- * @param {URL} img - URL to an Image to include (optional) 
- * @param {array} fields - addField arguments 
- * @param {URL} url - URL to add as the embedURL 
- * @param {URL} thumbnail - URL to thumbnail 
- * @returns {*} message.channel.send({ embeds: [embMsg] }) (pretty sure its another Message Object but needs testing)
+ * @param {object} footer - Object for the footer of the embedded message - Default: { text: null, iconURL: null }
+ * @param {URL} img - URL to an Image to include - Default: null 
+ * @param {array} fields - addField arguments - Default: []
+ * @param {URL} url - URL to add as the embedURL - Default: null 
+ * @param {URL} thumbnail - URL to thumbnail - Default: null 
+ * @returns {*} message.channel.send({ embeds: [embMsg] }) (Message Object)
  */
-function embedCustom(message, title, color, text, footer, img, fields, url, thumbnail) {
+async function embedCustom(message, title, color, text, footer, img, fields, url, thumbnail) {
     const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor(color)
@@ -32,7 +32,7 @@ function embedCustom(message, title, color, text, footer, img, fields, url, thum
         .setThumbnail(thumbnail)
         .setTimestamp();
 
-    return message.channel.send({ embeds: [embMsg] });
+    return await (message.channel.send({ embeds: [embMsg] }));
 }
 //#endregion
 
@@ -53,7 +53,7 @@ function embedCustomDM(message, title, color, text, img) {
         .setImage(img);
     message.author.send({ embeds: [embMsg] });
     if (message.channel.guild != undefined) {
-        message.delete({ timeout: 15000, reason: 'Cleanup.' });
+        setTimeout( () => message.delete(), 15000);
     }
 }
 //#endregion
@@ -87,9 +87,9 @@ function warnCustom(message, text, commandName) {
         .setColor('#F8AA2A')
         .setDescription(text);
     if (message.channel.guild != undefined) {
-        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
+        message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, text);
-        message.delete({ timeout: 15000, reason: 'Cleanup.' });
+        setTimeout( () => message.delete(), 15000);
     }
     else {
         message.channel.send({ embeds: [embMsg] });
@@ -110,9 +110,9 @@ function errorNoAdmin(message, commandName) {
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *BOT ADMIN* access to use!');
     if (message.channel.guild != undefined) {
-        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
+        message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Bot Admin!");
-        message.delete({ timeout: 15000, reason: 'Cleanup.' });
+        setTimeout( () => message.delete(), 15000);
     }
     else {
         message.channel.send({ embeds: [embMsg] });
@@ -133,9 +133,9 @@ function errorNoMod(message, commandName) {
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *BOT MOD* access to use!');
     if (message.channel.guild != undefined) {
-        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
+        message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Bot Moderator!");
-        message.delete({ timeout: 15000, reason: 'Cleanup.' });
+        setTimeout( () => message.delete(), 15000);
     }
     else {
         message.channel.send({ embeds: [embMsg] });
@@ -156,9 +156,9 @@ function errorNoDJ(message, commandName) {
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *DJ* access to use!');
     if (message.channel.guild != undefined) {
-        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
+        message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not DJ!");
-        message.delete({ timeout: 15000, reason: 'Cleanup.' });
+        setTimeout( () => message.delete(), 15000);
     }
     else {
         message.channel.send({ embeds: [embMsg] });
@@ -179,9 +179,9 @@ function errorNoServerAdmin(message, commandName) {
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!');
     if (message.channel.guild != undefined) {
-        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
+        message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Server Admin!");
-        message.delete({ timeout: 15000, reason: 'Cleanup.' });
+        setTimeout( () => message.delete(), 15000);
     }
     else {
         message.channel.send({ embeds: [embMsg] });
@@ -197,17 +197,16 @@ function errorNoServerAdmin(message, commandName) {
  * @param {string} text - String for the body of the embedded message
  * @param {string} commandName - String of the name of the command
  */
-function errorCustom(message, text, commandName) {
+async function errorCustom(message, text, commandName) {
     const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
         .setDescription(text);
     if (message.channel.guild != undefined) {
-        message.channel.send({ embeds: [embMsg] }).then(msg => {msg.delete({ timeout: 15000, reason: 'Cleanup.' })});
+        message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Fatal Error', commandName, message.author.tag, message.guild.name, message.channel.name, text);
-        message.delete({ timeout: 15000, reason: 'Cleanup.' });
-    }
-    else {
+        setTimeout( () => message.delete(), 15000);
+    } else {
         message.channel.send({ embeds: [embMsg] });
         addToLog('Fatal Error', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
     }

@@ -24,10 +24,10 @@ module.exports = {
         var devList = botConfig.devIDs;
         
         for (key in devList) {
-            embedCustom(message, "Bug Report", "#F8AA2A", content, `From - ${message.author.tag}.`);
+            embedCustom(message, "Bug Report", "#F8AA2A", content, { text: `From - ${message.author.tag}.`, iconURL: null }, null, [], null, null);
         }
         
-        embedCustom(message, 'Bug Report Sent.', '#0B6E29', `**Bug Report:** \`${content}\` \n**Sent To:** \`🐺 The Developers 🐺\``);
+        embedCustom(message, 'Bug Report Sent.', '#0B6E29', `**Bug Report:** \`${content}\` \n**Sent To:** \`🐺 The Developers 🐺\``, { text: null, iconURL: null }, null, [], null, null);
     }
 }
 //#endregion

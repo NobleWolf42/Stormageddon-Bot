@@ -21,7 +21,7 @@ module.exports = {
             if ((message.channel.guild.id in serverConfig)) {
                 message.mentions.members.forEach(async (user) => {
                     var serverID = message.channel.guild.id;
-                    var array = serverConfig[serverID].modmail.modlist;
+                    var array = serverConfig[serverID].modMail.modList;
             
                     if (user == undefined) {
                         return;
@@ -30,10 +30,10 @@ module.exports = {
                         array = array.filter(function(value){ return value != user.id;});
                     }
             
-                    var modmail = {};
-                    modmail.modlist = array;
-                    modmail.enable = true;
-                    serverConfig[serverID].modmail = modmail;
+                    var modMail = {};
+                    modMail.modList = array;
+                    modMail.enable = true;
+                    serverConfig[serverID].modMail = modMail;
             
                     await buildConfigFile(serverConfig);
             

@@ -118,7 +118,7 @@ module.exports = {
             warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`**${makeCommandPageList(commandClasses)}**\``, module.name);
             
             if (message.channel.guild != undefined) {
-                message.delete({ timeout: 15000, reason: 'Cleanup.' });
+                setTimeout( () => message.delete(), 15000);
             }
             
             return;

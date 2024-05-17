@@ -9,6 +9,7 @@ const { warnCustom, errorCustom } = require('../helpers/embedMessages.js');
 const { getRandomDoggo } = require('../helpers/doggoLinks.js');
 const { updateConfigFile } = require('../helpers/currentSettings.js');
 const { addToLog } = require('../helpers/errorLog.js');
+const { error } = require('console');
 //#endregion
 
 //Refreshing the serverConfig from serverConfig.json
@@ -29,8 +30,7 @@ function tryCommand(client, message, command, args) {
     try {
         command.execute(message, args, client);
         addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
-    }
-    catch (error) {
+    } catch (error) {
         addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
         errorCustom(message, "There was an error executing that command.", command.name);
         console.log(error);
@@ -57,7 +57,6 @@ function messageHandling(client) {
 
     //Handles messages from guilds and their responses
     client.on("messageCreate", message => {
-
         //#region Checks permissions
         // Make sure bots can't run commands
         if (message.author.bot) return;
@@ -167,10 +166,9 @@ function messageHandling(client) {
  * @param {Client} client - Discord.js Client Object
  */
 function PMHandling (client) {
-    client.on("message", message => {
+    client.on("messageCreate", message => {
         var prefix = '!';
         const coolDowns = new Collection();
-
         //#region Check permissions
         // Make sure the command can only be run in a PM
         if (message.guild) return;
@@ -178,19 +176,15 @@ function PMHandling (client) {
         // Make sure bots can't run this command
         if (message.author.bot) return;
         //#endregion
-
         //#region Handles DM commands
             //#region Prefix and Command Validation
             //Escapes if message does not start with prefix
             const prefixRegex = new RegExp(`^(<@?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
-            if (!prefixRegex.test(message.content)) return;
-        
+            if (!prefixRegex.test(message.content)) return;  
             //Gets command name as typed by user
             const [, matchedPrefix] = message.content.match(prefixRegex);
             const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
             const commandName = args.shift().toLowerCase();
-
-
             //Checks to see if it is a valid command and ignores message if it is not
             const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
             if (!command) return;

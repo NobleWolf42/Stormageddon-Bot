@@ -59,6 +59,7 @@ function serverRoleUpdate(sRole, serverID) {
     if (basicServerRoles[String(serverConfig[serverID].music.djRoles)] != undefined){
         djRoleIDs.push(basicServerRoles[String(serverConfig[serverID].music.djRoles)]);
     }
+
 }
 //#endregion
 
@@ -73,31 +74,27 @@ function adminCheck(message) {
     var serverRolesArray = [];
     var serverID = '';
     
-    if (message.author.lastMessage.member != null) {
-        userRolesArray = message.author.lastMessage.member._roles;
-        serverRolesArray = message.channel.guild.roles;
-        serverID = message.channel.guild.id;
+    if (message.member != null) {
+        userRolesArray = message.member._roles;
+        serverRolesArray = message.guild.roles;
+        serverID = message.guild.id;
     }
     else {
         return false;
     }
-    
     serverConfig = updateConfigFile();
     //Calls a function that updates the server role information
-    serverRoleUpdate(serverRolesArray, serverID);
-    
+    serverRoleUpdate(serverRolesArray, serverID); 
     //Checks to see if any of the user role ids match any of the admin role ids
     for (key in userRolesArray) {
         
         for (a in adminRoleIDs) {
             
             if(userRolesArray[key] == adminRoleIDs[a]) {
-                
                 return true;
             }
         }
     }
-    
     return false;
 }
 //#endregion
