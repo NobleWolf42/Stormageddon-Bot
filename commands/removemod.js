@@ -15,7 +15,7 @@ module.exports = {
     coolDown: 0,
     class: 'admin',
     usage: 'removemod ***MENTION-USERS***',
-    description: "Removes users freom the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
+    description: "Removes users from the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
     execute(message) {
         if (message.member.hasPermission('ADMINISTRATOR')) {
             if ((message.channel.guild.id in serverConfig)) {

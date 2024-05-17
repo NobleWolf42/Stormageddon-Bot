@@ -91,7 +91,7 @@ function messageHandling(client) {
             //@bot
             if(message.mentions.users.first().id === client.user.id) {
                 var attachment = new MessageAttachment(getRandomDoggo());
-                if (serverConfig[serverID].setUpNeeded) {
+                if (serverConfig[serverID].setupNeeded) {
                     message.channel.send(`Please run \`${prefix}setup\` in an admin only chat channel to set up the bot on your server.`);
                     message.channel.send(attachment);
                 }
@@ -150,7 +150,7 @@ function messageHandling(client) {
                 tryCommand(client, message, command, args);
                 return
             }
-            else if (serverConfig[serverID].setUpNeeded) {
+            else if (serverConfig[serverID].setupNeeded) {
                 return warnCustom(message, `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in and Admin Only chat.`, command.name);
             }
             //#endregion
