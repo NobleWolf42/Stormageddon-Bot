@@ -7,8 +7,7 @@ var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 
 //#region Helpers
-const { canModifyQueue } = require("../helpers/music.js");
-const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require("../helpers/embedMessages.js");
+const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } = require("../helpers/embedMessages.js");
 const { djCheck } = require("../helpers/userHandling.js");
 //#endregion
 
@@ -21,32 +20,32 @@ module.exports = {
     class: 'music',
     usage: 'resume',
     description: "Resumes the currently paused music.",
-    execute(message) {
+    execute(message, args, client, distube) {
+        //Checks to see if the music feature is enabled in this server
         if (!serverConfig[message.guild.id].music.enable) {
-            warnDisabled(message, 'music', module.name);
-            return;
+            return warnDisabled(message, 'music', module.name);
         }
-
+        //Checks to see if the user has DJ access
         if (!djCheck(message)) {
-            errorNoDJ(message, module.name);
-            return;
+            return errorNoDJ(message, module.name);
+        }
+        //Checks to see if the message was sent in the correct channel
+        if (serverConfig[message.guild.id].music.textChannel != message.channel.name) {
+            return warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
 
-        if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
-            const queue = message.client.queue.get(message.guild.id);
-            if (!queue) return warnCustom(message, "There is nothing playing.", module.name);
-            if (!canModifyQueue(message.member, message, module.name)) return;
+        var voiceChannel = message.member.voice.channel;
+        var queue = distube.getQueue(message);
 
-            if (!queue.playing) {
-                queue.playing = true;
-                queue.connection.dispatcher.resume();
-                return queue.textChannel.send(`\`${message.author.tag}\` ▶ resumed the music!`).catch(console.error);
-            }
-
-            return warnCustom(message, "The queue is not paused.", module.name);
-        }
-        else {
-            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
+        if (!queue) {
+            return warnCustom(message, "Nothing is playing right now.", module.name);
+        } else if (voiceChannel != queue.voiceChannel) {
+            return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
+        } else if (!queue.paused) {
+            return warnCustom(message, "Music is not paused.", module.name);
+        } else {
+            queue.resume();
+            embedCustom(message, "Music Resumed", "#0000FF", `Playing [\`${queue.songs[0].name}\`](${queue.songs[0].url}).`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
         }
     }
 }

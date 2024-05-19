@@ -16,7 +16,7 @@ module.exports = {
     execute(message, args) {
         var args = args.map(v => v.toLowerCase());
         const adminTF = adminCheck(message);
-        const commands = message.client.commands.array();
+        const commands = message.client.commands;
         let commandClasses = [];
         let helpMessageCommands = [];
         if (adminTF) {
@@ -31,23 +31,17 @@ module.exports = {
         if (args[0] == undefined || args[0] == 'help') {
             commands.forEach((cmd) => { if (cmd.class == 'help' && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
             title = 'Help';
-            makeHelpMsg(message, title, helpMessageCommands, commandClasses);
-            
-            if (message.channel.guild != undefined) {
-                message.delete({ timeout: 1500, reason: 'Cleanup.' });
-            }
-            
-            return;
+            return makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
         }
-        else if (commandClasses.includes(toLowerCase(args[0])) || args[0] == 'all' || args[0] == 'dm' || args[0] == 'server') {
+        else if (commandClasses.includes(capitalize(args[0])) || args[0] == 'all' || args[0] == 'dm' || args[0] == 'server') {
             if (args[0] == 'admin') {
                 if (adminTF) {
                     commands.forEach((cmd) => { if (cmd.class == args[0] && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
                     title = `${capitalize(args[0])} Help`;
+                    return makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
                 }
                 else {
-                    errorNoAdmin(message, module.name);
-                    return;
+                    return errorNoAdmin(message, module.name);
                 }
             }
             else if (args[0] == 'all') {
@@ -62,7 +56,7 @@ module.exports = {
                         title = 'Help';
                     }
 
-                    makeHelpMsg(message, title, helpMessageCommands, commandClasses);
+                    makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
                 }
 
                 return;
@@ -81,7 +75,7 @@ module.exports = {
                         title = 'Help';
                     }
 
-                    makeHelpMsg(message, title, helpMessageCommands, commandClasses);
+                    makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
                 }
 
                 return;
@@ -98,37 +92,26 @@ module.exports = {
                         title = 'Help';
                     }
 
-                    makeHelpMsg(message, title, helpMessageCommands, commandClasses);
+                    makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
                 }
+                return;
             }
             else {
                 commands.forEach((cmd) => { if (cmd.class == args[0] && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
                 title = `${capitalize(args[0])} Help`;
 
-                makeHelpMsg(message, title, helpMessageCommands, commandClasses);
+                return makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
             }
-
-            if (message.channel.guild != undefined) {
-                message.delete({ timeout: 1500, reason: 'Cleanup.' });
-            }
-            
-            return;
         }
         else {
-            warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`**${makeCommandPageList(commandClasses)}**\``, module.name);
-            
-            if (message.channel.guild != undefined) {
-                setTimeout( () => message.delete(), 15000);
-            }
-            
-            return;
+            return warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, module.name);
         }
     }
 }
 //#endregion
 
 //#region Function to create help message
-function makeHelpMsg(message, title, helpMessageCommands, commandClasses) {
+function makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF) {
     var helpMsg = '';
     commandClasses.sort();
 
@@ -161,7 +144,11 @@ function makeHelpMsg(message, title, helpMessageCommands, commandClasses) {
 
     var pageList = makeCommandPageList(commandClasses);
 
-    embedHelp(message, title, `\`Help Pages: ${pageList}\`\n${helpMsg}`);
+    if (adminTF) {
+        embedHelp(message, title, `\`Help Pages: ${pageList}\`\n**NOTE: !help Admin can only be run in a server!!!\n\n\n${helpMsg}`);
+    } else {
+        embedHelp(message, title, `\`Help Pages: ${pageList}\`\n${helpMsg}`);
+    }
 }
 //#endregion
 

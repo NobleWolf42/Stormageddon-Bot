@@ -48,8 +48,7 @@ module.exports = {
         
         // Checks to see if the module is enabled
         if (!config[serverID].autoRole.enable) {
-            warnDisabled(message, 'autoRole', module.name);
-            return
+            return warnDisabled(message, 'autoRole', module.name);
         }
 
         var thumbnail = null;

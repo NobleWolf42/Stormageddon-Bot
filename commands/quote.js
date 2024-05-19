@@ -16,10 +16,10 @@ module.exports = {
     class: 'fun',
     usage: 'quote',
     description: "Display a random quote, picked by the developers of Stormageddon.",
-    execute(message) {
+    async execute(message, args, client) {
         var quote = quotedata[getRandomInt(quotedata.length)];
 
-        embedCustom(message, 'Quote', '#000000', `"${quote.text}"\n Cited from ${quote.author}.\n Picked by ${quote.submitter}.`);
+        embedCustom(message, 'Quote', '#000000', `"${quote.text}"\n Cited from ${quote.author}.\n Picked by ${await(client.users.fetch(quote.submitter))}.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
     }
 }
 //#endregion

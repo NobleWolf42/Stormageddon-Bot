@@ -7,9 +7,8 @@ var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 
 //#region Helpers
-const { canModifyQueue } = require("../helpers/music.js");
-const { warnCustom, warnDisabled, warnWrongChannel, errorNoMod } = require("../helpers/embedMessages.js");
-const { modCheck, adminCheck } = require("../helpers/userHandling");
+const { warnCustom, warnDisabled, warnWrongChannel, embedCustom } = require("../helpers/embedMessages.js");
+const { djCheck } = require("../helpers/userHandling.js");
 //#endregion
 
 //#region This exports the volume command with the information about it
@@ -21,38 +20,33 @@ module.exports = {
     class: 'music',
     usage: 'volume ***NUMBER(1-100)***',
     description: "Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered.",
-    execute(message, args) {
-
+    execute(message, args, client, distube) {
+        //Checks to see if the music feature is enabled in this server
         if (!serverConfig[message.guild.id].music.enable) {
-            warnDisabled(message, 'music', module.name);
-            return;
+            return warnDisabled(message, 'music', module.name);
+        }
+        //Checks to see if the user has DJ access
+        if (!djCheck(message)) {
+            return errorNoDJ(message, module.name);
+        }
+        //Checks to see if the message was sent in the correct channel
+        if (serverConfig[message.guild.id].music.textChannel != message.channel.name) {
+            return warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
 
-        if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
-            const queue = message.client.queue.get(message.guild.id);
-  
-            if (!queue) return warnCustom(message, "There is nothing playing.", module.name);
-            if (!canModifyQueue(message.member, message, module.name))
-                return warnCustom(message, "You need to join a voice channel first!", module.name);
-  
-            if (!args[0]) return message.channel.send(`🔊 The current volume is: **${queue.volume}%**`).catch(console.error);
-            if (modCheck(message) || adminCheck(message)) {
-            
-                if (isNaN(args[0])) return warnCustom(message, "Please use a number to set volume.", module.name);
-                if (parseInt(args[0]) > 100 || parseInt(args[0]) < 0)
-                    return warnCustom(message, "Please use a number between 0 - 100.", module.name);
-  
-                queue.volume = args[0];
-                queue.connection.dispatcher.setVolumeLogarithmic(args[0] / 100);
-  
-                return queue.textChannel.send(`\`${message.author.tag}\` Set volume to: **${args[0]}%**`).catch(console.error);
-            }
-            else {
-                errorNoMod(message, module.name);
-            }
-        }
-        else {
-            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
+        var voiceChannel = message.member.voice.channel;
+        var queue = distube.getQueue(message);
+        var volume = Number(args[0]);
+
+        if (!queue) {
+            return warnCustom(message, "Nothing is playing right now.", module.name);
+        } else if (voiceChannel != queue.voiceChannel) {
+            return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
+        } else if (!volume) {
+            embedCustom(message, "Volume", "#0000FF", `Volume is currently ${queue.volume}%.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+        } else {
+            queue.setVolume(volume);
+            embedCustom(message, "Volume", "#0000FF", `Volume changed to ${queue.volume}%.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
         }
     }
 }

@@ -7,8 +7,7 @@ var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 
 //#region Helpers
-const { canModifyQueue } = require("../helpers/music.js");
-const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require("../helpers/embedMessages.js");
+const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } = require("../helpers/embedMessages.js");
 const { djCheck } = require("../helpers/userHandling.js");
 //#endregion
 
@@ -19,32 +18,44 @@ module.exports = {
     aliases: ['l'],
     coolDown: 0,
     class: 'music',
-    usage: 'loop',
-    description: "Toggle music loop on/off.",
-    execute(message) {
+    usage: 'loop ***SONG/QUEUE/OFF***',
+    description: "Toggle music loop for song/queue/off.",
+    execute(message, args, client, distube) {
+        //Checks to see if the music feature is enabled in this server
         if (!serverConfig[message.guild.id].music.enable) {
-            warnDisabled(message, 'music', module.name);
-            return;
+            return warnDisabled(message, 'music', module.name);
         }
-
+        //Checks to see if the user has DJ access
         if (!djCheck(message)) {
-            errorNoDJ(message, module.name);
-            return;
+            return errorNoDJ(message, module.name);
+        }
+        //Checks to see if the message was sent in the correct channel
+        if (serverConfig[message.guild.id].music.textChannel != message.channel.name) {
+            return warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
 
-        if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
-            const queue = message.client.queue.get(message.guild.id);
-            if (!queue) return warnCustom(message, "There is nothing playing.", module.name);
-            if (!canModifyQueue(message.member, message, module.name)) return;
+        var voiceChannel = message.member.voice.channel;
+        var queue = distube.getQueue(message);
+        var loopMode = args[0];
+        var mods = ['song', 'queue', 'off']
 
-            // toggle from false to true and reverse
-            queue.loop = !queue.loop;
-            return queue.textChannel
-                .send(`\`${message.author.tag}\` Has turned the loop ${queue.loop ? "**on**" : "**off**"}.`)
-                .catch(console.error);
-        }
-        else {
-            warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
+        if (!queue) {
+            return warnCustom(message, "Nothing is playing right now.", module.name);
+        } else if (voiceChannel != queue.voiceChannel) {
+            return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
+        } else if (!mods.includes(loopMode)) {
+            return warnCustom(message, `You must join use one of the following options: ${mods.join(", ")}`, module.name);
+        } else {
+            if (loopMode == 'song') {
+                queue.setRepeatMode(1);
+                return embedCustom(message, `Loop On`, "#0E4CB0", "Music set to loop song.", { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+            } else if (loopMode == 'queue') {
+                queue.setRepeatMode(2);
+                return embedCustom(message, `Loop On`, "#0E4CB0", "Music set to loop queue.", { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+            } else {
+                queue.setRepeatMode(0);
+                return embedCustom(message, `Loop Off`, "#0E4CB0", "Music has returned to normal playback.", { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+            }
         }
     }
 }

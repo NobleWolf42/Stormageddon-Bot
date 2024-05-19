@@ -13,25 +13,21 @@ module.exports = {
     description: "Bulk deletes the previous messages in a chat based on user input, up to 99 previous messages.",
     execute(message, args) {
         var amount = parseInt(args[0]);
-        var passed = true;
 
         if(isNaN(amount)) {
-            warnCustom(message, `That is not a valid number for the \`${message.prefix}clear\` command!`, module.name);
-            passed = false;
+            return warnCustom(message, `That is not a valid number for the \`${message.prefix}clear\` command!`, module.name);
         }
-        else if (amount < 1 || amount > 99) {
-            warnCustom(message, `${args[0]} is an invalid number! __**Number must be between 1 and 99!**__`, module.name);
-            passed = false;
+        else if (amount < 1 || amount > 100) {
+            return warnCustom(message, `${args[0]} is an invalid number! __**Number must be between 1 and 100!**__`, module.name);
         }
-        else if(amount >= 1 && amount <= 99) {
-            message.channel.bulkDelete((amount + 1), true).catch(err => {
+        else if(amount >= 1 && amount <= 100) {
+            message.delete();
+            message.deleted = true;
+            message.channel.bulkDelete(amount, true).catch(err => {
                 console.error(err);
-                errorCustom(message, 'An error occurred while attempting to delete!', module.name)
-                passed = false;
+                return errorCustom(message, 'An error occurred while attempting to delete!', module.name)
             });
-            if(passed == true) {
-                embedCustom(message, 'Success!', '#008000', `As Per \`${message.author.tag}\`, successfully deleted ${amount} messages!`, { text: null, iconURL: null }, null, [], null, null);
-            }
+            return embedCustom(message, 'Success!', '#008000', `Successfully deleted ${amount} messages!`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
         }
     }
 }

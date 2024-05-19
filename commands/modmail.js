@@ -1,3 +1,7 @@
+//#region Dependencies
+const { EmbedBuilder } = require("discord.js")
+//#endregion
+
 //#regions Helpers
 const { updateConfigFile } = require("../helpers/currentSettings.js");
 const { errorCustom, warnCustom,warnDisabled } = require('../helpers/embedMessages.js');
@@ -34,18 +38,25 @@ module.exports = {
                 var modList = serverConfig[serverID].modMail.modList;
     
                 for (key in modList) {
-                    client.users.cache.get(modList[key]).send('```' + content + '``` `From - ' + message.author.tag + ' in Server - ' + servername + '.`');
+                    const embMsg = new EmbedBuilder()
+                        .setTitle(`Mod Mail from: ${servername}`)
+                        .setColor('#0B6E29')
+                        .setDescription(content)
+                        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null })
+                        .setTimestamp();
+                    
+                    client.users.cache.get(modList[key]).send({ embeds: [embMsg] });
                 }
             }
             else {
-                warnDisabled(message, 'modMail', module.name);
+                return warnDisabled(message, 'modMail', module.name);
             }
         }
         else if (serverConfig[serverID] == undefined) {
-            errorCustom(message, `The \`!setup\` command has not been run on \`${servername}\` yet.`, module.name);
+            return errorCustom(message, `The \`!setup\` command has not been run on \`${servername}\` yet.`, module.name);
         }
         else {
-            warnCustom(message, 'The server you specified does not have this bot, or you failed to specify a server.', module.name);
+            return warnCustom(message, 'The server you specified does not have this bot, or you failed to specify a server.', module.name);
         }
     }
 }

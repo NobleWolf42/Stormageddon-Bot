@@ -47,7 +47,7 @@ function getClan(message, clan_name){
     request.open('GET', 'https://www.bungie.net/Platform/GroupV2/Name/'+clan_name+'/1', true);
     request.setRequestHeader('X-API-KEY', config.auth.d2ApiKey);
     request.onload = function() {
-        // After request is recieved, parse it.
+        // After request is received, parse it.
         var data = JSON.parse(request.responseText)["Response"];
         var error = JSON.parse(request.responseText);
 
@@ -56,17 +56,17 @@ function getClan(message, clan_name){
                 var domain = "https://www.bungie.net/";
 
                 var attachment = (domain + data["founder"]["bungieNetUserInfo"]["iconPath"]);
-                embedCustom(message, `${clan_name} Clan Information`, '#F5F5F5', `The clan was created on ${data["detail"]["creationDate"]}.\n The founder is ${data["founder"]["bungieNetUserInfo"]["displayName"]}.\n\n ${data["detail"]["about"]}`, { text: null, iconURL: null }, attachment, [], null, null);
+                return embedCustom(message, `${clan_name} Clan Information`, '#F5F5F5', `The clan was created on ${data["detail"]["creationDate"]}.\n The founder is ${data["founder"]["bungieNetUserInfo"]["displayName"]}.\n\n ${data["detail"]["about"]}`, { text: `Requested by ${message.author.tag}`, iconURL: null }, attachment, [], null, null);
             }
             else {
-                warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
+                return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
             }
         }
         else if (error.ErrorStatus == 'ClanNotFound') {
-            warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
+            return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
         }
         else {
-            errorCustom(message, "The Destiny API was unable to be reached at this time.\n Try again later.", module.name);
+            return errorCustom(message, "The Destiny API was unable to be reached at this time.\n Try again later.", module.name);
         }
     }
 
