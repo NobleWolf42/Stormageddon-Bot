@@ -13,7 +13,7 @@ const { addToLog } = require('./errorLog.js');
  * @param {string} title - String for the Title/Header of the message
  * @param {string} color - String Hex Code for the color of the border 
  * @param {string} text - String for the body of the embedded message
- * @param {object} footer - Object for the footer of the embedded message - Default: { text: null, iconURL: null }
+ * @param {object} footer - Object for the footer of the embedded message - Default: { text: `Requested by ${message.author.tag}`, iconURL: null }
  * @param {URL} img - URL to an Image to include - Default: null 
  * @param {array} fields - addField arguments - Default: []
  * @param {URL} url - URL to add as the embedURL - Default: null 
@@ -31,6 +31,11 @@ async function embedCustom(message, title, color, text, footer, img, fields, url
         .setURL(url)
         .setThumbnail(thumbnail)
         .setTimestamp();
+
+    if (message.channel.guild != undefined && !message.deleted) {
+        message.delete();
+        message.deleted = true;
+    }
 
     return await (message.channel.send({ embeds: [embMsg] }));
 }
@@ -50,10 +55,12 @@ function embedCustomDM(message, title, color, text, img) {
         .setTitle(title)
         .setColor(color)
         .setDescription(text)
+        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null })
         .setImage(img);
     message.author.send({ embeds: [embMsg] });
-    if (message.channel.guild != undefined) {
-        setTimeout( () => message.delete(), 15000);
+    if (message.channel.guild != undefined && !message.deleted) {
+        message.delete();
+        message.deleted = true;
     }
 }
 //#endregion
@@ -69,8 +76,14 @@ function embedHelp(message, title, text) {
     const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor('#1459C7')
-        .setDescription(text);
+        .setDescription(text)
+        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
     message.author.send({ embeds: [embMsg] });
+
+    if (message.channel.guild != undefined && !message.deleted) {
+        message.delete();
+        message.deleted = true;
+    }
 }
 //#endregion
 
@@ -85,11 +98,13 @@ function warnCustom(message, text, commandName) {
     const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
-        .setDescription(text);
-    if (message.channel.guild != undefined) {
+        .setDescription(text)
+        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
+    if (message.channel.guild != undefined && !message.deleted) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, text);
-        setTimeout( () => message.delete(), 15000);
+        message.delete();
+        message.deleted = true;
     }
     else {
         message.channel.send({ embeds: [embMsg] });
@@ -108,11 +123,13 @@ function errorNoAdmin(message, commandName) {
     const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
-        .setDescription('You do not have permission to use this command. This command requires *BOT ADMIN* access to use!');
-    if (message.channel.guild != undefined) {
+        .setDescription('You do not have permission to use this command. This command requires *BOT ADMIN* access to use!')
+        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
+    if (message.channel.guild != undefined && !message.deleted) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Bot Admin!");
-        setTimeout( () => message.delete(), 15000);
+        message.delete();
+        message.deleted = true;
     }
     else {
         message.channel.send({ embeds: [embMsg] });
@@ -131,11 +148,13 @@ function errorNoMod(message, commandName) {
     const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
-        .setDescription('You do not have permission to use this command. This command requires *BOT MOD* access to use!');
-    if (message.channel.guild != undefined) {
+        .setDescription('You do not have permission to use this command. This command requires *BOT MOD* access to use!')
+        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
+    if (message.channel.guild != undefined && !message.deleted) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Bot Moderator!");
-        setTimeout( () => message.delete(), 15000);
+        message.delete();
+        message.deleted = true;
     }
     else {
         message.channel.send({ embeds: [embMsg] });
@@ -154,11 +173,13 @@ function errorNoDJ(message, commandName) {
     const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
-        .setDescription('You do not have permission to use this command. This command requires *DJ* access to use!');
-    if (message.channel.guild != undefined) {
+        .setDescription('You do not have permission to use this command. This command requires *DJ* access to use!')
+        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
+    if (message.channel.guild != undefined && !message.deleted) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
-        addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not DJ!");
-        setTimeout( () => message.delete(), 15000);
+        addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not a DJ!");
+        message.delete();
+        message.deleted = true;
     }
     else {
         message.channel.send({ embeds: [embMsg] });
@@ -177,11 +198,13 @@ function errorNoServerAdmin(message, commandName) {
     const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
-        .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!');
-    if (message.channel.guild != undefined) {
+        .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!')
+        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
+    if (message.channel.guild != undefined && !message.deleted) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Server Admin!");
-        setTimeout( () => message.delete(), 15000);
+        message.delete();
+        message.deleted = true;
     }
     else {
         message.channel.send({ embeds: [embMsg] });
@@ -201,11 +224,13 @@ async function errorCustom(message, text, commandName) {
     const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
-        .setDescription(text);
-    if (message.channel.guild != undefined) {
+        .setDescription(text)
+        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
+    if (message.channel.guild != undefined && !message.deleted) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Fatal Error', commandName, message.author.tag, message.guild.name, message.channel.name, text);
-        setTimeout( () => message.delete(), 15000);
+        message.delete();
+        message.deleted = true;
     } else {
         message.channel.send({ embeds: [embMsg] });
         addToLog('Fatal Error', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
@@ -224,11 +249,13 @@ function warnWrongChannel(message, correctChannel, commandName) {
     const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
-        .setDescription(`That was not the correct channel for that command. The correct channel for this command is #${correctChannel}`);
+        .setDescription(`That was not the correct channel for that command. The correct channel for this command is #${correctChannel}`)
+        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
     message.author.send({ embeds: [embMsg] });
-    if (message.channel.guild != undefined) {
+    if (message.channel.guild != undefined && !message.deleted) {
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Wrong Text Channel");
-        message.delete({ timeout: 1500, reason: 'Cleanup.' });
+        message.delete();
+        message.deleted = true;
     }
     else {
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Wrong Text Channel");
@@ -247,11 +274,13 @@ function warnDisabled(message, feature, commandName) {
     const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
-        .setDescription(`This feature is currently disabled. To enable it, please run the !set ${feature}. NOTE: This command is only available to a server admin.`);
+        .setDescription(`This feature is currently disabled. To enable it, please run the !set ${feature}. NOTE: This command is only available to a server admin.`)
+        .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
     message.author.send({ embeds: [embMsg] });
-    if (message.channel.guild != undefined) {
+    if (message.channel.guild != undefined && !message.deleted) {
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Feature Disabled");
-        message.delete({ timeout: 1500, reason: 'Cleanup.' });
+        message.delete();
+        message.deleted = true;
     }
     else {
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Feature Disabled");

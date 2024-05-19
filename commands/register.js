@@ -1,3 +1,4 @@
+/* probably deprecating this
 //#region Data Files
 const botConfig = require('../data/botConfig.json');
 //#endregion
@@ -32,3 +33,4 @@ module.exports = {
     }
 }
 //#endregion
+*/

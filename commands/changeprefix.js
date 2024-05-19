@@ -33,26 +33,22 @@ module.exports = {
 
                     writeFileSync("./data/botPrefix.json", JSON.stringify(prefixFile), (err) => {
                         if (err) {
-                            errorCustom(message, err.description, module.name);
+                            return errorCustom(message, err.description, module.name);
                         };
                     });
 
-                    embedCustom(message, 'Current Prefix:', '#008000', `Current Prefix is ${args[0]}`, { text: null, iconURL: null }, null, [], null,null);
-                    return;
+                    return embedCustom(message, 'Current Prefix:', '#008000', `Current Prefix is ${args[0]}`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null,null);
                 }
                 else {
-                    warnCustom(message, 'Bot Prefix Must be ONE of the following: ```~!$%^&*()_+-={}[]|\:";\'<>?,./```', module.name);
-                    return;
+                    return warnCustom(message, 'Bot Prefix Must be ONE of the following: ```~!$%^&*()_+-={}[]|\:";\'<>?,./```', module.name);
                 }
             }
             else {
-                warnCustom(message, 'You must define a bot prefix.', module.name);
-                return;
+                return warnCustom(message, 'You must define a bot prefix.', module.name);
             }
         }
         else {
-            errorNoAdmin(message, module.name);
-            return;
+            return errorNoAdmin(message, module.name);
         }
     }
 }

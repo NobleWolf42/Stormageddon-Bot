@@ -110,10 +110,10 @@ function modCheck(message) {
     var serverRolesArray = [];
     var serverID = '';
     
-    if (message.author.lastMessage.member != null) {
-        userRolesArray = message.author.lastMessage.member._roles;
-        serverRolesArray = message.channel.guild.roles;
-        serverID = message.channel.guild.id;
+    if (message.author.member != null) {
+        userRolesArray = message.member._roles;
+        serverRolesArray = message.guild.roles;
+        serverID = message.guild.id;
     }
     else {
         return false;
@@ -151,10 +151,10 @@ function djCheck(message) {
     var serverRolesArray = [];
     var serverID = '';
     
-    if (message.author.lastMessage.member != null) {
-        userRolesArray = message.author.lastMessage.member._roles;
-        serverRolesArray = message.channel.guild.roles;
-        serverID = message.channel.guild.id;
+    if (message.member != null) {
+        userRolesArray = message.member._roles;
+        serverRolesArray = message.guild.roles;
+        serverID = message.guild.id;
     }
     else {
         return false;

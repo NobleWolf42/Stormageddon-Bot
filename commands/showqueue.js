@@ -1,9 +1,10 @@
 //#region Dependencies
-const { escapeMarkdown } = require("discord.js");
+const { EmbedBuilder } = require("discord.js");
 //#endregion
 
 //#region Helpers
-const { embedCustom, warnCustom } = require("../helpers/embedMessages.js");
+const { warnCustom, embedCustom } = require("../helpers/embedMessages.js");
+const { djCheck } = require("../helpers/userHandling.js");
 //#endregion
 
 //#region This exports the showqueue command with the information about it
@@ -15,25 +16,40 @@ module.exports = {
     class: 'music',
     usage: 'showqueue',
     description: "Shows the music queue and now playing.",
-    execute(message) {
-        const queue = message.client.queue.get(message.guild.id);
-        if (!queue) return warnCustom(message, "There is nothing playing.", module.name);
+    execute(message, args, client, distube) {
+        //Max fields for an embed per discord, change this if it ever changes
+        var maxFields = 25;
 
-        const description = queue.songs.map((song, index) => `${index + 1}. ${escapeMarkdown(song.title)}`);
-
-        const splitDescription = [];
-
-        if (description.length > 2048) {
-            var runTimes = Math.ceil(description.length / 2048);
-            for (var i = 0; i < runTimes; i++) {
-                splitDescription.push(description.substring(0, 2047));
-                description = description.substring(2047);
-            }
+        //Checks to see if the music feature is enabled in this server
+        if (!serverConfig[message.guild.id].music.enable) {
+            return warnDisabled(message, 'music', module.name);
+        }
+        //Checks to see if the user has DJ access
+        if (!djCheck(message)) {
+            return errorNoDJ(message, module.name);
+        }
+        //Checks to see if the message was sent in the correct channel
+        if (serverConfig[message.guild.id].music.textChannel != message.channel.name) {
+            return warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
 
-        splitDescription.forEach(async (m) => {
-            embedCustom(message, "Stormageddon Music Queue", "#0E4CB0", m);
-        });
+        var queue = distube.getQueue(message);
+        
+        if (!queue) {
+            return warnCustom(message, "Nothing is playing right now.", module.name);
+        } else {
+            var description = queue.songs.map((song, index) => `${index + 1} - [\`${song.name}\`](${song.url})\n`);
+
+            var maxTimes = Math.ceil(description.length/20);
+            slicedDesc = [];
+            for (var i = 0; i < maxTimes; i++) {
+                slicedDesc.push(description.slice(0,20).join(""));
+                description = description.slice(20);
+            }
+            slicedDesc.forEach(async (m, index) => {
+                embedCustom(message, `Stormageddon Music Queue - ${index + 1} of ${slicedDesc.length}`, "#0E4CB0", m, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+            });
+        }
     }
 }
 //#endregion

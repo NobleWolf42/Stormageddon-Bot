@@ -51,7 +51,7 @@ module.exports = {
     class: '', - string classifying the command as part of a group, 'admin' for commands intended for admins, 'help' information related to the bot commands, 'fun' commands that are for general fun, server no clear purpose, 'direct' commands that have to do the bot direct messaging people, 'gaming' commands related to video games, and 'music' for commands that have to do with the music player feature of the bot
     usage: '', - string describing how to use the command, i.e. 'addmod ***MENTION-USERS***'
     description: "", - string describing what the command does
-    execute(message, args, client) {} - the code for the function goes in here, message is a discord.js message object, args are the split off arguments for a command, client is a discord.js client object
+    execute(message, args, client, distube) {} - the code for the function goes in here, message is a discord.js message object, args are the split off arguments for a command, client is a discord.js client object
 }
 //#endregion
 
