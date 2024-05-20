@@ -8,7 +8,7 @@ const { existsSync, writeFileSync } = require('fs');
  */
 function createJSONfiles() {
 
-    var emptyfile = {};
+    var emptyFile = {};
     var d = new Date();
     var emptyLog = {
         "logging": [{
@@ -19,7 +19,7 @@ function createJSONfiles() {
     };
 
     if (!existsSync("./data/botPrefix.json")) {
-        writeFileSync("./data/botPrefix.json", JSON.stringify(emptyfile), function (err) {
+        writeFileSync("./data/botPrefix.json", JSON.stringify(emptyFile), function (err) {
             if (err) {
                 console.log(err);
             }
@@ -27,7 +27,7 @@ function createJSONfiles() {
     }
 
     if (!existsSync("./data/serverConfig.json")) {
-        writeFileSync("./data/serverConfig.json", JSON.stringify(emptyfile), function (err) {
+        writeFileSync("./data/serverConfig.json", JSON.stringify(emptyFile), function (err) {
             if (err) {
                 console.log(err);
             }
@@ -36,6 +36,14 @@ function createJSONfiles() {
 
     if (!existsSync("./data/errorLog.json")) {
         writeFileSync("./data/errorLog.json", JSON.stringify(emptyLog), function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    if (!existsSync("./data/log.json")) {
+        writeFileSync("./data/log.json", JSON.stringify(emptyLog), function (err) {
             if (err) {
                 console.log(err);
             }

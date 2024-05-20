@@ -3,6 +3,7 @@
 /data/botConfig.json
 /data/serverConfig.json
 /data/botPrefix.json
+/data/log.json
 /data/errorLog.json
 userInfo.json
 package-lock.json

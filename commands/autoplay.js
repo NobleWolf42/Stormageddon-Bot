@@ -7,19 +7,19 @@ var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 
 //#region Helpers
-const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } = require('../helpers/embedMessages.js');
+const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } = require('../helpers/embedMessages.js');
 const { djCheck } = require("../helpers/userHandling.js");
 //#endregion
 
 //#region This exports the play command with the information about it
 module.exports = {
-    name: "play",
+    name: "autoplay",
     type: ['Guild'],
-    aliases: ["p"],
+    aliases: ["ap"],
     coolDown: 3,
     class: 'music',
-    usage: 'play SEARCH-TERM/YOUTUBE-LINK/YOUTUBE-PLAYLIST/SPOTIFY-LINK/SPOTIFY-PLAYLIST',
-    description: "Plays the selected music in the voice channel you are in.",
+    usage: 'autoplay',
+    description: "Toggles autoplay on and off, when on bot will automatically pick a new song when the queue is done.",
     async execute(message, args, client, distube) {
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig[message.guild.id].music.enable) {
@@ -34,7 +34,6 @@ module.exports = {
             return warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
 
-        var song = args.join(" ");
         var voiceChannel = message.member.voice.channel;
         var queue = distube.getQueue(message);
 
@@ -46,16 +45,10 @@ module.exports = {
                 return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
             }
         }
-        //Checks to see if a song input is detected, is there is a song it checks to see if there is a queue, if there is no queue it plays the song, if there is an queue it will add it to the end of the queue
-        if (!song) {
-            return warnCustom(message, "No song input detected, please try again.", module.name);
-        } else {
-            distube.play(voiceChannel, song, {
-                member: message.member,
-                message: message, 
-                textChannel: message.channel,
-            });
-        }
+        
+        
+        var autoPlay = queue.toggleAutoplay()
+        embedCustom(message, "Autoplay Toggled", "#0000FF", `Autoplay is now ${autoPlay ? "On" : "Off"}.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
     }
 }
 //#endregion

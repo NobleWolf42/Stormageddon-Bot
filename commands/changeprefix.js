@@ -7,7 +7,7 @@ var prefixFile = JSON.parse(readFileSync('./data/botPrefix.json'));
 //#endregion
 
 //#region Helpers
-const { errorNoAdmin, warnCustom, embedCustom } = require("../helpers/embedMessages.js");
+const { errorNoAdmin, warnCustom, embedCustom,errorCustom } = require("../helpers/embedMessages.js");
 const { adminCheck } = require('../helpers/userHandling.js');
 //#endregion
 
@@ -22,9 +22,9 @@ module.exports = {
     coolDown: 3,
     class: 'admin',
     usage: 'changeprefix ***INSERT-SYMBOL***',
-    description: "Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-={}[]|:\";\'<>?,.```",
-    execute(message, args) {
-        var serverID = message.channel.guild.id;
+    description: "Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-=[];',.{}|:\"<>?```",
+    execute(message, args, client, distube) {
+        var serverID = message.guild.id;
 
         if (adminCheck(message)) {
             if(args[0] != undefined) {
@@ -33,26 +33,22 @@ module.exports = {
 
                     writeFileSync("./data/botPrefix.json", JSON.stringify(prefixFile), (err) => {
                         if (err) {
-                            console.error(err);
+                            return errorCustom(message, err.description, module.name, client);
                         };
                     });
 
-                    embedCustom(message, 'Current Prefix:', '#008000', `Current Prefix is ${args[0]}`);
-                    return;
+                    return embedCustom(message, 'Current Prefix:', '#008000', `Current Prefix is ${args[0]}`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null,null);
                 }
                 else {
-                    warnCustom(message, 'Bot Prefix Must be one of the following: ```~!$%^&*()_+-={}[]|\:";\'<>?,./```', module.name);
-                    return;
+                    return warnCustom(message, 'Bot Prefix Must be ONE of the following: ```~!$%^&*()_+-={}[]|\:";\'<>?,./```', module.name);
                 }
             }
             else {
-                warnCustom(message, 'You must define a bot prefix.', module.name);
-                return;
+                return warnCustom(message, 'You must define a bot prefix.', module.name);
             }
         }
         else {
-            errorNoAdmin(message, module.name);
-            return;
+            return errorNoAdmin(message, module.name);
         }
     }
 }

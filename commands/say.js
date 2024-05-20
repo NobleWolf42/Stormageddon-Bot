@@ -11,8 +11,8 @@ module.exports = {
     coolDown: 0,
     class: 'admin',
     usage: 'say ***MESSAGE-CONTENT***',
-    description: "Sends messege as bot.",
-    execute(message, args, client) {
+    description: "Sends message as bot.",
+    execute(message, args, client, distube) {
         if (adminCheck(message)) {
             var argsString = args.join(' ');
                 
@@ -20,12 +20,13 @@ module.exports = {
                 message.channel.send(argsString);
             }
             else {
-                errorCustom(message, "Cannot send an empty message!", module.name);
+                return errorCustom(message, "Cannot send an empty message!", module.name, client);
             }
-            message.delete({ timeout: 1500, reason: 'Cleanup.' });
+            message.delete();
+            message.deleted = true;
         }
         else {
-            errorNoAdmin(message, module.name);
+            return errorNoAdmin(message, module.name);
         }
     }
 }

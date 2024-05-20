@@ -1,11 +1,11 @@
 //#region Dependencies
-const { Collection, MessageAttachment, Client, Message } = require('discord.js');
+const { Collection, Client, Message, AttachmentBuilder } = require('discord.js');
 const { readdirSync, readFileSync } = require('fs');
 const { join } = require("path");
 //#endregion
 
 //#region Helpers
-const { warnCustom, errorCustom } = require('../helpers/embedMessages.js');
+const { warnCustom, errorCustom, embedCustom } = require('../helpers/embedMessages.js');
 const { getRandomDoggo } = require('../helpers/doggoLinks.js');
 const { updateConfigFile } = require('../helpers/currentSettings.js');
 const { addToLog } = require('../helpers/errorLog.js');
@@ -25,14 +25,13 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
  * @param {string} command - String of command keyword
  * @param {Array} args - Array of the words after the command keyword
  */
-function tryCommand(client, message, command, args) {
+function tryCommand(client, message, command, args, distube) {
     try {
-        command.execute(message, args, client);
+        command.execute(message, args, client, distube);
         addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
-    }
-    catch (error) {
+    } catch (error) {
         addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
-        errorCustom(message, "There was an error executing that command.", command.name);
+        errorCustom(message, "There was an error executing that command.", command.name, client);
         console.log(error);
     }
 }
@@ -43,7 +42,7 @@ function tryCommand(client, message, command, args) {
  * This function starts the listener that handles executing all commands in a server.
  * @param {Client} client - Discord.js Client Object
  */
-function messageHandling(client) {
+function messageHandling(client, distube) {
     client.commands = new Collection();
     const coolDowns = new Collection();
 
@@ -57,7 +56,6 @@ function messageHandling(client) {
 
     //Handles messages from guilds and their responses
     client.on("messageCreate", message => {
-
         //#region Checks permissions
         // Make sure bots can't run commands
         if (message.author.bot) return;
@@ -90,16 +88,12 @@ function messageHandling(client) {
 
             //@bot
             if(message.mentions.users.first().id === client.user.id) {
-                var attachment = new MessageAttachment(getRandomDoggo());
-                if (serverConfig[serverID].setUpNeeded) {
-                    message.channel.send(`Please run \`${prefix}setup\` in an admin only chat channel to set up the bot on your server.`);
-                    message.channel.send(attachment);
+                if (serverConfig[serverID].setupNeeded) {
+                    return embedCustom(message, `${client.user.tag}`, "#5D3FD3", `Please run \`${prefix}setup\` in an admin only chat channel to set up the bot on your server.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, getRandomDoggo(), [], null, null);
                 }
                 else {
-                    message.channel.send(`Woof Woof, My Prefix is \`${prefix}\`, for more commands, please use the \`${prefix}help\` command.`);
-                    message.channel.send(attachment);
+                    return embedCustom(message, `${client.user.tag}`, "#5D3FD3", `Woof Woof, My Prefix is \`${prefix}\`, for more commands, please use the \`${prefix}help\` command.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, getRandomDoggo(), [], null, null);
                 }
-                return;
             }
         }
         //#endregion
@@ -147,15 +141,15 @@ function messageHandling(client) {
 
             //#region Checks to see if server is set up
             if (command.name == "setup") {
-                tryCommand(client, message, command, args);
+                tryCommand(client, message, command, args, distube);
                 return
             }
-            else if (serverConfig[serverID].setUpNeeded) {
+            else if (serverConfig[serverID].setupNeeded) {
                 return warnCustom(message, `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in and Admin Only chat.`, command.name);
             }
             //#endregion
 
-            tryCommand(client, message, command, args);
+            tryCommand(client, message, command, args, distube);
         //#endregion
     });
 };
@@ -167,11 +161,9 @@ function messageHandling(client) {
  * @param {Client} client - Discord.js Client Object
  */
 function PMHandling (client) {
-    client.on("message", message => {
-        console.log("messageseen!");
+    client.on("messageCreate", message => {
         var prefix = '!';
         const coolDowns = new Collection();
-
         //#region Check permissions
         // Make sure the command can only be run in a PM
         if (message.guild) return;
@@ -180,18 +172,25 @@ function PMHandling (client) {
         if (message.author.bot) return;
         //#endregion
 
+        //#region Handles all @ Commands
+        if(message.mentions.users.first() !== undefined) {
+
+            //@bot
+            if(message.mentions.users.first().id === client.user.id) {
+                return embedCustom(message, `${client.user.tag}`, "#5D3FD3", `Woof Woof, My Prefix is \`${prefix}\`, for more commands, please use the \`${prefix}help\` command.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, getRandomDoggo(), [], null, null);
+            }
+        }
+        //#endregion
+
         //#region Handles DM commands
             //#region Prefix and Command Validation
             //Escapes if message does not start with prefix
-            const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
-            if (!prefixRegex.test(message.content)) return;
-        
+            const prefixRegex = new RegExp(`^(<@?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
+            if (!prefixRegex.test(message.content)) return;  
             //Gets command name as typed by user
             const [, matchedPrefix] = message.content.match(prefixRegex);
             const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
             const commandName = args.shift().toLowerCase();
-
-
             //Checks to see if it is a valid command and ignores message if it is not
             const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
             if (!command) return;
@@ -222,12 +221,12 @@ function PMHandling (client) {
             //#endregion
 
             try {
-                command.execute(message, args, client);
+                command.execute(message, args, client, distube);
                 addToLog('Success', command.name, message.author.tag, "DM", "Private Message");
             }
             catch (error) {
                 addToLog('Fatal Error', command.name, message.author.tag, "DM", "Private Message", error, client);
-                errorCustom(message, "There was an error executing that command.", command.name);
+                errorCustom(message, "There was an error executing that command.", command.name, client);
                 console.log(error);
             }
         //#endregion
