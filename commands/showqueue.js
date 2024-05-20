@@ -1,7 +1,3 @@
-//#region Dependencies
-const { EmbedBuilder } = require("discord.js");
-//#endregion
-
 //#region Helpers
 const { warnCustom, embedCustom } = require("../helpers/embedMessages.js");
 const { djCheck } = require("../helpers/userHandling.js");

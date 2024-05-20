@@ -1,7 +1,7 @@
 //#region Initial Set-Up
     //#region Dependencies
     const { Client, GatewayIntentBits, Partials } = require('discord.js');
-    const { DisTube, Queue } = require("distube");
+    const { DisTube } = require("distube");
     const { SpotifyPlugin } = require("@distube/spotify");
     const { SoundCloudPlugin } = require("@distube/soundcloud");
     const { YtDlpPlugin } = require("@distube/yt-dlp");
