@@ -20,23 +20,23 @@ module.exports = {
         let commandClasses = [];
         let helpMessageCommands = [];
         if (adminTF) {
-            commands.forEach((cmd) => { if (!commandClasses.includes(capitalize(cmd.class))) { commandClasses.push(capitalize(cmd.class))} });
+            commands.forEach((cmd) => { if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly') { commandClasses.push(capitalize(cmd.class))} });
         }
         else {
-            commands.forEach((cmd) => { if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Admin') { commandClasses.push(capitalize(cmd.class))} });
+            commands.forEach((cmd) => { if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly' && capitalize(cmd.class) != 'Admin') { commandClasses.push(capitalize(cmd.class))} });
         }
 
         commandClasses.sort();
 
         if (args[0] == undefined || args[0] == 'help') {
-            commands.forEach((cmd) => { if (cmd.class == 'help' && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
+            commands.forEach((cmd) => { if (cmd.class == 'help') { helpMessageCommands.push(cmd) } });
             title = 'Help';
             return makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
         }
         else if (commandClasses.includes(capitalize(args[0])) || args[0] == 'all' || args[0] == 'dm' || args[0] == 'server') {
             if (args[0] == 'admin') {
                 if (adminTF) {
-                    commands.forEach((cmd) => { if (cmd.class == args[0] && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
+                    commands.forEach((cmd) => { if (cmd.class == args[0]) { helpMessageCommands.push(cmd) } });
                     title = `${capitalize(args[0])} Help`;
                     return makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
                 }

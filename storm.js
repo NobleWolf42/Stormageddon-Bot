@@ -95,7 +95,7 @@ try{
         console.log(`Logged in as ${client.user.tag}!`);
         autoRoleListener(client);
         messageHandling(client, distube);
-        PMHandling(client);
+        PMHandling(client, distube);
         serverJoin(client);
         setDiscordClient(client);
         musicHandle(client, distube);
