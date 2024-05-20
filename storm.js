@@ -1,7 +1,7 @@
 //#region Initial Set-Up
     //#region Dependencies
     const { Client, GatewayIntentBits, Partials } = require('discord.js');
-    const { DisTube, Queue } = require("distube");
+    const { DisTube } = require("distube");
     const { SpotifyPlugin } = require("@distube/spotify");
     const { SoundCloudPlugin } = require("@distube/soundcloud");
     const { YtDlpPlugin } = require("@distube/yt-dlp");
@@ -95,7 +95,7 @@ try{
         console.log(`Logged in as ${client.user.tag}!`);
         autoRoleListener(client);
         messageHandling(client, distube);
-        PMHandling(client);
+        PMHandling(client, distube);
         serverJoin(client);
         setDiscordClient(client);
         musicHandle(client, distube);

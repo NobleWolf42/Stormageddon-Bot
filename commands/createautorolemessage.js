@@ -113,7 +113,8 @@ module.exports = {
             });
         }
 
-        setTimeout( () => message.delete(), 15000);
+        message.delete();
+        message.deleted = true;
     }
 }
 //#endregion

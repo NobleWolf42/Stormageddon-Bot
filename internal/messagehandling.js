@@ -160,7 +160,7 @@ function messageHandling(client, distube) {
  * This function starts the listener that handles executing all commands in DMs.
  * @param {Client} client - Discord.js Client Object
  */
-function PMHandling (client) {
+function PMHandling (client, distube) {
     client.on("messageCreate", message => {
         var prefix = '!';
         const coolDowns = new Collection();

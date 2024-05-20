@@ -55,6 +55,8 @@ module.exports = {
                 message: message, 
                 textChannel: message.channel,
             });
+            message.delete();
+            message.deleted = true;
         }
     }
 }

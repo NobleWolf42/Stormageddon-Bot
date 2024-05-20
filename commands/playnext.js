@@ -60,6 +60,9 @@ module.exports = {
                 position: 1,
             });
 
+            message.delete();
+            message.deleted = true;
+
         } else if (!args[0] || isNaN(args[0])) {
             return warnCustom(message, "No song information was included in the command.", module.name);
         } else {
@@ -70,6 +73,8 @@ module.exports = {
                 textChannel: message.channel,
                 position: 1,
             });
+            message.delete();
+            message.deleted = true;
         }
     }
 }

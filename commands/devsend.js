@@ -17,7 +17,7 @@ module.exports = {
     type: ['DM'],
     aliases: [],
     coolDown: 0,
-    class: 'direct',
+    class: 'devonly',
     usage: '!devsend ***USER-ID***, ***MESSAGE***',
     description: "Developer-only command for sending messages as the bot.",
     execute(message, args, client, distube) {
