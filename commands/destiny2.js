@@ -19,7 +19,7 @@ module.exports = {
     class: 'gaming',
     usage: 'destiny2 clan ***INSERT-CLAN-NAME***',
     description: "Status displays the Destiny 2 account's original creation date and last API update date. Clan displays Destiny 2 clan's bio, avatar, motto, and founder.",
-    execute(message, args) {
+    execute(message, args, client, distube) {
         if (args[0] == 'clan') {
             var clanName = '';
             
@@ -66,7 +66,7 @@ function getClan(message, clan_name){
             return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
         }
         else {
-            return errorCustom(message, "The Destiny API was unable to be reached at this time.\n Try again later.", module.name);
+            return errorCustom(message, "The Destiny API was unable to be reached at this time.\n Try again later.", module.name, client);
         }
     }
 

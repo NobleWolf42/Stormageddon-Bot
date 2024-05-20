@@ -31,7 +31,7 @@ function tryCommand(client, message, command, args, distube) {
         addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
     } catch (error) {
         addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
-        errorCustom(message, "There was an error executing that command.", command.name);
+        errorCustom(message, "There was an error executing that command.", command.name, client);
         console.log(error);
     }
 }
@@ -221,12 +221,12 @@ function PMHandling (client) {
             //#endregion
 
             try {
-                command.execute(message, args, client);
+                command.execute(message, args, client, distube);
                 addToLog('Success', command.name, message.author.tag, "DM", "Private Message");
             }
             catch (error) {
                 addToLog('Fatal Error', command.name, message.author.tag, "DM", "Private Message", error, client);
-                errorCustom(message, "There was an error executing that command.", command.name);
+                errorCustom(message, "There was an error executing that command.", command.name, client);
                 console.log(error);
             }
         //#endregion

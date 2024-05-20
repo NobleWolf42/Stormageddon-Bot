@@ -7,9 +7,6 @@ const { errorNoServerAdmin, errorCustom, warnCustom, embedCustom } = require("..
 const { buildConfigFile } = require("../internal/settingsFunctions.js");
 //#endregion
 
-//Gets current config file
-var serverConfig = updateConfigFile();
-
 //#region This exports the addmod command with the information about it
 module.exports = {
     name: "addmod",
@@ -19,7 +16,9 @@ module.exports = {
     class: 'admin',
     usage: 'addmod ***MENTION-USERS***',
     description: "Adds users to the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
-    execute(message, args, client) {
+    execute(message, args, client, distube) {
+        //Gets current config file
+        var serverConfig = updateConfigFile();
         if (message.member.permissions.has('ADMINISTRATOR')) {
             if ((message.channel.guild.id in serverConfig)) {
                 if (message.mentions.members.size == 0) {
@@ -56,7 +55,7 @@ module.exports = {
                 });
             }
             else {
-                return errorCustom(message, "Server is not set up with the bot yet!", module.name);
+                return errorCustom(message, "Server is not set up with the bot yet!", module.name, client);
             }
         }
         else {

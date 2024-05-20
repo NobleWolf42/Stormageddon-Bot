@@ -7,10 +7,6 @@ const { updateConfigFile } = require("../helpers/currentSettings.js");
 const { errorCustom, warnCustom,warnDisabled } = require('../helpers/embedMessages.js');
 //#endregion
 
-//#region loads current server config file
-var serverConfig = updateConfigFile();
-//#endregion
-
 //#region This exports the modmail command with the information about it
 module.exports = {
     name: "modmail",
@@ -20,7 +16,9 @@ module.exports = {
     class: 'direct',
     usage: '!modmail ***SERVER-NAME***, ***MESSAGE*** ',
     description: "Whisper via Stormageddon to all moderators for the specified server.",
-    execute(message, args, client) {
+    execute(message, args, client, distube) {
+        //Gets current config file
+        var serverConfig = updateConfigFile();
         var argsString = args.join(' ');
         var arguments = argsString.split(', ');
         var serverID = 0;
@@ -53,7 +51,7 @@ module.exports = {
             }
         }
         else if (serverConfig[serverID] == undefined) {
-            return errorCustom(message, `The \`!setup\` command has not been run on \`${servername}\` yet.`, module.name);
+            return errorCustom(message, `The \`!setup\` command has not been run on \`${servername}\` yet.`, module.name, client);
         }
         else {
             return warnCustom(message, 'The server you specified does not have this bot, or you failed to specify a server.', module.name);

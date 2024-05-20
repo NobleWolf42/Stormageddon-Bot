@@ -8,9 +8,6 @@ const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js
 const { setup } = require("../internal/settingsFunctions.js");
 //#endregion
 
-//Loads current server config settings
-var serverConfig = updateConfigFile();
-
 //#region This exports the setup command with the information about it
 module.exports = {
     name: "setup",
@@ -20,10 +17,12 @@ module.exports = {
     class: 'admin',
     usage: 'setup',
     description: "Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.",
-    async execute(message) {
-        console.log(serverConfig[message.channel.guild.id].setupNeeded)
-        if (serverConfig[message.channel.guild.id].setupNeeded) {
-            if (message.member.hasPermission('ADMINISTRATOR')) {
+    async execute(message, args, client, distube) {
+        //Loads current server config settings
+        var serverConfig = updateConfigFile();
+
+        if (serverConfig[message.guild.id].setupNeeded) {
+            if (message.member.permissions.has('ADMINISTRATOR')) {
                 await setup(message);
             }
             else {
@@ -31,7 +30,7 @@ module.exports = {
             };
         }
         else {
-            errorCustom(message, "Server Setup has already been completed.", module.name);
+            errorCustom(message, "Server Setup has already been completed.", module.name, client);
         };
         return;
     }

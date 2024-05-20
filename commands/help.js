@@ -13,7 +13,7 @@ module.exports = {
     class: 'help',
     usage: 'help ***PAGE***',
     description: "Displays Help Message, specifying a page will show that help info, using the **\"All\"** page will display all commands, the **\"DM\"** page will display all commands that can be Direct Messaged to the bot, and the **\"Server\"** page will display all commands that can be used in a discord server.",
-    execute(message, args) {
+    execute(message, args, client, distube) {
         var args = args.map(v => v.toLowerCase());
         const adminTF = adminCheck(message);
         const commands = message.client.commands;

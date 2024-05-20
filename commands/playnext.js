@@ -8,7 +8,7 @@ var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 
 //#region Helpers
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoMod, embedCustom, errorCustom } = require("../helpers/embedMessages.js");
-const { modCheck, adminCheck, djCheck } = require("../helpers/userHandling.js");
+const { modCheck, djCheck } = require("../helpers/userHandling.js");
 //#endregion
 
 //#region This exports the playnext command with the information about it
@@ -35,7 +35,7 @@ module.exports = {
             return warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
         //Checks to see if user is a bot mod
-        if (!(modCheck(message) || adminCheck(message))) {
+        if (!modCheck(message)) {
             return errorNoMod(message, module.name);
         }
 
@@ -50,7 +50,7 @@ module.exports = {
             var playNext = queue.songs.splice(args[0] - 1, 1)[0];
 
             if (!playNext) {
-                return errorCustom(message, "Failed to find the track in the queue.", module.name);
+                return errorCustom(message, "Failed to find the track in the queue.", module.name), client;
             }
 
             distube.play(voiceChannel, playNext, {

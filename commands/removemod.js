@@ -16,7 +16,7 @@ module.exports = {
     class: 'admin',
     usage: 'removemod ***MENTION-USERS***',
     description: "Removes users from the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
-    execute(message) {
+    execute(message, args, client, distube) {
         if (message.member.permissions.has('ADMINISTRATOR')) {
             if ((message.channel.guild.id in serverConfig)) {
                 if (message.mentions.members.size == 0) {
@@ -53,7 +53,7 @@ module.exports = {
                 });
             }
             else {
-                return errorCustom(message, "Server is not set up with the bot yet!", module.name);
+                return errorCustom(message, "Server is not set up with the bot yet!", module.name), client;
             }
         }
         else {

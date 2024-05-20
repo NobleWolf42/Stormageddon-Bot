@@ -220,7 +220,7 @@ function errorNoServerAdmin(message, commandName) {
  * @param {string} text - String for the body of the embedded message
  * @param {string} commandName - String of the name of the command
  */
-async function errorCustom(message, text, commandName) {
+async function errorCustom(message, text, commandName, client) {
     const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
@@ -228,7 +228,7 @@ async function errorCustom(message, text, commandName) {
         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
     if (message.channel.guild != undefined && !message.deleted) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
-        addToLog('Fatal Error', commandName, message.author.tag, message.guild.name, message.channel.name, text);
+        addToLog('Fatal Error', commandName, message.author.tag, message.guild.name, message.channel.name, text, client);
         message.delete();
         message.deleted = true;
     } else {

@@ -20,7 +20,7 @@ module.exports = {
     class: 'direct',
     usage: '!devsend ***USER-ID***, ***MESSAGE***',
     description: "Developer-only command for sending messages as the bot.",
-    execute(message, args, client) {
+    execute(message, args, client, distube) {
         var argsString = args.join(' ');
         var arguments = argsString.split(', ');
         var user = arguments[0];
@@ -41,7 +41,7 @@ module.exports = {
         }
         else {
             addToLog("Alert", module.name, message.author.tag, "Direct Message", "Direct Message", "Attempted to use dev only command!", client);
-            return errorCustom(message, 'You do not have permission to use this command!', module.name);
+            return errorCustom(message, 'You do not have permission to use this command!', module.name, client);
         }
     }
 }
