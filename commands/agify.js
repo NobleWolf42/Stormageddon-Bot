@@ -15,7 +15,7 @@ module.exports = {
     class: 'fun',
     usage: 'agify ***INSERT-NAME***',
     description: "Estimates someone's age based off of their name.",
-    execute(message) {
+    execute(message, args, client, distube) {
         const request = new XMLHttpRequest();
         var userInput = message.content.toLowerCase().split(' ');
 
@@ -36,7 +36,7 @@ module.exports = {
 
                 embedCustom(message, "Agify", "#5D3FD3", "\n The age of " + capitalizedName + " is estimated at " + data.age + ".", { text: `Requested by ${message.author.tag}`, iconURL: null }, null,[],null,null);
             } else {
-                errorCustom(message, "The Agify API was unable to be reached at this time. \n Try again later.", module.name);
+                errorCustom(message, "The Agify API was unable to be reached at this time. \n Try again later.", module.name, client);
             }
         }
 

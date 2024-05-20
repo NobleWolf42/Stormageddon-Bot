@@ -20,7 +20,7 @@ module.exports = {
     class: 'admin',
     usage: 'createrolemessage',
     description: "Create the reactions message for auto role assignment.",
-    execute(message, args, client) {
+    execute(message, args, client, distube) {
         //This is the max number of reactions on a message allowed by discord, if discord ever changes that number change this and the code should work again!!!
         var maxReactions = 20;
         
@@ -67,7 +67,7 @@ module.exports = {
                 throw `The role '${role}' does not exist!`;
 
             const customEmote = client.emojis.cache.find(e => e.name === emoji);
-            
+
             if (!customEmote) { 
                 fieldsOut.push({ name: emoji, value: role, inline: true });
             } else {

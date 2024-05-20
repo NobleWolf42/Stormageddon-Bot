@@ -11,7 +11,7 @@ module.exports = {
     class: 'admin',
     usage: 'clear ***NUMBER(1-99)***',
     description: "Bulk deletes the previous messages in a chat based on user input, up to 99 previous messages.",
-    execute(message, args) {
+    execute(message, args, client, distube) {
         var amount = parseInt(args[0]);
 
         if(isNaN(amount)) {
@@ -25,7 +25,7 @@ module.exports = {
             message.deleted = true;
             message.channel.bulkDelete(amount, true).catch(err => {
                 console.error(err);
-                return errorCustom(message, 'An error occurred while attempting to delete!', module.name)
+                return errorCustom(message, 'An error occurred while attempting to delete!', module.name, client)
             });
             return embedCustom(message, 'Success!', '#008000', `Successfully deleted ${amount} messages!`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
         }

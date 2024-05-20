@@ -20,7 +20,7 @@ module.exports = {
     class: 'music',
     usage: 'lyrics',
     description: "Gets the lyrics for the currently playing song.",
-    async execute(message) {
+    async execute(message, args, client, distube) {
         if (!serverConfig[message.guild.id].music.enable) {
             warnDisabled(message, 'music', module.name);
             return;

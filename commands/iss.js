@@ -15,7 +15,7 @@ module.exports = {
     class: 'fun',
     usage: 'iss',
     description: "Displays the names of all the astronauts that are aboard the ISS.",
-    execute(message){
+    execute(message, args, client, distube){
         var request = new XMLHttpRequest()
         request.open('GET', 'http://api.open-notify.org/astros.json', true);
         request.onload = function() {
@@ -31,7 +31,7 @@ module.exports = {
          
                 embedCustom(message, "Astronaut Information:", '#000000', response, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
             } else {
-                errorCustom(message, 'The ISS API was unable to be reached at this time. \n Try again later.', module.name);
+                errorCustom(message, 'The ISS API was unable to be reached at this time. \n Try again later.', module.name, client);
             }
         }
 

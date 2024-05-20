@@ -23,7 +23,7 @@ module.exports = {
     class: 'admin',
     usage: 'changeprefix ***INSERT-SYMBOL***',
     description: "Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-=[];',.{}|:\"<>?```",
-    execute(message, args) {
+    execute(message, args, client, distube) {
         var serverID = message.guild.id;
 
         if (adminCheck(message)) {
@@ -33,7 +33,7 @@ module.exports = {
 
                     writeFileSync("./data/botPrefix.json", JSON.stringify(prefixFile), (err) => {
                         if (err) {
-                            return errorCustom(message, err.description, module.name);
+                            return errorCustom(message, err.description, module.name, client);
                         };
                     });
 

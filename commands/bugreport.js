@@ -16,7 +16,7 @@ module.exports = {
     class: 'direct',
     usage: '!bugreport ***MESSAGE***',
     description: "Whisper via Stormageddon to report a bug to the developers of Stormageddon.",
-    execute(message, args, client) {
+    execute(message, args, client, distube) {
         var argsString = args.join(' ');
         var arguments = argsString.split(', ');
         var content = arguments[0];

@@ -4,9 +4,6 @@ const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } = r
 const { djCheck } = require("../helpers/userHandling.js");
 //#endregion
 
-//Loads current server config settings
-var serverConfig = updateConfigFile();
-
 //#region This exports the stop command with the information about it
 module.exports = {
     name: "stop",
@@ -17,6 +14,8 @@ module.exports = {
     usage: 'stop',
     description: "Stops the playing music.",
     execute(message, args, client, distube) {
+        //Gets current config file
+        var serverConfig = updateConfigFile();
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig[message.guild.id].music.enable) {
             return warnDisabled(message, 'music', module.name);

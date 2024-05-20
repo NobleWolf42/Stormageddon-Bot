@@ -12,7 +12,7 @@ module.exports = {
     class: 'admin',
     usage: 'say ***MESSAGE-CONTENT***',
     description: "Sends message as bot.",
-    execute(message, args, client) {
+    execute(message, args, client, distube) {
         if (adminCheck(message)) {
             var argsString = args.join(' ');
                 
@@ -20,7 +20,7 @@ module.exports = {
                 message.channel.send(argsString);
             }
             else {
-                return errorCustom(message, "Cannot send an empty message!", module.name);
+                return errorCustom(message, "Cannot send an empty message!", module.name, client);
             }
             message.delete();
             message.deleted = true;

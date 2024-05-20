@@ -17,7 +17,7 @@ module.exports = {
     class: 'help',
     usage: 'register',
     description: "Lets you know if you are registered and gives you the link to register/update you info.",
-    execute(message) {
+    execute(message, args, client, distube) {
         refreshUser();
         if (message.author.id in userAccountInfo) {
             var txt = `You Have Already Registered.\nThe last time you updated your info was ${userAccountInfo[message.author.id].time}\n If you wish to update you info now, please click on this link: ${botConfig.general.registerLink}`;

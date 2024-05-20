@@ -3,7 +3,7 @@ const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js
 //#endregion
 
 //#region Internals
-const { setautoRole, setJoinrole, setMusic, setGeneral, setModMail } = require("../internal/settingsFunctions.js");
+const { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail } = require("../internal/settingsFunctions.js");
 //#endregion
 
 //#region This exports the set command with the information about it
@@ -15,13 +15,13 @@ module.exports = {
     class: 'admin',
     usage: 'set autorole/joinrole/general/music/modmail',
     description: "Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.",
-    execute(message, args) {
-        if (message.member.hasPermission('ADMINISTRATOR')) {
-            if (args[0] == 'autoRole') {
-                setautoRole(message);
+    execute(message, args, client, distube) {
+        if (message.member.permissions.has('ADMINISTRATOR')) {
+            if (args[0] == 'autorole') {
+                setAutoRole(message);
             }
             else if (args[0] == 'joinrole') {
-                setJoinrole(message);
+                setJoinRole(message);
             }
             else if (args[0] == 'general') {
                 setGeneral(message);
@@ -33,7 +33,7 @@ module.exports = {
                 setModMail(message);
             }
             else {
-                errorCustom(message, "Not a valid settings catagory!", module.name);
+                errorCustom(message, "Not a valid settings category!", module.name, client);
             }
         }
         else {

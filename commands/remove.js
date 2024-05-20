@@ -54,7 +54,7 @@ module.exports = {
             var removeMe = queue.songs.splice(args[0] - 1, 1)[0];
 
             if (!removeMe) {
-                return errorCustom(message, "Failed to remove the track from the queue.", module.name);
+                return errorCustom(message, "Failed to remove the track from the queue.", module.name), client;
             }
 
             return embedCustom(message, "Removed", "#0000FF", `Removed [\`${removeMe.name}\`](${removeMe.url}) from the queue.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);;

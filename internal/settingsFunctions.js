@@ -11,6 +11,9 @@ const { embedCustom } = require('../helpers/embedMessages.js');
 //Refreshing the serverConfig from serverConfig.json
 var serverConfig = updateConfigFile();
 
+//Defining a filter for the setup commands to ignore bot messages
+const msgFilter = (m) => !m.author.bot;
+
 //#region Function that sets modMail settings
 /**
  * This function runs the setup for the ModMail feature.
@@ -18,13 +21,13 @@ var serverConfig = updateConfigFile();
  * @returns {JSON} Server Config JSON
  */
 async function setModMail(message) {
-    var serverID = message.channel.guild.id;
+    var serverID = message.guild.id;
     var modList = [];
 
     message.channel.send('Please respond with `T` if you would like to enable DMing to bot to DM mods, respond with `F` if you do not.');
     
     try {
-        var enableIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
+        var enableIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
         var enableTXT = enableIn.first().content.toLowerCase();
         var enable = undefined;
         if (enableTXT == 't') {
@@ -33,7 +36,7 @@ async function setModMail(message) {
             message.channel.send('Please @ the people you want to receive mod mail.')
     
             try {
-                var roleIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
+                var roleIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 roleIn.first().mentions.members.forEach((member) => {
                     modList.push(member.id);
                 });
@@ -76,14 +79,14 @@ async function setModMail(message) {
  * @returns {JSON} Server Config JSON
  */
 async function setAutoRole(message) {
-    var serverID = message.channel.guild.id;
+    var serverID = message.guild.id;
     message.channel.send('Example Message:');
-    await embedCustom(message, "Role Message", "#FFFF00", "**React to the messages below to receive the associated role.**", "If you do not receive the role try reacting again.");
+    await embedCustom(message, "Role Message", "#FFFF00", "**React to the messages below to receive the associated role.**", { text: `If you do not receive the role try reacting again.`, iconURL: null }, null,[],null,null);
 
     message.channel.send('Please respond with `T` if you would like to enable react to receive role feature, respond with `F` if you do not.');
     
     try {
-        var enableIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
+        var enableIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
         var enableTXT = enableIn.first().content.toLowerCase();
         var enable = undefined;
         if (enableTXT == 't') {
@@ -92,10 +95,11 @@ async function setAutoRole(message) {
             message.channel.send('Please respond with the text you would like the reactRole message to contain. Replaces (`**React to the messages below to receive the associated role.**`) in the example. You have two minutes to respond to each setting.');
 
             try {
-                var embedMessageIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
+                var embedMessageIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 var embedMessage = embedMessageIn.first().content;
             }
             catch (err) {
+                console.log(err.message);
                 return message.channel.send('Timeout Occurred. Process Terminated.')
             }
         
@@ -104,26 +108,28 @@ async function setAutoRole(message) {
             message.channel.send('Please @ the roles you would like users to be able to assign to themselves.');
         
             try {
-                var embedRoleIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
+                var embedRoleIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 var roles = [];
-                embedRoleIn.first().content.split(' ').forEach (role => roles.push(message.guild.roles.cache.get(role.substring(3, role.length-1)).name));
+                embedRoleIn.first().mentions.roles.forEach( role => roles.push(role.name));
             }
             catch (err) {
-                return message.channel.send('Timeout Occured. Process Terminated.')
+                console.log(err.message);
+                return message.channel.send('Timeout Occurred. Process Terminated.')
             }
-        
             message.channel.send('Please respond to this message with the list of reactions you want to be used for the roles above, matching their order. Format the list with spaces separating the reactions, like this: `🐕 🎩 👾`. (NOTE: You can use custom reactions as long as they are not animated and belong to this server)')
         
             try {
-                var embedReactIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
+                var embedReactIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 var reactions = embedReactIn.first().content.split(' ');
             }
             catch (err) {
+                console.log(err.message);
                 return message.channel.send('Timeout Occurred. Process Terminated.')
             }
         }
     }
     catch (err) {
+        console.log(err.message);
         return message.channel.send('Timeout Occurred. Process Terminated.')
     }
 
@@ -168,12 +174,12 @@ async function setAutoRole(message) {
  * @returns {JSON} Server Config JSON
  */
 async function setJoinRole(message) {
-    var serverID = message.channel.guild.id;
+    var serverID = message.guild.id;
 
     message.channel.send('Please respond with `T` if you would like to enable assign a user a role on server join, respond with `F` if you do not.');
     
     try {
-        var enableIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
+        var enableIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
         var enableTXT = enableIn.first().content.toLowerCase();
         var enable = undefined;
         if (enableTXT == 't') {
@@ -182,8 +188,9 @@ async function setJoinRole(message) {
             message.channel.send('Please @ the role you would like to assign users when they join your server.')
     
             try {
-                var roleIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
-                var role = message.guild.roles.cache.get(roleIn.first().content.substring(3, roleIn.first().content.length-1)).name;
+                var roleIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
+                var role = roleIn.first().mentions.roles.first().name;
+                console.log(role);
             }
             catch (err) {
                 return message.channel.send('Timeout Occurred. Process Terminated.')
@@ -223,12 +230,12 @@ async function setJoinRole(message) {
  * @returns {JSON} Server Config JSON
  */
 async function setMusic(message) {
-    var serverID = message.channel.guild.id;
+    var serverID = message.guild.id;
 
     message.channel.send('Please respond with `T` if you would like to enable music functionality, respond with `F` if you do not.');
     
     try {
-        var enableIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
+        var enableIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
         var enableTXT = enableIn.first().content.toLowerCase();
         var enable = undefined;
         if (enableTXT == 't') {
@@ -237,8 +244,9 @@ async function setMusic(message) {
             message.channel.send('Please @ the role you would like to use as a DJ role.');
     
             try {
-                var djRoleIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
-                var djRoles = message.guild.roles.cache.get(djRoleIn.first().content.substring(3, djRoleIn.first().content.length-1)).name;
+                var djRoleIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
+                var djRoles = djRoleIn.first().mentions.roles.first().name;
+                console.log(djRoles);
             }
             catch (err) {
                 return message.channel.send('Timeout Occurred. Process Terminated.')
@@ -247,7 +255,7 @@ async function setMusic(message) {
             message.channel.send('Please link the text channel you would like the music commands to be used in. \`You can do that by typing "#" followed by the channel name.\`')
         
             try {
-                var musicTXTIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
+                var musicTXTIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 var textChannel = message.guild.channels.cache.get(musicTXTIn.first().content.substring(2, musicTXTIn.first().content.length-1)).name;
             }
             catch (err) {
@@ -292,14 +300,14 @@ async function setMusic(message) {
  * @returns {JSON} Server Config JSON
  */
 async function setGeneral(message) {
-    var serverID = message.channel.guild.id;
+    var serverID = message.guild.id;
 
     message.channel.send('Please @ the roles you would like to use as Bot Admins.');
     
     try {
-        var adminRolesIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
+        var adminRolesIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
         var adminRoles = [];
-        adminRolesIn.first().content.split(' ').forEach (role => adminRoles.push(message.guild.roles.cache.get(role.substring(3, role.length-1)).name));
+        adminRolesIn.first().mentions.roles.forEach (role => adminRoles.push(role.name));
     }
     catch (err) {
         return message.channel.send('Timeout Occurred. Process Terminated.')
@@ -308,13 +316,13 @@ async function setGeneral(message) {
     message.channel.send('Please @ the roles you would like to use as Bot Mods. These automatically include you admin roles, if you wish to add none, simply reply `None`.');
 
     try {
-        var modRolesIn = await message.channel.awaitMessages(msg2 => (!msg2.author.bot) ,{ max: 1, time: 120000, errors: ['time'] });
+        var modRolesIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
         var modRoles = adminRoles.map((x) => x);
         if (modRolesIn.first().content.toLowerCase() == 'none') {
             var modRoles = adminRoles.map((x) => x);
         }
         else {
-            modRolesIn.first().content.split(' ').forEach (role => modRoles.push(message.guild.roles.cache.get(role.substring(3, role.length-1)).name));
+            modRolesIn.first().mentions.roles.forEach (role => modRoles.push(role.name));
         }
     }
     catch (err) {
@@ -350,19 +358,19 @@ async function setGeneral(message) {
  * @returns {void} Void
  */
 async function setup(message) {
-    var serverID = message.channel.guild.id;
+    var serverID = message.guild.id;
 
     //Sets up all commands
-    setAutoRole(message);
-    setGeneral(message);
-    setJoinRole(message);
-    setMusic(message);
-    setModMail(message);
+    await setAutoRole(message);
+    await setGeneral(message);
+    await setJoinRole(message);
+    await setMusic(message);
+    await setModMail(message);
 
     //Removes the Setup Needed Tag
     serverConfig[serverID].setupNeeded = false;
     await buildConfigFile(serverConfig);
-    message.channel.send('Server Setup Complete, \`MAKE SURE TO PUT THE ROLE FOR THIS BOT ABOVE ROLES YOU WANT THE BOT TO MANAGE, if you don\'t the bot will not work properly!\`');
+    embedCustom(message, "Server Setup Complete", "#5D3FD3", "**MAKE SURE TO PUT THE ROLE FOR THIS BOT ABOVE ROLES YOU WANT THE BOT TO MANAGE, if you don\'t the bot will not work properly!**", { text: `Requested by ${message.author.tag}`, iconURL: null }, null,[],null,null);
     updateConfigFile();
     return;
 }
