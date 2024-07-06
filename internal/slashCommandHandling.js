@@ -5,7 +5,7 @@ const { join } = require("path");
 //#endregion
 
 //#region Data Files
-const botConfig = require('./data/botConfig.json');
+const botConfig = require('../data/botConfig.json');
 //#endregion
 
 //#region
