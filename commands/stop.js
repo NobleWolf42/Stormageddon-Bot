@@ -32,12 +32,13 @@ module.exports = {
         var voiceChannel = message.member.voice.channel;
         var queue = distube.getQueue(message);
 
-        if (!queue) {
+        if (!queue || !queue.voiceChannel) {
             return warnCustom(message, "Nothing is playing right now.", module.name);
         } else if (voiceChannel != queue.voiceChannel) {
             return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
         } else {
             queue.stop().then(s => {
+                queue.voice.leave();
                 embedCustom(message, "Stop", "#0000FF", `Music Stopped.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
             });
         }
