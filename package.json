@@ -21,6 +21,7 @@
         "discord-oauth2": "^2.12.1",
         "discord.js": "^14.15.2",
         "distube": "^4.2.2",
+        "genius-lyrics": "^4.4.7",
         "lyrics-finder": "^21.7.0",
         "sodium-native": "^4.1.1",
         "xmlhttprequest": "^1.8.0"
