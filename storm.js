@@ -1,4 +1,5 @@
 //#region Initial Set-Up
+
     //#region Dependencies
     const { Client, GatewayIntentBits, Partials } = require('discord.js');
     const { DisTube } = require("distube");
@@ -6,15 +7,19 @@
     const { SoundCloudPlugin } = require("@distube/soundcloud");
     const { YtDlpPlugin } = require("@distube/yt-dlp");
     //#endregion
+
     //#region Data Files
     const botConfig = require('./data/botConfig.json');
     //#endregion
+
     //#region Helpers
     const { createJSONfiles } = require('./helpers/createFiles.js');
     const { addToLog } = require("./helpers/errorLog.js")
     //#endregion
+
     //Creates config and other required JSON files if they do not exist
     createJSONfiles();
+
     //#region Internals
     const { addServerConfig, removeServerConfig } = require('./internal/settingsFunctions.js');
     const { autoRoleListener } = require('./internal/autoRole.js');
@@ -22,9 +27,11 @@
     const { serverJoin } = require('./internal/serverJoin.js');
     const { musicHandle, setDiscordClient } = require('./internal/distubeHandling.js');
     const { joinToCreateHandling } = require('./internal/voiceHandling.js');
-    const { slashCommandHandling } = require('./internal/slashCommandHandling.js');
+    const { slashCommandHandling, registerGuildSlashCommands, registerGlobalSlashCommands } = require('./internal/slashCommandHandling.js');
     //#endregion
+
 //#endregion
+
 //#region Initialize Discord Bot
 const client = new Client({ 
     partials: [
@@ -103,6 +110,8 @@ try{
         musicHandle(client, distube);
         joinToCreateHandling(client);
         slashCommandHandling(client, distube);
+        registerGuildSlashCommands();
+        registerGlobalSlashCommands();
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
     });
 
