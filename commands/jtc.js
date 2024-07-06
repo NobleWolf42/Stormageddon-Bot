@@ -1,5 +1,5 @@
 //#region Helpers
-const { errorCustom, embedCustomDM } = require("../helpers/embedMessages.js");
+const { warnCustom, embedCustomDM } = require("../helpers/embedMessages.js");
 //#endregion
 
 //#region This exports the set command with the information about it
@@ -12,7 +12,7 @@ module.exports = {
     usage: 'jointocreate name ***YOUR NAME HERE***',
     description: "Allows you to change the settings for your voice channel.",
     execute(message, args, client, distube) {
-        const voiceChannel = member.voice.channel;
+        const voiceChannel = message.member.voice.channel;
 
         if (client.voiceGenerator.get(message.member.id) && client.voiceGenerator.get(message.member.id) == voiceChannel.id) {
             switch (args[0]) {
@@ -28,7 +28,7 @@ module.exports = {
                     };
 
                     if (newName.length > 22 || newName.length < 1) {
-                        errorCustom(message, "Not a valid name length, Length must be between 1-22 characters long!", module.name, client);
+                        warnCustom(message, "Not a valid name length, Length must be between 1-22 characters long!", module.name, client);
                     } else {
                         voiceChannel.edit({ name: newName});
                         embedCustomDM(message, "Success:", "#355E3B", "Channel name changed successfully!");
@@ -36,13 +36,11 @@ module.exports = {
                 break;
 
                 default:
-                    errorCustom(message, "Not a valid Join to Create command!", module.name, client);
+                    warnCustom(message, "Not a valid Join to Create command!", module.name, client);
                 break;
-
             }
-        }
-        else {
-            errorCustom(message, "You dot not own a voice channel!", module.name, client);
+        } else {
+            warnCustom(message, "You do not own a voice channel!", module.name, client);
         };
         return;
     }
