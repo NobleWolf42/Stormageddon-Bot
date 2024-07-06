@@ -50,6 +50,18 @@ async function musicHandle(client, distube) {
             .setTimestamp();
         
         queue.textChannel.send({ embeds: [embMsg] });
+        queue.voice.leave();
+    });
+
+    distube.on('finish', queue => {
+        var embMsg = new EmbedBuilder()
+            .setTitle(`Finished Queue`)
+            .setColor("#0000FF")
+            .setDescription(`Queue is empty! Leaving the voice channel.`)
+            .setTimestamp();
+        
+        queue.textChannel.send({ embeds: [embMsg] });
+        queue.voice.leave();
     });
 
     distube.on('disconnect', async (queue) => {

@@ -7,6 +7,10 @@ const { readFileSync } = require('fs');
 var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 
+//#region Helpers
+const { addToLog } = require('../helpers/errorLog.js');
+//#endregion
+
 //#region Function that starts the listener that handles Join to Create Channels
 /**
  * This function starts the listener that handles that handles Join to Create Channels.
@@ -54,7 +58,10 @@ async function joinToCreateHandling(client) {
 
         //Handles someone leaving a voice channel
         try {
-            if (client.voiceGenerator.get(oldChannel.id) && oldChannel.members.size == 0) {
+            if (oldChannel == null) {
+                return;
+            }
+            if (oldChannel != null && client.voiceGenerator.get(oldChannel.id) && oldChannel.members.size == 0) {
                 //This deletes a channel if it was created byt the bot and is empty
                 oldChannel.delete();
                 client.voiceGenerator.delete(client.voiceGenerator.get(oldChannel.id));
@@ -71,7 +78,7 @@ async function joinToCreateHandling(client) {
                 client.voiceGenerator.delete(client.voiceGenerator.get(oldChannel.id));
             }
         } catch (err) {
-            addToLog('Fatal Error', "JTCVC Handler", member.id, guild.name, oldChannel.name, err);
+            addToLog('Fatal Error', "JTCVC Handler", member.id, guild.name, oldChannel.name, err, client);
         }
 
     });
