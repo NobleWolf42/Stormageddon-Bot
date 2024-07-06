@@ -1,5 +1,5 @@
 //#region Dependencies
-const { Collection, Client, Message, AttachmentBuilder } = require('discord.js');
+const { Collection } = require('discord.js');
 const { readdirSync, readFileSync } = require('fs');
 const { join } = require("path");
 //#endregion
@@ -19,7 +19,7 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 //#region Function for trying a command and catching the error if it fails
 /**
- * This function tryS a command and catches the error if it fails.
+ * This function tries a command and catches the error if it fails.
  * @param {Client} client - Discord.js Client Object
  * @param {Message} message - Discord.js Message Object
  * @param {string} command - String of command keyword
@@ -41,6 +41,7 @@ function tryCommand(client, message, command, args, distube) {
 /**
  * This function starts the listener that handles executing all commands in a server.
  * @param {Client} client - Discord.js Client Object
+ * @param {DisTube} distube - DisTube Client Object
  */
 function messageHandling(client, distube) {
     client.commands = new Collection();
@@ -159,6 +160,7 @@ function messageHandling(client, distube) {
 /**
  * This function starts the listener that handles executing all commands in DMs.
  * @param {Client} client - Discord.js Client Object
+ * @param {DisTube} distube - DisTube Client Object
  */
 function PMHandling (client, distube) {
     client.on("messageCreate", message => {

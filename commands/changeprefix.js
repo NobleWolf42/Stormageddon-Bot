@@ -8,7 +8,7 @@ var prefixFile = JSON.parse(readFileSync('./data/botPrefix.json'));
 
 //#region Helpers
 const { errorNoAdmin, warnCustom, embedCustom,errorCustom } = require("../helpers/embedMessages.js");
-const { adminCheck } = require('../helpers/userHandling.js');
+const { adminCheck } = require('../helpers/userPermissions.js');
 //#endregion
 
 //Regex that should eliminate anything that is not ~!$%^&*()_+-={}[]|:";'<>?,.
@@ -38,16 +38,13 @@ module.exports = {
                     });
 
                     return embedCustom(message, 'Current Prefix:', '#008000', `Current Prefix is ${args[0]}`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null,null);
-                }
-                else {
+                } else {
                     return warnCustom(message, 'Bot Prefix Must be ONE of the following: ```~!$%^&*()_+-={}[]|\:";\'<>?,./```', module.name);
                 }
-            }
-            else {
+            } else {
                 return warnCustom(message, 'You must define a bot prefix.', module.name);
             }
-        }
-        else {
+        } else {
             return errorNoAdmin(message, module.name);
         }
     }

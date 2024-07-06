@@ -8,7 +8,7 @@ var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 
 //#region Helpers
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } = require("../helpers/embedMessages.js");
-const { djCheck } = require("../helpers/userHandling.js");
+const { djCheck } = require("../helpers/userPermissions.js");
 //#endregion
 
 //#region This exports the shuffle command with the information about it

@@ -16,11 +16,9 @@ module.exports = {
 
         if(isNaN(amount)) {
             return warnCustom(message, `That is not a valid number for the \`${message.prefix}clear\` command!`, module.name);
-        }
-        else if (amount < 1 || amount > 100) {
+        } else if (amount < 1 || amount > 100) {
             return warnCustom(message, `${args[0]} is an invalid number! __**Number must be between 1 and 100!**__`, module.name);
-        }
-        else if(amount >= 1 && amount <= 100) {
+        } else if(amount >= 1 && amount <= 100) {
             message.delete();
             message.deleted = true;
             message.channel.bulkDelete(amount, true).catch(err => {

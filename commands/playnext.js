@@ -8,7 +8,7 @@ var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 
 //#region Helpers
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoMod, embedCustom, errorCustom } = require("../helpers/embedMessages.js");
-const { modCheck, djCheck } = require("../helpers/userHandling.js");
+const { modCheck, djCheck } = require("../helpers/userPermissions.js");
 //#endregion
 
 //#region This exports the playnext command with the information about it

@@ -4,7 +4,7 @@ const botConfig = require('../data/botConfig.json');
 //#endregion
 
 //#region Helpers
-const { refreshUser } = require('../helpers/userHandling.js');
+const { refreshUser } = require('../helpers/userPermissions.js');
 const { embedCustomDM } = require('../helpers/embedMessages.js');
 //#endregion
 

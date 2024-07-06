@@ -1,6 +1,6 @@
 //#region Helpers
 const { warnCustom, embedCustom } = require("../helpers/embedMessages.js");
-const { djCheck } = require("../helpers/userHandling.js");
+const { djCheck } = require("../helpers/userPermissions.js");
 //#endregion
 
 //#region This exports the showqueue command with the information about it

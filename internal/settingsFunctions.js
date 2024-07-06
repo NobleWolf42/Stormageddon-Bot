@@ -223,6 +223,60 @@ async function setJoinRole(message) {
 }
 //#endregion
 
+//#region Function that sets joinToCreateVC settings
+/**
+ * This function runs the setup for the joinToCreateVC feature.
+ * @param {Message} message - Discord.js Message Object
+ * @returns {JSON} Server Config JSON
+ */
+async function setJoinToCreateVC(message) {
+    var serverID = message.guild.id;
+
+    message.channel.send('Please respond with `T` if you would like to enable Join to Create VC functionality, respond with `F` if you do not.');
+    
+    try {
+        var enableIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
+        var enableTXT = enableIn.first().content.toLowerCase();
+        var enable = undefined;
+        if (enableTXT == 't') {
+            enable = true;
+            
+            message.channel.send('Please input the channel id you want to use as a Join to Create Channel. \`You can get this by enabling developer mode in discord, then right clicking the cannel and clicking copy channel id.\`');
+        
+            try {
+                var JTCVCTXTIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
+                var voiceChannel = JTCVCTXTIn.first().content;
+            }
+            catch (err) {
+                return message.channel.send('Timeout Occurred. Process Terminated.')
+            }
+        }
+    }
+    catch (err) {
+        return message.channel.send('Timeout Occurred. Process Terminated.')
+    }
+
+    if (enable == undefined) {
+        enable = false;
+    } else if (voiceChannel == undefined) {
+        enable = false;
+    }
+
+    JTCVC = {};
+    JTCVC.enable = enable;
+    JTCVC.voiceChannel = voiceChannel;
+
+    serverConfig[serverID].JTCVC = JTCVC;
+
+    await buildConfigFile(serverConfig);
+
+    message.channel.send("Music Setup Complete!");
+
+    config = updateConfigFile();
+    return config;
+}
+//#endregion
+
 //#region Function that sets music settings
 /**
  * This function runs the setup for the Music feature.
@@ -366,6 +420,7 @@ async function setup(message) {
     await setJoinRole(message);
     await setMusic(message);
     await setModMail(message);
+    await setJoinToCreateVC(message);
 
     //Removes the Setup Needed Tag
     serverConfig[serverID].setupNeeded = false;
@@ -421,5 +476,5 @@ function removeServerConfig(serverID) {
 //#endregion
 
 //#region exports
-module.exports = { setAutoRole, setJoinRole, setMusic, setGeneral, setup, setModMail, buildConfigFile, removeServerConfig, addServerConfig };
+module.exports = { setAutoRole, setJoinRole, setMusic, setGeneral, setup, setModMail, buildConfigFile, removeServerConfig, addServerConfig, setJoinToCreateVC };
 //#endregion

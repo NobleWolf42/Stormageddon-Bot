@@ -1,6 +1,6 @@
 //#region Helpers
 const { embedHelp, warnCustom, errorNoAdmin } = require('../helpers/embedMessages.js');
-const { adminCheck } = require('../helpers/userHandling.js');
+const { adminCheck } = require('../helpers/userPermissions.js');
 const { capitalize } = require('../helpers/stringHelpers.js');
 //#endregion
 
@@ -19,10 +19,10 @@ module.exports = {
         const commands = message.client.commands;
         let commandClasses = [];
         let helpMessageCommands = [];
+
         if (adminTF) {
             commands.forEach((cmd) => { if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly') { commandClasses.push(capitalize(cmd.class))} });
-        }
-        else {
+        } else {
             commands.forEach((cmd) => { if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly' && capitalize(cmd.class) != 'Admin') { commandClasses.push(capitalize(cmd.class))} });
         }
 
@@ -32,78 +32,78 @@ module.exports = {
             commands.forEach((cmd) => { if (cmd.class == 'help') { helpMessageCommands.push(cmd) } });
             title = 'Help';
             return makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
-        }
-        else if (commandClasses.includes(capitalize(args[0])) || args[0] == 'all' || args[0] == 'dm' || args[0] == 'server') {
-            if (args[0] == 'admin') {
-                if (adminTF) {
-                    commands.forEach((cmd) => { if (cmd.class == args[0]) { helpMessageCommands.push(cmd) } });
+        } else if (commandClasses.includes(capitalize(args[0])) || args[0] == 'all' || args[0] == 'dm' || args[0] == 'server') {
+            switch (args[0]) {
+                case "admin":
+                    if (adminTF) {
+                        commands.forEach((cmd) => { if (cmd.class == args[0]) { helpMessageCommands.push(cmd) } });
+                        title = `${capitalize(args[0])} Help`;
+                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+                    } else {
+                        errorNoAdmin(message, module.name);
+                    }
+
+                break;
+
+                case "all":
+                    for (c = 0; c < commandClasses.length; c++) {
+                        helpMessageCommands = [];
+                        commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
+
+                        if (commandClasses[c].toLowerCase() != 'help'){
+                            title = `${capitalize(commandClasses[c])} Help`;
+                        } else {
+                            title = 'Help';
+                        }
+
+                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+                    }
+
+                break;
+
+                case "dm":
+                    commandClasses = commandClasses.filter(i => i.toLowerCase() != 'music');
+
+                    for (c = 0; c < commandClasses.length; c++) {
+                        helpMessageCommands = [];
+                        commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('DM') && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
+
+                        if (commandClasses[c].toLowerCase() != 'help'){
+                            title = `${capitalize(commandClasses[c])} Help`;
+                        } else {
+                            title = 'Help';
+                        }
+
+                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+                    }
+
+                break;
+            
+                case "server":
+                    for (c = 0; c < commandClasses.length; c++) {
+                        helpMessageCommands = [];
+                        commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('Guild') && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
+
+                        if (commandClasses[c].toLowerCase() != 'help'){
+                            title = `${capitalize(commandClasses[c])} Help`;
+                        } else {
+                            title = 'Help';
+                        }
+
+                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+                    }
+
+                break;
+
+                default:
+                    commands.forEach((cmd) => { if (cmd.class == args[0] && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
                     title = `${capitalize(args[0])} Help`;
-                    return makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
-                }
-                else {
-                    return errorNoAdmin(message, module.name);
-                }
-            }
-            else if (args[0] == 'all') {
-                for (c = 0; c < commandClasses.length; c++) {
-                    helpMessageCommands = [];
-                    commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
-
-                    if (commandClasses[c].toLowerCase() != 'help'){
-                        title = `${capitalize(commandClasses[c])} Help`;
-                    }
-                    else {
-                        title = 'Help';
-                    }
 
                     makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
-                }
-
-                return;
+                    
+                break;
             }
-            else if (args[0] == 'dm') {
-                commandClasses = commandClasses.filter(i => i.toLowerCase() != 'music');
-
-                for (c = 0; c < commandClasses.length; c++) {
-                    helpMessageCommands = [];
-                    commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('DM') && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
-
-                    if (commandClasses[c].toLowerCase() != 'help'){
-                        title = `${capitalize(commandClasses[c])} Help`;
-                    }
-                    else {
-                        title = 'Help';
-                    }
-
-                    makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
-                }
-
-                return;
-            }
-            else if (args[0] == 'server') {
-                for (c = 0; c < commandClasses.length; c++) {
-                    helpMessageCommands = [];
-                    commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('Guild') && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
-
-                    if (commandClasses[c].toLowerCase() != 'help'){
-                        title = `${capitalize(commandClasses[c])} Help`;
-                    }
-                    else {
-                        title = 'Help';
-                    }
-
-                    makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
-                }
-                return;
-            }
-            else {
-                commands.forEach((cmd) => { if (cmd.class == args[0] && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
-                title = `${capitalize(args[0])} Help`;
-
-                return makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
-            }
-        }
-        else {
+        } else {
             return warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, module.name);
         }
     }
@@ -121,11 +121,9 @@ function makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminT
 
         if (aliasesLength == 0) {
             helpMsg += `${key.usage} - Aliases: None - ${key.description}`
-        }
-        else if (aliasesLength == 1) {
+        } else if (aliasesLength == 1) {
             helpMsg += `${key.usage} - Aliases: ${key.aliases[0]} - ${key.description}`
-        }
-        else {
+        } else {
             let aliasList = '';
             for (a = 0; a < aliasesLength; a++) {
                 if (a != (aliasesLength - 1)) {
@@ -137,6 +135,7 @@ function makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminT
             }
             helpMsg += `${key.usage} - Aliases: ${aliasList} - ${key.description}`
         }
+        
         if (i != (helpMessageCommands.length - 1)) {
             helpMsg += `\n\n`;
         }

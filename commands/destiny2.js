@@ -26,8 +26,7 @@ module.exports = {
             for (i = 1; i < args.length; i++) {
                 if (i != (args.length - 1)) {
                     clanName += `${args[i]} `;
-                }
-                else {
+                } else {
                     clanName += `${args[i]}`;
                 }
             }

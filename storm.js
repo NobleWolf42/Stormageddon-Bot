@@ -21,6 +21,7 @@
     const { PMHandling, messageHandling } = require('./internal/messageHandling.js');
     const { serverJoin } = require('./internal/serverJoin.js');
     const { musicHandle, setDiscordClient } = require('./internal/distubeHandling.js');
+const { joinToCreateHandling } = require('./internal/voiceHandling.js');
     //#endregion
 //#endregion
 //#region Initialize Discord Bot
@@ -99,6 +100,7 @@ try{
         serverJoin(client);
         setDiscordClient(client);
         musicHandle(client, distube);
+        joinToCreateHandling(client);
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
     });
 

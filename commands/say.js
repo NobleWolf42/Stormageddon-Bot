@@ -1,5 +1,5 @@
 //#region Helpers
-const { adminCheck } = require('../helpers/userHandling.js');
+const { adminCheck } = require('../helpers/userPermissions.js');
 const { errorNoAdmin, errorCustom } = require('../helpers/embedMessages.js');
 //#endregion
 
