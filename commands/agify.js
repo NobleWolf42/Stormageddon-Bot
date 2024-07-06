@@ -1,4 +1,4 @@
-//#region Helpers
+//#region Dependencies
 const { XMLHttpRequest } = require("xmlhttprequest");
 //#endregion
 
