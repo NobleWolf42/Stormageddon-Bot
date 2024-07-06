@@ -1,6 +1,7 @@
 //#region Dependencies
-const { readFileSync } = require('fs');
-const lyricsFinder = require("lyrics-finder");
+const { readFileSync, writeFileSync } = require('fs');
+const GeniusLyrics = require("genius-lyrics");
+const Genius = new GeniusLyrics.Client();
 //#endregion
 
 //#region Data Files
@@ -8,6 +9,7 @@ var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 
 //#region Helpers
+const { addToLog } = require("../helpers/errorLog.js");
 const { embedCustom, warnCustom, warnDisabled, warnWrongChannel } = require("../helpers/embedMessages.js");
 //#endregion
 
@@ -27,23 +29,35 @@ module.exports = {
         }
 
         if (serverConfig[message.guild.id].music.textChannel == message.channel.name) {
-            const queue = message.client.queue.get(message.guild.id);
-            if (!queue) return warnCustom(message, "There is nothing playing.", module.name);
+            var queue = distube.getQueue(message);
+            if (!queue) {
+                return warnCustom(message, "There is nothing playing.", module.name);
+            }
 
-            let lyrics = null;
+            var lyrics = null;
 
             try {
-                lyrics = await lyricsFinder(queue.songs[0].title, "");
-                if (!lyrics) lyrics = `No lyrics found for ${queue.songs[0].title}.`;
+                const searches = await Genius.songs.search(queue.songs[0].name);
+                var song = searches[0];
+                lyrics = await song.lyrics();
+                if (!lyrics) {
+                    lyrics = `No lyrics found for ${queue.songs[0].name}.`;
+                }
             } catch (error) {
-                lyrics = `No lyrics found for ${queue.songs[0].title}.`;
+                addToLog("fatal error", module.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+                lyrics = `No lyrics found for ${queue.songs[0].name}.`;
             }
-
-            if (lyrics >= 2048) {
-                lyrics = `${lyrics.substring(0, 2045)}...`;
+            
+            slicedLyrics = [];
+            while (lyrics.length >= 2048) {
+                slicedLyrics.push(`${lyrics.substring(0, 2045)}...`);
+                lyrics = lyrics.slice(2045);
             }
+            slicedLyrics.push(lyrics);
 
-            return await embedCustom(message, "Lyrics", "#0E4CB0", lyrics).catch(console.error);
+            slicedLyrics.forEach(async (m, index) => {
+                embedCustom(message, `${song.fullTitle} - ${index + 1} of ${slicedLyrics.length}:`, "#0E4CB0", m, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+            });
         }
         else {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
