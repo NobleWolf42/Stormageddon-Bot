@@ -1,22 +1,33 @@
+//#region Dependencies
+const { SlashCommandBuilder } = require('discord.js');
+//#endregion
+
 //#region Helpers
-const { embedHelp, warnCustom, errorNoAdmin } = require('../helpers/embedMessages.js');
-const { adminCheck } = require('../helpers/userPermissions.js');
-const { capitalize } = require('../helpers/stringHelpers.js');
+const { embedHelp, warnCustom, errorNoAdmin } = require('../../helpers/embedSlashMessages.js');
+const { adminCheck } = require('../../helpers/userPermissions.js');
+const { capitalize } = require('../../helpers/stringHelpers.js');
 //#endregion
 
 //#region This exports the help command with the information about it
 module.exports = {
-    name: 'help',
-    type: ['DM', 'Guild'],
-    coolDown: 0,
-    aliases: ['h'],
-    class: 'help',
-    usage: 'help ***PAGE***',
-    description: "Displays Help Message, specifying a page will show that help info, using the **\"All\"** page will display all commands, the **\"DM\"** page will display all commands that can be Direct Messaged to the bot, and the **\"Server\"** page will display all commands that can be used in a discord server.",
-    execute(message, args, client, distube) {
-        var args = args.map(v => v.toLowerCase());
-        const adminTF = adminCheck(message);
-        const commands = message.client.commands;
+    data: new SlashCommandBuilder()
+        .setName('help')
+        .setDescription("Displays Help Message.")
+        .addStringOption(option =>
+            option
+                .setName("helppage")
+                .setDescription("Select a help page (admin/all/dm/server).")
+                .setRequired(false)
+                .setChoices(
+                    { name: 'Admin', value: 'admin' },
+                    { name: 'All', value: 'all' },
+                    { name: 'DM', value: 'dm' },
+                    { name: 'Server', value: 'server' }
+                )
+        ),
+    execute(client, interaction, distube) {
+        const adminTF = adminCheck(interaction);
+        const commands = client.commands;
         let commandClasses = [];
         let helpMessageCommands = [];
 
@@ -28,19 +39,19 @@ module.exports = {
 
         commandClasses.sort();
 
-        if (args[0] == undefined || args[0] == 'help') {
+        if (interaction.options.getString("helppage") == undefined || interaction.options.getString("helppage") == 'help') {
             commands.forEach((cmd) => { if (cmd.class == 'help') { helpMessageCommands.push(cmd) } });
             title = 'Help';
-            return makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
-        } else if (commandClasses.includes(capitalize(args[0])) || args[0] == 'all' || args[0] == 'dm' || args[0] == 'server') {
-            switch (args[0]) {
+            return makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
+        } else if (commandClasses.includes(capitalize(interaction.options.getString("helppage"))) || interaction.options.getString("helppage") == 'all' || interaction.options.getString("helppage") == 'dm' || interaction.options.getString("helppage") == 'server') {
+            switch (interaction.options.getString("helppage")) {
                 case "admin":
                     if (adminTF) {
-                        commands.forEach((cmd) => { if (cmd.class == args[0]) { helpMessageCommands.push(cmd) } });
-                        title = `${capitalize(args[0])} Help`;
-                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+                        commands.forEach((cmd) => { if (cmd.class == interaction.options.getString("helppage")) { helpMessageCommands.push(cmd) } });
+                        title = `${capitalize(interaction.options.getString("helppage"))} Help`;
+                        makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
                     } else {
-                        errorNoAdmin(message, module.name);
+                        errorNoAdmin(interaction, module.name);
                     }
 
                 break;
@@ -56,7 +67,7 @@ module.exports = {
                             title = 'Help';
                         }
 
-                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+                        makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
                     }
 
                 break;
@@ -74,7 +85,7 @@ module.exports = {
                             title = 'Help';
                         }
 
-                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+                        makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
                     }
 
                 break;
@@ -90,28 +101,28 @@ module.exports = {
                             title = 'Help';
                         }
 
-                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+                        makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
                     }
 
                 break;
 
                 default:
-                    commands.forEach((cmd) => { if (cmd.class == args[0] && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
-                    title = `${capitalize(args[0])} Help`;
+                    commands.forEach((cmd) => { if (cmd.class == interaction.options.getString("helppage") && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
+                    title = `${capitalize(interaction.options.getString("helppage"))} Help`;
 
-                    makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+                    makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
                     
                 break;
             }
         } else {
-            return warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, module.name);
+            return warnCustom(interaction, `The **${interaction.options.getString("helppage")}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, module.name);
         }
     }
 }
 //#endregion
 
 //#region Function to create help message
-function makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF) {
+function makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF) {
     var helpMsg = '';
     commandClasses.sort();
 
@@ -144,9 +155,9 @@ function makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminT
     var pageList = makeCommandPageList(commandClasses);
 
     if (adminTF) {
-        embedHelp(message, title, `\`Help Pages: ${pageList}\`\n**NOTE: !help Admin can only be run in a server!!!\n\n\n${helpMsg}`);
+        embedHelp(interaction, title, `\`Help Pages: ${pageList}\`\n**NOTE: !help Admin can only be run in a server!!!\n\n\n${helpMsg}`, client);
     } else {
-        embedHelp(message, title, `\`Help Pages: ${pageList}\`\n${helpMsg}`);
+        embedHelp(interaction, title, `\`Help Pages: ${pageList}\`\n${helpMsg}`, client);
     }
 }
 //#endregion

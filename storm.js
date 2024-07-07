@@ -10,6 +10,7 @@
 
     //#region Data Files
     const botConfig = require('./data/botConfig.json');
+    const serverConfig = require('./data/serverConfig.json');
     //#endregion
 
     //#region Helpers
@@ -102,7 +103,9 @@ try{
         musicHandle(client, distube);
         joinToCreateHandling(client);
         slashCommandHandling(client, distube);
-        registerGuildSlashCommands();
+        for (guildId in serverConfig) {
+            registerGuildSlashCommands(guildId);
+        }
         registerGlobalSlashCommands();
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
     });
@@ -110,6 +113,7 @@ try{
     //Adds New Servers to Config
     client.on("guildCreate", newGuild => {
         addServerConfig(newGuild.id);
+        registerGuildSlashCommands(newGuild.id);
         console.log(`Joined New Server: ${newGuild.name}#${newGuild.id}`);
     })
 

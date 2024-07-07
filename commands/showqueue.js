@@ -14,7 +14,7 @@ module.exports = {
     description: "Shows the music queue and now playing.",
     execute(message, args, client, distube) {
         //Max fields for an embed per discord, change this if it ever changes
-        var maxFields = 25;
+        var maxFields = 20;
 
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig[message.guild.id].music.enable) {
@@ -36,7 +36,7 @@ module.exports = {
         } else {
             var description = queue.songs.map((song, index) => `${index + 1} - [\`${song.name}\`](${song.url})\n`);
 
-            var maxTimes = Math.ceil(description.length/20);
+            var maxTimes = Math.ceil(description.length/maxFields);
             slicedDesc = [];
             for (var i = 0; i < maxTimes; i++) {
                 slicedDesc.push(description.slice(0,20).join(""));

@@ -28,7 +28,7 @@ module.exports = {
                     };
 
                     if (newName.length > 22 || newName.length < 1) {
-                        warnCustom(message, "Not a valid name length, Length must be between 1-22 characters long!", module.name, client);
+                        warnCustom(message, "Not a valid name length, Length must be between 1-22 characters long!", module.name);
                     } else {
                         voiceChannel.edit({ name: newName});
                         embedCustomDM(message, "Success:", "#355E3B", "Channel name changed successfully!");
@@ -36,11 +36,11 @@ module.exports = {
                 break;
 
                 default:
-                    warnCustom(message, "Not a valid Join to Create command!", module.name, client);
+                    warnCustom(message, "Not a valid Join to Create command!", module.name);
                 break;
             }
         } else {
-            warnCustom(message, "You do not own a voice channel!", module.name, client);
+            warnCustom(message, "You do not own a voice channel!", module.name);
         };
         return;
     }
