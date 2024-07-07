@@ -106,7 +106,7 @@ try{
         for (guildId in serverConfig) {
             registerGuildSlashCommands(guildId);
         }
-        registerGlobalSlashCommands();
+        //registerGlobalSlashCommands();
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
     });
 
