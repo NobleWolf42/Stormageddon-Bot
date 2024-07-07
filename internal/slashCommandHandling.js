@@ -67,15 +67,15 @@ async function slashCommandHandling(client, distube) {
 //#region Registers Guild Slash Commands with discord
 async function registerGuildSlashCommands(guildId) {
     const commands = [];
-    const commandFiles = readdirSync(join(__dirname, "../slashCommands/Guild")).filter((file) => file.endsWith(".js"));
+    const commandFiles = readdirSync(join(__dirname, "../slashCommands/guild")).filter((file) => file.endsWith(".js"));
     
     // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
     for (const file of commandFiles) {
-        const command = require(join(__dirname, "../slashCommands/Guild", `${file}`));
+        const command = require(join(__dirname, "../slashCommands/guild", `${file}`));
         if ('data' in command && 'execute' in command) {
     		commands.push(command.data.toJSON());
     	} else {
-    		console.log(`[WARNING] The command at ../slashCommands/Guild/${file} is missing a required "data" or "execute" property.`);
+    		console.log(`[WARNING] The command at ../slashCommands/guild/${file} is missing a required "data" or "execute" property.`);
     	}
     }
 
@@ -105,15 +105,15 @@ async function registerGuildSlashCommands(guildId) {
 //#region Registers Global Slash Commands with discord
 async function registerGlobalSlashCommands() {
     const commands = [];
-    const commandFiles = readdirSync(join(__dirname, "../slashCommands/Global")).filter((file) => file.endsWith(".js"));
+    const commandFiles = readdirSync(join(__dirname, "../slashCommands/global")).filter((file) => file.endsWith(".js"));
     
     // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
     for (const file of commandFiles) {
-        const command = require(join(__dirname, "../slashCommands/Global", `${file}`));
+        const command = require(join(__dirname, "../slashCommands/global", `${file}`));
         if ('data' in command && 'execute' in command) {
     		commands.push(command.data.toJSON());
     	} else {
-    		console.log(`[WARNING] The command at ../slashCommands/Global/${file} is missing a required "data" or "execute" property.`);
+    		console.log(`[WARNING] The command at ../slashCommands/global/${file} is missing a required "data" or "execute" property.`);
     	}
     }
 
