@@ -1,7 +1,7 @@
 //#region Dependencies
 const { SlashCommandBuilder } = require('discord.js');
 const { readFileSync, writeFileSync} = require('fs');
-//#endregion
+//#endregiona
 
 //#region Data Files
 var prefixFile = JSON.parse(readFileSync('././data/botPrefix.json'));

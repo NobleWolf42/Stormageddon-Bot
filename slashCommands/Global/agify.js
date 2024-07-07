@@ -1,7 +1,7 @@
 //#region Dependencies
 const { SlashCommandBuilder } = require('discord.js');
 const { XMLHttpRequest } = require("xmlhttprequest");
-//#endregion
+//#endregiona
 
 //#region Helpers
 const { errorCustom, warnCustom, embedCustom } = require("../../helpers/embedSlashMessages.js");
