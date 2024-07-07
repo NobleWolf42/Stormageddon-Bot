@@ -104,7 +104,7 @@ try{
         joinToCreateHandling(client);
         slashCommandHandling(client, distube);
         for (guildId in serverConfig) {
-            //registerGuildSlashCommands(guildId);
+            registerGuildSlashCommands(guildId);
         }
         registerGlobalSlashCommands();
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
