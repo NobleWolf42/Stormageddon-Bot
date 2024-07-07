@@ -8,7 +8,7 @@ const quotedata = require('../../data/quotes.json').data;
 
 //#region Helpers
 const { getRandomInt } = require('../../helpers/math.js');
-const { embedCustom } = require('../../helpers/embedMessages.js');
+const { embedCustom } = require('../../helpers/embedSlashMessages.js');
 //endregion
 
 //#region This exports the quote command with the information about it

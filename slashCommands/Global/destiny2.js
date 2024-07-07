@@ -29,7 +29,7 @@ module.exports = {
     execute(client, interaction, distube) {
         if (interaction.options.getSubcommand() == 'clan') {
             var clanName = interaction.options.getString("clanname");
-            getClan(interaction, clanName);
+            getClan(interaction, clanName, client);
         } else {
             warnCustom(interaction, "You did not use the command correctly, please try again.", module.name, client);
         }
@@ -39,7 +39,7 @@ module.exports = {
 //#endregion
 
 //#region Gets the information of the destiny 2 clan by name
-function getClan(interaction, clan_name){
+function getClan(interaction, clan_name, client){
     // Request initialized and created
     var request = new XMLHttpRequest()
     request.open('GET', 'https://www.bungie.net/Platform/GroupV2/Name/'+clan_name+'/1', true);

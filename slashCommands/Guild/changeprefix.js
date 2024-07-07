@@ -24,6 +24,7 @@ module.exports = {
             option
                 .setName("symbol")
                 .setDescription("Use one of the following symbols: ~!$%^&*()_+-=[];',.{}|:\"<>?")
+                .setRequired(true)
         ),
     execute(client, interaction, distube) {
         var serverID = interaction.guild.id;

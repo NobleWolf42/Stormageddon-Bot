@@ -16,13 +16,15 @@ module.exports = {
         .addStringOption(option =>
             option
                 .setName("helppage")
-                .setDescription("Select a help page (admin/all/dm/server).")
+                .setDescription("Select a help page (admin/direct/fun/gaming/help/music).")
                 .setRequired(false)
                 .setChoices(
                     { name: 'Admin', value: 'admin' },
-                    { name: 'All', value: 'all' },
-                    { name: 'DM', value: 'dm' },
-                    { name: 'Server', value: 'server' }
+                    { name: 'Direct', value: 'direct' },
+                    { name: 'Fun', value: 'fun' },
+                    { name: 'Gaming', value: 'gaming' },
+                    { name: 'Help', value: 'help' },
+                    { name: 'Music', value: 'music' }
                 )
         ),
     execute(client, interaction, distube) {
@@ -32,9 +34,17 @@ module.exports = {
         let helpMessageCommands = [];
 
         if (adminTF) {
-            commands.forEach((cmd) => { if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly') { commandClasses.push(capitalize(cmd.class))} });
+            commands.forEach((cmd) => {
+                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly' && cmd != undefined) {
+                    commandClasses.push(capitalize(cmd.class))
+                }
+            });
         } else {
-            commands.forEach((cmd) => { if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly' && capitalize(cmd.class) != 'Admin') { commandClasses.push(capitalize(cmd.class))} });
+            commands.forEach((cmd) => {
+                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly' && capitalize(cmd.class) != 'Admin' && cmd != undefined) {
+                    commandClasses.push(capitalize(cmd.class))
+                }
+            });
         }
 
         commandClasses.sort();
@@ -42,66 +52,16 @@ module.exports = {
         if (interaction.options.getString("helppage") == undefined || interaction.options.getString("helppage") == 'help') {
             commands.forEach((cmd) => { if (cmd.class == 'help') { helpMessageCommands.push(cmd) } });
             title = 'Help';
-            return makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
+            return makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF, client);
         } else if (commandClasses.includes(capitalize(interaction.options.getString("helppage"))) || interaction.options.getString("helppage") == 'all' || interaction.options.getString("helppage") == 'dm' || interaction.options.getString("helppage") == 'server') {
             switch (interaction.options.getString("helppage")) {
                 case "admin":
                     if (adminTF) {
                         commands.forEach((cmd) => { if (cmd.class == interaction.options.getString("helppage")) { helpMessageCommands.push(cmd) } });
                         title = `${capitalize(interaction.options.getString("helppage"))} Help`;
-                        makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
+                        makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF, client);
                     } else {
-                        errorNoAdmin(interaction, module.name);
-                    }
-
-                break;
-
-                case "all":
-                    for (c = 0; c < commandClasses.length; c++) {
-                        helpMessageCommands = [];
-                        commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
-
-                        if (commandClasses[c].toLowerCase() != 'help'){
-                            title = `${capitalize(commandClasses[c])} Help`;
-                        } else {
-                            title = 'Help';
-                        }
-
-                        makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
-                    }
-
-                break;
-
-                case "dm":
-                    commandClasses = commandClasses.filter(i => i.toLowerCase() != 'music');
-
-                    for (c = 0; c < commandClasses.length; c++) {
-                        helpMessageCommands = [];
-                        commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('DM') && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
-
-                        if (commandClasses[c].toLowerCase() != 'help'){
-                            title = `${capitalize(commandClasses[c])} Help`;
-                        } else {
-                            title = 'Help';
-                        }
-
-                        makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
-                    }
-
-                break;
-            
-                case "server":
-                    for (c = 0; c < commandClasses.length; c++) {
-                        helpMessageCommands = [];
-                        commands.forEach((cmd) => { if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('Guild') && cmd.name != 'devsend') { helpMessageCommands.push(cmd) }});
-
-                        if (commandClasses[c].toLowerCase() != 'help'){
-                            title = `${capitalize(commandClasses[c])} Help`;
-                        } else {
-                            title = 'Help';
-                        }
-
-                        makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
+                        errorNoAdmin(interaction, module.name, client);
                     }
 
                 break;
@@ -110,7 +70,7 @@ module.exports = {
                     commands.forEach((cmd) => { if (cmd.class == interaction.options.getString("helppage") && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
                     title = `${capitalize(interaction.options.getString("helppage"))} Help`;
 
-                    makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
+                    makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF, client);
                     
                 break;
             }
@@ -122,7 +82,16 @@ module.exports = {
 //#endregion
 
 //#region Function to create help message
-function makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF) {
+/**
+ * This function makes the help message and send it
+ * @param {Interaction} interaction Discord.js Interaction object
+ * @param {string} title Title of the help page
+ * @param {Array} helpMessageCommands Array containing the commands
+ * @param {Array} commandClasses Array containing the class types of commands
+ * @param {Boolean} adminTF Tre/False based on if the user is an admin
+ * @param {Client} client Discord.js Client object
+ */
+function makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF, client) {
     var helpMsg = '';
     commandClasses.sort();
 

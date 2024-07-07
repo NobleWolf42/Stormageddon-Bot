@@ -92,7 +92,7 @@ module.exports = {
                 
                         await buildConfigFile(serverConfig);
     
-                        embedCustom(message, "Mod Removed", "#5D3FD3", `Mod has been successfully removed!`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
+                        embedCustom(interaction, "Mod Removed", "#5D3FD3", `Mod has been successfully removed!`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
                 
                         serverConfig = updateConfigFile();
 

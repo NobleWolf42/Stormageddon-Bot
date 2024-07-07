@@ -24,7 +24,7 @@ module.exports = {
                 .setDescription("Message to send.")
                 .setRequired(true)
         ),
-    execute(client, interaction, distube) {
+    async execute(client, interaction, distube) {
         //Gets current config file
         var serverConfig = updateConfigFile();
         var serverID = 0;
@@ -42,7 +42,7 @@ module.exports = {
                 var modList = serverConfig[serverID].modMail.modList;
     
                 for (key in modList) {
-                    var mod = client.users.fetch(modList[key]);
+                    var mod = await client.users.fetch(modList[key]);
                     const embMsg = new EmbedBuilder()
                         .setTitle(`Mod Mail from: ${servername}`)
                         .setColor('#0B6E29')
@@ -52,6 +52,8 @@ module.exports = {
                     
                     mod.send({ embeds: [embMsg] });
                 }
+
+                return embedCustom(interaction, 'Mod Mail Sent.', '#0B6E29', `**Message:** \`${content}\` \n**Sent To:** \`The Mods at ${servername}\``, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
             }
             else {
                 return warnDisabled(interaction, 'modMail', module.name, client);

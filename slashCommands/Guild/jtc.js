@@ -34,7 +34,7 @@ module.exports = {
                         warnCustom(interaction, "Not a valid name length, Length must be between 1-22 characters long!", module.name, client);
                     } else {
                         voiceChannel.edit({ name: newName});
-                        embedCustomDM(interaction, "Success:", "#355E3B", "Channel name changed successfully!", client);
+                        embedCustomDM(interaction, "Success:", "#355E3B", "Channel name changed successfully!", null, client);
                     }
                 break;
 

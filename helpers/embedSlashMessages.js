@@ -46,7 +46,7 @@ async function embedCustom(interaction, title, color, text, footer, img, fields,
  * @param {URL} img - URL to an Image to include (optional) 
  * @param {Client} client - A Discord.js Client Object 
  */
-function embedCustomDM(interaction, title, color, text, img, client) {
+async function embedCustomDM(interaction, title, color, text, img, client) {
     const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor(color)
@@ -54,10 +54,11 @@ function embedCustomDM(interaction, title, color, text, img, client) {
         .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: null })
         .setImage(img);
     
-    client.users.fetch(interaction.member.user.id).send({ embeds: [embMsg] });
+    var usr = await client.users.fetch(interaction.member.user.id);
+    usr.send({ embeds: [embMsg] });
     interaction.reply({
-        content: "",
-        ephemeral: false
+        content: "Sent",
+        ephemeral: true
     });
 
 }
@@ -71,19 +72,14 @@ function embedCustomDM(interaction, title, color, text, img, client) {
  * @param {string} text - String for the body of the embedded interaction
  * @param {Client} client - A Discord.js Client Object 
  */
-function embedHelp(interaction, title, text, client) {
+async function embedHelp(interaction, title, text, client) {
     const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor('#1459C7')
         .setDescription(text)
         .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: null });
     
-    client.users.fetch(interaction.member.user.id).send({ embeds: [embMsg] });
-    client.api.interactions(interaction.id, interaction.token).callback.post({
-        data: {
-            type: 2,
-        }
-    });
+    interaction.reply({ embeds: [embMsg], ephemeral: true });
 }
 //#endregion
 
@@ -102,14 +98,13 @@ async function warnCustom(interaction, text, commandName, client) {
         .setDescription(text)
         .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: null });
 
-    var channel = await client.channels.fetch(interaction.channelId);
-
     if (interaction.guildId != null) {
-        interaction.reply({ embeds: [embMsg] }).then(() => {setTimeout( () => interaction.deleteReply(), 15000)});
+        var channel = await client.channels.fetch(interaction.channelId);
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, text);
     }
     else {
-        interaction.reply({ embeds: [embMsg] });
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
     }
 }
@@ -129,14 +124,13 @@ async function errorNoAdmin(interaction, commandName, client) {
         .setDescription('You do not have permission to use this command. This command requires *BOT ADMIN* access to use!')
         .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: null });
     
-    var channel = await client.channels.fetch(interaction.channelId);
-    
     if (interaction.guildId != null) {
-        interaction.reply({ embeds: [embMsg] }).then(() => {setTimeout( () => interaction.deleteReply(), 15000)});
+        var channel = await client.channels.fetch(interaction.channelId);
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, "Not Bot Admin!");
     }
     else {
-        interaction.reply({ embeds: [embMsg] });
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', "Not Bot Admin!");
     }
 }
@@ -155,15 +149,14 @@ async function errorNoMod(interaction, commandName, client) {
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *BOT MOD* access to use!')
         .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: null });
-    
-    var channel = await client.channels.fetch(interaction.channelId);
         
     if (interaction.guildId != null) {
-        interaction.reply({ embeds: [embMsg] }).then(() => {setTimeout( () => interaction.deleteReply(), 15000)});
+        var channel = await client.channels.fetch(interaction.channelId);
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, "Not Bot Moderator!");
     }
     else {
-        interaction.reply({ embeds: [embMsg] });
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', "Not Bot Moderator!");
     }
 }
@@ -182,15 +175,14 @@ async function errorNoDJ(interaction, commandName, client) {
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *DJ* access to use!')
         .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: null });
-    
-    var channel = await client.channels.fetch(interaction.channelId);
-        
+
     if (interaction.guildId != null) {
-        interaction.reply({ embeds: [embMsg] }).then(() => {setTimeout( () => interaction.deleteReply(), 15000)});
+        var channel = await client.channels.fetch(interaction.channelId);
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, "Not a DJ!");
     }
     else {
-        interaction.reply({ embeds: [embMsg] });
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', "Not DJ!");
     }
 }
@@ -209,15 +201,14 @@ async function errorNoServerAdmin(interaction, commandName, client) {
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!')
         .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: null });
-    
-    var channel = await client.channels.fetch(interaction.channelId);
-       
+
     if (interaction.guildId != null) {
-        interaction.reply({ embeds: [embMsg] }).then(() => {setTimeout( () => interaction.deleteReply(), 15000)});
+        var channel = await client.channels.fetch(interaction.channelId);
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, "Not Server Admin!");
     }
     else {
-        interaction.reply({ embeds: [embMsg] });
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', "Not Server Admin!");
     }
 }
@@ -237,14 +228,13 @@ async function errorCustom(interaction, text, commandName, client) {
         .setColor('#FF0000')
         .setDescription(text)
         .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: null });
-    
-    var channel = await client.channels.fetch(interaction.channelId);
         
     if (interaction.guildId != null) {
-        interaction.reply({ embeds: [embMsg] }).then(() => {setTimeout( () => interaction.deleteReply(), 15000)});
+        var channel = await client.channels.fetch(interaction.channelId);
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Fatal Error', commandName, interaction.user.username, interaction.member.guild.name, channel.name, text, client);
     } else {
-        interaction.reply({ embeds: [embMsg] });
+        interaction.reply({ embeds: [embMsg], ephemeral: true });
         addToLog('Fatal Error', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
     }
 }
@@ -265,15 +255,10 @@ async function warnWrongChannel(interaction, correctChannel, commandName, client
         .setDescription(`That was not the correct channel for that command. The correct channel for this command is #${correctChannel}`)
         .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: null });
     
-    client.users.fetch(interaction.member.user.id).send({ embeds: [embMsg] });
-    interaction.reply({
-        content: "",
-        ephemeral: false
-    });
-
-    var channel = await client.channels.fetch(interaction.channelId);
+    interaction.reply({ embeds: [embMsg], ephemeral: true });
     
     if (interaction.guildId != null) {
+        var channel = await client.channels.fetch(interaction.channelId);
         addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, "Wrong Text Channel");
     }
     else {
@@ -297,15 +282,10 @@ async function warnDisabled(interaction, feature, commandName, client) {
         .setDescription(`This feature is currently disabled. To enable it, please run the !set ${feature}. NOTE: This command is only available to a server admin.`)
         .setFooter({ text: `Requested by ${interaction.user.username}`, iconURL: null });
     
-    client.users.fetch(interaction.member.user.id).send({ embeds: [embMsg] });
-    interaction.reply({
-        content: "",
-        ephemeral: false
-    });
-
-    var channel = await client.channels.fetch(interaction.channelId);
+    interaction.reply({ embeds: [embMsg], ephemeral: true });
 
     if (interaction.guildId != null) {
+        var channel = await client.channels.fetch(interaction.channelId);
         addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, "Feature Disabled");
     }
     else {

@@ -15,6 +15,7 @@ module.exports = {
             option
                 .setName("amount")
                 .setDescription("The number of messages to delete (1-99).")
+                .setRequired(true)
         ),
     async execute(client, interaction, distube) {
         var channel = await client.channels.fetch(interaction.channelId);
