@@ -6,8 +6,7 @@ const { join } = require("path");
 
 //#region Data Files
 const botConfig = require('../data/botConfig.json');
-const { addToLog } = require('../helpers/errorLog');
-var serverConfig = JSON.parse(readFileSync('././data/serverConfig.json', 'utf8'));
+const { addToLog } = require('../helpers/errorLog.js');
 //#endregion
 
 //#region Slash Command Handler
