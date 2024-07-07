@@ -85,7 +85,6 @@ async function registerGuildSlashCommands(guildId) {
     (async () => {
         try {
     	    console.log(`Started refreshing ${commands.length} guild (/) commands.`);
-            console.log(`Guild: ${botConfig.general.clientID}`);
 
     	    // The put method is used to fully refresh all commands in the guild with the current set
     	    const data = await rest.put(
@@ -124,7 +123,7 @@ async function registerGlobalSlashCommands() {
     (async () => {
     	try {
     		console.log(`Started refreshing ${commands.length} application (/) commands.`);
-            console.log(`Global: ${botConfig.general.clientID}`);
+            console.log(`Global: ${botConfig}`);
 
     		// The put method is used to fully refresh all commands in the guild with the current set
     		const data = await rest.put(
