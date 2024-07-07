@@ -9,6 +9,8 @@ const { warnDisabled, embedCustom } = require('../helpers/embedMessages.js');
 
 //#region Internals
 const { generateEmbedFields } = require('../internal/autoRole.js');
+const { errorNoAdmin } = require("../helpers/embedMessages.js");
+const { adminCheck } = require("../helpers/userPermissions.js");
 //#endregion
 
 //#region This exports the createrolemessage command with the information about it
@@ -49,6 +51,11 @@ module.exports = {
         // Checks to see if the module is enabled
         if (!config[serverID].autoRole.enable) {
             return warnDisabled(message, 'autoRole', module.name);
+        }
+
+        // Checks that the user is an admin
+        if (!adminCheck(message)) {
+            return errorNoAdmin(message, module.name);
         }
 
         var thumbnail = null;

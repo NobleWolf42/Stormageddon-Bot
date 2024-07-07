@@ -16,7 +16,7 @@ module.exports = {
     class: 'direct',
     usage: '!modmail ***SERVER-NAME***, ***MESSAGE*** ',
     description: "Whisper via Stormageddon to all moderators for the specified server.",
-    execute(message, args, client, distube) {
+    async execute(message, args, client, distube) {
         //Gets current config file
         var serverConfig = updateConfigFile();
         var argsString = args.join(' ');
@@ -36,6 +36,7 @@ module.exports = {
                 var modList = serverConfig[serverID].modMail.modList;
     
                 for (key in modList) {
+                    var mod = await client.users.fetch(modList[key]);
                     const embMsg = new EmbedBuilder()
                         .setTitle(`Mod Mail from: ${servername}`)
                         .setColor('#0B6E29')
@@ -43,7 +44,7 @@ module.exports = {
                         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null })
                         .setTimestamp();
                     
-                    client.users.cache.get(modList[key]).send({ embeds: [embMsg] });
+                    mod.send({ embeds: [embMsg] });
                 }
             }
             else {

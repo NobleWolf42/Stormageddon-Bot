@@ -10,6 +10,7 @@
 
     //#region Data Files
     const botConfig = require('./data/botConfig.json');
+    const serverConfig = require('./data/serverConfig.json');
     //#endregion
 
     //#region Helpers
@@ -26,9 +27,11 @@
     const { serverJoin } = require('./internal/serverJoin.js');
     const { musicHandle, setDiscordClient } = require('./internal/distubeHandling.js');
     const { joinToCreateHandling } = require('./internal/voiceHandling.js');
+    const { slashCommandHandling, registerGuildSlashCommands, registerGlobalSlashCommands } = require('./internal/slashCommandHandling.js');
     //#endregion
 
 //#endregion
+
 //#region Initialize Discord Bot
 const client = new Client({ 
     partials: [
@@ -99,12 +102,18 @@ try{
         setDiscordClient(client);
         musicHandle(client, distube);
         joinToCreateHandling(client);
+        slashCommandHandling(client, distube);
+        for (guildId in serverConfig) {
+            registerGuildSlashCommands(guildId);
+        }
+        registerGlobalSlashCommands();
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
     });
 
     //Adds New Servers to Config
     client.on("guildCreate", newGuild => {
         addServerConfig(newGuild.id);
+        registerGuildSlashCommands(newGuild.id);
         console.log(`Joined New Server: ${newGuild.name}#${newGuild.id}`);
     })
 

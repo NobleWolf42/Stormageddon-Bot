@@ -250,12 +250,13 @@ Copy or Rename `botConfig.example.json` located in the `data` folder to `botConf
 
 ## 🤝 Contributing
 
-1. [Fork the repository](https://github.com/NobleWolf42/Stormageddon-bot/fork)
-2. Clone your fork: `git clone https://github.com/your-username/Stormageddon-bot.git`
-3. Create your feature branch: `git checkout -b my-new-feature`
-4. Commit your changes: `git commit -am 'Add some feature'`
-5. Push to the branch: `git push origin my-new-feature`
-6. Submit a pull request
+1. Check the ["Design Documentation.js"](https://github.com/NobleWolf42/Stormageddon-Bot/blob/master/Design%20Documentation.js) file before starting, it contains a rough layout of how files should look
+2. [Fork the repository](https://github.com/NobleWolf42/Stormageddon-bot/fork)
+3. Clone your fork: `git clone https://github.com/your-username/Stormageddon-bot.git`
+4. Create your feature branch: `git checkout -b my-new-feature`
+5. Commit your changes: `git commit -am 'Add some feature'`
+6. Push to the branch: `git push origin my-new-feature`
+7. Submit a pull request
 
 ## 📝 Credits
 
