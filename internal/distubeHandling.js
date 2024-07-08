@@ -4,7 +4,8 @@ const { EmbedBuilder, ComponentType, ActionRowBuilder } = require("discord.js");
 
 //#region Helpers
 const { addToLog } = require('../helpers/errorLog.js');
-const { pause, skip, stop, volumeDown, volumeUp, repeat, loop, noLoop, shuffle, autoplay } = require("../helpers/musicButtons.js")
+const { pause, skip, stop, volumeDown, volumeUp, repeat, loop, noLoop, shuffle, autoplay } = require("../helpers/musicButtons.js");
+const { embedCustom } = require('../helpers/embedSlashMessages.js');
 //#endregion
 
 //Discord client
@@ -23,7 +24,16 @@ function setDiscordClient(client) {
  * @param {distube} distube - DisTube Object
  */
 async function musicHandle(client, distube) {
+    //This global variable is intentionally so, it makes it so when switching songs it removes the buttons from the old now playing message
+    var nowPlayingMessage = {};
+    
+    //This handles the even issues when a new song starts playing
     distube.on('playSong', async (queue, song) => {
+        //Removes buttons from old now playing message
+        if (nowPlayingMessage[queue.id]) {
+            nowPlayingMessage[queue.id].edit({ components: [] });    
+        }
+        
         var embMsg = new EmbedBuilder()
             .setTitle("Now Playing")
             .setColor("#0000FF")
@@ -33,12 +43,13 @@ async function musicHandle(client, distube) {
         var buttons1 = new ActionRowBuilder().addComponents(pause, skip, stop, volumeDown, volumeUp);
         var buttons2 = new ActionRowBuilder().addComponents(repeat, loop, noLoop, shuffle, autoplay);
         
-        var nowPlayingMessage = await queue.textChannel.send({ embeds: [embMsg], components: [buttons1, buttons2] });
+        nowPlayingMessage[queue.id] = await queue.textChannel.send({ embeds: [embMsg], components: [buttons1, buttons2] });
 
-        const collector = nowPlayingMessage.createMessageComponentCollector({
+        const collector = nowPlayingMessage[queue.id].createMessageComponentCollector({
             componentType: ComponentType.Button
         });
 
+        //Handles the buttons for the now playing message
         collector.on('collect', async (interaction) => {
             switch (interaction.customId) {
                 case "pause":
@@ -54,6 +65,7 @@ async function musicHandle(client, distube) {
                 case "skip":
                     queue.skip().then(() => {
                         embedCustom(interaction, "Skipped", "#0000FF", `[\`${song.name}\`](${song.url}) successfully skipped.`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
+                        nowPlayingMessage[queue.id].edit({ components: [] });
                     });
                 break;
 
@@ -61,43 +73,38 @@ async function musicHandle(client, distube) {
                     queue.stop().then(() => {
                         queue.voice.leave();
                         embedCustom(interaction, "Stop", "#0000FF", `Music Stopped.`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
+                        nowPlayingMessage[queue.id].edit({ components: [] });
                     });
                 break;
 
                 case "volUp":
-                    queue.setVolume(queue.volume + 5).then(() => {
-                        embedCustom(interaction, "Volume", "#0000FF", `Volume changed to ${queue.volume}%.`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
-                    });
+                    queue.setVolume(queue.volume + 5);
+                    embedCustom(interaction, "Volume", "#0000FF", `Volume changed to ${queue.volume}%.`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
                 break;
 
                 case "volDown":
-                    queue.setVolume(queue.volume - 5).then(() => {
-                        embedCustom(interaction, "Volume", "#0000FF", `Volume changed to ${queue.volume}%.`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
-                    });
+                    queue.setVolume(queue.volume - 5);
+                    embedCustom(interaction, "Volume", "#0000FF", `Volume changed to ${queue.volume}%.`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
                 break;
 
                 case "repeat":
-                    queue.setRepeatMode(1).then(() => {
-                        embedCustom(interaction, `Loop On`, "#0E4CB0", "Music set to loop song.", { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
-                    });
+                    queue.setRepeatMode(1);
+                    embedCustom(interaction, `Loop On`, "#0E4CB0", "Music set to loop song.", { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
                 break;
 
                 case "loop":
-                    queue.setRepeatMode(2).then(() => {
-                        embedCustom(interaction, `Loop On`, "#0E4CB0", "Music set to loop queue.", { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
-                    });
+                    queue.setRepeatMode(2);
+                    embedCustom(interaction, `Loop On`, "#0E4CB0", "Music set to loop queue.", { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
                 break;
 
                 case "noLoop":
-                    queue.setRepeatMode(0).then(() => {
-                        embedCustom(interaction, `Loop Off`, "#0E4CB0", "Music has returned to normal playback.", { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
-                    });
+                    queue.setRepeatMode(0);
+                    embedCustom(interaction, `Loop Off`, "#0E4CB0", "Music has returned to normal playback.", { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
                 break;
 
                 case "shuffle":
-                    queue.shuffle().then(() => {
-                        embedCustom(interaction, "Shuffled", "#0000FF", `Queue successfully shuffled.`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
-                    });
+                    queue.shuffle();
+                    embedCustom(interaction, "Shuffled", "#0000FF", `Queue successfully shuffled.`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
                 break;
 
                 case "autoplay":
@@ -108,6 +115,7 @@ async function musicHandle(client, distube) {
         });
     });
 
+    //Handles when a song is added to the queue
     distube.on('addSong', async (queue, song) => {
         var embMsg = new EmbedBuilder()
             .setTitle("Song Added to Queue")
@@ -118,6 +126,7 @@ async function musicHandle(client, distube) {
         queue.textChannel.send({ embeds: [embMsg] });
     });
 
+    //Handles whe the vc is empty for some time
     distube.on('empty', queue => {
         var embMsg = new EmbedBuilder()
             .setTitle(`Empty Voice Channel`)
@@ -127,8 +136,13 @@ async function musicHandle(client, distube) {
         
         queue.textChannel.send({ embeds: [embMsg] });
         queue.voice.leave();
+        if (nowPlayingMessage[queue.id]) {
+            nowPlayingMessage[queue.id].edit({ components: [] });
+            delete nowPlayingMessage[queue.id];
+        }
     });
 
+    //Handles when the queue finishes
     distube.on('finish', queue => {
         var embMsg = new EmbedBuilder()
             .setTitle(`Finished Queue`)
@@ -138,8 +152,13 @@ async function musicHandle(client, distube) {
         
         queue.textChannel.send({ embeds: [embMsg] });
         queue.voice.leave();
+        if (nowPlayingMessage[queue.id]) {
+            nowPlayingMessage[queue.id].edit({ components: [] });
+            delete nowPlayingMessage[queue.id];
+        }
     });
 
+    //Handles when the bot disconnects from a voice channel
     distube.on('disconnect', async (queue) => {
         var embMsg = new EmbedBuilder()
             .setTitle(`Disconnected`)
@@ -148,8 +167,13 @@ async function musicHandle(client, distube) {
             .setTimestamp();
         
         queue.textChannel.send({ embeds: [embMsg] });
+        if (nowPlayingMessage[queue.id]) {
+            nowPlayingMessage[queue.id].edit({ components: [] });
+            delete nowPlayingMessage[queue.id];
+        }
     });
 
+    //Handles when a playlist is added to the queue
     distube.on('addList', (queue, playlist) => {
         var embMsg = new EmbedBuilder()
             .setTitle(`Playlist Added to Queue`)
