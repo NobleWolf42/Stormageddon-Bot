@@ -35,16 +35,19 @@ async function musicHandle(client, distube) {
         if (nowPlayingMessage[queue.id]) {
             nowPlayingMessage[queue.id].edit({ components: [] });    
         }
-
-        const searches = await Genius.songs.search(queue.songs[0].name);
-        var songPic = searches[0];
         
         var embMsg = new EmbedBuilder()
             .setTitle("Now Playing")
             .setColor("#0000FF")
             .setDescription(`[\`${song.name}\`](${song.url}) requested by - ${song.user}\nDuration: ${song.formattedDuration}\nVolume: ${queue.volume}%\nLoop: ${queue.repeatMode ? queue.repeatMode === 2 ? 'All Queue' : 'This Song' : 'Off'}\nAutoplay: ${queue.autoplay ? 'On' : 'Off'}`)
-            .setImage(songPic.image)
             .setTimestamp();
+
+        const searches = await Genius.songs.search(queue.songs[0].name);
+        var songPic = searches[0];
+
+        if (songPic != undefined) {
+            embMsg.setImage(songPic.image);
+        }
 
         var buttons1 = new ActionRowBuilder().addComponents(pause, skip, stop, volumeDown, volumeUp);
         var buttons2 = new ActionRowBuilder().addComponents(repeat, loop, noLoop, shuffle, autoplay);

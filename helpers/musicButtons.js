@@ -16,18 +16,18 @@ const stop = new ButtonBuilder()
 	.setStyle(ButtonStyle.Secondary);
 
 const volumeDown = new ButtonBuilder()
-	.setCustomId('volUp')
+	.setCustomId('volDown')
 	.setLabel('🔉')
 	.setStyle(ButtonStyle.Secondary);
 
 const volumeUp = new ButtonBuilder()
-	.setCustomId('volDown')
+	.setCustomId('volUp')
 	.setLabel('🔊')
 	.setStyle(ButtonStyle.Secondary);
 
 const repeat = new ButtonBuilder()
 	.setCustomId('repeat')
-	.setLabel('🔂')
+	.setLabel('🔁1️⃣')
 	.setStyle(ButtonStyle.Secondary);
 
 const loop = new ButtonBuilder()
@@ -37,7 +37,7 @@ const loop = new ButtonBuilder()
 
 const noLoop = new ButtonBuilder()
 	.setCustomId('noLoop')
-	.setLabel('➡️')
+	.setLabel('🔁🚫')
 	.setStyle(ButtonStyle.Secondary);
 
 const shuffle = new ButtonBuilder()

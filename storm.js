@@ -6,6 +6,7 @@
     const { SpotifyPlugin } = require("@distube/spotify");
     const { SoundCloudPlugin } = require("@distube/soundcloud");
     const { YtDlpPlugin } = require("@distube/yt-dlp");
+    const { YouTubePlugin } = require("@distube/youtube");
     //#endregion
 
     //#region Data Files
@@ -71,6 +72,7 @@ try{
             // Spotify Plugin with optimizations
             new SpotifyPlugin(),
             new SoundCloudPlugin(), // SoundCloud Plugin remains the same
+            new YouTubePlugin(),
             // YouTube DL Plugin with optimizations
             new YtDlpPlugin({
               update: true, // Update youtube-dl automatically
