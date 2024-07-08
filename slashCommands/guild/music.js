@@ -68,6 +68,11 @@ module.exports = {
         )
         .addSubcommand(subcommand =>
             subcommand
+                .setName("skip")
+                .setDescription("Skips to the next song in queue.")
+        )
+        .addSubcommand(subcommand =>
+            subcommand
                 .setName("playnext")
                 .setDescription("Pick the song to play next from the queue or add a new one up next.")
                 .addIntegerOption(option =>
