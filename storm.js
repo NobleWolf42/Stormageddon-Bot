@@ -1,29 +1,37 @@
 //#region Initial Set-Up
+
     //#region Dependencies
     const { Client, GatewayIntentBits, Partials } = require('discord.js');
-    const { DisTube } = require("distube");
+    const { DisTube } = require("distube"); //sodium-native is used by this
     const { SpotifyPlugin } = require("@distube/spotify");
     const { SoundCloudPlugin } = require("@distube/soundcloud");
     const { YtDlpPlugin } = require("@distube/yt-dlp");
     //#endregion
+
     //#region Data Files
     const botConfig = require('./data/botConfig.json');
+    const serverConfig = require('./data/serverConfig.json');
     //#endregion
+
     //#region Helpers
     const { createJSONfiles } = require('./helpers/createFiles.js');
-    const { addToLog } = require("./helpers/errorLog.js")
     //#endregion
+
     //Creates config and other required JSON files if they do not exist
     createJSONfiles();
+
     //#region Internals
     const { addServerConfig, removeServerConfig } = require('./internal/settingsFunctions.js');
     const { autoRoleListener } = require('./internal/autoRole.js');
     const { PMHandling, messageHandling } = require('./internal/messageHandling.js');
     const { serverJoin } = require('./internal/serverJoin.js');
     const { musicHandle, setDiscordClient } = require('./internal/distubeHandling.js');
-const { joinToCreateHandling } = require('./internal/voiceHandling.js');
+    const { joinToCreateHandling } = require('./internal/voiceHandling.js');
+    const { slashCommandHandling, registerGuildSlashCommands, registerGlobalSlashCommands } = require('./internal/slashCommandHandling.js');
     //#endregion
+
 //#endregion
+
 //#region Initialize Discord Bot
 const client = new Client({ 
     partials: [
@@ -58,17 +66,10 @@ try{
     //#region Initialize Distube(music) Functionality
     const distube = new DisTube(client, {
         emitNewSongOnly: false,
-        leaveOnEmpty: true,
-        leaveOnFinish: true,
-        leaveOnStop: true,
         savePreviousSongs: true,
-        searchSongs: 0,
         plugins: [
             // Spotify Plugin with optimizations
-            new SpotifyPlugin({
-              emitEventsAfterFetching: true, // Emit events only after fetching data
-              parallel: true, // Enable parallel fetching for faster processing
-            }),
+            new SpotifyPlugin(),
             new SoundCloudPlugin(), // SoundCloud Plugin remains the same
             // YouTube DL Plugin with optimizations
             new YtDlpPlugin({
@@ -101,12 +102,18 @@ try{
         setDiscordClient(client);
         musicHandle(client, distube);
         joinToCreateHandling(client);
+        slashCommandHandling(client, distube);
+        for (guildId in serverConfig) {
+            registerGuildSlashCommands(guildId);
+        }
+        registerGlobalSlashCommands();
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
     });
 
     //Adds New Servers to Config
     client.on("guildCreate", newGuild => {
         addServerConfig(newGuild.id);
+        registerGuildSlashCommands(newGuild.id);
         console.log(`Joined New Server: ${newGuild.name}#${newGuild.id}`);
     })
 
@@ -116,7 +123,7 @@ try{
         console.log(`Left Server: ${oldGuild.name}#${oldGuild.id}`);
     })
 } catch (err) {
-    addToLog("Fatal Error", "Main Bot", "Unknown", "Unknown", "Unknown", err.message.slice(0, 2000), client);
+    console.log(err);
 }
 
 //Logs Errors

@@ -11,9 +11,9 @@ var serverConfig = updateConfigFile();
 
 //#region Function that generates embed fields
 /**
- * Generates the embed fields and ties the emoji to their respective role from serverCOnfig.json.
+ * Generates the embed fields and ties the emoji to their respective role from serverConfig.json.
  * @param {number} serverID - Server ID for the server the command is run in
- * @returns not sure, probably need to recode it
+ * @returns {map} - returns a map of the emoji-role pairs
  */
 function generateEmbedFields(serverID) {
     return serverConfig[serverID].autoRole.roles.map((r, e) => {
@@ -32,7 +32,7 @@ function generateEmbedFields(serverID) {
  */
 function autoRoleListener(client) {
     serverConfig = updateConfigFile();
-    //#region Redable constants
+    //#region Readable constants
     // This makes the events used a bit more readable
     const events = {
 	    MESSAGE_REACTION_ADD: 'messageReactionAdd',
@@ -85,7 +85,7 @@ function autoRoleListener(client) {
     });
     //#endregion
 
-    //#region This handels unhandeled rejections
+    //#region This handles unhandled rejections
     process.on('unhandledRejection', err => {
         const msg = err.stack.replace(new RegExp(`${__dirname}/`, 'g'), './');
 	    console.error("Unhandled Rejection", msg);

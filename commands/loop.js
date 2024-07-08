@@ -44,7 +44,7 @@ module.exports = {
         } else if (voiceChannel != queue.voiceChannel) {
             return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
         } else if (!mods.includes(loopMode)) {
-            return warnCustom(message, `You must join use one of the following options: ${mods.join(", ")}`, module.name);
+            return warnCustom(message, `You must use one of the following options: ${mods.join(", ")}`, module.name);
         } else {
             if (loopMode == 'song') {
                 queue.setRepeatMode(1);
