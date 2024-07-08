@@ -1,5 +1,7 @@
 //#region Dependencies
 const { EmbedBuilder, ComponentType, ActionRowBuilder } = require("discord.js");
+const GeniusLyrics = require("genius-lyrics");
+const Genius = new GeniusLyrics.Client();
 //#endregion
 
 //#region Helpers
@@ -33,11 +35,15 @@ async function musicHandle(client, distube) {
         if (nowPlayingMessage[queue.id]) {
             nowPlayingMessage[queue.id].edit({ components: [] });    
         }
+
+        const searches = await Genius.songs.search(queue.songs[0].name);
+        var songPic = searches[0];
         
         var embMsg = new EmbedBuilder()
             .setTitle("Now Playing")
             .setColor("#0000FF")
             .setDescription(`[\`${song.name}\`](${song.url}) requested by - ${song.user}\nDuration: ${song.formattedDuration}\nVolume: ${queue.volume}%\nLoop: ${queue.repeatMode ? queue.repeatMode === 2 ? 'All Queue' : 'This Song' : 'Off'}\nAutoplay: ${queue.autoplay ? 'On' : 'Off'}`)
+            .setImage(songPic.image)
             .setTimestamp();
 
         var buttons1 = new ActionRowBuilder().addComponents(pause, skip, stop, volumeDown, volumeUp);
@@ -163,7 +169,7 @@ async function musicHandle(client, distube) {
         var embMsg = new EmbedBuilder()
             .setTitle(`Disconnected`)
             .setColor("#0000FF")
-            .setDescription(`Disconnected from ${queue.voiceChannel}`)
+            .setDescription(`Disconnected from voice.`)
             .setTimestamp();
         
         queue.textChannel.send({ embeds: [embMsg] });
