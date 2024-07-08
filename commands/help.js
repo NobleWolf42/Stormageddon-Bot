@@ -111,6 +111,14 @@ module.exports = {
 //#endregion
 
 //#region Function to create help message
+/**
+ * 
+ * @param {Message} message - Discord.js Message object
+ * @param {String} title - String for the title of the embed
+ * @param {Array} helpMessageCommands - Array of the commands and their descriptions
+ * @param {Array} commandClasses - Array of the different command classes
+ * @param {Boolean} adminTF - Is the user an admin in the server y/n
+ */
 function makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF) {
     var helpMsg = '';
     commandClasses.sort();
