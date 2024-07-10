@@ -2,7 +2,7 @@
 
     //#region Dependencies
     const { Client, GatewayIntentBits, Partials } = require('discord.js');
-    const { DisTube } = require("distube"); //sodium-native is used by this
+    const { DisTube } = require("distube"); //sodium-native is used by this, stop deleting it you fool
     const { SpotifyPlugin } = require("@distube/spotify");
     const { SoundCloudPlugin } = require("@distube/soundcloud");
     const { YtDlpPlugin } = require("@distube/yt-dlp");
@@ -46,7 +46,7 @@ const client = new Client({
         GatewayIntentBits.DirectMessageTyping,
         GatewayIntentBits.DirectMessages,
         GatewayIntentBits.GuildEmojisAndStickers,
-        GatewayIntentBits.GuildIntegrations,
+        GatewayIntentBits.GuildIntegrations, //might not uses this, see if we need it for the future or delete it
         GatewayIntentBits.GuildInvites,
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessagePolls,
@@ -83,7 +83,7 @@ try{
                 timeout: 10000, // Set timeout for requests to avoid long waits
               },
             }),
-          ]
+        ]
     });
     //#endregion
 
