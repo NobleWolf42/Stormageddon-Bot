@@ -454,7 +454,7 @@ async function buildConfigFile(config) {
  */
 function addServerConfig(serverID) {
     if (serverConfig[serverID] == undefined) {
-        serverConfig[serverID] = {"setupNeeded":true,"autoRole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinRole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modMail":{"enable":false,"modList":[]}};
+        serverConfig[serverID] = {"setupNeeded":true,"autoRole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinRole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"Not Set Up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modMail":{"enable":false,"modList":[]},"JTCVC":{"enable":false,"voiceChannel":"Not Set Up"}};
     }
 
     buildConfigFile(serverConfig);

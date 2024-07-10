@@ -9,17 +9,18 @@
     const { YouTubePlugin } = require("@distube/youtube");
     //#endregion
 
-    //#region Data Files
-    const botConfig = require('./data/botConfig.json');
-    const serverConfig = require('./data/serverConfig.json');
-    //#endregion
-
     //#region Helpers
     const { createJSONfiles } = require('./helpers/createFiles.js');
     //#endregion
 
     //Creates config and other required JSON files if they do not exist
     createJSONfiles();
+
+    //#region Data Files
+    const botConfig = require('./data/botConfig.json');
+    const serverConfig = require('./data/serverConfig.json');
+    //#endregion
+
 
     //#region Internals
     const { addServerConfig, removeServerConfig } = require('./internal/settingsFunctions.js');

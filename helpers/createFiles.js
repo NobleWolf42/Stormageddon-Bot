@@ -1,5 +1,5 @@
 //#region Dependencies
-const { existsSync, writeFileSync } = require('fs');
+const { existsSync, writeFileSync, readFileSync } = require('fs');
 //#endregion
 
 //#region Creates missing files on start
@@ -44,6 +44,14 @@ function createJSONfiles() {
 
     if (!existsSync("./data/log.json")) {
         writeFileSync("./data/log.json", JSON.stringify(emptyLog), function (err) {
+            if (err) {
+                console.log(err);
+            }
+        });
+    }
+
+    if (!existsSync("./data/botConfig.json")) {
+        writeFileSync("./data/botConfig.json", JSON.stringify(readFileSync("./data/botConfig.example.json")), function (err) {
             if (err) {
                 console.log(err);
             }
