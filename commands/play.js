@@ -18,17 +18,19 @@ module.exports = {
     aliases: ["p"],
     coolDown: 3,
     class: 'music',
-    usage: 'play SEARCH-TERM/YOUTUBE-LINK/YOUTUBE-PLAYLIST/SPOTIFY-LINK/SPOTIFY-PLAYLIST',
+    usage: 'play ***SEARCH-TERM/YOUTUBE-LINK/YOUTUBE-PLAYLIST/SPOTIFY-LINK/SPOTIFY-PLAYLIST***',
     description: "Plays the selected music in the voice channel you are in.",
     async execute(message, args, client, distube) {
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig[message.guild.id].music.enable) {
             return warnDisabled(message, 'music', module.name);
         }
+
         //Checks to see if the user has DJ access
         if (!djCheck(message)) {
             return errorNoDJ(message, module.name);
         }
+
         //Checks to see if the message was sent in the correct channel
         if (serverConfig[message.guild.id].music.textChannel != message.channel.name) {
             return warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);

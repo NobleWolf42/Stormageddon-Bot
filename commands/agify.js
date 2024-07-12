@@ -14,12 +14,10 @@ module.exports = {
     coolDown: 0,
     class: 'fun',
     usage: 'agify ***INSERT-NAME***',
-    description: "Estimates someone's age based off of their name.",
+    description: "Uses [Agify.io](https://agify.io/) to estimate someone's age based off of their name. (Works in Direct Messages too.)",
     execute(message, args, client, distube) {
         const request = new XMLHttpRequest();
         var userInput = message.content.toLowerCase().split(' ');
-
-        console.log(userInput);
 
         if (userInput[1] == undefined) {
             return warnCustom(message, "No user input detected, are you sure you put a name?", module.name);

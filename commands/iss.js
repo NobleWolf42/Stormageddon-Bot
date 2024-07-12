@@ -14,7 +14,7 @@ module.exports = {
     coolDown: 60,
     class: 'fun',
     usage: 'iss',
-    description: "Displays the names of all the astronauts that are aboard the ISS.",
+    description: "Displays the names of all the astronauts that are in transit to/from, or currently aboard the International Space Station. (Works in Direct Messages too.)",
     execute(message, args, client, distube){
         var request = new XMLHttpRequest()
         request.open('GET', 'http://api.open-notify.org/astros.json', true);

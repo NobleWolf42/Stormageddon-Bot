@@ -8,7 +8,7 @@ module.exports = {
     type: ['Guild'],
     aliases: ["jtc"],
     coolDown: 0,
-    class: 'admin',
+    class: 'misc.',
     usage: 'jointocreate name ***YOUR NAME HERE***',
     description: "Allows you to change the settings for your voice channel.",
     execute(message, args, client, distube) {

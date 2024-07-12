@@ -15,7 +15,7 @@ module.exports = {
     coolDown: 0,
     class: 'admin',
     usage: 'addmod ***MENTION-USERS***',
-    description: "Adds users to the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
+    description: "Adds users to the list of people that get the PM when someone whispers the bot with the modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
     execute(message, args, client, distube) {
         //Gets current config file
         var serverConfig = updateConfigFile();
@@ -49,16 +49,14 @@ module.exports = {
             
                     await buildConfigFile(serverConfig);
 
-                    embedCustom(message, "Mods Added", "#5D3FD3", `Mods have been successfully added!`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+                    embedCustom(message, "Mods Added", "#5D3FD3", `Mod ${user.tag} has been successfully added!`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
             
                     serverConfig = updateConfigFile();
                 });
-            }
-            else {
+            } else {
                 return errorCustom(message, "Server is not set up with the bot yet!", module.name, client);
             }
-        }
-        else {
+        } else {
             return errorNoServerAdmin(message, module.name);
         }
     }

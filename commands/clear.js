@@ -6,7 +6,7 @@ const { errorCustom, embedCustom, warnCustom } = require('../helpers/embedMessag
 module.exports = {
     name: "clear",
     type: ['Guild'],
-    aliases: ['clr', 'delete', 'remove', 'clean'],
+    aliases: ['clr', 'delete', 'clean'],
     coolDown: 0,
     class: 'admin',
     usage: 'clear ***NUMBER(1-99)***',
@@ -14,7 +14,7 @@ module.exports = {
     execute(message, args, client, distube) {
         var amount = parseInt(args[0]);
 
-        if(isNaN(amount)) {
+        if (isNaN(amount)) {
             return warnCustom(message, `That is not a valid number for the \`${message.prefix}clear\` command!`, module.name);
         } else if (amount < 1 || amount > 100) {
             return warnCustom(message, `${args[0]} is an invalid number! __**Number must be between 1 and 100!**__`, module.name);

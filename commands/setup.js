@@ -24,12 +24,10 @@ module.exports = {
         if (serverConfig[message.guild.id].setupNeeded) {
             if (message.member.permissions.has('ADMINISTRATOR')) {
                 await setup(message);
-            }
-            else {
+            } else {
                 errorNoServerAdmin(message, module.name);
             };
-        }
-        else {
+        } else {
             errorCustom(message, "Server Setup has already been completed.", module.name, client);
         };
         return;

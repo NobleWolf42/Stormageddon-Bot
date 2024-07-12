@@ -25,10 +25,12 @@ module.exports = {
         if (!serverConfig[message.guild.id].music.enable) {
             return warnDisabled(message, 'music', module.name);
         }
+
         //Checks to see if the user has DJ access
         if (!djCheck(message)) {
             return errorNoDJ(message, module.name);
         }
+
         //Checks to see if the message was sent in the correct channel
         if (serverConfig[message.guild.id].music.textChannel != message.channel.name) {
             return warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
@@ -50,7 +52,7 @@ module.exports = {
             queue.skip().then(s => {
                 embedCustom(message, "Removed", "#0000FF", `Removed [\`${son.name}\`](${song.url}) from the queue.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
             });
-        }else {
+        } else {
             var removeMe = queue.songs.splice(args[0] - 1, 1)[0];
 
             if (!removeMe) {

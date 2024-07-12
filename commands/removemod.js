@@ -51,12 +51,10 @@ module.exports = {
             
                     serverConfig = updateConfigFile();
                 });
-            }
-            else {
+            } else {
                 return errorCustom(message, "Server is not set up with the bot yet!", module.name), client;
             }
-        }
-        else {
+        } else {
             return errorNoServerAdmin(message, module.name);
         }
     }

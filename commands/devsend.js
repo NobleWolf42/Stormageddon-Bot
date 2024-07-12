@@ -17,9 +17,9 @@ module.exports = {
     type: ['DM'],
     aliases: [],
     coolDown: 0,
-    class: 'devonly',
+    class: 'developer',
     usage: '!devsend ***USER-ID***, ***MESSAGE***',
-    description: "Developer-only command for sending messages as the bot.",
+    description: "Developer-only command for sending messages as the bot. (Only works in Direct Message.)",
     execute(message, args, client, distube) {
         var argsString = args.join(' ');
         var arguments = argsString.split(', ');
@@ -38,8 +38,7 @@ module.exports = {
             client.users.send(user, { embeds: [embMsg] });
 
             return embedCustom(message, 'Message Sent.', '#0B6E29', `**Message:** \`${content}\` \n**Sent To:** \`${client.users.cache.get(user).tag}\``, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
-        }
-        else {
+        } else {
             addToLog("Alert", module.name, message.author.tag, "Direct Message", "Direct Message", "Attempted to use dev only command!", client);
             return errorCustom(message, 'You do not have permission to use this command!', module.name, client);
         }

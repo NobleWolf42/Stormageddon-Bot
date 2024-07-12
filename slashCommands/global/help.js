@@ -35,13 +35,13 @@ module.exports = {
 
         if (adminTF) {
             commands.forEach((cmd) => {
-                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly' && cmd != undefined) {
+                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Developer' && cmd != undefined) {
                     commandClasses.push(capitalize(cmd.class))
                 }
             });
         } else {
             commands.forEach((cmd) => {
-                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly' && capitalize(cmd.class) != 'Admin' && cmd != undefined) {
+                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Developer' && capitalize(cmd.class) != 'Admin' && cmd != undefined) {
                     commandClasses.push(capitalize(cmd.class))
                 }
             });

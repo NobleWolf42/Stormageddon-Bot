@@ -13,7 +13,7 @@ module.exports = {
     aliases: [""],
     coolDown: 0,
     class: 'admin',
-    usage: 'set autorole/joinrole/general/music/modmail/jointocreatevc',
+    usage: 'set autorole/general/joinrole/jointocreatevc/modmail/music',
     description: "Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.",
     execute(message, args, client, distube) {
         if (message.member.permissions.has('ADMINISTRATOR')) {
@@ -42,12 +42,11 @@ module.exports = {
                     setJoinToCreateVC(message);
                 break;
 
-                deafult:
+                default:
                     errorCustom(message, "Not a valid settings category!", module.name, client);
                 break;
             }
-        }
-        else {
+        } else {
             errorNoServerAdmin(message, module.name);
         };
         return;

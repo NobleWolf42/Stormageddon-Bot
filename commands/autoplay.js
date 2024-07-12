@@ -19,16 +19,18 @@ module.exports = {
     coolDown: 3,
     class: 'music',
     usage: 'autoplay',
-    description: "Toggles autoplay on and off, when on bot will automatically pick a new song when the queue is done.",
+    description: "Toggles wether or not the bot will automatically pick a new song when the queue is done.",
     async execute(message, args, client, distube) {
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig[message.guild.id].music.enable) {
             return warnDisabled(message, 'music', module.name);
         }
+
         //Checks to see if the user has DJ access
         if (!djCheck(message)) {
             return errorNoDJ(message, module.name);
         }
+
         //Checks to see if the message was sent in the correct channel
         if (serverConfig[message.guild.id].music.textChannel != message.channel.name) {
             return warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
@@ -45,7 +47,6 @@ module.exports = {
                 return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
             }
         }
-        
         
         var autoPlay = queue.toggleAutoplay()
         embedCustom(message, "Autoplay Toggled", "#0000FF", `Autoplay is now ${autoPlay ? "On" : "Off"}.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);

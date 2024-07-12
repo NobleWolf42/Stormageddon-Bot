@@ -11,21 +11,19 @@ module.exports = {
     coolDown: 0,
     class: 'admin',
     usage: 'say ***MESSAGE-CONTENT***',
-    description: "Sends message as bot.",
+    description: "Sends a message as the bot.",
     execute(message, args, client, distube) {
         if (adminCheck(message)) {
             var argsString = args.join(' ');
                 
             if (argsString != '') {
                 message.channel.send(argsString);
-            }
-            else {
+            } else {
                 return errorCustom(message, "Cannot send an empty message!", module.name, client);
             }
             message.delete();
             message.deleted = true;
-        }
-        else {
+        } else {
             return errorNoAdmin(message, module.name);
         }
     }
