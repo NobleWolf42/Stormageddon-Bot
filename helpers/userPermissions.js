@@ -78,13 +78,15 @@ function adminCheck(message) {
         userRolesArray = message.member._roles;
         serverRolesArray = message.guild.roles;
         serverID = message.guild.id;
-    }
-    else {
+    } else {
         return false;
     }
+
     serverConfig = updateConfigFile();
+
     //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverID); 
+
     //Checks to see if any of the user role ids match any of the admin role ids
     for (key in userRolesArray) {
         
@@ -110,23 +112,22 @@ function modCheck(message) {
     var serverRolesArray = [];
     var serverID = '';
     
-    if (message.author.member != null) {
+    if (message.member != null) {
         userRolesArray = message.member._roles;
         serverRolesArray = message.guild.roles;
         serverID = message.guild.id;
-    }
-    else {
+    } else {
         return false;
     }
 
-
     serverConfig = updateConfigFile();
+
     //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverID);
     
     //Checks to see if user role ids match any of the mod role ids
     for (key in userRolesArray) {
-        
+
         for (a in modRoleIDs) {
 
             if(userRolesArray[key] == modRoleIDs [a]) {
@@ -155,8 +156,7 @@ function djCheck(message) {
         userRolesArray = message.member._roles;
         serverRolesArray = message.guild.roles;
         serverID = message.guild.id;
-    }
-    else {
+    } else {
         return false;
     }
     
@@ -173,8 +173,7 @@ function djCheck(message) {
                 }
             }
         }
-    }
-    else {
+    } else {
         return true;
     }
     

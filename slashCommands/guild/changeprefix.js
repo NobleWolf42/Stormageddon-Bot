@@ -1,5 +1,5 @@
 //#region Dependencies
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 const { readFileSync, writeFileSync} = require('fs');
 //#endregion
 
@@ -25,7 +25,8 @@ module.exports = {
                 .setName("symbol")
                 .setDescription("Use one of the following symbols: ~!$%^&*()_+-=[];',.{}|:\"<>?")
                 .setRequired(true)
-        ),
+        )
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     execute(client, interaction, distube) {
         var serverID = interaction.guild.id;
 

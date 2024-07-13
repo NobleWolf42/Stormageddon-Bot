@@ -30,6 +30,25 @@
   -  Media Controls via Buttons  
     ![buttons](https://i.imgur.com/T6BV1zH.png)
 
+- Slash Commands
+
+  - The current slash commands are:
+
+    - Add/Remove Mod
+    - Agify
+    - BugReport
+    - Change Prefix
+    - Clear
+    - Destiny 2
+    - Help
+    - Info
+    - ISS
+    - Join To Create
+    - ModMail
+    - Music
+    - Quote
+    - Say
+
 - And Much More
 
   - There are many more commands that can be found [below](#-commands) in the 
