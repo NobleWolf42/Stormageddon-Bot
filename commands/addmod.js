@@ -19,7 +19,7 @@ module.exports = {
     execute(message, args, client, distube) {
         //Gets current config file
         var serverConfig = updateConfigFile();
-        if (message.member.permissions.has('ADMINISTRATOR')) {
+        if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
             if ((message.channel.guild.id in serverConfig)) {
                 if (message.mentions.members.size == 0) {
                     return warnCustom(message, "No user input detected, Did you make sure to @ them?", module.name);

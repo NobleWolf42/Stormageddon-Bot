@@ -151,7 +151,7 @@ function messageHandling(client, distube) {
                 tryCommand(client, message, command, args, distube);
                 return
             } else if (serverConfig[serverID].setupNeeded) {
-                return warnCustom(message, `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in and Admin Only chat.`, command.name);
+                return warnCustom(message, `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in an Admin Only chat.`, command.name);
             }
             //#endregion
 

@@ -17,7 +17,7 @@ module.exports = {
     usage: 'removemod ***MENTION-USERS***',
     description: "Removes users from the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
     execute(message, args, client, distube) {
-        if (message.member.permissions.has('ADMINISTRATOR')) {
+        if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
             if ((message.channel.guild.id in serverConfig)) {
                 if (message.mentions.members.size == 0) {
                     return warnCustom(message, "No user input detected, Did you make sure to @ them?", module.name);

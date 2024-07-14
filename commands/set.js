@@ -16,7 +16,7 @@ module.exports = {
     usage: 'set autorole/general/joinrole/jointocreatevc/modmail/music',
     description: "Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.",
     execute(message, args, client, distube) {
-        if (message.member.permissions.has('ADMINISTRATOR')) {
+        if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
             switch (args[0]) {
                 case "autorole":
                     setAutoRole(message);

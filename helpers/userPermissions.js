@@ -85,7 +85,7 @@ function adminCheck(message) {
     serverConfig = updateConfigFile();
 
     //Checks to see if user is server admin
-    if (message.member.permissions.has('ADMINISTRATOR')) {
+    if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
         return true;
     }
 
