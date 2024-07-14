@@ -1,5 +1,5 @@
 //#region Dependencies
-const { existsSync, writeFileSync, readFileSync } = require('fs');
+const { existsSync, writeFileSync } = require('fs');
 //#endregion
 
 //#region Creates missing files on start
@@ -17,6 +17,41 @@ function createJSONfiles() {
             "Code": "None"
         }]
     };
+
+    //#region botConfigExample
+    var botConfigExample = {
+        "auth": {
+            "token": "YOUR BOT TOKEN",
+            "clientSecret": "YOUR CLIENT SECRET",
+            "youtubeApiKey": "YOUR YOUTUBE API KEY",
+            "soundCloudApiKey": "YOUR SOUND CLOUD API KEY",
+            "imgurApiKey" : "YOUR IMGUR API KEY",
+            "d2ApiKey": "YOUR DESTINY 2 API KEY",
+            "spotifyToken": "YOUR SPOTIFY TOKEN",
+            "spotifySecret": "YOUR SPOTIFY SECRET"
+        },
+        "oauth": {
+            "privateKey": "LOCATION OF PRIVATE HTTPS KEY",
+            "publicKey": "LOCATION OF PUBLIC HTTPS KEY",
+            "port": "PORT YOU WANT THE OAUTH SERVER TO USE"
+        },
+        "general": {
+            "clientID": "YOUR CLIENT ID",
+            "redirectURI": "YOUR REDIRECT URI",
+            "registerLink": "YOUR REGISTER URL"
+    
+        },
+        "imgur": {
+            "clientID" : "YOUR IMGUR CLIENT ID",
+            "apiCall" : "IMGUR API CALL"
+        },
+        "music": {
+            "maxPlaylistSize": 0,
+            "pruning": false
+        },
+        "devIDs": ["YOUR DISCORD IDS 1", "YOUR DISCORD IDS 2", "YOUR DISCORD IDS 3"]
+    }
+    //#endregion
 
     if (!existsSync("./data/botPrefix.json")) {
         writeFileSync("./data/botPrefix.json", JSON.stringify(emptyFile), function (err) {
@@ -51,7 +86,7 @@ function createJSONfiles() {
     }
 
     if (!existsSync("./data/botConfig.json")) {
-        writeFileSync("./data/botConfig.json", JSON.stringify(readFileSync("./data/botConfig.example.json")), function (err) {
+        writeFileSync("./data/botConfig.json", JSON.stringify(botConfigExample), function (err) {
             if (err) {
                 console.log(err);
             }
