@@ -8,7 +8,7 @@ const { addToLog } = require('./errorLog.js');
 
 //#region Function that takes several inputs and creates an embedded message and sends it in the channel that is attached to the Message Object
 /**
- * This function takes several inputs and creates an embed message and then sends it in a server.
+ * This function takes several inputs and creates a custom embed message and then sends it in a server.
  * @param {Message} message - A Discord.js Message Object 
  * @param {string} title - String for the Title/Header of the message
  * @param {string} color - String Hex Code for the color of the border 
@@ -124,7 +124,7 @@ function warnCustom(message, text, commandName) {
 
 //#region Function that takes several inputs and creates an embedded message for a lack of bot admin privileges
 /**
- * This function takes several inputs and creates an embed message for an Error stating a lack of bot admin privileges.
+ * This function takes several inputs and creates an embed message for an error stating a lack of bot admin privileges.
  * @param {Message} message - A Discord.js Message Object
  * @param {string} commandName - String of the name of the command
  */
@@ -148,9 +148,9 @@ function errorNoAdmin(message, commandName) {
 }
 //#endregion
 
-//#region Function that takes several inputs and creates an embedded message for a lack of mod privileges
+//#region Function that takes several inputs and creates an embedded message for a lack of bot mod privileges
 /**
- * This function takes several inputs and creates an embed message for an Error stating a lack of mod privileges.
+ * This function takes several inputs and creates an embed message for an error stating a lack of bot mod privileges.
  * @param {Message} message - A Discord.js Message Object
  * @param {string} commandName - String of the name of the command
  */
@@ -176,7 +176,7 @@ function errorNoMod(message, commandName) {
 
 //#region Function that takes several inputs and creates an embedded message for a lack of DJ privileges
 /**
- * This function takes several inputs and creates an embed message for an Error stating a lack of DJ privileges.
+ * This function takes several inputs and creates an embed message for an error stating a lack of DJ privileges.
  * @param {Message} message - A Discord.js Message Object
  * @param {string} commandName - String of the name of the command
  */
@@ -254,9 +254,9 @@ async function errorCustom(message, text, commandName, client) {
 }
 //#endregion
 
-//#region Function that takes several inputs and creates an embedded message for a wrong channel error
+//#region Function that takes several inputs and creates an embedded message for a wrong channel warning
 /**
- * This function takes several inputs and creates an embed message for a custom error.
+ * This function takes several inputs and creates an embed message for a wrong channel warning.
  * @param {Message} message - A Discord.js Message Object
  * @param {string} correctChannel - String for the correct channel to send the command in
  * @param {string} commandName - String of the name of the command
@@ -281,9 +281,9 @@ function warnWrongChannel(message, correctChannel, commandName) {
 }
 //#endregion
 
-//#region Function that takes several inputs and creates an embedded message for a disabled command error
+//#region Function that takes several inputs and creates an embedded message for a disabled command warning
 /**
- * This function takes several inputs and creates an embed message for a custom error.
+ * This function takes several inputs and creates an embed message for a disabled command warning.
  * @param {Message} message - A Discord.js Message Object
  * @param {string} feature - String for the name of the feature
  * @param {string} commandName - String of the name of the command

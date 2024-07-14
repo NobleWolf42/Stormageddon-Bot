@@ -3,7 +3,7 @@ const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js
 //#endregion
 
 //#region Internals
-const { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC } = require("../internal/settingsFunctions.js");
+const { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame } = require("../internal/settingsFunctions.js");
 //#endregion
 
 //#region This exports the set command with the information about it
@@ -40,6 +40,10 @@ module.exports = {
 
                 case "jointocreatevc":
                     setJoinToCreateVC(message);
+                break;
+
+                case "blame":
+                    setBlame(message);
                 break;
 
                 default:

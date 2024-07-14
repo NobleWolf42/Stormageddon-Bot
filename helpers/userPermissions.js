@@ -84,14 +84,17 @@ function adminCheck(message) {
 
     serverConfig = updateConfigFile();
 
+    //Checks to see if user is server admin
+    if (message.member.permissions.has('ADMINISTRATOR')) {
+        return true;
+    }
+
     //Calls a function that updates the server role information
-    serverRoleUpdate(serverRolesArray, serverID); 
+    serverRoleUpdate(serverRolesArray, serverID);
 
     //Checks to see if any of the user role ids match any of the admin role ids
     for (key in userRolesArray) {
-        
         for (a in adminRoleIDs) {
-            
             if(userRolesArray[key] == adminRoleIDs[a]) {
                 return true;
             }

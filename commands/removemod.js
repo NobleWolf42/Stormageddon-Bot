@@ -35,7 +35,9 @@ module.exports = {
                     });
 
                     if (userFound) {
-                        array = array.filter(function(value){ return value != user.id;});
+                        array = array.filter(function (value) {
+                            return value != user.id;
+                        });
                     } else {
                         return warnCustom(message, `User ${user.tag} is not a Mod!`, module.name);
                     }

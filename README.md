@@ -36,6 +36,7 @@
 
     - Add/Remove Mod
     - Agify
+    - Blame
     - BugReport
     - Change Prefix
     - Clear
@@ -136,7 +137,7 @@ After installation and configuration you can use `npm start` or `node storm.js` 
     - `!removemod ***MENTION-USERS*** i.e. (@NobleWolf42)`
         - Removes users from the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.
 
-    - `say ***MESSAGE-CONTENT*** i.e (Hello World!)`
+    - `!say ***MESSAGE-CONTENT*** i.e (Hello World!)`
         - Sends a message as the bot.
 
     - `!set autorole/general/joinrole/jointocreatevc/modmail/music`
@@ -155,16 +156,19 @@ After installation and configuration you can use `npm start` or `node storm.js` 
 
 - DM Only Commands
 
-    - `bugreport ***MESSAGE***  i.e (It Brokey 😿)`
+    - `!bugreport ***MESSAGE***  i.e (It Brokey 😿)`
         - Whisper via Stormageddon to report a bug to the developers of Stormageddon.
 
-    - `modmail, ***SERVER-NAME***, ***MESSAGE***  i.e (A Server Name, Hello World!)`
+    - `!modmail, ***SERVER-NAME***, ***MESSAGE***  i.e (A Server Name, Hello World!)`
         - Whisper via Stormageddon to all moderators for the specified server.
 
 - Fun Commands
 
     - `!agify ***INSERT-NAME*** i.e. (Steve)`
         - Uses [Agify.io](https://agify.io/) to estimate someone's age based off of their name. (Works in Direct Messages too.)
+
+    - `!blame ""/add/remove/addperm/removeperm/list ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE*** i.e. (!blame or !blame list or !blame add NobleWolf42)`
+        - Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.
 
     - `!iss`
         - Displays the names of all the astronauts that are in transit to/from, or currently aboard the International Space Station. (Works in Direct Messages too.)
@@ -186,52 +190,51 @@ After installation and configuration you can use `npm start` or `node storm.js` 
         - Displays information about the bot, it's creators, and where you can go if you would like to contribute to it. (Works in Direct Messages too.)
 
 - Miscellaneous Commands
-    - `jointocreate name ***YOUR NAME HERE*** i.e. (My Channel 😺)`
+    - `!jointocreate name ***YOUR NAME HERE*** i.e. (My Channel 😺)`
         - Allows you to change the name of your voice channel (only if you created it).
 
 - Music Commands
-    -  `autoplay`
+    -  `!autoplay`
         - Toggles wether or not the bot will automatically pick a new song when the queue is done.
 
-    - `loop ***SONG/QUEUE/OFF*** i.e (Song)`
+    - `!loop ***SONG/QUEUE/OFF*** i.e (Song)`
       - Toggle music loop for song/queue/off.
 
-    - `lyrics`
+    - `!lyrics`
         - Gets the lyrics for the currently playing song.
 
-    - `pause`
+    - `!pause`
         - Pauses the currently playing music.
         
-    - `play ***SEARCH-TERM/YOUTUBE-LINK-or-PLAYLIST/SPOTIFY-LINK-or-PLAYLIST/SOUNDCLOUD-LINK*** i.e. (Crossfire By Stephan)`
+    - `!play ***SEARCH-TERM/YOUTUBE-LINK-or-PLAYLIST/SPOTIFY-LINK-or-PLAYLIST/SOUNDCLOUD-LINK*** i.e. (Crossfire By Stephan)`
         - Plays the selected music in the voice channel you are in.
         
-    - `playnext ***QUEUE-NUMBER/SEARCH-TERM/YOUTUBE-LINK/SPOTIFY-LINK/SOUNDCLOUD-LINK*** i.e. (5)`
+    - `!playnext ***QUEUE-NUMBER/SEARCH-TERM/YOUTUBE-LINK/SPOTIFY-LINK/SOUNDCLOUD-LINK*** i.e. (5)`
         - Plays the selected song next. (NOTE: Bot Moderator Command ONLY)
         
-    - `remove ***QUEUE-NUMBER***`
+    - `!remove ***QUEUE-NUMBER***`
         - Removes selected song from the queue.
 
-    -  `resume`
+    - `!resume`
         -  Resumes the currently paused music.
   
-    -  `showqueue`
+    - `!showqueue`
         - Shows the music queue.
 
     - `shuffle`
         - Shuffles the currently queued music.
 
-     - `skip`
+    - `!skip`
         - Skips the currently playing song.
 
-    - `skipto ***QUEUE-NUMBER***`
+    - `!skipto ***QUEUE-NUMBER***`
         - Skips to the selected queue number.
 
-    - `stop`
+    - `!stop`
          - Stops the playing music.
 
-    - `volume ***NUMBER(1-100)***` 
+    - `!volume ***NUMBER(1-100)***` 
         - Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered.
-    }
 
 ## 🤝 Contributing
 
