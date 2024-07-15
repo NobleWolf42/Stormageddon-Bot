@@ -432,6 +432,7 @@ async function setBlame(message) {
     blame = {};
     blame.enable = enable;
     blame.cursing = cursing;
+    blame.offset = 0;
     blame.permList = [];
     blame.rotateList = [];
 
@@ -535,6 +536,30 @@ async function addRemoveBlame(serverID, addTF, permTF, person) {
 }
 //#endregion
 
+//#region Function that changes offsets for blame lists in settings
+/**
+ * This function takes several inputs and adds/removes someone from the blame command.
+ * @param {String} serverID - The id for the server this is run in
+ * @param {Boolean} addTF - True makes it add the person, False removes them
+ * @param {Boolean} permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
+ * @param {String} person - Name of the person
+ * @returns {JSON} Server Config JSON
+ */
+async function changeBlameOffset(serverID, offset) {
+    //Pulls the current blame lists
+    var blame = serverConfig[serverID].blame;
+    
+    blame.offset = offset;
+
+    serverConfig[serverID].blame = blame;
+
+    await buildConfigFile(serverConfig);
+
+    config = await updateConfigFile();
+    return config;
+}
+//#endregion
+
 //#region Function that runs all setup commands
 /**
  * This function runs the setup for all features.
@@ -585,7 +610,7 @@ async function buildConfigFile(config) {
  */
 function addServerConfig(serverID) {
     if (serverConfig[serverID] == undefined) {
-        serverConfig[serverID] = {"setupNeeded":true,"autoRole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinRole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"Not Set Up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modMail":{"enable":false,"modList":[]},"JTCVC":{"enable":false,"voiceChannel":"Not Set Up"},"blame":{"enable":false,"cursing":false,"permList":[],"rotateList":[]}};
+        serverConfig[serverID] = {"setupNeeded":true,"autoRole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinRole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"Not Set Up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modMail":{"enable":false,"modList":[]},"JTCVC":{"enable":false,"voiceChannel":"Not Set Up"},"blame":{"enable":false,"cursing":false,"offset":0,"permList":[],"rotateList":[]}};
     }
 
     buildConfigFile(serverConfig);
@@ -607,5 +632,5 @@ function removeServerConfig(serverID) {
 //#endregion
 
 //#region exports
-module.exports = { setAutoRole, setJoinRole, setMusic, setGeneral, setup, setModMail, buildConfigFile, removeServerConfig, addServerConfig, setJoinToCreateVC, setBlame, addRemoveBlame };
+module.exports = { setAutoRole, setJoinRole, setMusic, setGeneral, setup, setModMail, buildConfigFile, removeServerConfig, addServerConfig, setJoinToCreateVC, setBlame, addRemoveBlame, changeBlameOffset };
 //#endregion

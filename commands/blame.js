@@ -8,7 +8,7 @@ const { adminCheck } = require('../helpers/userPermissions.js');
 //#endregion
 
 //#region Internals
-const { addRemoveBlame } = require("../internal/settingsFunctions.js");
+const { addRemoveBlame, changeBlameOffset } = require("../internal/settingsFunctions.js");
 //#endregion
 
 
@@ -150,12 +150,36 @@ module.exports = {
                     embedCustom(message, "Blame List:", "#B54A65", `Rotating Blame List: ${rBlameString}\nPermanent Blame List: ${pBlameString}`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null)
                 break;
 
+                //Fixes the person whose week it is
+                case "fix":
+                    var currentVal = serverConfig[serverID].blame.rotateList[Math.floor((Date.now() - 410400000 - serverConfig[serverID].blame.offset) / 604800000) - (Math.floor(Math.floor((Date.now() - 410400000 - serverConfig[serverID].blame.offset) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length)];
+
+                    var wantedVal = args[1] - 1;
+
+                    if (currentVal != wantedVal) {
+                        var offset = (wantedVal - currentVal) * 604800000;
+
+                        serverConfig = await changeBlameOffset(serverID, offset).catch((err) => {
+                            errorCustom(message, err.message, "blame" + oldSubCommand, client);
+
+                            erroredOut = true;
+                            return serverConfig;
+                        });
+    
+                        if (!erroredOut) {
+                            embedCustom(message, "Success", "#00FF00", `Successfully changed ${serverConfig[serverID].blame.rotateList[wantedVal]} to the current one to blame.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null)
+                        }
+                    } else {
+                        warnCustom(message, "It is already that user's week!", module.name);
+                    }
+                break;
+
                 //Blames a person
                 default:
                     var blameList = serverConfig[serverID].blame.permList;
                     var blameString = "";
                     if (serverConfig[serverID].blame.rotateList.length > 0) {
-                        blameList.push(serverConfig[serverID].blame.rotateList[Math.floor((Date.now()- 410400) / 604800000) - (Math.floor(Math.floor((Date.now()- 410400) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length)]);
+                        blameList.push(serverConfig[serverID].blame.rotateList[Math.floor((Date.now() - 410400 - serverConfig[serverID].blame.offset) / 604800000) - (Math.floor(Math.floor((Date.now() - 410400 - serverConfig[serverID].blame.offset) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length)]);
                     } else if (blameList.length < 1) {
                         return warnCustom(message, "The blame list is empty!", module.name);
                     }
