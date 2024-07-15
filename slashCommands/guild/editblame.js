@@ -208,7 +208,7 @@ module.exports = {
 
                 //Fixes the person whose week it is
                 case "fix":
-                    var currentVal = Math.floor((Date.now() - 410400000) / 604800000) - (Math.floor(Math.floor((Date.now() - 410400000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length) - serverConfig[serverID].blame.offset;
+                    var currentVal = Math.floor((Date.now() - 493200000) / 604800000) - (Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length) - serverConfig[serverID].blame.offset;
 
                     var wantedVal = interaction.options.getInteger("person") - 1;
 

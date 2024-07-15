@@ -20,7 +20,12 @@ module.exports = {
 
         if (serverConfig[serverID].blame.enable) {
             //Blames a person
-            var blameList = serverConfig[serverID].blame.permList;
+            var blameList = [];
+
+            for (key in serverConfig[serverID].blame.permList) {
+                blameList.push(serverConfig[serverID].blame.permList[key]);
+            }
+
             var blameString = "";
             if (serverConfig[serverID].blame.rotateList.length > 0) {
                 blameList.push(serverConfig[serverID].blame.rotateList[Math.floor((Date.now() - 493200000) / 604800000) - (Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length) - serverConfig[serverID].blame.offset]);

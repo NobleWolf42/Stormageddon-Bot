@@ -152,7 +152,7 @@ module.exports = {
 
                 //Fixes the person whose week it is
                 case "fix":
-                    var currentVal = Math.floor((Date.now() - 410400000) / 604800000) - (Math.floor(Math.floor((Date.now() - 410400000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length) - serverConfig[serverID].blame.offset;
+                    var currentVal = Math.floor((Date.now() - 493200000) / 604800000) - (Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length) - serverConfig[serverID].blame.offset;
 
                     if (args[1] == undefined || args[1] < 1 || args[1] > serverConfig[serverID].blame.rotateList) {
                         return warnCustom(message, `You must put a number between 1 and ${serverConfig[serverID].blame.rotateList.length}`, module.name)
@@ -162,10 +162,6 @@ module.exports = {
 
                     if (currentVal != wantedVal) {
                         var offset =  currentVal - wantedVal;
-
-                        console.log(currentVal);
-                        console.log(wantedVal);
-                        console.log(offset);
 
                         serverConfig = await changeBlameOffset(serverID, offset).catch((err) => {
                             errorCustom(message, err.message, "blame" + oldSubCommand, client);
@@ -184,13 +180,20 @@ module.exports = {
 
                 //Blames a person
                 default:
-                    var blameList = serverConfig[serverID].blame.permList;
+                    var blameList = [];
+
+                    for (key in serverConfig[serverID].blame.permList) {
+                        blameList.push(serverConfig[serverID].blame.permList[key]);
+                    }
+
                     var blameString = "";
                     if (serverConfig[serverID].blame.rotateList.length > 0) {
                         blameList.push(serverConfig[serverID].blame.rotateList[Math.floor((Date.now() - 493200000) / 604800000) - (Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length) - serverConfig[serverID].blame.offset]);
                     } else if (blameList.length < 1) {
                         return warnCustom(message, "The blame list is empty!", module.name);
                     }
+
+                    console.log(blameList);
 
                     if (blameList.length == 1) {
                         if (serverConfig[serverID].blame.cursing) {
@@ -199,6 +202,7 @@ module.exports = {
                             embedCustom(message, "Blame", "#B54A65", `It's ${blameList[0]}'s fault screw that guy in particular!`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
                         }
                     } else {
+
                         for (key in blameList) {
                             if (blameList.length > 2) {
                                 if (key == blameList.length - 1) {
@@ -214,14 +218,13 @@ module.exports = {
                                 }
                             }
                         }
+
                         if (serverConfig[serverID].blame.cursing) {
                             embedCustom(message, "Blame", "#B54A65", `It's ${blameString} fault fuck those guys in particular!`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
                         } else {
                             embedCustom(message, "Blame", "#B54A65", `It's ${blameString} fault screw those guys in particular!`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
                         }
                     }
-
-                    
                 break;
             }
         } else {
