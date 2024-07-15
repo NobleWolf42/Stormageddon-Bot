@@ -152,7 +152,7 @@ module.exports = {
 
                 //Fixes the person whose week it is
                 case "fix":
-                    var currentVal = Math.floor((Date.now() - 493200000) / 604800000) - (Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length) - serverConfig[serverID].blame.offset;
+                    var currentVal = Math.floor((Date.now() - 493200000) / 604800000) - (Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length);
 
                     if (args[1] == undefined || args[1] < 1 || args[1] > serverConfig[serverID].blame.rotateList) {
                         return warnCustom(message, `You must put a number between 1 and ${serverConfig[serverID].blame.rotateList.length}`, module.name)
