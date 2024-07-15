@@ -70,6 +70,17 @@ module.exports = {
                 .setName("list")
                 .setDescription("Shows the current blame lists.")
         )
+        .addSubcommand(subcommand =>
+            subcommand
+                .setName("fix")
+                .setDescription("Fixes the current weeks blame to the specified person.")
+                .addIntegerOption(option =>
+                    option
+                        .setName("person")
+                        .setDescription("The person's position in the list.")
+                        .setRequired(true)
+                )
+        )
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
         async execute(client, interaction, distube) {
         var serverID = interaction.guildId;
@@ -195,7 +206,38 @@ module.exports = {
                     embedCustom(interaction, "Blame List:", "#B54A65", `Rotating Blame List: ${rBlameString}\nPermanent Blame List: ${pBlameString}`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null)
                 break;
 
-                //Blames a person
+                //Fixes the person whose week it is
+                case "fix":
+                    var currentVal = Math.floor((Date.now() - 410400000) / 604800000) - (Math.floor(Math.floor((Date.now() - 410400000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length) - serverConfig[serverID].blame.offset;
+
+                    var wantedVal = interaction.options.getInteger("person") - 1;
+
+                    if (wantedVal == undefined || wantedVal < 1 || wantedVal > serverConfig[serverID].blame.rotateList) {
+                        return warnCustom(interaction, `You must put a number between 1 and ${serverConfig[serverID].blame.rotateList.length}`, module.name, client)
+                    }
+
+                    if (currentVal != wantedVal) {
+                        var offset =  currentVal - wantedVal;
+
+                        console.log(currentVal);
+                        console.log(wantedVal);
+                        console.log(offset);
+
+                        serverConfig = await changeBlameOffset(serverID, offset).catch((err) => {
+                            errorCustom(interaction, err.message, "blame" + oldSubCommand, client);
+
+                            erroredOut = true;
+                            return serverConfig;
+                        });
+    
+                        if (!erroredOut) {
+                            embedCustom(interaction, "Success", "#00FF00", `Successfully changed ${serverConfig[serverID].blame.rotateList[wantedVal]} to the current one to blame.`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null)
+                        }
+                    } else {
+                        warnCustom(interaction, "It is already that user's week!", module.name, client);
+                    }
+                break;
+
                 default:
                     warnCustom(interaction, "Not an option for the editblame command!", "/editblame", client);
                 break;
