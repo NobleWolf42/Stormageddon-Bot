@@ -23,7 +23,7 @@ module.exports = {
             var blameList = serverConfig[serverID].blame.permList;
             var blameString = "";
             if (serverConfig[serverID].blame.rotateList.length > 0) {
-                blameList.push(serverConfig[serverID].blame.rotateList[Math.floor((Date.now()- 410400) / 604800000) - (Math.floor(Math.floor((Date.now()- 410400) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length)]);
+                blameList.push(serverConfig[serverID].blame.rotateList[Math.floor((Date.now() - 493200000) / 604800000) - (Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length) - serverConfig[serverID].blame.offset]);
             } else if (blameList.length < 1) {
                 return warnCustom(interaction, "The blame list is empty!", module.name, client);
             }
