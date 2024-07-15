@@ -1,4 +1,5 @@
 //#region Dependencies
+const { PermissionFlagsBits } = require("discord.js")
 const { readFileSync } = require('fs');
 //#endregion
 
