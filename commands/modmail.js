@@ -46,15 +46,12 @@ module.exports = {
                     
                     mod.send({ embeds: [embMsg] });
                 }
-            }
-            else {
+            } else {
                 return warnDisabled(message, 'modMail', module.name);
             }
-        }
-        else if (serverConfig[serverID] == undefined) {
+        } else if (serverConfig[serverID] == undefined) {
             return errorCustom(message, `The \`!setup\` command has not been run on \`${servername}\` yet.`, module.name, client);
-        }
-        else {
+        } else {
             return warnCustom(message, 'The server you specified does not have this bot, or you failed to specify a server.', module.name);
         }
     }

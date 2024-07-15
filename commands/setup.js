@@ -1,5 +1,6 @@
 
 //#region Helpers
+const { PermissionFlagsBits } = require("discord.js");
 const { updateConfigFile } = require("../helpers/currentSettings.js");
 const { errorNoServerAdmin, errorCustom } = require("../helpers/embedMessages.js");
 //#endregion
@@ -22,14 +23,12 @@ module.exports = {
         var serverConfig = updateConfigFile();
 
         if (serverConfig[message.guild.id].setupNeeded) {
-            if (message.member.permissions.has('ADMINISTRATOR')) {
+            if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
                 await setup(message);
-            }
-            else {
+            } else {
                 errorNoServerAdmin(message, module.name);
             };
-        }
-        else {
+        } else {
             errorCustom(message, "Server Setup has already been completed.", module.name, client);
         };
         return;

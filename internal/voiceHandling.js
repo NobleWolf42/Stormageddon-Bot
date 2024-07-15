@@ -49,7 +49,7 @@ async function joinToCreateHandling(client) {
             client.voiceGenerator.set(voiceChannel.id, member.id);
             client.voiceGenerator.set(member.id, voiceChannel.id);
             
-            //Times the user out from spamming new voice channels, currently set to 10 seconds
+            //Times the user out from spamming new voice channels, currently set to 10 seconds and apparently works intermittently, probably dur to the permissions when testing it
             await newChannel.permissionOverwrites.edit(member, {deny: PermissionFlagsBits.Connect});
             setTimeout(() => newChannel.permissionOverwrites.delete(member), 10 * 1000);
 

@@ -1,5 +1,5 @@
 //#region Dependencies
-const { readFileSync, writeFileSync } = require('fs');
+const { readFileSync } = require('fs');
 const GeniusLyrics = require("genius-lyrics");
 const Genius = new GeniusLyrics.Client();
 //#endregion
@@ -58,8 +58,7 @@ module.exports = {
             slicedLyrics.forEach(async (m, index) => {
                 embedCustom(message, `${song.fullTitle} - ${index + 1} of ${slicedLyrics.length}:`, "#0E4CB0", m, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
             });
-        }
-        else {
+        } else {
             warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
         }
     }

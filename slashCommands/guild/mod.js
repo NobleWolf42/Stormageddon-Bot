@@ -1,5 +1,5 @@
 //#region Dependencies
-const { SlashCommandBuilder } = require('discord.js');
+const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 //#endregion
 
 //#region Helpers
@@ -37,73 +37,69 @@ module.exports = {
                         .setDescription('The member to add to modlist')
                         .setRequired(true)
                 )
-        ),
+        )
+        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     async execute(client, interaction, distube) {
         //Gets current config file
         var serverConfig = updateConfigFile();
-        if (interaction.member.permissions.has('ADMINISTRATOR')) {
-            if ((interaction.guild.id in serverConfig)) {
-                if (interaction.options.size == 0) {
-                    return warnCustom(interaction, "No user input detected!", module.name, client);
-                }
-
-                var user = interaction.options.getUser("moderator")
-                var serverID = interaction.guildId;
-                var array = serverConfig[serverID].modMail.modList;
-                var userFound = false;
-                var modMail = {};
-
-                array.forEach( item => {
-                    if (item == user) {
-                        userFound = true;
-                    }
-                });
-
-                switch(interaction.options.getSubcommand()) {
-                    case "add":
-                        if (!userFound) {
-                            array.push(user.id);
-                        } else {
-                            return warnCustom(interaction, `User ${user.tag} is already a Mod!`, module.name, client);
-                        }
-                    
-                        modMail.modList = array;
-                        modMail.enable = true;
-                        serverConfig[serverID].modMail = modMail;
-                    
-                        await buildConfigFile(serverConfig);
-                    
-                        embedCustom(interaction, "Mod Added", "#5D3FD3", `Mod has been successfully added!`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
-                    
-                        serverConfig = updateConfigFile();
-
-                        break;
-
-                    case "remove":
-                        if (userFound) {
-                            array = array.filter(function(value){ return value != user.id;});
-                        } else {
-                            return warnCustom(interaction, `User ${user.tag} is not a Mod!`, module.name, client);
-                        }
-                
-                        modMail.modList = array;
-                        modMail.enable = true;
-                        serverConfig[serverID].modMail = modMail;
-                
-                        await buildConfigFile(serverConfig);
-    
-                        embedCustom(interaction, "Mod Removed", "#5D3FD3", `Mod has been successfully removed!`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
-                
-                        serverConfig = updateConfigFile();
-
-                        break;
-                    }
-            } else {
-                return errorCustom(interaction, "Server is not set up with the bot yet!", module.name, client);
+        if ((interaction.guild.id in serverConfig)) {
+            if (interaction.options.size == 0) {
+                return warnCustom(interaction, "No user input detected!", module.name, client);
             }
-        }
-        else {
-            return errorNoServerAdmin(interaction, module.name, client);
+
+            var user = interaction.options.getUser("moderator")
+            var serverID = interaction.guildId;
+            var array = serverConfig[serverID].modMail.modList;
+            var userFound = false;
+            var modMail = {};
+
+            array.forEach( item => {
+                if (item == user) {
+                    userFound = true;
+                }
+            });
+
+            switch(interaction.options.getSubcommand()) {
+                case "add":
+                    if (!userFound) {
+                        array.push(user.id);
+                    } else {
+                        return warnCustom(interaction, `User ${user.tag} is already a Mod!`, module.name, client);
+                    }
+                
+                    modMail.modList = array;
+                    modMail.enable = true;
+                    serverConfig[serverID].modMail = modMail;
+                
+                    await buildConfigFile(serverConfig);
+                
+                    embedCustom(interaction, "Mod Added", "#5D3FD3", `Mod has been successfully added!`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
+                
+                    serverConfig = updateConfigFile();
+
+                    break;
+
+                case "remove":
+                    if (userFound) {
+                        array = array.filter(function(value){ return value != user.id;});
+                    } else {
+                        return warnCustom(interaction, `User ${user.tag} is not a Mod!`, module.name, client);
+                    }
+            
+                    modMail.modList = array;
+                    modMail.enable = true;
+                    serverConfig[serverID].modMail = modMail;
+            
+                    await buildConfigFile(serverConfig);
+
+                    embedCustom(interaction, "Mod Removed", "#5D3FD3", `Mod has been successfully removed!`, { text: `Requested by ${interaction.user.username}`, iconURL: null }, null, [], null, null);
+            
+                    serverConfig = updateConfigFile();
+
+                    break;
+                }
+        } else {
+            return errorCustom(interaction, "Server is not set up with the bot yet!", module.name, client);
         }
     }
 }

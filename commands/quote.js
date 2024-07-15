@@ -15,7 +15,7 @@ module.exports = {
     coolDown: 5,
     class: 'fun',
     usage: 'quote',
-    description: "Display a random quote, picked by the developers of Stormageddon.",
+    description: "Display a random quote, picked by the developers of Stormageddon. (Works in Direct Messages too.)",
     async execute(message, args, client, distube) {
         var quote = quotedata[getRandomInt(quotedata.length)];
 

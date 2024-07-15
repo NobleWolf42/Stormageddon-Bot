@@ -18,7 +18,7 @@ module.exports = {
     coolDown: 0,
     class: 'gaming',
     usage: 'destiny2 clan ***INSERT-CLAN-NAME***',
-    description: "Status displays the Destiny 2 account's original creation date and last API update date. Clan displays Destiny 2 clan's bio, avatar, motto, and founder.",
+    description: "Displays Destiny 2 clan's bio, avatar, motto, and founder. (Works in Direct Messages too.)",
     execute(message, args, client, distube) {
         if (args[0] == 'clan') {
             var clanName = '';
@@ -30,11 +30,11 @@ module.exports = {
                     clanName += `${args[i]}`;
                 }
             }
+
             getClan(message, clanName);
         } else {
-            warnCustom(message, "You did not use the command correctly, please try again.", module.name);
+            return warnCustom(message, `You did not use the command correctly, please try again (${message.prefix}destiny2 clan ***INSERT-CLAN-NAME***).`, module.name);
         }
-
     }
 }
 //#endregion
@@ -56,15 +56,12 @@ function getClan(message, clan_name){
 
                 var attachment = (domain + data["founder"]["bungieNetUserInfo"]["iconPath"]);
                 return embedCustom(message, `${clan_name} Clan Information`, '#F5F5F5', `The clan was created on ${data["detail"]["creationDate"]}.\n The founder is ${data["founder"]["bungieNetUserInfo"]["displayName"]}.\n\n ${data["detail"]["about"]}`, { text: `Requested by ${message.author.tag}`, iconURL: null }, attachment, [], null, null);
-            }
-            else {
+            } else {
                 return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
             }
-        }
-        else if (error.ErrorStatus == 'ClanNotFound') {
+        } else if (error.ErrorStatus == 'ClanNotFound') {
             return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
-        }
-        else {
+        } else {
             return errorCustom(message, "The Destiny API was unable to be reached at this time.\n Try again later.", module.name, client);
         }
     }

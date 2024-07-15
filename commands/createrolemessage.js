@@ -4,7 +4,7 @@ const { PermissionsBitField, EmbedBuilder } = require("discord.js");
 
 //#region Helpers
 const { updateConfigFile } = require('../helpers/currentSettings.js');
-const { warnDisabled, embedCustom } = require('../helpers/embedMessages.js');
+const { warnDisabled, errorCustom, embedCustomDM } = require('../helpers/embedMessages.js');
 //#endregion
 
 //#region Internals
@@ -31,22 +31,26 @@ module.exports = {
         config = updateConfigFile();
         //Checks to make sure your roles and reactions match up
         if (config[serverID].autoRole.roles.length !== config[serverID].autoRole.reactions.length) {
-            throw new Error("Roles list and reactions list are not the same length! Please double check this in the config[serverID].js file");
+            return errorCustom(message, `Roles list and reactions list are not the same length! Please run the setup command again (${message.prefix}set autorole).`, module.name, client);
         }
 
         // We don't want the bot to do anything further if it can't send messages in the channel
-        if (message.guild && !message.guild.members.me.permissionsIn(message.channel.id).missing(PermissionsBitField.Flags.SendMessages)) return;
+        if (message.guild && !message.guild.members.me.permissionsIn(message.channel.id).missing(PermissionsBitField.Flags.SendMessages)) {
+            return embedCustomDM(message, "Error", "#FF0000", "I don't have access to send messages in that channel, please give me permissions.");
+        };
 
         const missing = message.guild.members.me.permissionsIn(message.channel.id).missing(PermissionsBitField.Flags.ManageMessages);
 
         // Here we check if the bot can actually add reactions in the channel the command is being ran in
-        if (missing.includes('ADD_REACTIONS'))
-            throw new Error("I need permission to add reactions to these messages! Please assign the 'Add Reactions' permission to me in this channel!");
+        if (missing.includes('ADD_REACTIONS')) {
+            return errorCustom(message, `I need permission to add reactions to messages in this channel! Please assign the 'Add Reactions' permission to me in this channel!`, module.name, client);
+        }
 
-        if (!config[serverID].autoRole.embedMessage || (config[serverID].autoRole.embedMessage === ''))
-            throw "The 'embedMessage' property is not set in the config[serverID].js file. Please do this!";
-        if (!config[serverID].autoRole.embedFooter || (config[serverID].autoRole.embedMessage === ''))
-            throw "The 'embedFooter' property is not set in the config[serverID].js file. Please do this!";
+        if (!config[serverID].autoRole.embedMessage || (config[serverID].autoRole.embedMessage === '')) {
+            return errorCustom(message, `The 'embedMessage' property is not set! Please run the setup command again (${message.prefix}set autorole).`, module.name, client);
+        } else if (!config[serverID].autoRole.embedFooter || (config[serverID].autoRole.embedFooter === '')) {
+            return errorCustom(message, `The 'embedFooter' property is not set! Please run the setup command again (${message.prefix}set autorole).`, module.name, client);
+        }
         
         // Checks to see if the module is enabled
         if (!config[serverID].autoRole.enable) {
@@ -70,8 +74,9 @@ module.exports = {
         const fields = generateEmbedFields(serverID);
 
         for (const { emoji, role } of fields) {
-            if (!message.guild.roles.cache.find(r => r.name === role))
-                throw `The role '${role}' does not exist!`;
+            if (!message.guild.roles.cache.find(r => r.name === role)) {
+                return errorCustom(message, `The role '${role}' does not exist!! Please run the setup command again (${message.prefix}set autorole).`, module.name, client);
+            }
 
             const customEmote = client.emojis.cache.find(e => e.name === emoji);
 
@@ -85,15 +90,14 @@ module.exports = {
         var count = 0;
         for (var i = 0; i < Math.ceil(fieldsOut.length/maxReactions); i++) {
 
-            var embMsg = new EmbedBuilder();
-            embMsg.setColor('#dd9323');
-            embMsg.setDescription(config[serverID].autoRole.embedMessage);
-            embMsg.setThumbnail(thumbnail);
-            embMsg.setFooter({ text: config[serverID].autoRole.embedFooter, iconURL: null });
-            
-            embMsg.setTitle(`Role Message - ${i+1} out of ${Math.ceil(fieldsOut.length/maxReactions)}`);
-            embMsg.setFields(fieldsOut.slice(i*maxReactions, (i+1)*maxReactions));
-            embMsg.setTimestamp();
+            var embMsg = new EmbedBuilder()
+                .setColor('#dd9323')
+                .setDescription(config[serverID].autoRole.embedMessage)
+                .setThumbnail(thumbnail)
+                .setFooter({ text: config[serverID].autoRole.embedFooter, iconURL: null })
+                .setTitle(`Role Message - ${i+1} out of ${Math.ceil(fieldsOut.length/maxReactions)}`)
+                .setFields(fieldsOut.slice(i*maxReactions, (i+1)*maxReactions))
+                .setTimestamp();
             
             message.channel.send({ embeds: [embMsg] }).then(async m => {
                 var maxEmoji = 0;

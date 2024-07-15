@@ -11,7 +11,7 @@ module.exports = {
     coolDown: 60,
     class: 'music',
     usage: 'showqueue',
-    description: "Shows the music queue and now playing.",
+    description: "Shows the music queue.",
     execute(message, args, client, distube) {
         //Max fields for an embed per discord, change this if it ever changes
         var maxFields = 20;
@@ -20,10 +20,12 @@ module.exports = {
         if (!serverConfig[message.guild.id].music.enable) {
             return warnDisabled(message, 'music', module.name);
         }
+
         //Checks to see if the user has DJ access
         if (!djCheck(message)) {
             return errorNoDJ(message, module.name);
         }
+
         //Checks to see if the message was sent in the correct channel
         if (serverConfig[message.guild.id].music.textChannel != message.channel.name) {
             return warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);

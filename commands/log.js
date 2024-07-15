@@ -17,9 +17,9 @@ module.exports = {
     type: ['DM'],
     aliases: [""],
     coolDown: 0,
-    class: 'devonly',
+    class: 'developer',
     usage: 'logs',
-    description: "Developer-only command that triggers the bot to send you the log files.",
+    description: "Triggers the bot to send you the log files.",
     execute(message, args, client, distube) {
         if (botConfig.devIDs.includes(message.author.id)) {
             const embMsg = new EmbedBuilder()

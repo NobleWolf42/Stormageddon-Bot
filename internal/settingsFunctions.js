@@ -40,13 +40,11 @@ async function setModMail(message) {
                 roleIn.first().mentions.members.forEach((member) => {
                     modList.push(member.id);
                 });
-            }
-            catch (err) {
+            } catch (err) {
                 return message.channel.send('Timeout Occurred. Process Terminated.');
             }
         }
-    }
-    catch (err) {
+    } catch (err) {
         return message.channel.send('Timeout Occurred. Process Terminated.');
     }
 
@@ -67,7 +65,7 @@ async function setModMail(message) {
 
     message.channel.send("Mod Mail Setup Complete!");
 
-    config = updateConfigFile();
+    config = await updateConfigFile();
     return config;
 }
 //#endregion
@@ -97,8 +95,7 @@ async function setAutoRole(message) {
             try {
                 var embedMessageIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 var embedMessage = embedMessageIn.first().content;
-            }
-            catch (err) {
+            } catch (err) {
                 console.log(err.message);
                 return message.channel.send('Timeout Occurred. Process Terminated.')
             }
@@ -111,8 +108,7 @@ async function setAutoRole(message) {
                 var embedRoleIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 var roles = [];
                 embedRoleIn.first().mentions.roles.forEach( role => roles.push(role.name));
-            }
-            catch (err) {
+            } catch (err) {
                 console.log(err.message);
                 return message.channel.send('Timeout Occurred. Process Terminated.')
             }
@@ -121,14 +117,12 @@ async function setAutoRole(message) {
             try {
                 var embedReactIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 var reactions = embedReactIn.first().content.split(' ');
-            }
-            catch (err) {
+            } catch (err) {
                 console.log(err.message);
                 return message.channel.send('Timeout Occurred. Process Terminated.')
             }
         }
-    }
-    catch (err) {
+    } catch (err) {
         console.log(err.message);
         return message.channel.send('Timeout Occurred. Process Terminated.')
     }
@@ -162,7 +156,7 @@ async function setAutoRole(message) {
 
     message.channel.send("Auto Role Setup Complete!");
 
-    config = updateConfigFile();
+    config = await updateConfigFile();
     return config;
 }
 //#endregion
@@ -191,13 +185,11 @@ async function setJoinRole(message) {
                 var roleIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 var role = roleIn.first().mentions.roles.first().name;
                 console.log(role);
-            }
-            catch (err) {
+            } catch (err) {
                 return message.channel.send('Timeout Occurred. Process Terminated.')
             }
         }
-    }
-    catch (err) {
+    } catch (err) {
         return message.channel.send('Timeout Occurred. Process Terminated.')
     }
 
@@ -218,7 +210,7 @@ async function setJoinRole(message) {
 
     message.channel.send("Join Role Setup Complete!");
 
-    config = updateConfigFile();
+    config = await updateConfigFile();
     return config;
 }
 //#endregion
@@ -246,13 +238,11 @@ async function setJoinToCreateVC(message) {
             try {
                 var JTCVCTXTIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 var voiceChannel = JTCVCTXTIn.first().content;
-            }
-            catch (err) {
+            } catch (err) {
                 return message.channel.send('Timeout Occurred. Process Terminated.')
             }
         }
-    }
-    catch (err) {
+    } catch (err) {
         return message.channel.send('Timeout Occurred. Process Terminated.')
     }
 
@@ -272,7 +262,7 @@ async function setJoinToCreateVC(message) {
 
     message.channel.send("Music Setup Complete!");
 
-    config = updateConfigFile();
+    config = await updateConfigFile();
     return config;
 }
 //#endregion
@@ -301,8 +291,7 @@ async function setMusic(message) {
                 var djRoleIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 var djRoles = djRoleIn.first().mentions.roles.first().name;
                 console.log(djRoles);
-            }
-            catch (err) {
+            } catch (err) {
                 return message.channel.send('Timeout Occurred. Process Terminated.')
             }
         
@@ -311,13 +300,11 @@ async function setMusic(message) {
             try {
                 var musicTXTIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
                 var textChannel = message.guild.channels.cache.get(musicTXTIn.first().content.substring(2, musicTXTIn.first().content.length-1)).name;
-            }
-            catch (err) {
+            } catch (err) {
                 return message.channel.send('Timeout Occurred. Process Terminated.')
             }
         }
-    }
-    catch (err) {
+    } catch (err) {
         return message.channel.send('Timeout Occurred. Process Terminated.')
     }
 
@@ -342,7 +329,7 @@ async function setMusic(message) {
 
     message.channel.send("Music Setup Complete!");
 
-    config = updateConfigFile();
+    config = await updateConfigFile();
     return config;
 }
 //#endregion
@@ -362,8 +349,7 @@ async function setGeneral(message) {
         var adminRolesIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
         var adminRoles = [];
         adminRolesIn.first().mentions.roles.forEach (role => adminRoles.push(role.name));
-    }
-    catch (err) {
+    } catch (err) {
         return message.channel.send('Timeout Occurred. Process Terminated.')
     }
 
@@ -378,8 +364,7 @@ async function setGeneral(message) {
         else {
             modRolesIn.first().mentions.roles.forEach (role => modRoles.push(role.name));
         }
-    }
-    catch (err) {
+    } catch (err) {
         return message.channel.send('Timeout Occurred. Process Terminated.')
     }
 
@@ -400,7 +385,152 @@ async function setGeneral(message) {
 
     message.channel.send("General Setup Complete!");
 
-    config = updateConfigFile();
+    config = await updateConfigFile();
+    return config;
+}
+//#endregion
+
+//#region Function that sets blame settings
+/**
+ * This function runs the setup for the blame features.
+ * @param {Message} message - Discord.js Message Object
+ * @returns {JSON} Server Config JSON
+ */
+async function setBlame(message) {
+    var serverID = message.guild.id;
+
+    message.channel.send('Please respond with `T` if you would like to enable Blame functionality, respond with `F` if you do not.');
+    
+    try {
+        var enableIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
+        var enableTXT = enableIn.first().content.toLowerCase();
+        var enable = undefined;
+        var cursing = undefined;
+        if (enableTXT == 't') {
+            enable = true;
+
+            message.channel.send('Please respond with `T` if you would like to enable explicit language (`fuck`), respond with `F` if you do not.');
+        
+            try {
+                var curseTXTIn = await message.channel.awaitMessages({ filter: msgFilter, max: 1, time: 120000, errors: ['time'] });
+                var cursing = curseTXTIn.first().content;
+            } catch (err) {
+                return message.channel.send('Timeout Occurred. Process Terminated.')
+            }
+        }
+    } catch (err) {
+        return message.channel.send('Timeout Occurred. Process Terminated.')
+    }
+
+    if (enable == undefined) {
+        enable = false;
+    }
+    if (cursing == undefined) {
+        cursing = false;
+    }
+
+    blame = {};
+    blame.enable = enable;
+    blame.cursing = cursing;
+    blame.permList = [];
+    blame.rotateList = [];
+
+    serverConfig[serverID].blame = blame;
+
+    await buildConfigFile(serverConfig);
+
+    message.channel.send("Blame Setup Complete!");
+
+    config = await updateConfigFile();
+    return config;
+}
+//#endregion
+
+//#region Function that adds/removes from blame lists in settings
+/**
+ * This function takes several inputs and adds/removes someone from the blame command.
+ * @param {String} serverID - The id for the server this is run in
+ * @param {Boolean} addTF - True makes it add the person, False removes them
+ * @param {Boolean} permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
+ * @param {String} person - Name of the person
+ * @returns {JSON} Server Config JSON
+ */
+async function addRemoveBlame(serverID, addTF, permTF, person) {
+    //Pulls the current blame lists
+    var blame = serverConfig[serverID].blame;
+    var personFound = false;
+
+    if (permTF) {
+        blame.permList.forEach( item => {
+            if (item == person) {
+                personFound = true;
+            }
+        });
+
+        if (addTF) {
+            blame.permList.forEach( item => {
+                if (item == person) {
+                    personFound = true;
+                }
+            });
+            if (!personFound) {
+                blame.permList.push(person);
+            } else {
+                throw {name : "PersonExists", message : `${person} is already in the permanent blame list!`};
+            }
+        } else {
+            blame.permList.forEach( item => {
+                if (item == person) {
+                    personFound = true;
+                }
+            });
+            if (personFound) {
+                blame.permList = blame.permList.filter(function (item) {
+                    return item !== person;
+                });
+            } else {
+                throw {name : "PersonNotExists", message : `${person} is not in the permanent blame list!`};
+            }
+        }
+    } else {
+        blame.rotateList.forEach( item => {
+            if (item == person) {
+                personFound = true;
+            }
+        });
+
+        if (addTF) {
+            blame.rotateList.forEach( item => {
+                if (item == person) {
+                    personFound = true;
+                }
+            });
+            if (!personFound) {
+                blame.rotateList.push(person);
+            } else {
+                throw {name : "PersonExists", message : `${person} is already in the rotating blame list!`};
+            }
+        } else {
+            blame.permList.forEach( item => {
+                if (item == person) {
+                    personFound = true;
+                }
+            });
+            if (personFound) {
+                blame.rotateList = blame.rotateList.filter(function (item) {
+                    return item !== person;
+                });
+            } else {
+                throw {name : "PersonNotExists", message : `${person} is not in the rotating blame list!`};
+            }
+        }
+    }
+
+    serverConfig[serverID].blame = blame;
+
+    await buildConfigFile(serverConfig);
+
+    config = await updateConfigFile();
     return config;
 }
 //#endregion
@@ -421,6 +551,7 @@ async function setup(message) {
     await setMusic(message);
     await setModMail(message);
     await setJoinToCreateVC(message);
+    await setBlame(message);
 
     //Removes the Setup Needed Tag
     serverConfig[serverID].setupNeeded = false;
@@ -454,7 +585,7 @@ async function buildConfigFile(config) {
  */
 function addServerConfig(serverID) {
     if (serverConfig[serverID] == undefined) {
-        serverConfig[serverID] = {"setupNeeded":true,"autoRole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinRole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"not-set-up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modMail":{"enable":false,"modList":[]}};
+        serverConfig[serverID] = {"setupNeeded":true,"autoRole":{"enable":false,"embedMessage":"Not Set Up","embedFooter":"Not Set Up","roles":["Not Set Up"],"reactions":["🎵"]},"joinRole":{"enable":false,"role":"Not Set Up"},"music":{"enable":false,"djRoles":["Not Set Up"],"textChannel":"Not Set Up"},"general":{"adminRoles":["Not Set Up"],"modRoles":["Not Set Up"]},"modMail":{"enable":false,"modList":[]},"JTCVC":{"enable":false,"voiceChannel":"Not Set Up"},"blame":{"enable":false,"cursing":false,"permList":[],"rotateList":[]}};
     }
 
     buildConfigFile(serverConfig);
@@ -476,5 +607,5 @@ function removeServerConfig(serverID) {
 //#endregion
 
 //#region exports
-module.exports = { setAutoRole, setJoinRole, setMusic, setGeneral, setup, setModMail, buildConfigFile, removeServerConfig, addServerConfig, setJoinToCreateVC };
+module.exports = { setAutoRole, setJoinRole, setMusic, setGeneral, setup, setModMail, buildConfigFile, removeServerConfig, addServerConfig, setJoinToCreateVC, setBlame, addRemoveBlame };
 //#endregion

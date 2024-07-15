@@ -33,28 +33,41 @@ module.exports = {
         let commandClasses = [];
         let helpMessageCommands = [];
 
-        if (adminTF) {
+        //Checks to see if your an admin and only adds the admin page to the commandClasses array if you are
+        if (botConfig.devIDs.includes(interaction.author.id)) {
             commands.forEach((cmd) => {
-                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly' && cmd != undefined) {
-                    commandClasses.push(capitalize(cmd.class))
+                if (!commandClasses.includes(capitalize(cmd.class))) {
+                    commandClasses.push(capitalize(cmd.class));
+                }
+            });
+        } else if (adminTF) {
+            commands.forEach((cmd) => {
+                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Developer') {
+                    commandClasses.push(capitalize(cmd.class));
                 }
             });
         } else {
             commands.forEach((cmd) => {
-                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Devonly' && capitalize(cmd.class) != 'Admin' && cmd != undefined) {
-                    commandClasses.push(capitalize(cmd.class))
+                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Developer' && capitalize(cmd.class) != 'Admin') {
+                    commandClasses.push(capitalize(cmd.class));
                 }
             });
         }
 
+        //Makes the commandClasses array alphabetical
         commandClasses.sort();
 
+        //Outputs the default help page if no page or help page is detected, otherwise handles it in the switch statement
         if (interaction.options.getString("helppage") == undefined || interaction.options.getString("helppage") == 'help') {
             commands.forEach((cmd) => { if (cmd.class == 'help') { helpMessageCommands.push(cmd) } });
             title = 'Help';
             return makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF, client);
         } else if (commandClasses.includes(capitalize(interaction.options.getString("helppage"))) || interaction.options.getString("helppage") == 'all' || interaction.options.getString("helppage") == 'dm' || interaction.options.getString("helppage") == 'server') {
+
+            //Switch case to output help page based on requested page
             switch (interaction.options.getString("helppage")) {
+
+                //Outputs admin page if user is admin in the server its run in, otherwise sends an error message
                 case "admin":
                     if (adminTF) {
                         commands.forEach((cmd) => { if (cmd.class == interaction.options.getString("helppage")) { helpMessageCommands.push(cmd) } });
@@ -66,6 +79,23 @@ module.exports = {
 
                 break;
 
+                //Outputs developer page if user is a dev, otherwise sends an error message
+                case "developer":
+                    if (botConfig.devIDs.includes(interaction.author.id)) {
+                        commands.forEach((cmd) => {
+                            if (cmd.class == args[0]) {
+                                helpMessageCommands.push(cmd)
+                            }
+                        });
+                        title = `${capitalize(args[0])} Help`;
+                        makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
+                    } else {
+                        return warnCustom(interaction, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, module.name);
+                    }
+
+                break;
+
+                //Outputs the commands for the chosen page
                 default:
                     commands.forEach((cmd) => { if (cmd.class == interaction.options.getString("helppage") && cmd.name != 'devsend') { helpMessageCommands.push(cmd) } });
                     title = `${capitalize(interaction.options.getString("helppage"))} Help`;
@@ -138,8 +168,6 @@ function makeCommandPageList(commandClasses) {
     for (i = 0; i < commandClasses.length; i++) {
         pageList += `${commandClasses[i]}, `;
     }
-
-    pageList += `DM, Server, and All.`
     
     return pageList;
 }

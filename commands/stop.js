@@ -16,14 +16,17 @@ module.exports = {
     execute(message, args, client, distube) {
         //Gets current config file
         var serverConfig = updateConfigFile();
+
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig[message.guild.id].music.enable) {
             return warnDisabled(message, 'music', module.name);
         }
+
         //Checks to see if the user has DJ access
         if (!djCheck(message)) {
             return errorNoDJ(message, module.name);
         }
+        
         //Checks to see if the message was sent in the correct channel
         if (serverConfig[message.guild.id].music.textChannel != message.channel.name) {
             return warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);

@@ -99,6 +99,12 @@ function messageHandling(client, distube) {
         }
         //#endregion
 
+        //#region honse responder
+        if (message.content.toLowerCase().includes("honse")) {
+            message.channel.send("https://i.imgur.com/hKZb0pc.png");
+        }
+        //#endregion
+
         //#region Handles all commands triggered by prefix
             //#region Prefix and Command Validation
             //Escapes if message does not start with prefix
@@ -144,9 +150,8 @@ function messageHandling(client, distube) {
             if (command.name == "setup") {
                 tryCommand(client, message, command, args, distube);
                 return
-            }
-            else if (serverConfig[serverID].setupNeeded) {
-                return warnCustom(message, `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in and Admin Only chat.`, command.name);
+            } else if (serverConfig[serverID].setupNeeded) {
+                return warnCustom(message, `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in an Admin Only chat.`, command.name);
             }
             //#endregion
 

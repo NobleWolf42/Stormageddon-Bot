@@ -17,7 +17,7 @@ module.exports = {
     usage: 'removemod ***MENTION-USERS***',
     description: "Removes users from the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
     execute(message, args, client, distube) {
-        if (message.member.permissions.has('ADMINISTRATOR')) {
+        if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
             if ((message.channel.guild.id in serverConfig)) {
                 if (message.mentions.members.size == 0) {
                     return warnCustom(message, "No user input detected, Did you make sure to @ them?", module.name);
@@ -35,7 +35,9 @@ module.exports = {
                     });
 
                     if (userFound) {
-                        array = array.filter(function(value){ return value != user.id;});
+                        array = array.filter(function (value) {
+                            return value != user.id;
+                        });
                     } else {
                         return warnCustom(message, `User ${user.tag} is not a Mod!`, module.name);
                     }
@@ -51,12 +53,10 @@ module.exports = {
             
                     serverConfig = updateConfigFile();
                 });
-            }
-            else {
+            } else {
                 return errorCustom(message, "Server is not set up with the bot yet!", module.name), client;
             }
-        }
-        else {
+        } else {
             return errorNoServerAdmin(message, module.name);
         }
     }

@@ -8,7 +8,7 @@ const { addToLog } = require('./errorLog.js');
 
 //#region Function that takes several inputs and creates an embedded message and sends it in the channel that is attached to the Message Object
 /**
- * This function takes several inputs and creates an embed message and then sends it in a server.
+ * This function takes several inputs and creates a custom embed message and then sends it in a server.
  * @param {Message} message - A Discord.js Message Object 
  * @param {string} title - String for the Title/Header of the message
  * @param {string} color - String Hex Code for the color of the border 
@@ -32,9 +32,11 @@ async function embedCustom(message, title, color, text, footer, img, fields, url
         .setThumbnail(thumbnail)
         .setTimestamp();
 
-    if (message.channel.guild != undefined && !message.deleted) {
-        message.delete();
-        message.deleted = true;
+    if (message.channel.guild != undefined) {
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
     }
 
     return await (message.channel.send({ embeds: [embMsg] }));
@@ -58,9 +60,12 @@ function embedCustomDM(message, title, color, text, img) {
         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null })
         .setImage(img);
     message.author.send({ embeds: [embMsg] });
-    if (message.channel.guild != undefined && !message.deleted) {
-        message.delete();
-        message.deleted = true;
+
+    if (message.channel.guild != undefined) {
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
     }
 }
 //#endregion
@@ -80,9 +85,11 @@ function embedHelp(message, title, text) {
         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
     message.author.send({ embeds: [embMsg] });
 
-    if (message.channel.guild != undefined && !message.deleted) {
-        message.delete();
-        message.deleted = true;
+    if (message.channel.guild != undefined) {
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
     }
 }
 //#endregion
@@ -100,13 +107,15 @@ function warnCustom(message, text, commandName) {
         .setColor('#F8AA2A')
         .setDescription(text)
         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
-    if (message.channel.guild != undefined && !message.deleted) {
+    
+    if (message.channel.guild != undefined) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, text);
-        message.delete();
-        message.deleted = true;
-    }
-    else {
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
+    } else {
         message.channel.send({ embeds: [embMsg] });
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
     }
@@ -115,7 +124,7 @@ function warnCustom(message, text, commandName) {
 
 //#region Function that takes several inputs and creates an embedded message for a lack of bot admin privileges
 /**
- * This function takes several inputs and creates an embed message for an Error stating a lack of bot admin privileges.
+ * This function takes several inputs and creates an embed message for an error stating a lack of bot admin privileges.
  * @param {Message} message - A Discord.js Message Object
  * @param {string} commandName - String of the name of the command
  */
@@ -125,22 +134,23 @@ function errorNoAdmin(message, commandName) {
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *BOT ADMIN* access to use!')
         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
-    if (message.channel.guild != undefined && !message.deleted) {
+    if (message.channel.guild != undefined) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Bot Admin!");
-        message.delete();
-        message.deleted = true;
-    }
-    else {
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
+    } else {
         message.channel.send({ embeds: [embMsg] });
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not Bot Admin!");
     }
 }
 //#endregion
 
-//#region Function that takes several inputs and creates an embedded message for a lack of mod privileges
+//#region Function that takes several inputs and creates an embedded message for a lack of bot mod privileges
 /**
- * This function takes several inputs and creates an embed message for an Error stating a lack of mod privileges.
+ * This function takes several inputs and creates an embed message for an error stating a lack of bot mod privileges.
  * @param {Message} message - A Discord.js Message Object
  * @param {string} commandName - String of the name of the command
  */
@@ -150,13 +160,14 @@ function errorNoMod(message, commandName) {
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *BOT MOD* access to use!')
         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
-    if (message.channel.guild != undefined && !message.deleted) {
+    if (message.channel.guild != undefined) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Bot Moderator!");
-        message.delete();
-        message.deleted = true;
-    }
-    else {
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
+    } else {
         message.channel.send({ embeds: [embMsg] });
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not Bot Moderator!");
     }
@@ -165,7 +176,7 @@ function errorNoMod(message, commandName) {
 
 //#region Function that takes several inputs and creates an embedded message for a lack of DJ privileges
 /**
- * This function takes several inputs and creates an embed message for an Error stating a lack of DJ privileges.
+ * This function takes several inputs and creates an embed message for an error stating a lack of DJ privileges.
  * @param {Message} message - A Discord.js Message Object
  * @param {string} commandName - String of the name of the command
  */
@@ -175,13 +186,14 @@ function errorNoDJ(message, commandName) {
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *DJ* access to use!')
         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
-    if (message.channel.guild != undefined && !message.deleted) {
+    if (message.channel.guild != undefined) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not a DJ!");
-        message.delete();
-        message.deleted = true;
-    }
-    else {
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
+    } else {
         message.channel.send({ embeds: [embMsg] });
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not DJ!");
     }
@@ -200,13 +212,14 @@ function errorNoServerAdmin(message, commandName) {
         .setColor('#FF0000')
         .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!')
         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
-    if (message.channel.guild != undefined && !message.deleted) {
+    if (message.channel.guild != undefined) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Not Server Admin!");
-        message.delete();
-        message.deleted = true;
-    }
-    else {
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
+    } else {
         message.channel.send({ embeds: [embMsg] });
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Not Server Admin!");
     }
@@ -219,6 +232,7 @@ function errorNoServerAdmin(message, commandName) {
  * @param {Message} message - A Discord.js Message Object
  * @param {string} text - String for the body of the embedded message
  * @param {string} commandName - String of the name of the command
+ * @param {Client} client - A Discord.js Client Object
  */
 async function errorCustom(message, text, commandName, client) {
     const embMsg = new EmbedBuilder()
@@ -226,11 +240,13 @@ async function errorCustom(message, text, commandName, client) {
         .setColor('#FF0000')
         .setDescription(text)
         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
-    if (message.channel.guild != undefined && !message.deleted) {
+    if (message.channel.guild != undefined) {
         message.channel.send({ embeds: [embMsg] }).then(msg => {setTimeout( () => msg.delete(), 15000)});
         addToLog('Fatal Error', commandName, message.author.tag, message.guild.name, message.channel.name, text, client);
-        message.delete();
-        message.deleted = true;
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
     } else {
         message.channel.send({ embeds: [embMsg] });
         addToLog('Fatal Error', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
@@ -238,9 +254,9 @@ async function errorCustom(message, text, commandName, client) {
 }
 //#endregion
 
-//#region Function that takes several inputs and creates an embedded message for a wrong channel error
+//#region Function that takes several inputs and creates an embedded message for a wrong channel warning
 /**
- * This function takes several inputs and creates an embed message for a custom error.
+ * This function takes several inputs and creates an embed message for a wrong channel warning.
  * @param {Message} message - A Discord.js Message Object
  * @param {string} correctChannel - String for the correct channel to send the command in
  * @param {string} commandName - String of the name of the command
@@ -252,10 +268,12 @@ function warnWrongChannel(message, correctChannel, commandName) {
         .setDescription(`That was not the correct channel for that command. The correct channel for this command is #${correctChannel}`)
         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
     message.author.send({ embeds: [embMsg] });
-    if (message.channel.guild != undefined && !message.deleted) {
+    if (message.channel.guild != undefined) {
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Wrong Text Channel");
-        message.delete();
-        message.deleted = true;
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
     }
     else {
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Wrong Text Channel");
@@ -263,9 +281,9 @@ function warnWrongChannel(message, correctChannel, commandName) {
 }
 //#endregion
 
-//#region Function that takes several inputs and creates an embedded message for a disabled command error
+//#region Function that takes several inputs and creates an embedded message for a disabled command warning
 /**
- * This function takes several inputs and creates an embed message for a custom error.
+ * This function takes several inputs and creates an embed message for a disabled command warning.
  * @param {Message} message - A Discord.js Message Object
  * @param {string} feature - String for the name of the feature
  * @param {string} commandName - String of the name of the command
@@ -277,10 +295,12 @@ function warnDisabled(message, feature, commandName) {
         .setDescription(`This feature is currently disabled. To enable it, please run the !set ${feature}. NOTE: This command is only available to a server admin.`)
         .setFooter({ text: `Requested by ${message.author.tag}`, iconURL: null });
     message.author.send({ embeds: [embMsg] });
-    if (message.channel.guild != undefined && !message.deleted) {
+    if (message.channel.guild != undefined) {
         addToLog('Warning', commandName, message.author.tag, message.guild.name, message.channel.name, "Feature Disabled");
-        message.delete();
-        message.deleted = true;
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
     }
     else {
         addToLog('Warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', "Feature Disabled");
