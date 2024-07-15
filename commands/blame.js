@@ -19,7 +19,7 @@ module.exports = {
     aliases: [],
     coolDown: 0,
     class: 'fun',
-    usage: 'blame ""/add/remove/addperm/removeperm/list ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE***',
+    usage: 'blame ""/add/remove/addperm/removeperm/list/fix ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE***/***FIX-ONLY-NUMBER-IN-LIST-OF-PERSON***',
     description: "Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.",
     async execute(message, args, client, distube) {
         var serverID = message.guild.id;

@@ -167,7 +167,7 @@ After installation and configuration you can use `npm start` or `node storm.js` 
     - `!agify ***INSERT-NAME*** i.e. (Steve)`
         - Uses [Agify.io](https://agify.io/) to estimate someone's age based off of their name. (Works in Direct Messages too.)
 
-    - `!blame ""/add/remove/addperm/removeperm/list ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE*** i.e. (!blame or !blame list or !blame add NobleWolf42)`
+    - `!blame ""/add/remove/addperm/removeperm/list/fix ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE***/***FIX-ONLY-NUMBER-IN-LIST-OF-PERSON*** i.e. (!blame, !blame list, !blame add NobleWolf42, or  !blame fix 3)`
         - Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.
 
     - `!iss`

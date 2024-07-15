@@ -19,7 +19,7 @@
     },
     "Fun": {
         "agify ***INSERT-NAME***"                                                                                   : "Uses [Agify.io](https://agify.io/) to estimate someone's age based off of their name. (Works in Direct Messages too.)",
-        "blame \"\"/add/remove/addperm/removeperm/list ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE***" : "Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.",
+        "blame \"\"/add/remove/addperm/removeperm/list/fix ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE***/***FIX-ONLY-NUMBER-IN-LIST-OF-PERSON***" : "Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.",
         "iss"                                                                                                       : "Displays the names of all the astronauts that are in transit to/from, or currently aboard the International Space Station. (Works in Direct Messages too.)",
         "quote"                                                                                                     : "Display a random quote, picked by the developers of Stormageddon. (Works in Direct Messages too.)"
     },
