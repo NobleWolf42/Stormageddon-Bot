@@ -67,18 +67,18 @@ async function joinToCreateHandling(client) {
                 client.voiceGenerator.delete(client.voiceGenerator.get(oldChannel.id));
                 client.voiceGenerator.delete(oldChannel.id);
             } else if (client.voiceGenerator.get(oldChannel.id) && member.id == client.voiceGenerator.get(oldChannel.id)) {
-                //This should restore default permissions to the channel when the owner leaves, and remove owner
-                await oldChannel.permissionOverwrites.edit(oldChannel.parent.permissionOverwrites.cache.map((p) => {
+                //This should restore default permissions to the channel when the owner leaves, and remove owner THIS IS BROKEN AND SERVERS NO PURPOSE RIGHT NOW
+                /*await oldChannel.permissionOverwrites.edit(oldChannel.parent.permissionOverwrites.cache.map((p) => {
                     return {
                         id: p.id,
                         allow: p.allow.toArray(),
                         deny: p.deny.toArray()
                     }
-                }));
+                }));*/
                 client.voiceGenerator.delete(client.voiceGenerator.get(oldChannel.id));
             }
         } catch (err) {
-            addToLog('Fatal Error', "JTCVC Handler", member.id, guild.name, oldChannel.name, err, client);
+            addToLog('Fatal Error', "JTCVC Handler", member.tag, guild.name, oldChannel.name, err, client);
         }
 
     });
