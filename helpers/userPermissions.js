@@ -125,6 +125,11 @@ function modCheck(message) {
 
     serverConfig = updateConfigFile();
 
+    //Checks to see if user is admin
+    if (adminCheck(message)) {
+        return true;
+    }
+
     //Calls a function that updates the server role information
     serverRoleUpdate(serverRolesArray, serverID);
     
