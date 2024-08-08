@@ -1,11 +1,11 @@
 //Work in progrees to make buttons do the heavy lifting
 //#region Helpers
-const { updateConfigFile } = require("../helpers/currentSettings.js");
-const { errorCustom } = require("../helpers/embedSlashMessages.js");
+const { updateConfigFile } = require("../../helpers/currentSettings.js");
+const { errorCustom } = require("../../helpers/embedSlashMessages.js");
 //#endregion
 
 //#region Internals
-const { setup } = require("../internal/settingsFunctions.js");
+const { setup } = require("../../internal/settingsFunctions.js");
 //#endregion
 
 //#region This exports the setup command with the information about it
