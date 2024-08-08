@@ -188,12 +188,18 @@ module.exports = {
 
                     var blameString = "";
                     if (serverConfig[serverID].blame.rotateList.length > 0) {
-                        blameList.push(serverConfig[serverID].blame.rotateList[Math.floor((Date.now() - 493200000) / 604800000) - (Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length) - serverConfig[serverID].blame.offset]);
+                        var rotateIndex = Math.floor((Date.now() - 493200000) / 604800000) - (Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig[serverID].blame.rotateList.length) * serverConfig[serverID].blame.rotateList.length) - serverConfig[serverID].blame.offset;
+
+                        if (rotateIndex >= serverConfig[serverID].blame.rotateList.length) {
+                            rotateIndex -= serverConfig[serverID].blame.rotateList.length;
+                        } else if (rotateIndex < 0) {
+                            rotateIndex += serverConfig[serverID].blame.rotateList.length;
+                        }
+
+                        blameList.push(serverConfig[serverID].blame.rotateList[rotateIndex]);
                     } else if (blameList.length < 1) {
                         return warnCustom(message, "The blame list is empty!", module.name);
                     }
-
-                    console.log(blameList);
 
                     if (blameList.length == 1) {
                         if (serverConfig[serverID].blame.cursing) {
