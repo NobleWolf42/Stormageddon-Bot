@@ -92,15 +92,8 @@ try {
     //Logs the bot into discord, using it's auth token
     client.login(process.env.authToken);
 
-    const mongoDatabase = mongoDBClient.db('server-configs');
-    const guilds = mongoDatabase.collection('guildIDs');
-
-    const serverConfigs = guilds.find({ guildID: { $nin: [] } });
-
-    console.log(serverConfigs);
-
     //Logs the Bot info when bot starts
-    client.on('ready', () => {
+    client.on('ready', async () => {
         console.log(`Logged in as ${client.user.tag}!`);
         autoRoleListener(client);
         messageHandling(client, distube);
@@ -110,6 +103,7 @@ try {
         musicHandle(client, distube);
         joinToCreateHandling(client);
         slashCommandHandling(client, distube);
+        var serverConfigs = await dbLoad();
         for (guildId in serverConfigs) {
             registerGuildSlashCommands(guildId);
         }
@@ -131,6 +125,16 @@ try {
     });
 } catch (err) {
     console.log(err);
+}
+
+async function dbLoad() {
+    const mongoDatabase = mongoDBClient.db('server-configs');
+    const guilds = mongoDatabase.collection('guildIDs');
+
+    const serverConfigs = await guilds.find({ guildID: { $nin: [] } });
+
+    console.log(serverConfigs);
+    return serverConfigs;
 }
 
 //Logs Errors
