@@ -28,7 +28,7 @@
         "xmlhttprequest": "^1.8.0"
     },
     "scripts": {
-        "start": "node --env-file=.env storm.js"
+        "start": "node --env-file=.env ./built/storm.js"
     },
     "devDependencies": {
         "prettier": "3.3.3",

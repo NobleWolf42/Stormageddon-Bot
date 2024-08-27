@@ -17,10 +17,6 @@ import { createJSONfiles } from './helpers/createFiles.js';
 //Creates config and other required JSON files if they do not exist
 createJSONfiles();
 
-//#region Data Files
-const serverConfig = require('./data/serverConfig.json');
-//#endregion
-
 //#region Internals
 import { addServerConfig, removeServerConfig } from './internal/settingsFunctions.js';
 import { autoRoleListener } from './internal/autoRole.js';
@@ -58,6 +54,7 @@ const client = new Client({
         GatewayIntentBits.MessageContent,
     ],
 });
+console.log('client');
 //#endregion
 
 try {
@@ -73,16 +70,11 @@ try {
             // YouTube DL Plugin with optimizations
             new YtDlpPlugin({
                 update: true, // Update youtube-dl automatically
-                //   requestOptions: {
-                //     // Configure request options for faster downloading
-                //     maxRedirects: 5, // Increase maximum redirects
-                //     timeout: 10000, // Set timeout for requests to avoid long waits
-                //   },
             }),
         ],
     });
     //#endregion
-
+    console.log('distube');
     //#region Initialize mongoDB client
     const mongoDBClient = new MongoClient(process.env.mongoDBURI, {
         serverApi: {
@@ -91,10 +83,8 @@ try {
             deprecationErrors: true,
         },
     });
-
-    client.mongoDBClient = new Collection(mongoDBClient);
     //#endregion
-
+    console.log('mongo');
     //Throws Error if bot's token is not set.
     if (process.env.authToken === 'YOUR BOT TOKEN' || process.env.authToken === '') {
         throw new Error("The 'authToken' property is not set in the .env file. Please do this!");
@@ -102,6 +92,11 @@ try {
 
     //Logs the bot into discord, using it's auth token
     client.login(process.env.authToken);
+
+    const mongoDatabase = mongoDBClient.db('server-configs');
+    const guilds = mongoDatabase.collection('guildIDs');
+
+    console.log(guilds);
 
     //Logs the Bot info when bot starts
     client.on('ready', () => {
@@ -114,7 +109,7 @@ try {
         musicHandle(client, distube);
         joinToCreateHandling(client);
         slashCommandHandling(client, distube);
-        for (guildId in serverConfig) {
+        for (guildId in guilds) {
             registerGuildSlashCommands(guildId);
         }
         registerGlobalSlashCommands();
