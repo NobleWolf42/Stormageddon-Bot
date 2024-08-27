@@ -97,7 +97,7 @@ try {
 
     const serverConfigs = guilds.find({ guildID: { $nin: [] } });
 
-    console.log(guilds);
+    console.log(serverConfigs);
 
     //Logs the Bot info when bot starts
     client.on('ready', () => {

@@ -86,7 +86,7 @@ try {
     var mongoDatabase = mongoDBClient.db('server-configs');
     var guilds = mongoDatabase.collection('guildIDs');
     var serverConfigs_1 = guilds.find({ guildID: { $nin: [] } });
-    console.log(guilds);
+    console.log(serverConfigs_1);
     //Logs the Bot info when bot starts
     client.on('ready', function () {
         console.log("Logged in as ".concat(client.user.tag, "!"));
