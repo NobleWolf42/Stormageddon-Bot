@@ -126,6 +126,9 @@ try {
             switch (_a.label) {
                 case 0:
                     console.log("Logged in as ".concat(client.user.tag, "!"));
+                    return [4 /*yield*/, dbLoad()];
+                case 1:
+                    serverConfigs = _a.sent();
                     (0, autoRole_js_1.autoRoleListener)(client);
                     (0, messageHandling_js_1.messageHandling)(client, distube_2);
                     (0, messageHandling_js_1.PMHandling)(client, distube_2);
@@ -134,9 +137,6 @@ try {
                     (0, distubeHandling_js_1.musicHandle)(client, distube_2);
                     (0, voiceHandling_js_1.joinToCreateHandling)(client);
                     (0, slashCommandHandling_js_1.slashCommandHandling)(client, distube_2);
-                    return [4 /*yield*/, dbLoad()];
-                case 1:
-                    serverConfigs = _a.sent();
                     for (guildId in serverConfigs) {
                         (0, slashCommandHandling_js_1.registerGuildSlashCommands)(guildId);
                     }

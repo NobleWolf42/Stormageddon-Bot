@@ -95,6 +95,7 @@ try {
     //Logs the Bot info when bot starts
     client.on('ready', async () => {
         console.log(`Logged in as ${client.user.tag}!`);
+        var serverConfigs = await dbLoad();
         autoRoleListener(client);
         messageHandling(client, distube);
         PMHandling(client, distube);
@@ -103,7 +104,6 @@ try {
         musicHandle(client, distube);
         joinToCreateHandling(client);
         slashCommandHandling(client, distube);
-        var serverConfigs = await dbLoad();
         for (guildId in serverConfigs) {
             registerGuildSlashCommands(guildId);
         }
