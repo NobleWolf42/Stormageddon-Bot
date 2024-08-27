@@ -54,7 +54,6 @@ const client = new Client({
         GatewayIntentBits.MessageContent,
     ],
 });
-console.log('client');
 //#endregion
 
 try {
@@ -74,7 +73,7 @@ try {
         ],
     });
     //#endregion
-    console.log('distube');
+
     //#region Initialize mongoDB client
     const mongoDBClient = new MongoClient(process.env.mongoDBURI, {
         serverApi: {
@@ -84,7 +83,7 @@ try {
         },
     });
     //#endregion
-    console.log('mongo');
+
     //Throws Error if bot's token is not set.
     if (process.env.authToken === 'YOUR BOT TOKEN' || process.env.authToken === '') {
         throw new Error("The 'authToken' property is not set in the .env file. Please do this!");
@@ -95,6 +94,8 @@ try {
 
     const mongoDatabase = mongoDBClient.db('server-configs');
     const guilds = mongoDatabase.collection('guildIDs');
+
+    const serverConfigs = guilds.find({ guildID: { $nin: [] } });
 
     console.log(guilds);
 
@@ -109,7 +110,7 @@ try {
         musicHandle(client, distube);
         joinToCreateHandling(client);
         slashCommandHandling(client, distube);
-        for (guildId in guilds) {
+        for (guildId in serverConfigs) {
             registerGuildSlashCommands(guildId);
         }
         registerGlobalSlashCommands();

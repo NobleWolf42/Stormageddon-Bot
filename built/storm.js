@@ -50,7 +50,6 @@ var client = new discord_js_1.Client({
         discord_js_1.GatewayIntentBits.MessageContent,
     ],
 });
-console.log('client');
 //#endregion
 try {
     //#region Initialize Distube(music) Functionality
@@ -69,7 +68,6 @@ try {
         ],
     });
     //#endregion
-    console.log('distube');
     //#region Initialize mongoDB client
     var mongoDBClient = new mongodb_1.MongoClient(process.env.mongoDBURI, {
         serverApi: {
@@ -79,7 +77,6 @@ try {
         },
     });
     //#endregion
-    console.log('mongo');
     //Throws Error if bot's token is not set.
     if (process.env.authToken === 'YOUR BOT TOKEN' || process.env.authToken === '') {
         throw new Error("The 'authToken' property is not set in the .env file. Please do this!");
@@ -87,8 +84,9 @@ try {
     //Logs the bot into discord, using it's auth token
     client.login(process.env.authToken);
     var mongoDatabase = mongoDBClient.db('server-configs');
-    var guilds_1 = mongoDatabase.collection('guildIDs');
-    console.log(guilds_1);
+    var guilds = mongoDatabase.collection('guildIDs');
+    var serverConfigs_1 = guilds.find({ guildID: { $nin: [] } });
+    console.log(guilds);
     //Logs the Bot info when bot starts
     client.on('ready', function () {
         console.log("Logged in as ".concat(client.user.tag, "!"));
@@ -100,7 +98,7 @@ try {
         (0, distubeHandling_js_1.musicHandle)(client, distube_2);
         (0, voiceHandling_js_1.joinToCreateHandling)(client);
         (0, slashCommandHandling_js_1.slashCommandHandling)(client, distube_2);
-        for (guildId in guilds_1) {
+        for (guildId in serverConfigs_1) {
             (0, slashCommandHandling_js_1.registerGuildSlashCommands)(guildId);
         }
         (0, slashCommandHandling_js_1.registerGlobalSlashCommands)();
