@@ -28,7 +28,7 @@
     const { PMHandling, messageHandling } = require('./internal/messageHandling.js');
     const { serverJoin } = require('./internal/serverJoin.js');
     const { musicHandle, setDiscordClient } = require('./internal/distubeHandling.js');
-    const { joinToCreateHandling } = require('./internal/voiceHandling.js');
+    const { joinToCreateHandling, logOnVoiceStateUpdate } = require('./internal/voiceHandling.js');
     const { slashCommandHandling, registerGuildSlashCommands, registerGlobalSlashCommands } = require('./internal/slashCommandHandling.js');
     //#endregion
 
@@ -105,6 +105,7 @@ try{
         setDiscordClient(client);
         musicHandle(client, distube);
         joinToCreateHandling(client);
+        logOnVoiceStateUpdate(client);
         slashCommandHandling(client, distube);
         for (guildId in serverConfig) {
             registerGuildSlashCommands(guildId);

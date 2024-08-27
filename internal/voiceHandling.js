@@ -123,13 +123,36 @@ async function joinToCreateHandling(client) {
  * @param {*} client
  */
 async function logOnVoiceStateUpdate(client) {
+
   // setup a listener for voice state update
   client.on("voiceStateUpdate", async (oldState, newState) => {
     // extract the member? and the channel
-    const { member, guild } = newState;
-    const serverID = guild.id;
     const newChannel = newState.channel;
     const oldChannel = oldState.channel;
+    var member = null;
+    var guild = null;
+    var connectEvent = null;
+
+        //This is horrible, fix me later
+    if (!oldChannel) {
+        member = newState.member;
+        guild = newState.guild;
+        connectEvent = true;
+    } else if (!newChannel) {
+        member = oldState.member;
+        guild = oldState.guild;
+        connectEvent = false;
+    } else if (oldChannel.guild.id != newChannel.guild.id) {
+        member = newState.member;
+        guild = newState.guild;
+        connectEvent = true;
+    } else {
+        member = oldState.member;
+        guild = oldState.guild;
+        connectEvent = false;
+    }
+
+    const serverID = guild.id;
 
     // check the server config and see if they have logging turned on
     // is the bot setup on the server?
@@ -138,7 +161,7 @@ async function logOnVoiceStateUpdate(client) {
     }
 
     // is logging turned on?
-    if (!serverConfig[serverID].logging.voiceConnect) {
+    if (!serverConfig[serverID].logging.enable || !serverConfig[serverID].logging.voice.enable ) {
       return;
     }
 
@@ -156,9 +179,10 @@ async function logOnVoiceStateUpdate(client) {
     }
 
     // any time voice state updated execute the following code
-    if (oldChannel == null || oldChannel.guild.id != newChannel.guild.id) {
+    if (connectEvent) {
+        console.log(member);
       const embMsg = new EmbedBuilder()
-        .setTitle(`User ${member.tag} connected!`)
+        .setTitle(`User ${member.user.username} connected!`)
         .setColor("#ffffff")
         .setDescription("test we'll figure it out later ben I'm tired")
         .setTimestamp();
@@ -166,13 +190,13 @@ async function logOnVoiceStateUpdate(client) {
       // Trigger every time a connection or disconnection is made to a channel
       // wrap in message (embeds)
       // post message to channel
-      await client.channels
-        .fetch(serverConfig[serverID].logging.loggingChannel)
-        .then((channel) => channel.send({ embeds: [embMsg] }));
-    }
-    if (newChannel == null || newChannel.guild.id != oldChannel.guild.id) {
+      await client.channels.cache
+        .get(serverConfig[serverID].logging.loggingChannel)
+        .send({ embeds: [embMsg] });
+
+    } else if (connectEvent != null || !connectEvent) {
       const embMsg = new EmbedBuilder()
-        .setTitle(`User ${member.tag} disconnected!`)
+        .setTitle(`User ${member.user.username} disconnected!`)
         .setColor("#ffffff")
         .setDescription("test we'll figure it out later ben I'm tired")
         .setTimestamp();
@@ -180,9 +204,11 @@ async function logOnVoiceStateUpdate(client) {
       // Trigger every time a connection or disconnection is made to a channel
       // wrap in message (embeds)
       // post message to channel
-      await client.channels
-        .fetch(serverConfig[serverID].logging.loggingChannel)
-        .then((channel) => channel.send({ embeds: [embMsg] }));
+      await client.channels.cache
+        .get(serverConfig[serverID].logging.loggingChannel)
+        .send({ embeds: [embMsg] });
+    } else {
+        //more error logging
     }
   });
 }
@@ -190,5 +216,5 @@ async function logOnVoiceStateUpdate(client) {
 //#endregion
 
 //#region exports
-module.exports = { joinToCreateHandling };
+module.exports = { joinToCreateHandling, logOnVoiceStateUpdate };
 //#endregion
