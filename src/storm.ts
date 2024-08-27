@@ -96,6 +96,7 @@ try {
     client.on('ready', async () => {
         console.log(`Logged in as ${client.user.tag}!`);
         var serverConfigs = await dbLoad();
+        console.log('bdloading!');
         autoRoleListener(client);
         messageHandling(client, distube);
         PMHandling(client, distube);

@@ -129,6 +129,7 @@ try {
                     return [4 /*yield*/, dbLoad()];
                 case 1:
                     serverConfigs = _a.sent();
+                    console.log('bdloading!');
                     (0, autoRole_js_1.autoRoleListener)(client);
                     (0, messageHandling_js_1.messageHandling)(client, distube_2);
                     (0, messageHandling_js_1.PMHandling)(client, distube_2);
