@@ -1,63 +1,64 @@
 # 🐺 Stormageddon (Discord Bot)
+
 > Stormageddon is a Discord Bot built with discord.js & uses Command Handler from [discordjs.guide](https://discordjs.guide)
 > If you would like to help in the development of this bot, the discord is https://discord.gg/tgJtK7f.
 
-## 📖 Table of Contents  
-- [🐺 Stormageddon (Discord Bot)](#-stormageddon-discord-bot)
-  - [📖 Table of Contents](#-table-of-contents)
-  - [📝 Features](#-features)
-  - [✅ Requirements](#-requirements)
-  - [🚀 Getting Started](#-getting-started)
-  - [⚙️ Configuration](#️-configuration)
-  - [🏎️ Running the Bot](#️-running-the-bot)
-  - [📝 Commands](#-commands)
-  - [🤝 Contributing](#-contributing)
+## 📖 Table of Contents
 
+-   [🐺 Stormageddon (Discord Bot)](#-stormageddon-discord-bot)
+    -   [📖 Table of Contents](#-table-of-contents)
+    -   [📝 Features](#-features)
+    -   [✅ Requirements](#-requirements)
+    -   [🚀 Getting Started](#-getting-started)
+    -   [⚙️ Configuration](#️-configuration)
+    -   [🏎️ Running the Bot](#️-running-the-bot)
+    -   [📝 Commands](#-commands)
+    -   [🤝 Contributing](#-contributing)
 
 ## 📝 Features
 
-- React to Receive Role
+-   React to Receive Role
 
-  - A system for creating a message with reactions that users can use to self-assign roles.
+    -   A system for creating a message with reactions that users can use to self-assign roles.
 
-- Join to Create Voice channel
+-   Join to Create Voice channel
 
-  - This allows you to set up a voice channel that users can join to have their own temporary voice channel created
+    -   This allows you to set up a voice channel that users can join to have their own temporary voice channel created
 
-- Music Player
+-   Music Player
 
-  - The music functionality allows for youtube, spotify, and soundcloud songs and playlists, might also work with other sites, but it is only tested with those three.
-  -  Media Controls via Buttons  
-    ![buttons](https://i.imgur.com/T6BV1zH.png)
+    -   The music functionality allows for youtube, spotify, and soundcloud songs and playlists, might also work with other sites, but it is only tested with those three.
+    -   Media Controls via Buttons  
+        ![buttons](https://i.imgur.com/T6BV1zH.png)
 
-- Slash Commands
+-   Slash Commands
 
-  - The current slash commands are:
+    -   The current slash commands are:
 
-    - Add/Remove Mod
-    - Agify
-    - Blame
-    - BugReport
-    - Change Prefix
-    - Clear
-    - Destiny 2
-    - Help
-    - Info
-    - ISS
-    - Join To Create
-    - ModMail
-    - Music
-    - Quote
-    - Say
+        -   Add/Remove Mod
+        -   Agify
+        -   Blame
+        -   BugReport
+        -   Change Prefix
+        -   Clear
+        -   Destiny 2
+        -   Help
+        -   Info
+        -   ISS
+        -   Join To Create
+        -   ModMail
+        -   Music
+        -   Quote
+        -   Say
 
-- And Much More
+-   And Much More
 
-  - There are many more commands that can be found [below](#-commands) in the 
+    -   There are many more commands that can be found [below](#-commands) in the
 
 ## ✅ Requirements
 
-1. Discord Bot Token 
-   - **[Guide](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot)**
+1. Discord Bot Token
+    - **[Guide](https://discordjs.guide/preparations/setting-up-a-bot-application.html#creating-your-bot)**
 2. [Node.js](https://nodejs.org/en/download/package-manager) v22.2.0 or newer
 3. [FFMPEG](https://ffmpeg.org/download.html)
 
@@ -116,125 +117,143 @@ After installation and configuration you can use `npm start` or `node storm.js` 
 
 ## 📝 Commands
 
-
 > Note: The default prefix is '!'
 
+-   Admin Commands
 
-- Admin Commands
+    -   `!addmod ***MENTION-USERS*** i.e. (@NobleWolf42)`
 
-    - `!addmod ***MENTION-USERS*** i.e. (@NobleWolf42)`
-        - Adds users to the list of people that get the PM when someone whispers the bot with the modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.
+        -   Adds users to the list of people that get the PM when someone whispers the bot with the modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.
 
-    - `!changeprefix ***INSERT-SYMBOL*** i.e. (!)`
-        - Changes the prefix the bot uses in your server. Available Symbols: `~!$%^&*()_+-=[];',.{}|:\"<>?`.
+    -   `!changeprefix ***INSERT-SYMBOL*** i.e. (!)`
 
-    - `!clear ***NUMBER(1-99)*** i.e. (99)`
-        - Bulk deletes the previous messages in a chat based on user input, up to 99 previous messages.
+        -   Changes the prefix the bot uses in your server. Available Symbols: `~!$%^&*()_+-=[];',.{}|:\"<>?`.
 
-    - `!createrolemsg`
-        - Create the reactions message for auto role assignment.
+    -   `!clear ***NUMBER(1-99)*** i.e. (99)`
 
-    - `!removemod ***MENTION-USERS*** i.e. (@NobleWolf42)`
-        - Removes users from the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.
+        -   Bulk deletes the previous messages in a chat based on user input, up to 99 previous messages.
 
-    - `!say ***MESSAGE-CONTENT*** i.e (Hello World!)`
-        - Sends a message as the bot.
+    -   `!createrolemsg`
 
-    - `!set autorole/general/joinrole/jointocreatevc/modmail/music`
-        - Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.
+        -   Create the reactions message for auto role assignment.
 
-    - `!setup`
-        - Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.
+    -   `!removemod ***MENTION-USERS*** i.e. (@NobleWolf42)`
 
-- Developer-Only Commands
+        -   Removes users from the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.
 
-    - `!devsend ***USER-ID***, ***MESSAGE***'  i.e (0123456789012345678, Hello World!)`
-        - Developer-only command for sending messages as the bot. (Only works in Direct Message.)
+    -   `!say ***MESSAGE-CONTENT*** i.e (Hello World!)`
 
-    - `!logs`
-        - Triggers the bot to send you the log files
+        -   Sends a message as the bot.
 
-- DM Only Commands
+    -   `!set autorole/general/joinrole/jointocreatevc/modmail/music`
 
-    - `!bugreport ***MESSAGE***  i.e (It Brokey 😿)`
-        - Whisper via Stormageddon to report a bug to the developers of Stormageddon.
+        -   Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.
 
-    - `!modmail, ***SERVER-NAME***, ***MESSAGE***  i.e (A Server Name, Hello World!)`
-        - Whisper via Stormageddon to all moderators for the specified server.
+    -   `!setup`
+        -   Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.
 
-- Fun Commands
+-   Developer-Only Commands
 
-    - `!agify ***INSERT-NAME*** i.e. (Steve)`
-        - Uses [Agify.io](https://agify.io/) to estimate someone's age based off of their name. (Works in Direct Messages too.)
+    -   `!devsend ***USER-ID***, ***MESSAGE***'  i.e (0123456789012345678, Hello World!)`
 
-    - `!blame ""/add/remove/addperm/removeperm/list/fix ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE***/***FIX-ONLY-NUMBER-IN-LIST-OF-PERSON*** i.e. (!blame, !blame list, !blame add NobleWolf42, or  !blame fix 3)`
-        - Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.
+        -   Developer-only command for sending messages as the bot. (Only works in Direct Message.)
 
-    - `!iss`
-        - Displays the names of all the astronauts that are in transit to/from, or currently aboard the International Space Station. (Works in Direct Messages too.)
+    -   `!logs`
+        -   Triggers the bot to send you the log files
 
-    - `!quote`
-        - Display a random quote, picked by the developers of Stormageddon. (works in Direct Messages too.)
+-   DM Only Commands
 
-- Gaming Commands
+    -   `!bugreport ***MESSAGE***  i.e (It Brokey 😿)`
 
-    - `!destiny2 clan ***INSERT-CLAN-NAME** i.e. (The Taken Clan Name)`
-        - Displays Destiny 2 clan's bio, avatar, motto, and founder. (Works in Direct Messages too.)
+        -   Whisper via Stormageddon to report a bug to the developers of Stormageddon.
 
-- Help Commands
+    -   `!modmail, ***SERVER-NAME***, ***MESSAGE***  i.e (A Server Name, Hello World!)`
+        -   Whisper via Stormageddon to all moderators for the specified server.
 
-    - `!help ***PAGE*** i.e. (All)` 
-        - Displays Help Message, specifying a page will show that help info, including a listing of all help pages. Using the **\"All\"** page will display all commands, the **\"DM\"** page will display all commands that can be Direct Messaged to the bot, and the **\"Server\"** page will display all commands that can be used in a discord server. (Works in Direct Messages too.)
+-   Fun Commands
 
-    - `!info`
-        - Displays information about the bot, it's creators, and where you can go if you would like to contribute to it. (Works in Direct Messages too.)
+    -   `!agify ***INSERT-NAME*** i.e. (Steve)`
 
-- Miscellaneous Commands
-    - `!jointocreate name ***YOUR NAME HERE*** i.e. (My Channel 😺)`
-        - Allows you to change the name of your voice channel (only if you created it).
+        -   Uses [Agify.io](https://agify.io/) to estimate someone's age based off of their name. (Works in Direct Messages too.)
 
-- Music Commands
-    -  `!autoplay`
-        - Toggles wether or not the bot will automatically pick a new song when the queue is done.
+    -   `!blame ""/add/remove/addperm/removeperm/list/fix ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE***/***FIX-ONLY-NUMBER-IN-LIST-OF-PERSON*** i.e. (!blame, !blame list, !blame add NobleWolf42, or  !blame fix 3)`
 
-    - `!loop ***SONG/QUEUE/OFF*** i.e (Song)`
-      - Toggle music loop for song/queue/off.
+        -   Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.
 
-    - `!lyrics`
-        - Gets the lyrics for the currently playing song.
+    -   `!iss`
 
-    - `!pause`
-        - Pauses the currently playing music.
-        
-    - `!play ***SEARCH-TERM/YOUTUBE-LINK-or-PLAYLIST/SPOTIFY-LINK-or-PLAYLIST/SOUNDCLOUD-LINK*** i.e. (Crossfire By Stephan)`
-        - Plays the selected music in the voice channel you are in.
-        
-    - `!playnext ***QUEUE-NUMBER/SEARCH-TERM/YOUTUBE-LINK/SPOTIFY-LINK/SOUNDCLOUD-LINK*** i.e. (5)`
-        - Plays the selected song next. (NOTE: Bot Moderator Command ONLY)
-        
-    - `!remove ***QUEUE-NUMBER***`
-        - Removes selected song from the queue.
+        -   Displays the names of all the astronauts that are in transit to/from, or currently aboard the International Space Station. (Works in Direct Messages too.)
 
-    - `!resume`
-        -  Resumes the currently paused music.
-  
-    - `!showqueue`
-        - Shows the music queue.
+    -   `!quote`
+        -   Display a random quote, picked by the developers of Stormageddon. (works in Direct Messages too.)
 
-    - `shuffle`
-        - Shuffles the currently queued music.
+-   Gaming Commands
 
-    - `!skip`
-        - Skips the currently playing song.
+    -   `!destiny2 clan ***INSERT-CLAN-NAME** i.e. (The Taken Clan Name)`
+        -   Displays Destiny 2 clan's bio, avatar, motto, and founder. (Works in Direct Messages too.)
 
-    - `!skipto ***QUEUE-NUMBER***`
-        - Skips to the selected queue number.
+-   Help Commands
 
-    - `!stop`
-         - Stops the playing music.
+    -   `!help ***PAGE*** i.e. (All)`
 
-    - `!volume ***NUMBER(1-100)***` 
-        - Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered.
+        -   Displays Help Message, specifying a page will show that help info, including a listing of all help pages. Using the **\"All\"** page will display all commands, the **\"DM\"** page will display all commands that can be Direct Messaged to the bot, and the **\"Server\"** page will display all commands that can be used in a discord server. (Works in Direct Messages too.)
+
+    -   `!info`
+        -   Displays information about the bot, it's creators, and where you can go if you would like to contribute to it. (Works in Direct Messages too.)
+
+-   Miscellaneous Commands
+
+    -   `!jointocreate name ***YOUR NAME HERE*** i.e. (My Channel 😺)`
+        -   Allows you to change the name of your voice channel (only if you created it).
+
+-   Music Commands
+
+    -   `!autoplay`
+
+        -   Toggles wether or not the bot will automatically pick a new song when the queue is done.
+
+    -   `!loop ***SONG/QUEUE/OFF*** i.e (Song)`
+
+        -   Toggle music loop for song/queue/off.
+
+    -   `!lyrics`
+
+        -   Gets the lyrics for the currently playing song.
+
+    -   `!pause`
+        -   Pauses the currently playing music.
+    -   `!play ***SEARCH-TERM/YOUTUBE-LINK-or-PLAYLIST/SPOTIFY-LINK-or-PLAYLIST/SOUNDCLOUD-LINK*** i.e. (Crossfire By Stephan)`
+        -   Plays the selected music in the voice channel you are in.
+    -   `!playnext ***QUEUE-NUMBER/SEARCH-TERM/YOUTUBE-LINK/SPOTIFY-LINK/SOUNDCLOUD-LINK*** i.e. (5)`
+        -   Plays the selected song next. (NOTE: Bot Moderator Command ONLY)
+    -   `!remove ***QUEUE-NUMBER***`
+
+        -   Removes selected song from the queue.
+
+    -   `!resume`
+        -   Resumes the currently paused music.
+    -   `!showqueue`
+
+        -   Shows the music queue.
+
+    -   `shuffle`
+
+        -   Shuffles the currently queued music.
+
+    -   `!skip`
+
+        -   Skips the currently playing song.
+
+    -   `!skipto ***QUEUE-NUMBER***`
+
+        -   Skips to the selected queue number.
+
+    -   `!stop`
+
+        -   Stops the playing music.
+
+    -   `!volume ***NUMBER(1-100)***`
+        -   Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered.
 
 ## 🤝 Contributing
 

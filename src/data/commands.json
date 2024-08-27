@@ -1,0 +1,52 @@
+{
+    "Admin": {
+        "addmod ***MENTION-USERS***": "Adds users to the list of people that get the PM when someone whispers the bot with the modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
+        "changeprefix ***INSERT-SYMBOL***": "Changes the prefix the bot uses in your server. Available Symbols: ~!$%^&*()_+-=[];',.{}|:\"<>?",
+        "clear ***NUMBER(1-99)***": "Bulk deletes the previous messages in a chat based on user input, up to 99 previous messages.",
+        "createrolemsg": "Create the reactions message for auto role assignment.",
+        "removemod ***MENTION-USERS***": "Removes users from the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.",
+        "say ***MESSAGE-CONTENT***": "Sends a message as the bot.",
+        "set autorole/general/joinrole/jointocreatevc/modmail/music": "Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.",
+        "setup": "Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS."
+    },
+    "Developer": {
+        "devsend ***USER-ID***, ***MESSAGE***'": "Developer-only command for sending messages as the bot. (Only works in Direct Message.)",
+        "logs": "Triggers the bot to send you the log files."
+    },
+    "Direct": {
+        "bugreport ***MESSAGE***": "Whisper via Stormageddon to report a bug to the developers of Stormageddon. (Only works in Direct Message.)",
+        "modmail, ***SERVER-NAME***, ***MESSAGE***": "Whisper via Stormageddon to all moderators for the specified server. (Only works in Direct Message.)"
+    },
+    "Fun": {
+        "agify ***INSERT-NAME***": "Uses [Agify.io](https://agify.io/) to estimate someone's age based off of their name. (Works in Direct Messages too.)",
+        "blame \"\"/add/remove/addperm/removeperm/list/fix ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE***/***FIX-ONLY-NUMBER-IN-LIST-OF-PERSON***": "Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.",
+        "iss": "Displays the names of all the astronauts that are in transit to/from, or currently aboard the International Space Station. (Works in Direct Messages too.)",
+        "quote": "Display a random quote, picked by the developers of Stormageddon. (Works in Direct Messages too.)"
+    },
+    "Gaming": {
+        "destiny2 clan ***INSERT-CLAN-NAME***": "Displays Destiny 2 clan's bio, avatar, motto, and founder. (Works in Direct Messages too.)"
+    },
+    "Help": {
+        "help ***PAGE***": "Displays Help Message, specifying a page will show that help info, including a listing of all help pages. Using the **\"All\"** page will display all commands, the **\"DM\"** page will display all commands that can be Direct Messaged to the bot, and the **\"Server\"** page will display all commands that can be used in a discord server. (Works in Direct Messages too.)",
+        "info": "Displays information about the bot, it's creators, and where you can go if you would like to contribute to it. (Works in Direct Messages too.)"
+    },
+    "Misc.": {
+        "jointocreate name ***YOUR NAME HERE***": "Allows you to change the settings for your voice channel."
+    },
+    "Music": {
+        "autoplay": "Toggles wether or not the bot will automatically pick a new song when the queue is done.",
+        "loop ***SONG/QUEUE/OFF***": "Toggle music loop for song/queue/off.",
+        "lyrics": "Gets the lyrics for the currently playing song.",
+        "pause": "Pauses the currently playing music.",
+        "play ***SEARCH-TERM/YOUTUBE-LINK-or-PLAYLIST/SPOTIFY-LINK-or-PLAYLIST/SOUNDCLOUD-LINK***": "Plays the selected music in the voice channel you are in.",
+        "playnext ***QUEUE-NUMBER/SEARCH-TERM/YOUTUBE-LINK/SPOTIFY-LINK/SOUNDCLOUD-LINK***": "Plays the selected song next. (NOTE: Bot Moderator Command ONLY)",
+        "remove ***QUEUE-NUMBER***": "Removes selected song from the queue.",
+        "resume": "Resumes the currently paused music.",
+        "showqueue": "Shows the music queue.",
+        "shuffle": "Shuffles the currently queued music.",
+        "skip": "Skips the currently playing song.",
+        "skipto ***QUEUE-NUMBER***": "Skips to the selected queue number.",
+        "stop": "Stops the playing music.",
+        "volume ***NUMBER(1-100)***": "Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered."
+    }
+}

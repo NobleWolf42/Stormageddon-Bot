@@ -1,6 +1,6 @@
 {
     "name": "stormageddon-bot",
-    "version": "3.1.2",
+    "version": "3.2.0",
     "description": "Custom Discord Bot",
     "main": "storm.js",
     "author": "Ben Carpenter (NobleWolf42) <bencarpenterit@gmail.com>",
@@ -23,10 +23,15 @@
         "discord.js": "^14.15.3",
         "distube": "^5.0.2",
         "genius-lyrics": "^4.4.7",
+        "mongodb": "^6.8.0",
         "sodium-native": "^4.1.1",
         "xmlhttprequest": "^1.8.0"
     },
     "scripts": {
-        "start": "node storm.js"
+        "start": "node --env-file=.env storm.js"
+    },
+    "devDependencies": {
+        "prettier": "3.3.3",
+        "typescript": "^5.5.4"
     }
 }
