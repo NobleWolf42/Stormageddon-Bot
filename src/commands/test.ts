@@ -13,7 +13,7 @@ module.exports = {
         console.log('Start Test Command');
         const typeScriptNewConfig: ServerConfig = {
             _id: 'testIDString2',
-            guildID: Date.now().toLocaleString(),
+            guildID: 'testing change',
         };
         const newConfig = new MongooseServerConfig({ ...typeScriptNewConfig });
 
@@ -23,8 +23,8 @@ module.exports = {
             console.log(err);
         }
 
-        console.log(await MongooseServerConfig.findById('testIDString2').exec().toObject());
-        console.log(await MongooseServerConfig.findById('testIDString').exec().toObject());
+        console.log(await MongooseServerConfig.findById('testIDString2').exec());
+        console.log(await MongooseServerConfig.findById('testIDString').exec());
         console.log('testing nodemon');
     },
 };
