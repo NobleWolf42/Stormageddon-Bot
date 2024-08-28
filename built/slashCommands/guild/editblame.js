@@ -83,16 +83,17 @@ module.exports = {
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     execute: function (client, interaction, distube) {
         return __awaiter(this, void 0, void 0, function () {
-            var serverID, erroredOut, adminTF, serverConfig, _a, argsString, argsString, argsString, argsString, rBlameString, pBlameString, currentVal, wantedVal, offset;
+            var serverID, erroredOut, adminTF, dbCall, serverConfig, _a, argsString, argsString, argsString, argsString, rBlameString, pBlameString, currentVal, wantedVal, offset;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         serverID = interaction.guildId;
                         erroredOut = false;
                         adminTF = adminCheck(interaction);
-                        return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()[0]];
+                        return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()];
                     case 1:
-                        serverConfig = _b.sent();
+                        dbCall = _b.sent();
+                        serverConfig = dbCall[0];
                         if (!serverConfig.blame.enable) return [3 /*break*/, 17];
                         _a = interaction.options.getSubcommand();
                         switch (_a) {

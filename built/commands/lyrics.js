@@ -58,13 +58,14 @@ module.exports = {
     description: 'Gets the lyrics for the currently playing song.',
     execute: function (message, args, client, distube) {
         return __awaiter(this, void 0, void 0, function () {
-            var serverConfig, queue, lyrics, searches, song, error_1;
+            var dbCall, serverConfig, queue, lyrics, searches, song, error_1;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(message.guild.id).exec()[0]];
+                    case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(message.guild.id).exec()];
                     case 1:
-                        serverConfig = _a.sent();
+                        dbCall = _a.sent();
+                        serverConfig = dbCall[0];
                         if (!serverConfig.music.enable) {
                             warnDisabled(message, 'music', module.name);
                             return [2 /*return*/];

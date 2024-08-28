@@ -54,12 +54,13 @@ module.exports = {
     description: 'Toggles wether or not the bot will automatically pick a new song when the queue is done.',
     execute: function (message, args, client, distube) {
         return __awaiter(this, void 0, void 0, function () {
-            var serverConfig, voiceChannel, queue, autoPlay;
+            var dbCall, serverConfig, voiceChannel, queue, autoPlay;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(message.guild.id).exec()[0]];
+                    case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(message.guild.id).exec()];
                     case 1:
-                        serverConfig = _a.sent();
+                        dbCall = _a.sent();
+                        serverConfig = dbCall[0];
                         //Checks to see if the music feature is enabled in this server
                         if (!serverConfig.music.enable) {
                             return [2 /*return*/, (0, embedMessages_js_1.warnDisabled)(message, 'music', module.name)];

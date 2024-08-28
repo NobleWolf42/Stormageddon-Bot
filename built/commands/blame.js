@@ -57,14 +57,15 @@ module.exports = {
     description: 'Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.',
     execute: function (message, args, client, distube) {
         return __awaiter(this, void 0, void 0, function () {
-            var serverID, serverConfig, erroredOut, adminTF, oldSubCommand, _a, argsString, argsString, argsString, argsString, rBlameString, pBlameString, currentVal, wantedVal, offset, blameList, blameString, rotateIndex;
+            var serverID, dbCall, serverConfig, erroredOut, adminTF, oldSubCommand, _a, argsString, argsString, argsString, argsString, rBlameString, pBlameString, currentVal, wantedVal, offset, blameList, blameString, rotateIndex;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         serverID = message.guild.id;
-                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()[0]];
+                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                     case 1:
-                        serverConfig = _b.sent();
+                        dbCall = _b.sent();
+                        serverConfig = dbCall[0];
                         erroredOut = false;
                         adminTF = adminCheck(message);
                         oldSubCommand = " ".concat(args[0]);

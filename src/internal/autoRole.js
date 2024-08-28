@@ -14,7 +14,8 @@ import { MongooseServerConfig } from '../models/serverConfig';
  */
 async function generateEmbedFields(serverID) {
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+    var dbCall = await MongooseServerConfig.findById(serverID).exec();
+    var serverConfig = dbCall[0];
 
     return serverConfig.autoRole.roles.map((r, e) => {
         return {
@@ -52,7 +53,8 @@ async function autoRoleListener(client) {
         var serverID = message.channel.guild.id;
 
         //Gets serverConfig from database
-        var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+        var dbCall = await MongooseServerConfig.findById(serverID).exec();
+        var serverConfig = dbCall[0];
 
         const emojiKey = data.emoji.id ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
         let reaction = message.reactions.cache.get(emojiKey);

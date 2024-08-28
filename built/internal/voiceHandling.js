@@ -52,7 +52,7 @@ function joinToCreateHandling(client) {
             client.voiceGenerator = new Collection();
             //This handles the event of a user joining or disconnecting from a voice channel
             client.on('voiceStateUpdate', function (oldState, newState) { return __awaiter(_this, void 0, void 0, function () {
-                var member, guild, serverID, oldChannel, newChannel, serverConfig, voiceChannel;
+                var member, guild, serverID, oldChannel, newChannel, dbCall, serverConfig, voiceChannel;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -60,9 +60,10 @@ function joinToCreateHandling(client) {
                             serverID = guild.id;
                             oldChannel = oldState.channel;
                             newChannel = newState.channel;
-                            return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()[0]];
+                            return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()];
                         case 1:
-                            serverConfig = _a.sent();
+                            dbCall = _a.sent();
+                            serverConfig = dbCall[0];
                             if (serverConfig.setupNeeded) {
                                 return [2 /*return*/];
                             }

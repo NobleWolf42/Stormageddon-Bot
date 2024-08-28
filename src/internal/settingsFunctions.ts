@@ -20,7 +20,8 @@ async function setModMail(message) {
     var modList = [];
 
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+    var dbCall = await MongooseServerConfig.findById(serverID).exec();
+    var serverConfig = dbCall[0];
 
     message.channel.send('Please respond with `T` if you would like to enable DMing to bot to DM mods, respond with `F` if you do not.');
 
@@ -85,7 +86,8 @@ async function setModMail(message) {
 async function setAutoRole(message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+    var dbCall = await MongooseServerConfig.findById(serverID).exec();
+    var serverConfig = dbCall[0];
 
     message.channel.send('Example Message:');
     await embedCustom(
@@ -216,7 +218,8 @@ async function setAutoRole(message) {
 async function setJoinRole(message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+    var dbCall = await MongooseServerConfig.findById(serverID).exec();
+    var serverConfig = dbCall[0];
 
     message.channel.send('Please respond with `T` if you would like to enable assign a user a role on server join, respond with `F` if you do not.');
 
@@ -280,7 +283,8 @@ async function setJoinRole(message) {
 async function setJoinToCreateVC(message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+    var dbCall = await MongooseServerConfig.findById(serverID).exec();
+    var serverConfig = dbCall[0];
 
     message.channel.send('Please respond with `T` if you would like to enable Join to Create VC functionality, respond with `F` if you do not.');
 
@@ -346,7 +350,8 @@ async function setJoinToCreateVC(message) {
 async function setMusic(message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+    var dbCall = await MongooseServerConfig.findById(serverID).exec();
+    var serverConfig = dbCall[0];
 
     message.channel.send('Please respond with `T` if you would like to enable music functionality, respond with `F` if you do not.');
 
@@ -430,7 +435,8 @@ async function setMusic(message) {
 async function setGeneral(message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+    var dbCall = await MongooseServerConfig.findById(serverID).exec();
+    var serverConfig = dbCall[0];
 
     message.channel.send('Please @ the roles you would like to use as Bot Admins.');
 
@@ -497,7 +503,8 @@ async function setGeneral(message) {
 async function setBlame(message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+    var dbCall = await MongooseServerConfig.findById(serverID).exec();
+    var serverConfig = dbCall[0];
 
     message.channel.send('Please respond with `T` if you would like to enable Blame functionality, respond with `F` if you do not.');
 
@@ -569,7 +576,8 @@ async function setBlame(message) {
 async function addRemoveBlame(serverID, addTF, permTF, person) {
     //Pulls the current blame lists
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+    var dbCall = await MongooseServerConfig.findById(serverID).exec();
+    var serverConfig = dbCall[0];
 
     var blame = serverConfig.blame;
     var personFound = false;
@@ -672,7 +680,8 @@ async function addRemoveBlame(serverID, addTF, permTF, person) {
  */
 async function changeBlameOffset(serverID, offset) {
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+    var dbCall = await MongooseServerConfig.findById(serverID).exec();
+    var serverConfig = dbCall[0];
 
     //Pulls the current blame lists
     var blame = serverConfig.blame;
@@ -697,7 +706,8 @@ async function changeBlameOffset(serverID, offset) {
 async function setup(message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
+    var dbCall = await MongooseServerConfig.findById(serverID).exec();
+    var serverConfig = dbCall[0];
 
     //Sets up all commands
     await setAutoRole(message);

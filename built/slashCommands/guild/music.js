@@ -103,15 +103,16 @@ module.exports = {
     //#region Execution of the commands
     execute: function (client, interaction, distube) {
         return __awaiter(this, void 0, void 0, function () {
-            var maxFields, serverConfig, channel, voiceChannel, queue, _a, song, autoPlay, loopMode, mods, lyrics, searches, song, error_1, song, playNext, song, song, removeMe, description, maxTimes, i, song, skip, volume;
+            var maxFields, dbCall, serverConfig, channel, voiceChannel, queue, _a, song, autoPlay, loopMode, mods, lyrics, searches, song, error_1, song, playNext, song, song, removeMe, description, maxTimes, i, song, skip, volume;
             var _this = this;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         maxFields = 20;
-                        return [4 /*yield*/, MongooseServerConfig.findById(interaction.guildId).exec()[0]];
+                        return [4 /*yield*/, MongooseServerConfig.findById(interaction.guildId).exec()];
                     case 1:
-                        serverConfig = _b.sent();
+                        dbCall = _b.sent();
+                        serverConfig = dbCall[0];
                         //Checks to see if the music feature is enabled in this server
                         if (!serverConfig.music.enable) {
                             return [2 /*return*/, warnDisabled(interaction, 'music', module.name, client)];
