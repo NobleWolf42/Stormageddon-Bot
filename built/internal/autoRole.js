@@ -40,7 +40,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var _a = require('discord.js'), MessageReaction = _a.MessageReaction, Client = _a.Client;
 //#endregion
 //#region Modules
-var serverConfig_1 = require("./models/serverConfig");
+var serverConfig_1 = require("../models/serverConfig");
 //#endregion
 //#region Function that generates embed fields
 /**
