@@ -106,7 +106,9 @@ function messageHandling(client, distube) {
                     return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
                     serverConfig = _b.sent();
+                    console.log(serverConfig);
                     prefix = serverConfig.prefix;
+                    console.log(prefix);
                     message.prefix = prefix;
                     //#endregion
                     //#region Handles all @ Commands
