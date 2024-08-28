@@ -106,8 +106,9 @@ function messageHandling(client, distube) {
                     return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
                     dbCall = _b.sent();
+                    console.log(dbCall);
                     serverConfig = dbCall[0];
-                    console.log(serverConfig);
+                    console.log(dbCall[0]);
                     prefix = serverConfig.prefix;
                     console.log(prefix);
                     message.prefix = prefix;
