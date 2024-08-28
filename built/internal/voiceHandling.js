@@ -35,11 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 //#region Dependencies
-var _a = require('discord.js'), Collection = _a.Collection, VoiceState = _a.VoiceState, ChannelType = _a.ChannelType, PermissionFlagsBits = _a.PermissionFlagsBits;
-var readFileSync = require('fs').readFileSync;
-//#endregion
-//#region Data Files
-var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
+var _a = require('discord.js'), Collection = _a.Collection, ChannelType = _a.ChannelType, PermissionFlagsBits = _a.PermissionFlagsBits;
 //#endregion
 //#region Helpers
 var addToLog = require('../helpers/errorLog.js').addToLog;
@@ -56,7 +52,7 @@ function joinToCreateHandling(client) {
             client.voiceGenerator = new Collection();
             //This handles the event of a user joining or disconnecting from a voice channel
             client.on('voiceStateUpdate', function (oldState, newState) { return __awaiter(_this, void 0, void 0, function () {
-                var member, guild, serverID, oldChannel, newChannel, voiceChannel;
+                var member, guild, serverID, oldChannel, newChannel, serverConfig, voiceChannel;
                 return __generator(this, function (_a) {
                     switch (_a.label) {
                         case 0:
@@ -64,13 +60,13 @@ function joinToCreateHandling(client) {
                             serverID = guild.id;
                             oldChannel = oldState.channel;
                             newChannel = newState.channel;
-                            if (serverConfig[serverID].setupNeeded) {
+                            return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()];
+                        case 1:
+                            serverConfig = _a.sent();
+                            if (serverConfig.setupNeeded) {
                                 return [2 /*return*/];
                             }
-                            if (!(serverConfig[serverID].JTCVC.enable &&
-                                oldChannel !== newChannel &&
-                                newChannel &&
-                                newChannel.id === serverConfig[serverID].JTCVC.voiceChannel)) return [3 /*break*/, 3];
+                            if (!(serverConfig.JTCVC.enable && oldChannel !== newChannel && newChannel && newChannel.id === serverConfig.JTCVC.voiceChannel)) return [3 /*break*/, 4];
                             return [4 /*yield*/, guild.channels.create({
                                     name: "".concat(member.user.tag, "'s Channel"),
                                     type: ChannelType.GuildVoice,
@@ -83,7 +79,7 @@ function joinToCreateHandling(client) {
                                         };
                                     }),
                                 })];
-                        case 1:
+                        case 2:
                             voiceChannel = _a.sent();
                             //Adds the voice channel just made to the collection
                             client.voiceGenerator.set(voiceChannel.id, member.id);
@@ -92,27 +88,24 @@ function joinToCreateHandling(client) {
                             return [4 /*yield*/, newChannel.permissionOverwrites.edit(member, {
                                     deny: PermissionFlagsBits.Connect,
                                 })];
-                        case 2:
+                        case 3:
                             //Times the user out from spamming new voice channels, currently set to 10 seconds and apparently works intermittently, probably dur to the permissions when testing it
                             _a.sent();
                             setTimeout(function () { return newChannel.permissionOverwrites.delete(member); }, 10 * 1000);
                             return [2 /*return*/, member.voice.setChannel(voiceChannel)];
-                        case 3:
+                        case 4:
                             //Handles someone leaving a voice channel
                             try {
                                 if (oldChannel == null) {
                                     return [2 /*return*/];
                                 }
-                                if (oldChannel != null &&
-                                    client.voiceGenerator.get(oldChannel.id) &&
-                                    oldChannel.members.size == 0) {
+                                if (oldChannel != null && client.voiceGenerator.get(oldChannel.id) && oldChannel.members.size == 0) {
                                     //This deletes a channel if it was created byt the bot and is empty
                                     oldChannel.delete();
                                     client.voiceGenerator.delete(client.voiceGenerator.get(oldChannel.id));
                                     client.voiceGenerator.delete(oldChannel.id);
                                 }
-                                else if (client.voiceGenerator.get(oldChannel.id) &&
-                                    member.id == client.voiceGenerator.get(oldChannel.id)) {
+                                else if (client.voiceGenerator.get(oldChannel.id) && member.id == client.voiceGenerator.get(oldChannel.id)) {
                                     //This should restore default permissions to the channel when the owner leaves, and remove owner THIS IS BROKEN AND SERVERS NO PURPOSE RIGHT NOW
                                     /*await oldChannel.permissionOverwrites.edit(oldChannel.parent.permissionOverwrites.cache.map((p) => {
                                         return {

@@ -36,10 +36,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 //#region Dependencies
 var _a = require('discord.js'), SlashCommandBuilder = _a.SlashCommandBuilder, EmbedBuilder = _a.EmbedBuilder;
-var readFileSync = require('fs').readFileSync;
-//#endregion
-//#region Data Files
-var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 //#region Helpers
 var _b = require('../../helpers/embedSlashMessages.js'), warnCustom = _b.warnCustom, warnDisabled = _b.warnDisabled, warnWrongChannel = _b.warnWrongChannel, errorNoDJ = _b.errorNoDJ, embedCustom = _b.embedCustom, errorNoMod = _b.errorNoMod, errorCustom = _b.errorCustom;
@@ -57,18 +53,9 @@ module.exports = {
         return subcommand
             .setName('play')
             .setDescription('Starts playing a song/playlist or adds it to the queue.')
-            .addStringOption(function (option) {
-            return option
-                .setName('song')
-                .setDescription('Song Name, or Youtube/Spotify/SoundCloud link.')
-                .setRequired(true);
-        });
+            .addStringOption(function (option) { return option.setName('song').setDescription('Song Name, or Youtube/Spotify/SoundCloud link.').setRequired(true); });
     })
-        .addSubcommand(function (subcommand) {
-        return subcommand
-            .setName('autoplay')
-            .setDescription('Toggles autoplay, where the bot will automatically pick a new song when the queue is done.');
-    })
+        .addSubcommand(function (subcommand) { return subcommand.setName('autoplay').setDescription('Toggles autoplay, where the bot will automatically pick a new song when the queue is done.'); })
         .addSubcommand(function (subcommand) {
         return subcommand
             .setName('loop')
@@ -81,82 +68,36 @@ module.exports = {
                 .setChoices({ name: 'Song', value: 'song' }, { name: 'Queue', value: 'queue' }, { name: 'Off', value: 'off' });
         });
     })
-        .addSubcommand(function (subcommand) {
-        return subcommand
-            .setName('lyrics')
-            .setDescription('Displays lyrics for the current song if they can be found.');
-    })
-        .addSubcommand(function (subcommand) {
-        return subcommand
-            .setName('pause')
-            .setDescription('Pauses the currently playing music.');
-    })
-        .addSubcommand(function (subcommand) {
-        return subcommand.setName('resume').setDescription('Resumes paused music.');
-    })
-        .addSubcommand(function (subcommand) {
-        return subcommand
-            .setName('skip')
-            .setDescription('Skips to the next song in queue.');
-    })
+        .addSubcommand(function (subcommand) { return subcommand.setName('lyrics').setDescription('Displays lyrics for the current song if they can be found.'); })
+        .addSubcommand(function (subcommand) { return subcommand.setName('pause').setDescription('Pauses the currently playing music.'); })
+        .addSubcommand(function (subcommand) { return subcommand.setName('resume').setDescription('Resumes paused music.'); })
+        .addSubcommand(function (subcommand) { return subcommand.setName('skip').setDescription('Skips to the next song in queue.'); })
         .addSubcommand(function (subcommand) {
         return subcommand
             .setName('playnext')
             .setDescription('Pick the song to play next from the queue or add a new one up next.')
-            .addIntegerOption(function (option) {
-            return option
-                .setName('song')
-                .setDescription('Queue Position (number), Song Name, or Youtube/Spotify/SoundCloud link.')
-                .setRequired(true);
-        });
+            .addIntegerOption(function (option) { return option.setName('song').setDescription('Queue Position (number), Song Name, or Youtube/Spotify/SoundCloud link.').setRequired(true); });
     })
         .addSubcommand(function (subcommand) {
         return subcommand
             .setName('remove')
             .setDescription('Remove a song from the queue.')
-            .addStringOption(function (option) {
-            return option
-                .setName('song')
-                .setDescription('Queue position of Song.')
-                .setRequired(true);
-        });
+            .addStringOption(function (option) { return option.setName('song').setDescription('Queue position of Song.').setRequired(true); });
     })
-        .addSubcommand(function (subcommand) {
-        return subcommand
-            .setName('queue')
-            .setDescription('Displays the current queue.');
-    })
-        .addSubcommand(function (subcommand) {
-        return subcommand
-            .setName('shuffle')
-            .setDescription('Shuffles the current queue.');
-    })
+        .addSubcommand(function (subcommand) { return subcommand.setName('queue').setDescription('Displays the current queue.'); })
+        .addSubcommand(function (subcommand) { return subcommand.setName('shuffle').setDescription('Shuffles the current queue.'); })
         .addSubcommand(function (subcommand) {
         return subcommand
             .setName('skipto')
             .setDescription('Skips to a specific song from the queue.')
-            .addIntegerOption(function (option) {
-            return option
-                .setName('song')
-                .setDescription('Queue position of Song.')
-                .setRequired(true);
-        });
+            .addIntegerOption(function (option) { return option.setName('song').setDescription('Queue position of Song.').setRequired(true); });
     })
-        .addSubcommand(function (subcommand) {
-        return subcommand
-            .setName('stop')
-            .setDescription('Stops the current queue.');
-    })
+        .addSubcommand(function (subcommand) { return subcommand.setName('stop').setDescription('Stops the current queue.'); })
         .addSubcommand(function (subcommand) {
         return subcommand
             .setName('volume')
             .setDescription('Display or change the volume.')
-            .addIntegerOption(function (option) {
-            return option
-                .setName('volume')
-                .setDescription('Volume to change to.')
-                .setRequired(false);
-        });
+            .addIntegerOption(function (option) { return option.setName('volume').setDescription('Volume to change to.').setRequired(false); });
     }),
     //#endregion
     //#region Execution of the commands
@@ -168,9 +109,11 @@ module.exports = {
                 switch (_b.label) {
                     case 0:
                         maxFields = 20;
-                        serverConfig = updateConfigFile();
+                        return [4 /*yield*/, MongooseServerConfig.findById(interaction.guildId).exec()];
+                    case 1:
+                        serverConfig = _b.sent();
                         //Checks to see if the music feature is enabled in this server
-                        if (!serverConfig[interaction.guildId].music.enable) {
+                        if (!serverConfig.music.enable) {
                             return [2 /*return*/, warnDisabled(interaction, 'music', module.name, client)];
                         }
                         //Checks to see if the user has DJ access
@@ -178,10 +121,10 @@ module.exports = {
                             return [2 /*return*/, errorNoDJ(interaction, module.name, client)];
                         }
                         return [4 /*yield*/, client.channels.fetch(interaction.channelId)];
-                    case 1:
+                    case 2:
                         channel = _b.sent();
-                        if (serverConfig[interaction.guildId].music.textChannel != channel.name) {
-                            return [2 /*return*/, warnWrongChannel(interaction, serverConfig[interaction.guildId].music.textChannel, module.name, client)];
+                        if (serverConfig.music.textChannel != channel.name) {
+                            return [2 /*return*/, warnWrongChannel(interaction, serverConfig.music.textChannel, module.name, client)];
                         }
                         voiceChannel = interaction.member.voice.channel;
                         queue = distube.getQueue(interaction);
@@ -194,23 +137,23 @@ module.exports = {
                         }
                         _a = interaction.options.getSubcommand();
                         switch (_a) {
-                            case 'play': return [3 /*break*/, 2];
-                            case 'autoplay': return [3 /*break*/, 3];
-                            case 'loop': return [3 /*break*/, 4];
-                            case 'lyrics': return [3 /*break*/, 5];
-                            case 'pause': return [3 /*break*/, 11];
-                            case 'resume': return [3 /*break*/, 12];
-                            case 'playnext': return [3 /*break*/, 13];
-                            case 'remove': return [3 /*break*/, 14];
-                            case 'queue': return [3 /*break*/, 15];
-                            case 'shuffle': return [3 /*break*/, 16];
-                            case 'skip': return [3 /*break*/, 17];
-                            case 'skipto': return [3 /*break*/, 18];
-                            case 'stop': return [3 /*break*/, 19];
-                            case 'volume': return [3 /*break*/, 20];
+                            case 'play': return [3 /*break*/, 3];
+                            case 'autoplay': return [3 /*break*/, 4];
+                            case 'loop': return [3 /*break*/, 5];
+                            case 'lyrics': return [3 /*break*/, 6];
+                            case 'pause': return [3 /*break*/, 12];
+                            case 'resume': return [3 /*break*/, 13];
+                            case 'playnext': return [3 /*break*/, 14];
+                            case 'remove': return [3 /*break*/, 15];
+                            case 'queue': return [3 /*break*/, 16];
+                            case 'shuffle': return [3 /*break*/, 17];
+                            case 'skip': return [3 /*break*/, 18];
+                            case 'skipto': return [3 /*break*/, 19];
+                            case 'stop': return [3 /*break*/, 20];
+                            case 'volume': return [3 /*break*/, 21];
                         }
-                        return [3 /*break*/, 21];
-                    case 2:
+                        return [3 /*break*/, 22];
+                    case 3:
                         song = interaction.options.getString('song');
                         //Checks to see if a song input is detected, is there is a song it checks to see if there is a queue, if there is no queue it plays the song, if there is an queue it will add it to the end of the queue
                         if (!song) {
@@ -226,15 +169,15 @@ module.exports = {
                                 ephemeral: true,
                             });
                         }
-                        return [3 /*break*/, 21];
-                    case 3:
+                        return [3 /*break*/, 22];
+                    case 4:
                         autoPlay = queue.toggleAutoplay();
                         embedCustom(interaction, 'Autoplay Toggled', '#0000FF', "Autoplay is now ".concat(autoPlay ? 'On' : 'Off', "."), {
                             text: "Requested by ".concat(interaction.user.username),
                             iconURL: null,
                         }, null, [], null, null);
-                        return [3 /*break*/, 21];
-                    case 4:
+                        return [3 /*break*/, 22];
+                    case 5:
                         loopMode = interaction.options.getString('looptype');
                         mods = ['song', 'queue', 'off'];
                         if (!queue) {
@@ -268,32 +211,32 @@ module.exports = {
                                     break;
                             }
                         }
-                        return [3 /*break*/, 21];
-                    case 5:
+                        return [3 /*break*/, 22];
+                    case 6:
                         if (!queue) {
                             return [2 /*return*/, warnCustom(interaction, 'There is nothing playing.', module.name)];
                         }
                         lyrics = null;
-                        _b.label = 6;
-                    case 6:
-                        _b.trys.push([6, 9, , 10]);
-                        return [4 /*yield*/, Genius.songs.search(queue.songs[0].name)];
+                        _b.label = 7;
                     case 7:
+                        _b.trys.push([7, 10, , 11]);
+                        return [4 /*yield*/, Genius.songs.search(queue.songs[0].name)];
+                    case 8:
                         searches = _b.sent();
                         song = searches[0];
                         return [4 /*yield*/, song.lyrics()];
-                    case 8:
+                    case 9:
                         lyrics = _b.sent();
                         if (!lyrics) {
                             lyrics = "No lyrics found for ".concat(queue.songs[0].name, ".");
                         }
-                        return [3 /*break*/, 10];
-                    case 9:
+                        return [3 /*break*/, 11];
+                    case 10:
                         error_1 = _b.sent();
                         addToLog('fatal error', module.name, interaction.user.username, interaction.guild.name, channel.name, error_1, client);
                         lyrics = "No lyrics found for ".concat(queue.songs[0].name, ".");
-                        return [3 /*break*/, 10];
-                    case 10:
+                        return [3 /*break*/, 11];
+                    case 11:
                         slicedLyrics = [];
                         while (lyrics.length >= 2048) {
                             slicedLyrics.push("".concat(lyrics.substring(0, 2045), "..."));
@@ -309,8 +252,8 @@ module.exports = {
                                 return [2 /*return*/];
                             });
                         }); });
-                        return [3 /*break*/, 21];
-                    case 11:
+                        return [3 /*break*/, 22];
+                    case 12:
                         if (!queue) {
                             return [2 /*return*/, warnCustom(interaction, 'Nothing is playing right now.', module.name, client)];
                         }
@@ -324,8 +267,8 @@ module.exports = {
                                 iconURL: null,
                             }, null, [], null, null);
                         }
-                        return [3 /*break*/, 21];
-                    case 12:
+                        return [3 /*break*/, 22];
+                    case 13:
                         if (!queue) {
                             return [2 /*return*/, warnCustom(interaction, 'Nothing is playing right now.', module.name, client)];
                         }
@@ -339,8 +282,8 @@ module.exports = {
                                 iconURL: null,
                             }, null, [], null, null);
                         }
-                        return [3 /*break*/, 21];
-                    case 13:
+                        return [3 /*break*/, 22];
+                    case 14:
                         if (!modCheck(interaction)) {
                             return [2 /*return*/, errorNoMod(interaction, module.name, client)];
                         }
@@ -369,8 +312,8 @@ module.exports = {
                                 position: 1,
                             });
                         }
-                        return [3 /*break*/, 21];
-                    case 14:
+                        return [3 /*break*/, 22];
+                    case 15:
                         song = interaction.options.getInteger('song');
                         if (!queue) {
                             return [2 /*return*/, warnCustom(interaction, 'Nothing is playing right now.', module.name, client)];
@@ -393,23 +336,20 @@ module.exports = {
                         else {
                             removeMe = queue.songs.splice(song - 1, 1)[0];
                             if (!removeMe) {
-                                return [2 /*return*/, (errorCustom(interaction, 'Failed to remove the track from the queue.', module.name, client),
-                                        client)];
+                                return [2 /*return*/, (errorCustom(interaction, 'Failed to remove the track from the queue.', module.name, client), client)];
                             }
                             return [2 /*return*/, embedCustom(interaction, 'Removed', '#0000FF', "Removed [`".concat(removeMe.name, "`](").concat(removeMe.url, ") from the queue."), {
                                     text: "Requested by ".concat(interaction.user.username),
                                     iconURL: null,
                                 }, null, [], null, null)];
                         }
-                        return [3 /*break*/, 21];
-                    case 15:
+                        return [3 /*break*/, 22];
+                    case 16:
                         if (!queue) {
                             return [2 /*return*/, warnCustom(interaction, 'Nothing is playing right now.', module.name, client)];
                         }
                         else {
-                            description = queue.songs.map(function (song, index) {
-                                return "".concat(index + 1, " - [`").concat(song.name, "`](").concat(song.url, ")\n");
-                            });
+                            description = queue.songs.map(function (song, index) { return "".concat(index + 1, " - [`").concat(song.name, "`](").concat(song.url, ")\n"); });
                             maxTimes = Math.ceil(description.length / maxFields);
                             slicedDesc = [];
                             for (i = 0; i < maxTimes; i++) {
@@ -438,8 +378,8 @@ module.exports = {
                                 });
                             }); });
                         }
-                        return [3 /*break*/, 21];
-                    case 16:
+                        return [3 /*break*/, 22];
+                    case 17:
                         if (!queue) {
                             return [2 /*return*/, warnCustom(interaction, 'Nothing is playing right now.', module.name, client)];
                         }
@@ -453,8 +393,8 @@ module.exports = {
                                 iconURL: null,
                             }, null, [], null, null);
                         }
-                        return [3 /*break*/, 21];
-                    case 17:
+                        return [3 /*break*/, 22];
+                    case 18:
                         if (!queue) {
                             return [2 /*return*/, warnCustom(interaction, 'Nothing is playing right now.', module.name, client)];
                         }
@@ -470,8 +410,8 @@ module.exports = {
                                 }, null, [], null, null);
                             });
                         }
-                        return [3 /*break*/, 21];
-                    case 18:
+                        return [3 /*break*/, 22];
+                    case 19:
                         skip = interaction.options.getInteger('song');
                         if (!queue) {
                             return [2 /*return*/, warnCustom(interaction, 'Nothing is playing right now.', module.name, client)];
@@ -491,8 +431,8 @@ module.exports = {
                                 }, null, [], null, null);
                             });
                         }
-                        return [3 /*break*/, 21];
-                    case 19:
+                        return [3 /*break*/, 22];
+                    case 20:
                         if (!queue || !queue.voiceChannel) {
                             return [2 /*return*/, warnCustom(interaction, 'Nothing is playing right now.', module.name, client)];
                         }
@@ -505,8 +445,8 @@ module.exports = {
                                 }, null, [], null, null);
                             });
                         }
-                        return [3 /*break*/, 21];
-                    case 20:
+                        return [3 /*break*/, 22];
+                    case 21:
                         volume = interaction.options.getNumber('song');
                         if (!queue) {
                             return [2 /*return*/, warnCustom(interaction, 'Nothing is playing right now.', module.name, client)];
@@ -524,8 +464,8 @@ module.exports = {
                                 iconURL: null,
                             }, null, [], null, null);
                         }
-                        return [3 /*break*/, 21];
-                    case 21: return [2 /*return*/];
+                        return [3 /*break*/, 22];
+                    case 22: return [2 /*return*/];
                 }
             });
         });

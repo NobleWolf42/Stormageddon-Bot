@@ -1,15 +1,5 @@
 //#region Dependencies
-const {
-    Collection,
-    VoiceState,
-    ChannelType,
-    PermissionFlagsBits,
-} = require('discord.js');
-const { readFileSync } = require('fs');
-//#endregion
-
-//#region Data Files
-var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
+const { Collection, ChannelType, PermissionFlagsBits } = require('discord.js');
 //#endregion
 
 //#region Helpers
@@ -30,30 +20,26 @@ async function joinToCreateHandling(client) {
         const serverID = guild.id;
         const oldChannel = oldState.channel;
         const newChannel = newState.channel;
+        //Calls serverConfig from database
+        var serverConfig = await MongooseServerConfig.findById(message.guild.id).exec();
 
-        if (serverConfig[serverID].setupNeeded) {
+        if (serverConfig.setupNeeded) {
             return;
         }
 
-        if (
-            serverConfig[serverID].JTCVC.enable &&
-            oldChannel !== newChannel &&
-            newChannel &&
-            newChannel.id === serverConfig[serverID].JTCVC.voiceChannel
-        ) {
+        if (serverConfig.JTCVC.enable && oldChannel !== newChannel && newChannel && newChannel.id === serverConfig.JTCVC.voiceChannel) {
             //Creates new voice channel
             const voiceChannel = await guild.channels.create({
                 name: `${member.user.tag}'s Channel`,
                 type: ChannelType.GuildVoice,
                 parent: newChannel.parent,
-                permissionOverwrites:
-                    newChannel.parent.permissionOverwrites.cache.map((p) => {
-                        return {
-                            id: p.id,
-                            allow: p.allow.toArray(),
-                            deny: p.deny.toArray(),
-                        };
-                    }),
+                permissionOverwrites: newChannel.parent.permissionOverwrites.cache.map((p) => {
+                    return {
+                        id: p.id,
+                        allow: p.allow.toArray(),
+                        deny: p.deny.toArray(),
+                    };
+                }),
             });
 
             //Adds the voice channel just made to the collection
@@ -64,10 +50,7 @@ async function joinToCreateHandling(client) {
             await newChannel.permissionOverwrites.edit(member, {
                 deny: PermissionFlagsBits.Connect,
             });
-            setTimeout(
-                () => newChannel.permissionOverwrites.delete(member),
-                10 * 1000
-            );
+            setTimeout(() => newChannel.permissionOverwrites.delete(member), 10 * 1000);
 
             return member.voice.setChannel(voiceChannel);
         }
@@ -77,21 +60,12 @@ async function joinToCreateHandling(client) {
             if (oldChannel == null) {
                 return;
             }
-            if (
-                oldChannel != null &&
-                client.voiceGenerator.get(oldChannel.id) &&
-                oldChannel.members.size == 0
-            ) {
+            if (oldChannel != null && client.voiceGenerator.get(oldChannel.id) && oldChannel.members.size == 0) {
                 //This deletes a channel if it was created byt the bot and is empty
                 oldChannel.delete();
-                client.voiceGenerator.delete(
-                    client.voiceGenerator.get(oldChannel.id)
-                );
+                client.voiceGenerator.delete(client.voiceGenerator.get(oldChannel.id));
                 client.voiceGenerator.delete(oldChannel.id);
-            } else if (
-                client.voiceGenerator.get(oldChannel.id) &&
-                member.id == client.voiceGenerator.get(oldChannel.id)
-            ) {
+            } else if (client.voiceGenerator.get(oldChannel.id) && member.id == client.voiceGenerator.get(oldChannel.id)) {
                 //This should restore default permissions to the channel when the owner leaves, and remove owner THIS IS BROKEN AND SERVERS NO PURPOSE RIGHT NOW
                 /*await oldChannel.permissionOverwrites.edit(oldChannel.parent.permissionOverwrites.cache.map((p) => {
                     return {
@@ -100,20 +74,10 @@ async function joinToCreateHandling(client) {
                         deny: p.deny.toArray()
                     }
                 }));*/
-                client.voiceGenerator.delete(
-                    client.voiceGenerator.get(oldChannel.id)
-                );
+                client.voiceGenerator.delete(client.voiceGenerator.get(oldChannel.id));
             }
         } catch (err) {
-            addToLog(
-                'Fatal Error',
-                'JTCVC Handler',
-                member.tag,
-                guild.name,
-                oldChannel.name,
-                err,
-                client
-            );
+            addToLog('Fatal Error', 'JTCVC Handler', member.tag, guild.name, oldChannel.name, err, client);
         }
     });
 }
