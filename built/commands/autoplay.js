@@ -41,7 +41,7 @@ var embedMessages_js_1 = require("../helpers/embedMessages.js");
 var userPermissions_js_1 = require("../helpers/userPermissions.js");
 //#endregion
 //#region Modules
-var serverConfig_1 = require("./models/serverConfig");
+var serverConfig_1 = require("../models/serverConfig");
 //#endregion
 //#region This exports the play command with the information about it
 module.exports = {

@@ -41,7 +41,7 @@ var _a = require('../helpers/embedMessages.js'), warnCustom = _a.warnCustom, war
 var djCheck = require('../helpers/userPermissions.js').djCheck;
 //#endregion
 //#region Modules
-var serverConfig_1 = require("./models/serverConfig");
+var serverConfig_1 = require("../models/serverConfig.");
 //#endregion
 //#region This exports the loop command with the information about it
 module.exports = {

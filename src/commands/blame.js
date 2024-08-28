@@ -8,7 +8,7 @@ const { addRemoveBlame, changeBlameOffset } = require('../internal/settingsFunct
 //#endregion
 
 //#region Modules
-import { MongooseServerConfig } from './models/serverConfig';
+import { MongooseServerConfig } from '../models/serverConfig.';
 //#endregion
 
 //#region This exports the blame command with the information about it

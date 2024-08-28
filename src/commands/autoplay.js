@@ -4,7 +4,7 @@ import { djCheck } from '../helpers/userPermissions.js';
 //#endregion
 
 //#region Modules
-import { MongooseServerConfig } from './models/serverConfig';
+import { MongooseServerConfig } from '../models/serverConfig';
 //#endregion
 
 //#region This exports the play command with the information about it

@@ -9,7 +9,7 @@ const { embedCustom, warnCustom, warnDisabled, warnWrongChannel } = require('../
 //#endregion
 
 //#region Modules
-import { MongooseServerConfig } from './models/serverConfig';
+import { MongooseServerConfig } from '../models/serverConfig.';
 //#endregion
 
 //#region This exports the lyrics command with the information about it

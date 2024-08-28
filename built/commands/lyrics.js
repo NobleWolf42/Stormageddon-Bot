@@ -45,7 +45,7 @@ var addToLog = require('../helpers/errorLog.js').addToLog;
 var _a = require('../helpers/embedMessages.js'), embedCustom = _a.embedCustom, warnCustom = _a.warnCustom, warnDisabled = _a.warnDisabled, warnWrongChannel = _a.warnWrongChannel;
 //#endregion
 //#region Modules
-var serverConfig_1 = require("./models/serverConfig");
+var serverConfig_1 = require("../models/serverConfig.");
 //#endregion
 //#region This exports the lyrics command with the information about it
 module.exports = {
