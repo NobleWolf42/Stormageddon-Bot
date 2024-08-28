@@ -5,11 +5,7 @@ const { join } = require('path');
 //#endregion
 
 //#region Helpers
-const {
-    warnCustom,
-    errorCustom,
-    embedCustom,
-} = require('../helpers/embedMessages.js');
+const { warnCustom, errorCustom, embedCustom } = require('../helpers/embedMessages.js');
 const { getRandomDoggo } = require('../helpers/doggoLinks.js');
 const { updateConfigFile } = require('../helpers/currentSettings.js');
 const { addToLog } = require('../helpers/errorLog.js');
@@ -32,29 +28,10 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 function tryCommand(client, message, command, args, distube) {
     try {
         command.execute(message, args, client, distube);
-        addToLog(
-            'Success',
-            command.name,
-            message.author.tag,
-            message.guild.name,
-            message.channel.name
-        );
+        addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
     } catch (error) {
-        addToLog(
-            'Fatal Error',
-            command.name,
-            message.author.tag,
-            message.guild.name,
-            message.channel.name,
-            error,
-            client
-        );
-        errorCustom(
-            message,
-            'There was an error executing that command.',
-            command.name,
-            client
-        );
+        addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+        errorCustom(message, 'There was an error executing that command.', command.name, client);
         console.log(error);
     }
 }
@@ -71,9 +48,7 @@ function messageHandling(client, distube) {
     const coolDowns = new Collection();
 
     //#region Imports commands from ./commands
-    const commandFiles = readdirSync(join(__dirname, '../commands')).filter(
-        (file) => file.endsWith('.js')
-    );
+    const commandFiles = readdirSync(join(__dirname, '../commands')).filter((file) => file.endsWith('.js'));
     for (const file of commandFiles) {
         const command = require(join(__dirname, '../commands', `${file}`));
         client.commands.set(command.name, command);
@@ -92,9 +67,7 @@ function messageHandling(client, distube) {
 
         //#region Sets prefix/defaultPrefix
         var serverID = message.channel.guild.id;
-        var prefixFile = JSON.parse(
-            readFileSync('./data/botPrefix.json', 'utf8')
-        );
+        var prefixFile = JSON.parse(readFileSync('./data/botPrefix.json', 'utf8'));
 
         if (prefixFile[serverID] != undefined) {
             if (prefixFile[serverID].prefix != undefined) {
@@ -157,25 +130,16 @@ function messageHandling(client, distube) {
         //#region Handles all commands triggered by prefix
         //#region Prefix and Command Validation
         //Escapes if message does not start with prefix
-        const prefixRegex = new RegExp(
-            `^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`
-        );
+        const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
         if (!prefixRegex.test(message.content)) return;
 
         //Gets command name as typed by user
         const [, matchedPrefix] = message.content.match(prefixRegex);
-        const args = message.content
-            .slice(matchedPrefix.length)
-            .trim()
-            .split(/ +/);
+        const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
         const commandName = args.shift().toLowerCase();
 
         //Checks to see if it is a valid command and ignores message if it is not
-        const command =
-            client.commands.get(commandName) ||
-            client.commands.find(
-                (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
-            );
+        const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
         if (!command) return;
 
         if (!command.type.includes('Guild')) return;
@@ -192,16 +156,11 @@ function messageHandling(client, distube) {
         const coolDownAmount = (command.coolDown || 1) * 1000;
 
         if (timestamps.has(message.author.id)) {
-            const expirationTime =
-                timestamps.get(message.author.id) + coolDownAmount;
+            const expirationTime = timestamps.get(message.author.id) + coolDownAmount;
 
             if (now < expirationTime) {
                 const timeLeft = (expirationTime - now) / 1000;
-                return warnCustom(
-                    message,
-                    `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`,
-                    command.name
-                );
+                return warnCustom(message, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`, command.name);
             }
         }
 
@@ -271,23 +230,14 @@ function PMHandling(client, distube) {
         //#region Handles DM commands
         //#region Prefix and Command Validation
         //Escapes if message does not start with prefix
-        const prefixRegex = new RegExp(
-            `^(<@?${client.user.id}>|${escapeRegex(prefix)})\\s*`
-        );
+        const prefixRegex = new RegExp(`^(<@?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
         if (!prefixRegex.test(message.content)) return;
         //Gets command name as typed by user
         const [, matchedPrefix] = message.content.match(prefixRegex);
-        const args = message.content
-            .slice(matchedPrefix.length)
-            .trim()
-            .split(/ +/);
+        const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
         const commandName = args.shift().toLowerCase();
         //Checks to see if it is a valid command and ignores message if it is not
-        const command =
-            client.commands.get(commandName) ||
-            client.commands.find(
-                (cmd) => cmd.aliases && cmd.aliases.includes(commandName)
-            );
+        const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
         if (!command) return;
         if (!command.type.includes('DM')) return;
         //#endregion
@@ -303,16 +253,11 @@ function PMHandling(client, distube) {
         const coolDownAmount = (command.coolDown || 1) * 1000;
 
         if (timestamps.has(message.author.id)) {
-            const expirationTime =
-                timestamps.get(message.author.id) + coolDownAmount;
+            const expirationTime = timestamps.get(message.author.id) + coolDownAmount;
 
             if (now < expirationTime) {
                 const timeLeft = (expirationTime - now) / 1000;
-                return warnCustom(
-                    message,
-                    `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`,
-                    command.name
-                );
+                return warnCustom(message, `Please wait ${timeLeft.toFixed(1)} more second(s) before reusing the \`${command.name}\` command.`, command.name);
             }
         }
 
@@ -322,29 +267,10 @@ function PMHandling(client, distube) {
 
         try {
             command.execute(message, args, client, distube);
-            addToLog(
-                'Success',
-                command.name,
-                message.author.tag,
-                'DM',
-                'Private Message'
-            );
+            addToLog('Success', command.name, message.author.tag, 'DM', 'Private Message');
         } catch (error) {
-            addToLog(
-                'Fatal Error',
-                command.name,
-                message.author.tag,
-                'DM',
-                'Private Message',
-                error,
-                client
-            );
-            errorCustom(
-                message,
-                'There was an error executing that command.',
-                command.name,
-                client
-            );
+            addToLog('Fatal Error', command.name, message.author.tag, 'DM', 'Private Message', error, client);
+            errorCustom(message, 'There was an error executing that command.', command.name, client);
             console.log(error);
         }
         //#endregion

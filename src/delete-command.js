@@ -1,5 +1,5 @@
 const { REST, Routes } = require('discord.js');
-const serverConfig = require('./data/serverConfig.ts');
+const serverConfig = require('./data/serverConfig.json');
 
 const rest = new REST().setToken(process.env.authToken);
 

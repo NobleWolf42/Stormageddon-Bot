@@ -1,13 +1,14 @@
 //#region Initial Set-Up
 
 //#region Dependencies
-import { Client, Collection, GatewayIntentBits, Partials } from 'discord.js';
+import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import { DisTube } from 'distube'; //sodium-native is used by this, stop deleting it you fool
 import { SpotifyPlugin } from '@distube/spotify';
 import { SoundCloudPlugin } from '@distube/soundcloud';
 import { YtDlpPlugin } from '@distube/yt-dlp';
 import { YouTubePlugin } from '@distube/youtube';
 import { MongoClient, ServerApiVersion } from 'mongodb';
+import mongoose from 'mongoose';
 //#endregion
 
 //#region Helpers
@@ -56,6 +57,33 @@ const client = new Client({
 });
 //#endregion
 
+//#region Initialize mongoDB client
+export const db = mongoose.connect(process.env.mongoDBURI).then(() => {
+    console.log('mongodb connected!');
+});
+
+// const mongoDBClient = new MongoClient(process.env.mongoDBURI, {
+//     serverApi: {
+//         version: ServerApiVersion.v1,
+//         strict: true,
+//         deprecationErrors: true,
+//     },
+// });
+//#endregion
+
+//#region function to load db and Return list of servers currently using bot
+/**
+ *
+ * @returns
+ */
+async function dbLoad() {
+    // const mongoCollection = mongoDBClient.db('server-configs').collection('guildIDs');
+    // const serverConfigs = await mongoCollection.find({ guildID: { $nin: [] } });
+    // console.log(serverConfigs);
+    // return serverConfigs;
+}
+//#endregion
+
 try {
     //#region Initialize Distube(music) Functionality
     const distube = new DisTube(client, {
@@ -74,16 +102,6 @@ try {
     });
     //#endregion
 
-    //#region Initialize mongoDB client
-    const mongoDBClient = new MongoClient(process.env.mongoDBURI, {
-        serverApi: {
-            version: ServerApiVersion.v1,
-            strict: true,
-            deprecationErrors: true,
-        },
-    });
-    //#endregion
-
     //Throws Error if bot's token is not set.
     if (process.env.authToken === 'YOUR BOT TOKEN' || process.env.authToken === '') {
         throw new Error("The 'authToken' property is not set in the .env file. Please do this!");
@@ -96,7 +114,6 @@ try {
     client.on('ready', async () => {
         console.log(`Logged in as ${client.user.tag}!`);
         var serverConfigs = await dbLoad();
-        console.log('bdloading!');
         autoRoleListener(client);
         messageHandling(client, distube);
         PMHandling(client, distube);
@@ -126,16 +143,6 @@ try {
     });
 } catch (err) {
     console.log(err);
-}
-
-async function dbLoad() {
-    const mongoDatabase = mongoDBClient.db('server-configs');
-    const guilds = mongoDatabase.collection('guildIDs');
-
-    const serverConfigs = await guilds.find({ guildID: { $nin: [] } });
-
-    console.log(serverConfigs);
-    return serverConfigs;
 }
 
 //Logs Errors

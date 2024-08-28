@@ -1,5 +1,5 @@
 var _a = require('discord.js'), REST = _a.REST, Routes = _a.Routes;
-var serverConfig = require('./data/serverConfig.ts');
+var serverConfig = require('./data/serverConfig.json');
 var rest = new REST().setToken(process.env.authToken);
 // for guild-based commands
 for (guildId in serverConfig) {

@@ -37,6 +37,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.db = void 0;
 //#region Dependencies
 var discord_js_1 = require("discord.js");
 var distube_1 = require("distube"); //sodium-native is used by this, stop deleting it you fool
@@ -44,7 +45,7 @@ var spotify_1 = require("@distube/spotify");
 var soundcloud_1 = require("@distube/soundcloud");
 var yt_dlp_1 = require("@distube/yt-dlp");
 var youtube_1 = require("@distube/youtube");
-var mongodb_1 = require("mongodb");
+var mongoose_1 = require("mongoose");
 //#endregion
 //#region Helpers
 var createFiles_js_1 = require("./helpers/createFiles.js");
@@ -87,6 +88,31 @@ var client = new discord_js_1.Client({
     ],
 });
 //#endregion
+//#region Initialize mongoDB client
+exports.db = mongoose_1.default.connect(process.env.mongoDBURI).then(function () {
+    console.log('mongodb connected!');
+});
+// const mongoDBClient = new MongoClient(process.env.mongoDBURI, {
+//     serverApi: {
+//         version: ServerApiVersion.v1,
+//         strict: true,
+//         deprecationErrors: true,
+//     },
+// });
+//#endregion
+//#region function to load db and Return list of servers currently using bot
+/**
+ *
+ * @returns
+ */
+function dbLoad() {
+    return __awaiter(this, void 0, void 0, function () {
+        return __generator(this, function (_a) {
+            return [2 /*return*/];
+        });
+    });
+}
+//#endregion
 try {
     //#region Initialize Distube(music) Functionality
     var distube_2 = new distube_1.DisTube(client, {
@@ -102,15 +128,6 @@ try {
                 update: true, // Update youtube-dl automatically
             }),
         ],
-    });
-    //#endregion
-    //#region Initialize mongoDB client
-    var mongoDBClient = new mongodb_1.MongoClient(process.env.mongoDBURI, {
-        serverApi: {
-            version: mongodb_1.ServerApiVersion.v1,
-            strict: true,
-            deprecationErrors: true,
-        },
     });
     //#endregion
     //Throws Error if bot's token is not set.
@@ -129,7 +146,6 @@ try {
                     return [4 /*yield*/, dbLoad()];
                 case 1:
                     serverConfigs = _a.sent();
-                    console.log('bdloading!');
                     (0, autoRole_js_1.autoRoleListener)(client);
                     (0, messageHandling_js_1.messageHandling)(client, distube_2);
                     (0, messageHandling_js_1.PMHandling)(client, distube_2);
@@ -161,23 +177,6 @@ try {
 }
 catch (err) {
     console.log(err);
-}
-function dbLoad() {
-    return __awaiter(this, void 0, void 0, function () {
-        var mongoDatabase, guilds, serverConfigs;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0:
-                    mongoDatabase = mongoDBClient.db('server-configs');
-                    guilds = mongoDatabase.collection('guildIDs');
-                    return [4 /*yield*/, guilds.find({ guildID: { $nin: [] } })];
-                case 1:
-                    serverConfigs = _a.sent();
-                    console.log(serverConfigs);
-                    return [2 /*return*/, serverConfigs];
-            }
-        });
-    });
 }
 //Logs Errors
 client.on('warn', function (info) { return console.log(info); });

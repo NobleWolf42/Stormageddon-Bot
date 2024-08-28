@@ -3,7 +3,7 @@ const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
 //#endregion
 
 //#region Data Files
-var serverConfig = require('../../data/serverConfig.ts');
+var serverConfig = require('../../data/serverConfig.json');
 //#endregion
 
 //#region Helpers

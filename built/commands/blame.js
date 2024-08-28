@@ -35,7 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 //#region Data Files
-var serverConfig = require('../data/serverConfig.ts');
+var serverConfig = require('../data/serverConfig.json');
 //#endregion
 //#region Helpers
 var _a = require('../helpers/embedMessages.js'), embedCustom = _a.embedCustom, warnDisabled = _a.warnDisabled, errorCustom = _a.errorCustom, warnCustom = _a.warnCustom, errorNoAdmin = _a.errorNoAdmin;

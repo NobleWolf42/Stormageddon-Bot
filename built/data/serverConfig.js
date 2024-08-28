@@ -24,14 +24,7 @@ var serverConfigs = [
             cursing: true,
             offset: -2,
             permList: [],
-            rotateList: [
-                'HypersonicWalrus',
-                'NobleWolf42',
-                'End3rman07',
-                'Chris Cugs',
-                '--Thor--',
-                'spacewulf',
-            ],
+            rotateList: ['HypersonicWalrus', 'NobleWolf42', 'End3rman07', 'Chris Cugs', '--Thor--', 'spacewulf'],
         },
     },
 ];

@@ -108,14 +108,10 @@ function messageHandling(client, distube) {
             return;
         //Gets command name as typed by user
         var _a = message.content.match(prefixRegex), matchedPrefix = _a[1];
-        var args = message.content
-            .slice(matchedPrefix.length)
-            .trim()
-            .split(/ +/);
+        var args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
         var commandName = args.shift().toLowerCase();
         //Checks to see if it is a valid command and ignores message if it is not
-        var command = client.commands.get(commandName) ||
-            client.commands.find(function (cmd) { return cmd.aliases && cmd.aliases.includes(commandName); });
+        var command = client.commands.get(commandName) || client.commands.find(function (cmd) { return cmd.aliases && cmd.aliases.includes(commandName); });
         if (!command)
             return;
         if (!command.type.includes('Guild'))
@@ -190,14 +186,10 @@ function PMHandling(client, distube) {
             return;
         //Gets command name as typed by user
         var _a = message.content.match(prefixRegex), matchedPrefix = _a[1];
-        var args = message.content
-            .slice(matchedPrefix.length)
-            .trim()
-            .split(/ +/);
+        var args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
         var commandName = args.shift().toLowerCase();
         //Checks to see if it is a valid command and ignores message if it is not
-        var command = client.commands.get(commandName) ||
-            client.commands.find(function (cmd) { return cmd.aliases && cmd.aliases.includes(commandName); });
+        var command = client.commands.get(commandName) || client.commands.find(function (cmd) { return cmd.aliases && cmd.aliases.includes(commandName); });
         if (!command)
             return;
         if (!command.type.includes('DM'))

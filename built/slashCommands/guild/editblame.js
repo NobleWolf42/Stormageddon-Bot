@@ -38,7 +38,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 var _a = require('discord.js'), SlashCommandBuilder = _a.SlashCommandBuilder, PermissionFlagsBits = _a.PermissionFlagsBits;
 //#endregion
 //#region Data Files
-var serverConfig = require('../../data/serverConfig.ts');
+var serverConfig = require('../../data/serverConfig.json');
 //#endregion
 //#region Helpers
 var _b = require('../../helpers/embedSlashMessages.js'), embedCustom = _b.embedCustom, warnDisabled = _b.warnDisabled, errorCustom = _b.errorCustom, warnCustom = _b.warnCustom, errorNoAdmin = _b.errorNoAdmin;
