@@ -91,7 +91,7 @@ function messageHandling(client, distube) {
     //#endregion
     //Handles messages from guilds and their responses
     client.on('messageCreate', function (message) { return __awaiter(_this, void 0, void 0, function () {
-        var serverID, dbCall, serverConfig, prefix, prefixRegex, _a, matchedPrefix, args, commandName, command, now, timestamps, coolDownAmount, expirationTime, timeLeft;
+        var serverID, serverConfig, prefix, prefixRegex, _a, matchedPrefix, args, commandName, command, now, timestamps, coolDownAmount, expirationTime, timeLeft;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -105,12 +105,8 @@ function messageHandling(client, distube) {
                     serverID = message.channel.guild.id;
                     return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    dbCall = _b.sent();
-                    console.log(dbCall);
-                    serverConfig = dbCall;
-                    console.log(dbCall.prefix);
+                    serverConfig = (_b.sent()).toObject();
                     prefix = serverConfig.prefix;
-                    console.log(prefix);
                     message.prefix = prefix;
                     //#endregion
                     //#region Handles all @ Commands
