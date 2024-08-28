@@ -69,7 +69,7 @@ function messageHandling(client, distube) {
         var serverID = message.channel.guild.id;
 
         //Gets serverConfig from database
-        var dbCall = await MongooseServerConfig.findById(serverID).exec();
+        var dbCall = (await MongooseServerConfig.findById(serverID).exec()).toObject();
         console.log(dbCall);
         var serverConfig = dbCall[0];
         console.log(dbCall[0]);

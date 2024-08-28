@@ -105,7 +105,7 @@ function messageHandling(client, distube) {
                     serverID = message.channel.guild.id;
                     return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    dbCall = _b.sent();
+                    dbCall = (_b.sent()).toObject();
                     console.log(dbCall);
                     serverConfig = dbCall[0];
                     console.log(dbCall[0]);
