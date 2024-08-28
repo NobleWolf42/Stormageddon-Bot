@@ -74,74 +74,72 @@ function generateEmbedFields(serverID) {
  */
 function autoRoleListener(client) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverConfig, events;
+        var events;
         var _this = this;
         return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
-                case 1:
-                    serverConfig = _a.sent();
-                    events = {
-                        MESSAGE_REACTION_ADD: 'messageReactionAdd',
-                        MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
-                    };
-                    //#endregion
-                    //#region This event handles adding/removing users from the role(s) they chose based on message reactions
-                    client.on('raw', function (event) { return __awaiter(_this, void 0, void 0, function () {
-                        var data, user, channel, message, member, serverID, emojiKey, reaction, embedFooterText, fields, _loop_1, _i, fields_1, _a, name_1, value;
-                        return __generator(this, function (_b) {
-                            switch (_b.label) {
-                                case 0:
-                                    if (!events.hasOwnProperty(event.t))
-                                        return [2 /*return*/];
-                                    data = event.d;
-                                    user = client.users.cache.get(data.user_id);
-                                    channel = client.channels.cache.get(data.channel_id);
-                                    return [4 /*yield*/, channel.messages.fetch(data.message_id)];
-                                case 1:
-                                    message = _b.sent();
-                                    member = message.guild.members.cache.get(user.id);
-                                    serverID = message.channel.guild.id;
-                                    emojiKey = data.emoji.id ? "".concat(data.emoji.name, ":").concat(data.emoji.id) : data.emoji.name;
-                                    reaction = message.reactions.cache.get(emojiKey);
-                                    if (!reaction) {
-                                        // Create an object that can be passed through the event like normal
-                                        reaction = new MessageReaction(client, data, message, 1, data.user_id === client.user.id);
-                                    }
-                                    if (message.embeds[0] && message.embeds[0].footer != null)
-                                        embedFooterText = message.embeds[0].footer.text;
-                                    if (message.author.id === client.user.id && (message.content !== serverConfig.autoRole.initialMessage || (message.embeds[0] && embedFooterText !== serverConfig.autoRole.embedFooter))) {
-                                        if (message.embeds.length >= 1) {
-                                            fields = message.embeds[0].fields;
-                                            _loop_1 = function (name_1, value) {
-                                                if (member.id !== client.user.id) {
-                                                    var guildRole = message.guild.roles.cache.find(function (r) { return r.name === value; });
-                                                    if (name_1 === reaction.emoji.name || name_1 === reaction.emoji.toString()) {
-                                                        if (event.t === 'MESSAGE_REACTION_ADD')
-                                                            member.roles.add(guildRole.id);
-                                                        else if (event.t === 'MESSAGE_REACTION_REMOVE')
-                                                            member.roles.remove(guildRole.id);
-                                                    }
-                                                }
-                                            };
-                                            for (_i = 0, fields_1 = fields; _i < fields_1.length; _i++) {
-                                                _a = fields_1[_i], name_1 = _a.name, value = _a.value;
-                                                _loop_1(name_1, value);
+            events = {
+                MESSAGE_REACTION_ADD: 'messageReactionAdd',
+                MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
+            };
+            //#endregion
+            //#region This event handles adding/removing users from the role(s) they chose based on message reactions
+            client.on('raw', function (event) { return __awaiter(_this, void 0, void 0, function () {
+                var data, user, channel, message, member, serverID, serverConfig, emojiKey, reaction, embedFooterText, fields, _loop_1, _i, fields_1, _a, name_1, value;
+                return __generator(this, function (_b) {
+                    switch (_b.label) {
+                        case 0:
+                            if (!events.hasOwnProperty(event.t))
+                                return [2 /*return*/];
+                            data = event.d;
+                            user = client.users.cache.get(data.user_id);
+                            channel = client.channels.cache.get(data.channel_id);
+                            return [4 /*yield*/, channel.messages.fetch(data.message_id)];
+                        case 1:
+                            message = _b.sent();
+                            member = message.guild.members.cache.get(user.id);
+                            serverID = message.channel.guild.id;
+                            return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
+                        case 2:
+                            serverConfig = _b.sent();
+                            emojiKey = data.emoji.id ? "".concat(data.emoji.name, ":").concat(data.emoji.id) : data.emoji.name;
+                            reaction = message.reactions.cache.get(emojiKey);
+                            if (!reaction) {
+                                // Create an object that can be passed through the event like normal
+                                reaction = new MessageReaction(client, data, message, 1, data.user_id === client.user.id);
+                            }
+                            if (message.embeds[0] && message.embeds[0].footer != null)
+                                embedFooterText = message.embeds[0].footer.text;
+                            if (message.author.id === client.user.id && (message.content !== serverConfig.autoRole.initialMessage || (message.embeds[0] && embedFooterText !== serverConfig.autoRole.embedFooter))) {
+                                if (message.embeds.length >= 1) {
+                                    fields = message.embeds[0].fields;
+                                    _loop_1 = function (name_1, value) {
+                                        if (member.id !== client.user.id) {
+                                            var guildRole = message.guild.roles.cache.find(function (r) { return r.name === value; });
+                                            if (name_1 === reaction.emoji.name || name_1 === reaction.emoji.toString()) {
+                                                if (event.t === 'MESSAGE_REACTION_ADD')
+                                                    member.roles.add(guildRole.id);
+                                                else if (event.t === 'MESSAGE_REACTION_REMOVE')
+                                                    member.roles.remove(guildRole.id);
                                             }
                                         }
+                                    };
+                                    for (_i = 0, fields_1 = fields; _i < fields_1.length; _i++) {
+                                        _a = fields_1[_i], name_1 = _a.name, value = _a.value;
+                                        _loop_1(name_1, value);
                                     }
-                                    return [2 /*return*/];
+                                }
                             }
-                        });
-                    }); });
-                    //#endregion
-                    //#region This handles unhandled rejections
-                    process.on('unhandledRejection', function (err) {
-                        var msg = err.stack.replace(new RegExp("".concat(__dirname, "/"), 'g'), './');
-                        console.error('Unhandled Rejection', msg);
-                    });
-                    return [2 /*return*/];
-            }
+                            return [2 /*return*/];
+                    }
+                });
+            }); });
+            //#endregion
+            //#region This handles unhandled rejections
+            process.on('unhandledRejection', function (err) {
+                var msg = err.stack.replace(new RegExp("".concat(__dirname, "/"), 'g'), './');
+                console.error('Unhandled Rejection', msg);
+            });
+            return [2 /*return*/];
         });
     });
 }

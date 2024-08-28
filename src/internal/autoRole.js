@@ -31,9 +31,6 @@ async function generateEmbedFields(serverID) {
  * @param {Client} client - Discord.js Client Object
  */
 async function autoRoleListener(client) {
-    //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
-
     //#region Readable constants
     // This makes the events used a bit more readable
     const events = {
@@ -53,6 +50,9 @@ async function autoRoleListener(client) {
         const message = await channel.messages.fetch(data.message_id);
         const member = message.guild.members.cache.get(user.id);
         var serverID = message.channel.guild.id;
+
+        //Gets serverConfig from database
+        var serverConfig = await MongooseServerConfig.findById(serverID).exec();
 
         const emojiKey = data.emoji.id ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
         let reaction = message.reactions.cache.get(emojiKey);
