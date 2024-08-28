@@ -41,7 +41,7 @@ var _a = require('../helpers/embedMessages.js'), warnCustom = _a.warnCustom, war
 var _b = require('../helpers/userPermissions.js'), modCheck = _b.modCheck, djCheck = _b.djCheck;
 //#endregion
 //#region Modules
-var serverConfig_1 = require("../models/serverConfig.");
+var serverConfig_1 = require("../models/serverConfig");
 //#endregion
 //#region This exports the playnext command with the information about it
 module.exports = {
