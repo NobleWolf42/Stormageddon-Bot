@@ -91,7 +91,7 @@ function messageHandling(client, distube) {
     //#endregion
     //Handles messages from guilds and their responses
     client.on('messageCreate', function (message) { return __awaiter(_this, void 0, void 0, function () {
-        var serverID, serverConfig, prefixRegex, _a, matchedPrefix, args, commandName, command, now, timestamps, coolDownAmount, expirationTime, timeLeft;
+        var serverID, serverConfig, prefix, prefixRegex, _a, matchedPrefix, args, commandName, command, now, timestamps, coolDownAmount, expirationTime, timeLeft;
         return __generator(this, function (_b) {
             switch (_b.label) {
                 case 0:
@@ -106,20 +106,21 @@ function messageHandling(client, distube) {
                     return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
                     serverConfig = _b.sent();
-                    message.prefix = serverConfig.prefix;
+                    prefix = serverConfig.prefix;
+                    message.prefix = prefix;
                     //#endregion
                     //#region Handles all @ Commands
                     if (message.mentions.users.first() !== undefined) {
                         //@bot
                         if (message.mentions.users.first().id === client.user.id) {
                             if (serverConfig.setupNeeded) {
-                                return [2 /*return*/, embedCustom(message, "".concat(client.user.tag), '#5D3FD3', "Please run `".concat(message.prefix, "setup` in an admin only chat channel to set up the bot on your server."), {
+                                return [2 /*return*/, embedCustom(message, "".concat(client.user.tag), '#5D3FD3', "Please run `".concat(prefix, "setup` in an admin only chat channel to set up the bot on your server."), {
                                         text: "Requested by ".concat(message.author.tag),
                                         iconURL: null,
                                     }, getRandomDoggo(), [], null, null)];
                             }
                             else {
-                                return [2 /*return*/, embedCustom(message, "".concat(client.user.tag), '#5D3FD3', "Woof Woof, My Prefix is `".concat(message.prefix, "`, for more commands, please use the `").concat(message.prefix, "help` command."), {
+                                return [2 /*return*/, embedCustom(message, "".concat(client.user.tag), '#5D3FD3', "Woof Woof, My Prefix is `".concat(prefix, "`, for more commands, please use the `").concat(prefix, "help` command."), {
                                         text: "Requested by ".concat(message.author.tag),
                                         iconURL: null,
                                     }, getRandomDoggo(), [], null, null)];
@@ -131,7 +132,7 @@ function messageHandling(client, distube) {
                     if (message.content.toLowerCase().includes('honse')) {
                         message.channel.send('https://i.imgur.com/hKZb0pc.png');
                     }
-                    prefixRegex = new RegExp("^(<@!?".concat(client.user.id, ">|").concat(escapeRegex(message.prefix), ")\\s*"));
+                    prefixRegex = new RegExp("^(<@!?".concat(client.user.id, ">|").concat(escapeRegex(prefix), ")\\s*"));
                     if (!prefixRegex.test(message.content))
                         return [2 /*return*/];
                     _a = message.content.match(prefixRegex), matchedPrefix = _a[1];
@@ -167,7 +168,7 @@ function messageHandling(client, distube) {
                         return [2 /*return*/];
                     }
                     else if (serverConfig.setupNeeded) {
-                        return [2 /*return*/, warnCustom(message, "You must set up the bot on this server before you can use commands. You can do this by using the `".concat(message.prefix, "setup` command in an Admin Only chat."), command.name)];
+                        return [2 /*return*/, warnCustom(message, "You must set up the bot on this server before you can use commands. You can do this by using the `".concat(prefix, "setup` command in an Admin Only chat."), command.name)];
                     }
                     //#endregion
                     tryCommand(client, message, command, args, distube);

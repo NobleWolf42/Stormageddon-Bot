@@ -70,7 +70,8 @@ function messageHandling(client, distube) {
 
         //Gets serverConfig from database
         var serverConfig = await MongooseServerConfig.findById(serverID).exec();
-        message.prefix = serverConfig.prefix;
+        var prefix = serverConfig.prefix;
+        message.prefix = prefix;
 
         //#endregion
 
@@ -83,7 +84,7 @@ function messageHandling(client, distube) {
                         message,
                         `${client.user.tag}`,
                         '#5D3FD3',
-                        `Please run \`${message.prefix}setup\` in an admin only chat channel to set up the bot on your server.`,
+                        `Please run \`${prefix}setup\` in an admin only chat channel to set up the bot on your server.`,
                         {
                             text: `Requested by ${message.author.tag}`,
                             iconURL: null,
@@ -98,7 +99,7 @@ function messageHandling(client, distube) {
                         message,
                         `${client.user.tag}`,
                         '#5D3FD3',
-                        `Woof Woof, My Prefix is \`${message.prefix}\`, for more commands, please use the \`${message.prefix}help\` command.`,
+                        `Woof Woof, My Prefix is \`${prefix}\`, for more commands, please use the \`${prefix}help\` command.`,
                         {
                             text: `Requested by ${message.author.tag}`,
                             iconURL: null,
@@ -122,7 +123,7 @@ function messageHandling(client, distube) {
         //#region Handles all commands triggered by prefix
         //#region Prefix and Command Validation
         //Escapes if message does not start with prefix
-        const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(message.prefix)})\\s*`);
+        const prefixRegex = new RegExp(`^(<@!?${client.user.id}>|${escapeRegex(prefix)})\\s*`);
         if (!prefixRegex.test(message.content)) return;
 
         //Gets command name as typed by user
@@ -167,7 +168,7 @@ function messageHandling(client, distube) {
         } else if (serverConfig.setupNeeded) {
             return warnCustom(
                 message,
-                `You must set up the bot on this server before you can use commands. You can do this by using the \`${message.prefix}setup\` command in an Admin Only chat.`,
+                `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in an Admin Only chat.`,
                 command.name
             );
         }
