@@ -47,7 +47,19 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-//#region Helpers
+exports.setAutoRole = setAutoRole;
+exports.setJoinRole = setJoinRole;
+exports.setMusic = setMusic;
+exports.setGeneral = setGeneral;
+exports.setup = setup;
+exports.setModMail = setModMail;
+exports.buildConfigFile = buildConfigFile;
+exports.removeServerConfig = removeServerConfig;
+exports.addServerConfig = addServerConfig;
+exports.setJoinToCreateVC = setJoinToCreateVC;
+exports.setBlame = setBlame;
+exports.addRemoveBlame = addRemoveBlame;
+exports.changeBlameOffset = changeBlameOffset;
 var embedMessages_js_1 = require("../helpers/embedMessages.js");
 //#endregion
 //#region Modules
@@ -59,11 +71,11 @@ var msgFilter = function (m) { return !m.author.bot; };
 /**
  * This function runs the setup for the ModMail feature.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
 function setModMail(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, modList, serverConfig, enableIn, enableTXT, enable, roleIn, err_1, err_2;
+        var serverID, modList, serverConfig, enableIn, enableTXT, enable, roleIn, err_1, err_2, modMail;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -117,7 +129,10 @@ function setModMail(message) {
                     if (enable == undefined) {
                         enable = false;
                     }
-                    modMail = {};
+                    modMail = {
+                        enable: false,
+                        modList: [],
+                    };
                     modMail.enable = enable;
                     modMail.modList = modList;
                     serverConfig.modMail = modMail;
@@ -125,10 +140,7 @@ function setModMail(message) {
                 case 10:
                     _a.sent();
                     message.channel.send('Mod Mail Setup Complete!');
-                    return [4 /*yield*/, updateConfigFile()];
-                case 11:
-                    config = _a.sent();
-                    return [2 /*return*/, config];
+                    return [2 /*return*/, serverConfig];
             }
         });
     });
@@ -138,11 +150,11 @@ function setModMail(message) {
 /**
  * This function runs the setup for the AutoRole feature.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
 function setAutoRole(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, serverConfig, enableIn, enableTXT, enable, embedMessageIn, embedMessage, err_3, embedFooter, embedRoleIn, roles, err_4, embedReactIn, reactions, err_5, err_6;
+        var serverID, serverConfig, enableIn, enableTXT, enable, embedMessageIn, embedMessage, err_3, embedFooter, embedRoleIn, roles, err_4, embedReactIn, reactions, err_5, err_6, autoRole;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -252,7 +264,13 @@ function setAutoRole(message) {
                     if (enable == undefined) {
                         enable = false;
                     }
-                    autoRole = {};
+                    autoRole = {
+                        enable: false,
+                        embedMessage: '`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`',
+                        embedFooter: 'If you do not receive the role try reacting again.',
+                        roles: [],
+                        reactions: [],
+                    };
                     autoRole.enable = enable;
                     autoRole.embedMessage = embedMessage;
                     autoRole.embedFooter = embedFooter;
@@ -263,10 +281,7 @@ function setAutoRole(message) {
                 case 19:
                     _a.sent();
                     message.channel.send('Auto Role Setup Complete!');
-                    return [4 /*yield*/, updateConfigFile()];
-                case 20:
-                    config = _a.sent();
-                    return [2 /*return*/, config];
+                    return [2 /*return*/, serverConfig];
             }
         });
     });
@@ -276,11 +291,11 @@ function setAutoRole(message) {
 /**
  * This function runs the setup for the JoinRole feature.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
 function setJoinRole(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, serverConfig, enableIn, enableTXT, enable, roleIn, role, err_7, err_8;
+        var serverID, serverConfig, enableIn, enableTXT, enable, roleIn, role, err_7, err_8, joinRole;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -332,7 +347,10 @@ function setJoinRole(message) {
                     if (enable == undefined) {
                         enable = false;
                     }
-                    joinRole = {};
+                    joinRole = {
+                        enabled: false,
+                        role: '',
+                    };
                     joinRole.enabled = enable;
                     joinRole.role = role;
                     serverConfig.joinRole = joinRole;
@@ -340,10 +358,7 @@ function setJoinRole(message) {
                 case 10:
                     _a.sent();
                     message.channel.send('Join Role Setup Complete!');
-                    return [4 /*yield*/, updateConfigFile()];
-                case 11:
-                    config = _a.sent();
-                    return [2 /*return*/, config];
+                    return [2 /*return*/, serverConfig];
             }
         });
     });
@@ -353,11 +368,11 @@ function setJoinRole(message) {
 /**
  * This function runs the setup for the joinToCreateVC feature.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
 function setJoinToCreateVC(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, serverConfig, enableIn, enableTXT, enable, JTCVCTXTIn, voiceChannel, err_9, err_10;
+        var serverID, serverConfig, enableIn, enableTXT, enable, JTCVCTXTIn, voiceChannel, err_9, err_10, JTCVC;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -409,7 +424,10 @@ function setJoinToCreateVC(message) {
                     else if (voiceChannel == undefined) {
                         enable = false;
                     }
-                    JTCVC = {};
+                    JTCVC = {
+                        enable: false,
+                        voiceChannel: undefined,
+                    };
                     JTCVC.enable = enable;
                     JTCVC.voiceChannel = voiceChannel;
                     serverConfig.JTCVC = JTCVC;
@@ -417,10 +435,7 @@ function setJoinToCreateVC(message) {
                 case 10:
                     _a.sent();
                     message.channel.send('Music Setup Complete!');
-                    return [4 /*yield*/, updateConfigFile()];
-                case 11:
-                    config = _a.sent();
-                    return [2 /*return*/, config];
+                    return [2 /*return*/, serverConfig];
             }
         });
     });
@@ -430,11 +445,11 @@ function setJoinToCreateVC(message) {
 /**
  * This function runs the setup for the Music feature.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
 function setMusic(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, serverConfig, enableIn, enableTXT, enable, djRoleIn, djRoles, err_11, musicTXTIn, textChannel, err_12, err_13;
+        var serverID, serverConfig, enableIn, enableTXT, enable, djRoleIn, djRoles, err_11, musicTXTIn, textChannel, err_12, err_13, music;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -508,7 +523,11 @@ function setMusic(message) {
                     if (enable == undefined) {
                         enable = false;
                     }
-                    music = {};
+                    music = {
+                        enable: false,
+                        djRoles: 'DJ',
+                        textChannel: 'Music',
+                    };
                     music.enable = enable;
                     music.djRoles = djRoles;
                     music.textChannel = textChannel;
@@ -517,10 +536,7 @@ function setMusic(message) {
                 case 14:
                     _a.sent();
                     message.channel.send('Music Setup Complete!');
-                    return [4 /*yield*/, updateConfigFile()];
-                case 15:
-                    config = _a.sent();
-                    return [2 /*return*/, config];
+                    return [2 /*return*/, serverConfig];
             }
         });
     });
@@ -530,11 +546,11 @@ function setMusic(message) {
 /**
  * This function runs the setup for the general features.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
 function setGeneral(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, serverConfig, adminRolesIn, adminRoles, err_14, modRolesIn, modRoles, modRoles, err_15;
+        var serverID, serverConfig, adminRolesIn, adminRoles, err_14, modRolesIn, modRoles, modRoles, err_15, general;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -591,7 +607,10 @@ function setGeneral(message) {
                     if (modRoles == undefined) {
                         modRoles = adminRoles.map(function (x) { return x; });
                     }
-                    general = {};
+                    general = {
+                        adminRoles: [],
+                        modRoles: [],
+                    };
                     general.adminRoles = adminRoles;
                     general.modRoles = modRoles;
                     serverConfig.general = general;
@@ -599,10 +618,7 @@ function setGeneral(message) {
                 case 10:
                     _a.sent();
                     message.channel.send('General Setup Complete!');
-                    return [4 /*yield*/, updateConfigFile()];
-                case 11:
-                    config = _a.sent();
-                    return [2 /*return*/, config];
+                    return [2 /*return*/, serverConfig];
             }
         });
     });
@@ -612,11 +628,11 @@ function setGeneral(message) {
 /**
  * This function runs the setup for the blame features.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
 function setBlame(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, serverConfig, enableIn, enableTXT, enable, cursing, curseTXTIn, cursing, err_16, err_17;
+        var serverID, serverConfig, enableIn, enableTXT, enable, cursing, curseTXTIn, cursingText, err_16, err_17, blame;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -638,7 +654,7 @@ function setBlame(message) {
                     enableIn = _a.sent();
                     enableTXT = enableIn.first().content.toLowerCase();
                     enable = undefined;
-                    cursing = undefined;
+                    cursing = false;
                     if (!(enableTXT == 't')) return [3 /*break*/, 7];
                     enable = true;
                     message.channel.send('Please respond with `T` if you would like to enable explicit language (`fuck`), respond with `F` if you do not.');
@@ -653,7 +669,7 @@ function setBlame(message) {
                         })];
                 case 5:
                     curseTXTIn = _a.sent();
-                    cursing = curseTXTIn.first().content;
+                    cursingText = curseTXTIn.first().content;
                     return [3 /*break*/, 7];
                 case 6:
                     err_16 = _a.sent();
@@ -666,10 +682,19 @@ function setBlame(message) {
                     if (enable == undefined) {
                         enable = false;
                     }
-                    if (cursing == undefined) {
+                    if (cursingText == 'true') {
+                        cursing = true;
+                    }
+                    else {
                         cursing = false;
                     }
-                    blame = {};
+                    blame = {
+                        enable: false,
+                        cursing: false,
+                        offset: 0,
+                        permList: [],
+                        rotateList: [],
+                    };
                     blame.enable = enable;
                     blame.cursing = cursing;
                     blame.offset = 0;
@@ -680,10 +705,7 @@ function setBlame(message) {
                 case 10:
                     _a.sent();
                     message.channel.send('Blame Setup Complete!');
-                    return [4 /*yield*/, updateConfigFile()];
-                case 11:
-                    config = _a.sent();
-                    return [2 /*return*/, config];
+                    return [2 /*return*/, serverConfig];
             }
         });
     });
@@ -692,11 +714,11 @@ function setBlame(message) {
 //#region Function that adds/removes from blame lists in settings
 /**
  * This function takes several inputs and adds/removes someone from the blame command.
- * @param {String} serverID - The id for the server this is run in
- * @param {Boolean} addTF - True makes it add the person, False removes them
- * @param {Boolean} permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
- * @param {String} person - Name of the person
- * @returns {JSON} Server Config JSON
+ * @param {string} serverID - The id for the server this is run in
+ * @param {boolean} addTF - True makes it add the person, False removes them
+ * @param {boolean} permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
+ * @param {string} person - Name of the person
+ * @returns {object} Server Config JSON
  */
 function addRemoveBlame(serverID, addTF, permTF, person) {
     return __awaiter(this, void 0, void 0, function () {
@@ -794,10 +816,7 @@ function addRemoveBlame(serverID, addTF, permTF, person) {
                     return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, updateConfigFile()];
-                case 3:
-                    config = _a.sent();
-                    return [2 /*return*/, config];
+                    return [2 /*return*/, serverConfig];
             }
         });
     });
@@ -806,10 +825,8 @@ function addRemoveBlame(serverID, addTF, permTF, person) {
 //#region Function that changes offsets for blame lists in settings
 /**
  * This function takes several inputs and adds/removes someone from the blame command.
- * @param {String} serverID - The id for the server this is run in
- * @param {Boolean} addTF - True makes it add the person, False removes them
- * @param {Boolean} permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
- * @param {String} person - Name of the person
+ * @param {string} serverID - The id for the server this is run in
+ * @param {number} offset - Number of places to offset the blame by
  * @returns {JSON} Server Config JSON
  */
 function changeBlameOffset(serverID, offset) {
@@ -826,10 +843,7 @@ function changeBlameOffset(serverID, offset) {
                     return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
                 case 2:
                     _a.sent();
-                    return [4 /*yield*/, updateConfigFile()];
-                case 3:
-                    config = _a.sent();
-                    return [2 /*return*/, config];
+                    return [2 /*return*/, serverConfig];
             }
         });
     });
@@ -889,7 +903,9 @@ function setup(message) {
 //#region Function that builds config file
 /**
  * This function builds the serverConfig file with the provided JSON.
- * @param {string} config - String of JSON
+ * @param {ServerConfig} config - String of JSON
+ * @param {string} serverID - String of numbers for the server/guild ID
+ * @returns {void} Void
  */
 function buildConfigFile(config, serverID) {
     return __awaiter(this, void 0, void 0, function () {
@@ -947,13 +963,16 @@ function buildConfigFile(config, serverID) {
 //#region Function that adds the provided server to the serverConfig.json file
 /**
  * This function adds the provided server to the serverConfig.json file.
- * @param {number} serverID - Server ID for server to be added
+ * @param {string} serverID - Server ID for server to be added
+ * @returns {void} Void
  */
 function addServerConfig(serverID) {
     return __awaiter(this, void 0, void 0, function () {
         var defaultConfig;
         return __generator(this, function (_a) {
             defaultConfig = {
+                _id: serverID,
+                guildID: serverID,
                 setupNeeded: true,
                 prefix: '!',
                 autoRole: {
@@ -963,15 +982,27 @@ function addServerConfig(serverID) {
                     roles: ['Not Set Up'],
                     reactions: ['🎵'],
                 },
-                joinRole: { enable: false, role: 'Not Set Up' },
+                joinRole: {
+                    enabled: false,
+                    role: 'Not Set Up',
+                },
                 music: {
                     enable: false,
-                    djRoles: ['Not Set Up'],
+                    djRoles: Array['Not Set Up'],
                     textChannel: 'Not Set Up',
                 },
-                general: { adminRoles: ['Not Set Up'], modRoles: ['Not Set Up'] },
-                modMail: { enable: false, modList: [] },
-                JTCVC: { enable: false, voiceChannel: 'Not Set Up' },
+                general: {
+                    adminRoles: ['Not Set Up'],
+                    modRoles: ['Not Set Up'],
+                },
+                modMail: {
+                    enable: false,
+                    modList: [],
+                },
+                JTCVC: {
+                    enable: false,
+                    voiceChannel: 'Not Set Up',
+                },
                 blame: {
                     enable: false,
                     cursing: false,
@@ -980,7 +1011,7 @@ function addServerConfig(serverID) {
                     rotateList: [],
                 },
                 logging: {
-                    enabled: false,
+                    enable: false,
                     loggingChannel: 'Not Set Up',
                     voice: {
                         enabled: false,
@@ -996,29 +1027,11 @@ function addServerConfig(serverID) {
 //#region Function that removes the provided server form the serverConfig.json file
 /**
  * This function removes the provided server from the serverConfig.json file
- * @param {number} serverID - Server ID for server to be added
+ * @param {string} serverID - Server ID for server to be added
+ * @returns {void} Void
  */
 function removeServerConfig(serverID) {
-    if (serverConfig[serverID] !== undefined) {
-        serverConfig[serverID] = undefined;
-    }
-    buildConfigFile(serverConfig);
+    serverConfig_1.MongooseServerConfig.findByIdAndDelete(serverID);
+    return;
 }
-//#endregion
-//#region exports
-module.exports = {
-    setAutoRole: setAutoRole,
-    setJoinRole: setJoinRole,
-    setMusic: setMusic,
-    setGeneral: setGeneral,
-    setup: setup,
-    setModMail: setModMail,
-    buildConfigFile: buildConfigFile,
-    removeServerConfig: removeServerConfig,
-    addServerConfig: addServerConfig,
-    setJoinToCreateVC: setJoinToCreateVC,
-    setBlame: setBlame,
-    addRemoveBlame: addRemoveBlame,
-    changeBlameOffset: changeBlameOffset,
-};
 //#endregion

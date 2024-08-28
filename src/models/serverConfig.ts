@@ -42,6 +42,13 @@ interface ServerConfig {
         permList: string[];
         rotateList: string[];
     };
+    logging?: {
+        enable: boolean;
+        loggingChannel: string;
+        voice: {
+            enabled: boolean;
+        };
+    };
 }
 //#endregion
 

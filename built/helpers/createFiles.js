@@ -1,12 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.createJSONfiles = createJSONfiles;
 //#region Dependencies
-var _a = require('fs'), existsSync = _a.existsSync, writeFileSync = _a.writeFileSync;
+var fs_1 = require("fs");
 //#endregion
 //#region Creates missing files on start
 /**
  * This function creates the JSON files the bot requires to function if they do not already exist.
  */
 function createJSONfiles() {
-    var emptyFile = {};
     var d = new Date();
     var emptyLog = {
         logging: [
@@ -17,69 +19,17 @@ function createJSONfiles() {
             },
         ],
     };
-    //#region botConfigExample fix this! needs to be .env
-    var botConfigExample = {
-        auth: {
-            token: 'YOUR BOT TOKEN',
-            clientSecret: 'YOUR CLIENT SECRET',
-            youtubeApiKey: 'YOUR YOUTUBE API KEY',
-            soundCloudApiKey: 'YOUR SOUND CLOUD API KEY',
-            imgurApiKey: 'YOUR IMGUR API KEY',
-            d2ApiKey: 'YOUR DESTINY 2 API KEY',
-            spotifyToken: 'YOUR SPOTIFY TOKEN',
-            spotifySecret: 'YOUR SPOTIFY SECRET',
-        },
-        oauth: {
-            privateKey: 'LOCATION OF PRIVATE HTTPS KEY',
-            publicKey: 'LOCATION OF PUBLIC HTTPS KEY',
-            port: 'PORT YOU WANT THE OAUTH SERVER TO USE',
-        },
-        general: {
-            clientID: 'YOUR CLIENT ID',
-            redirectURI: 'YOUR REDIRECT URI',
-            registerLink: 'YOUR REGISTER URL',
-        },
-        imgur: {
-            clientID: 'YOUR IMGUR CLIENT ID',
-            apiCall: 'IMGUR API CALL',
-        },
-        music: {
-            maxPlaylistSize: 0,
-            pruning: false,
-        },
-        devIDs: ['YOUR DISCORD IDS 1', 'YOUR DISCORD IDS 2', 'YOUR DISCORD IDS 3'],
-    };
+    //#region botConfigExample
+    var botConfigExample = 'authToken = "YOUR-AUTH-TOKEN"\nclientID = "YOUR_CLIENT_ID"\nd2ApiKey = "671b3211756445cbb83b5d82f6682ebd"\ndevIDs = ["201665936049176576"]\nmongoDBURI = "mongodb+srv://stormyAdmin:KkIO3kH7DCXLvRco@stormageddon-bot.mtf5p.mongodb.net/?retryWrites=true&w=majority&appName=Stormageddon-Bot"';
     //#endregion
-    if (!existsSync('./data/botPrefix.json')) {
-        writeFileSync('./data/botPrefix.json', JSON.stringify(emptyFile), function (err) {
-            if (err) {
-                console.log(err);
-            }
-        });
+    if (!(0, fs_1.existsSync)('./data/errorLog.json')) {
+        (0, fs_1.writeFileSync)('./data/errorLog.json', JSON.stringify(emptyLog));
     }
-    if (!existsSync('./data/errorLog.json')) {
-        writeFileSync('./data/errorLog.json', JSON.stringify(emptyLog), function (err) {
-            if (err) {
-                console.log(err);
-            }
-        });
+    if (!(0, fs_1.existsSync)('./data/log.json')) {
+        (0, fs_1.writeFileSync)('./data/log.json', JSON.stringify(emptyLog));
     }
-    if (!existsSync('./data/log.json')) {
-        writeFileSync('./data/log.json', JSON.stringify(emptyLog), function (err) {
-            if (err) {
-                console.log(err);
-            }
-        });
-    }
-    if (!existsSync('./data/botConfig.json')) {
-        writeFileSync('./data/botConfig.json', JSON.stringify(botConfigExample), function (err) {
-            if (err) {
-                console.log(err);
-            }
-        });
+    if (!(0, fs_1.existsSync)('.env')) {
+        (0, fs_1.writeFileSync)('.env', botConfigExample);
     }
 }
-//#endregion
-//#region exports
-module.exports = { createJSONfiles: createJSONfiles };
 //#endregion

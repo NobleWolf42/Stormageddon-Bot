@@ -47,19 +47,19 @@ var youtube_1 = require("@distube/youtube");
 var mongoose_1 = require("mongoose");
 //#endregion
 //#region Helpers
-var createFiles_js_1 = require("./helpers/createFiles.js");
+var createFiles_1 = require("./helpers/createFiles");
 //#endregion
 //Creates config and other required JSON files if they do not exist
-(0, createFiles_js_1.createJSONfiles)();
+(0, createFiles_1.createJSONfiles)();
 //#region Internals
-var settingsFunctions_js_1 = require("./internal/settingsFunctions.js");
-var autoRole_js_1 = require("./internal/autoRole.js");
-var messageHandling_js_1 = require("./internal/messageHandling.js");
-var serverJoin_js_1 = require("./internal/serverJoin.js");
-var distubeHandling_js_1 = require("./internal/distubeHandling.js");
-var voiceHandling_js_1 = require("./internal/voiceHandling.js");
-var slashCommandHandling_js_1 = require("./internal/slashCommandHandling.js");
-var serverConfig_js_1 = require("./models/serverConfig.js");
+var settingsFunctions_1 = require("./internal/settingsFunctions");
+var autoRole_1 = require("./internal/autoRole");
+var messageHandling_1 = require("./internal/messageHandling");
+var serverJoin_1 = require("./internal/serverJoin");
+var distubeHandling_1 = require("./internal/distubeHandling");
+var voiceHandling_1 = require("./internal/voiceHandling");
+var slashCommandHandling_1 = require("./internal/slashCommandHandling");
+var serverConfig_1 = require("./models/serverConfig");
 //#endregion
 //#endregion
 //#region Initialize Discord Bot
@@ -123,21 +123,21 @@ try {
             switch (_a.label) {
                 case 0:
                     console.log("Logged in as ".concat(client.user.tag, "!"));
-                    return [4 /*yield*/, serverConfig_js_1.MongooseServerConfig.find({ guildID: { $nin: [] } }).exec()];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.find({ guildID: { $nin: [] } }).exec()];
                 case 1:
                     serverConfigs = _a.sent();
-                    (0, autoRole_js_1.autoRoleListener)(client);
-                    (0, messageHandling_js_1.messageHandling)(client, distube_2);
-                    (0, messageHandling_js_1.PMHandling)(client, distube_2);
-                    (0, serverJoin_js_1.serverJoin)(client);
-                    (0, distubeHandling_js_1.setDiscordClient)(client);
-                    (0, distubeHandling_js_1.musicHandle)(client, distube_2);
-                    (0, voiceHandling_js_1.joinToCreateHandling)(client);
-                    (0, slashCommandHandling_js_1.slashCommandHandling)(client, distube_2);
+                    (0, autoRole_1.autoRoleListener)(client);
+                    (0, messageHandling_1.messageHandling)(client, distube_2);
+                    (0, messageHandling_1.PMHandling)(client, distube_2);
+                    (0, serverJoin_1.serverJoin)(client);
+                    (0, distubeHandling_1.setDiscordClient)(client);
+                    (0, distubeHandling_1.musicHandle)(client, distube_2);
+                    (0, voiceHandling_1.joinToCreateHandling)(client);
+                    (0, slashCommandHandling_1.slashCommandHandling)(client, distube_2);
                     for (guild in serverConfigs) {
-                        (0, slashCommandHandling_js_1.registerGuildSlashCommands)(serverConfigs[guild].guildID);
+                        (0, slashCommandHandling_1.registerGuildSlashCommands)(serverConfigs[guild].guildID);
                     }
-                    (0, slashCommandHandling_js_1.registerGlobalSlashCommands)();
+                    (0, slashCommandHandling_1.registerGlobalSlashCommands)();
                     client.user.setActivity("@me for more info and use the ! prefix when you dm me.");
                     return [2 /*return*/];
             }
@@ -145,13 +145,13 @@ try {
     }); });
     //Adds New Servers to Config
     client.on('guildCreate', function (newGuild) {
-        (0, settingsFunctions_js_1.addServerConfig)(newGuild.id);
-        (0, slashCommandHandling_js_1.registerGuildSlashCommands)(newGuild.id);
+        (0, settingsFunctions_1.addServerConfig)(newGuild.id);
+        (0, slashCommandHandling_1.registerGuildSlashCommands)(newGuild.id);
         console.log("Joined New Server: ".concat(newGuild.name, "#").concat(newGuild.id));
     });
     //Removes Server from Config
     client.on('guildDelete', function (oldGuild) {
-        (0, settingsFunctions_js_1.removeServerConfig)(oldGuild.id);
+        (0, settingsFunctions_1.removeServerConfig)(oldGuild.id);
         console.log("Left Server: ".concat(oldGuild.name, "#").concat(oldGuild.id));
     });
 }

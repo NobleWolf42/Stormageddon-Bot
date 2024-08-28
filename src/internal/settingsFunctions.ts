@@ -1,4 +1,5 @@
 //#region Helpers
+import { Guild, Message } from 'discord.js';
 import { embedCustom } from '../helpers/embedMessages.js';
 //#endregion
 
@@ -13,9 +14,9 @@ const msgFilter = (m) => !m.author.bot;
 /**
  * This function runs the setup for the ModMail feature.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
-async function setModMail(message) {
+async function setModMail(message: Message) {
     var serverID = message.guild.id;
     var modList = [];
 
@@ -61,7 +62,10 @@ async function setModMail(message) {
         enable = false;
     }
 
-    modMail = {};
+    var modMail = {
+        enable: false,
+        modList: [],
+    };
     modMail.enable = enable;
     modMail.modList = modList;
 
@@ -71,8 +75,7 @@ async function setModMail(message) {
 
     message.channel.send('Mod Mail Setup Complete!');
 
-    config = await updateConfigFile();
-    return config;
+    return serverConfig;
 }
 //#endregion
 
@@ -80,9 +83,9 @@ async function setModMail(message) {
 /**
  * This function runs the setup for the AutoRole feature.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
-async function setAutoRole(message) {
+async function setAutoRole(message: Message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
@@ -189,7 +192,13 @@ async function setAutoRole(message) {
         enable = false;
     }
 
-    autoRole = {};
+    var autoRole = {
+        enable: false,
+        embedMessage: '`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`',
+        embedFooter: 'If you do not receive the role try reacting again.',
+        roles: [],
+        reactions: [],
+    };
     autoRole.enable = enable;
     autoRole.embedMessage = embedMessage;
     autoRole.embedFooter = embedFooter;
@@ -202,8 +211,7 @@ async function setAutoRole(message) {
 
     message.channel.send('Auto Role Setup Complete!');
 
-    config = await updateConfigFile();
-    return config;
+    return serverConfig;
 }
 //#endregion
 
@@ -211,9 +219,9 @@ async function setAutoRole(message) {
 /**
  * This function runs the setup for the JoinRole feature.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
-async function setJoinRole(message) {
+async function setJoinRole(message: Message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
@@ -256,7 +264,10 @@ async function setJoinRole(message) {
         enable = false;
     }
 
-    joinRole = {};
+    var joinRole = {
+        enabled: false,
+        role: '',
+    };
     joinRole.enabled = enable;
     joinRole.role = role;
 
@@ -266,8 +277,7 @@ async function setJoinRole(message) {
 
     message.channel.send('Join Role Setup Complete!');
 
-    config = await updateConfigFile();
-    return config;
+    return serverConfig;
 }
 //#endregion
 
@@ -275,9 +285,9 @@ async function setJoinRole(message) {
 /**
  * This function runs the setup for the joinToCreateVC feature.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
-async function setJoinToCreateVC(message) {
+async function setJoinToCreateVC(message: Message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
@@ -322,7 +332,10 @@ async function setJoinToCreateVC(message) {
         enable = false;
     }
 
-    JTCVC = {};
+    var JTCVC = {
+        enable: false,
+        voiceChannel: undefined,
+    };
     JTCVC.enable = enable;
     JTCVC.voiceChannel = voiceChannel;
 
@@ -332,8 +345,7 @@ async function setJoinToCreateVC(message) {
 
     message.channel.send('Music Setup Complete!');
 
-    config = await updateConfigFile();
-    return config;
+    return serverConfig;
 }
 //#endregion
 
@@ -341,9 +353,9 @@ async function setJoinToCreateVC(message) {
 /**
  * This function runs the setup for the Music feature.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
-async function setMusic(message) {
+async function setMusic(message: Message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
@@ -405,7 +417,11 @@ async function setMusic(message) {
         enable = false;
     }
 
-    music = {};
+    var music = {
+        enable: false,
+        djRoles: 'DJ',
+        textChannel: 'Music',
+    };
     music.enable = enable;
     music.djRoles = djRoles;
     music.textChannel = textChannel;
@@ -416,8 +432,7 @@ async function setMusic(message) {
 
     message.channel.send('Music Setup Complete!');
 
-    config = await updateConfigFile();
-    return config;
+    return serverConfig;
 }
 //#endregion
 
@@ -425,9 +440,9 @@ async function setMusic(message) {
 /**
  * This function runs the setup for the general features.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
-async function setGeneral(message) {
+async function setGeneral(message: Message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
@@ -473,7 +488,10 @@ async function setGeneral(message) {
         modRoles = adminRoles.map((x) => x);
     }
 
-    general = {};
+    var general = {
+        adminRoles: [],
+        modRoles: [],
+    };
     general.adminRoles = adminRoles;
     general.modRoles = modRoles;
 
@@ -483,8 +501,7 @@ async function setGeneral(message) {
 
     message.channel.send('General Setup Complete!');
 
-    config = await updateConfigFile();
-    return config;
+    return serverConfig;
 }
 //#endregion
 
@@ -492,9 +509,9 @@ async function setGeneral(message) {
 /**
  * This function runs the setup for the blame features.
  * @param {Message} message - Discord.js Message Object
- * @returns {JSON} Server Config JSON
+ * @returns {object} Server Config JSON
  */
-async function setBlame(message) {
+async function setBlame(message: Message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
@@ -510,7 +527,7 @@ async function setBlame(message) {
         });
         var enableTXT = enableIn.first().content.toLowerCase();
         var enable = undefined;
-        var cursing = undefined;
+        var cursing = false;
         if (enableTXT == 't') {
             enable = true;
 
@@ -523,7 +540,7 @@ async function setBlame(message) {
                     time: 120000,
                     errors: ['time'],
                 });
-                var cursing = curseTXTIn.first().content;
+                var cursingText = curseTXTIn.first().content;
             } catch (err) {
                 return message.channel.send('Timeout Occurred. Process Terminated.');
             }
@@ -535,11 +552,19 @@ async function setBlame(message) {
     if (enable == undefined) {
         enable = false;
     }
-    if (cursing == undefined) {
+    if (cursingText == 'true') {
+        cursing = true;
+    } else {
         cursing = false;
     }
 
-    blame = {};
+    var blame = {
+        enable: false,
+        cursing: false,
+        offset: 0,
+        permList: [],
+        rotateList: [],
+    };
     blame.enable = enable;
     blame.cursing = cursing;
     blame.offset = 0;
@@ -552,21 +577,20 @@ async function setBlame(message) {
 
     message.channel.send('Blame Setup Complete!');
 
-    config = await updateConfigFile();
-    return config;
+    return serverConfig;
 }
 //#endregion
 
 //#region Function that adds/removes from blame lists in settings
 /**
  * This function takes several inputs and adds/removes someone from the blame command.
- * @param {String} serverID - The id for the server this is run in
- * @param {Boolean} addTF - True makes it add the person, False removes them
- * @param {Boolean} permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
- * @param {String} person - Name of the person
- * @returns {JSON} Server Config JSON
+ * @param {string} serverID - The id for the server this is run in
+ * @param {boolean} addTF - True makes it add the person, False removes them
+ * @param {boolean} permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
+ * @param {string} person - Name of the person
+ * @returns {object} Server Config JSON
  */
-async function addRemoveBlame(serverID, addTF, permTF, person) {
+async function addRemoveBlame(serverID: string, addTF: boolean, permTF: boolean, person: string) {
     //Pulls the current blame lists
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
@@ -656,21 +680,18 @@ async function addRemoveBlame(serverID, addTF, permTF, person) {
 
     await buildConfigFile(serverConfig, serverID);
 
-    config = await updateConfigFile();
-    return config;
+    return serverConfig;
 }
 //#endregion
 
 //#region Function that changes offsets for blame lists in settings
 /**
  * This function takes several inputs and adds/removes someone from the blame command.
- * @param {String} serverID - The id for the server this is run in
- * @param {Boolean} addTF - True makes it add the person, False removes them
- * @param {Boolean} permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
- * @param {String} person - Name of the person
+ * @param {string} serverID - The id for the server this is run in
+ * @param {number} offset - Number of places to offset the blame by
  * @returns {JSON} Server Config JSON
  */
-async function changeBlameOffset(serverID, offset) {
+async function changeBlameOffset(serverID: string, offset: number) {
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
@@ -683,8 +704,7 @@ async function changeBlameOffset(serverID, offset) {
 
     await buildConfigFile(serverConfig, serverID);
 
-    config = await updateConfigFile();
-    return config;
+    return serverConfig;
 }
 //#endregion
 
@@ -694,7 +714,7 @@ async function changeBlameOffset(serverID, offset) {
  * @param {Message} message - Discord.js Message Object
  * @returns {void} Void
  */
-async function setup(message) {
+async function setup(message: Message) {
     var serverID = message.guild.id;
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
@@ -729,9 +749,11 @@ async function setup(message) {
 //#region Function that builds config file
 /**
  * This function builds the serverConfig file with the provided JSON.
- * @param {string} config - String of JSON
+ * @param {ServerConfig} config - String of JSON
+ * @param {string} serverID - String of numbers for the server/guild ID
+ * @returns {void} Void
  */
-async function buildConfigFile(config, serverID) {
+async function buildConfigFile(config: ServerConfig, serverID: string) {
     var newConfig;
 
     if ((await MongooseServerConfig.findById(serverID).exec()) != null) {
@@ -768,16 +790,20 @@ async function buildConfigFile(config, serverID) {
     } catch (err) {
         console.log(err);
     }
+    return;
 }
 //#endregion
 
 //#region Function that adds the provided server to the serverConfig.json file
 /**
  * This function adds the provided server to the serverConfig.json file.
- * @param {number} serverID - Server ID for server to be added
+ * @param {string} serverID - Server ID for server to be added
+ * @returns {void} Void
  */
-async function addServerConfig(serverID) {
-    var defaultConfig = {
+async function addServerConfig(serverID: string) {
+    var defaultConfig: ServerConfig = {
+        _id: serverID,
+        guildID: serverID,
         setupNeeded: true,
         prefix: '!',
         autoRole: {
@@ -787,15 +813,27 @@ async function addServerConfig(serverID) {
             roles: ['Not Set Up'],
             reactions: ['🎵'],
         },
-        joinRole: { enable: false, role: 'Not Set Up' },
+        joinRole: {
+            enabled: false,
+            role: 'Not Set Up',
+        },
         music: {
             enable: false,
-            djRoles: ['Not Set Up'],
+            djRoles: Array['Not Set Up'],
             textChannel: 'Not Set Up',
         },
-        general: { adminRoles: ['Not Set Up'], modRoles: ['Not Set Up'] },
-        modMail: { enable: false, modList: [] },
-        JTCVC: { enable: false, voiceChannel: 'Not Set Up' },
+        general: {
+            adminRoles: ['Not Set Up'],
+            modRoles: ['Not Set Up'],
+        },
+        modMail: {
+            enable: false,
+            modList: [],
+        },
+        JTCVC: {
+            enable: false,
+            voiceChannel: 'Not Set Up',
+        },
         blame: {
             enable: false,
             cursing: false,
@@ -804,7 +842,7 @@ async function addServerConfig(serverID) {
             rotateList: [],
         },
         logging: {
-            enabled: false,
+            enable: false,
             loggingChannel: 'Not Set Up',
             voice: {
                 enabled: false,
@@ -813,37 +851,22 @@ async function addServerConfig(serverID) {
     };
 
     buildConfigFile(defaultConfig, serverID);
+    return;
 }
 //#endregion
 
 //#region Function that removes the provided server form the serverConfig.json file
 /**
  * This function removes the provided server from the serverConfig.json file
- * @param {number} serverID - Server ID for server to be added
+ * @param {string} serverID - Server ID for server to be added
+ * @returns {void} Void
  */
-function removeServerConfig(serverID) {
-    if (serverConfig[serverID] !== undefined) {
-        serverConfig[serverID] = undefined;
-    }
-
-    buildConfigFile(serverConfig);
+function removeServerConfig(serverID: string) {
+    MongooseServerConfig.findByIdAndDelete(serverID);
+    return;
 }
 //#endregion
 
 //#region exports
-module.exports = {
-    setAutoRole,
-    setJoinRole,
-    setMusic,
-    setGeneral,
-    setup,
-    setModMail,
-    buildConfigFile,
-    removeServerConfig,
-    addServerConfig,
-    setJoinToCreateVC,
-    setBlame,
-    addRemoveBlame,
-    changeBlameOffset,
-};
+export { setAutoRole, setJoinRole, setMusic, setGeneral, setup, setModMail, buildConfigFile, removeServerConfig, addServerConfig, setJoinToCreateVC, setBlame, addRemoveBlame, changeBlameOffset };
 //#endregion

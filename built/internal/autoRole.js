@@ -36,8 +36,10 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.autoRoleListener = autoRoleListener;
+exports.generateEmbedFields = generateEmbedFields;
 //#region Dependencies
-var _a = require('discord.js'), MessageReaction = _a.MessageReaction, Client = _a.Client;
+var discord_js_1 = require("discord.js");
 //#endregion
 //#region Modules
 var serverConfig_1 = require("../models/serverConfig");
@@ -45,8 +47,8 @@ var serverConfig_1 = require("../models/serverConfig");
 //#region Function that generates embed fields
 /**
  * Generates the embed fields and ties the emoji to their respective role from serverConfig.
- * @param {number} serverID - Server ID for the server the command is run in
- * @returns {map} - returns a map of the emoji-role pairs
+ * @param {string} serverID - Server ID for the server the command is run in
+ * @returns {map} A map of the emoji-role pairs
  */
 function generateEmbedFields(serverID) {
     return __awaiter(this, void 0, void 0, function () {
@@ -105,7 +107,7 @@ function autoRoleListener(client) {
                             reaction = message.reactions.cache.get(emojiKey);
                             if (!reaction) {
                                 // Create an object that can be passed through the event like normal
-                                reaction = new MessageReaction(client, data, message, 1, data.user_id === client.user.id);
+                                reaction = new discord_js_1.MessageReaction(client, data, message, 1, data.user_id === client.user.id);
                             }
                             if (message.embeds[0] && message.embeds[0].footer != null)
                                 embedFooterText = message.embeds[0].footer.text;
@@ -143,7 +145,4 @@ function autoRoleListener(client) {
         });
     });
 }
-//#endregion
-//#region exports
-module.exports = { autoRoleListener: autoRoleListener, generateEmbedFields: generateEmbedFields };
 //#endregion

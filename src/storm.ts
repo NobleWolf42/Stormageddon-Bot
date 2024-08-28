@@ -11,21 +11,21 @@ import mongoose from 'mongoose';
 //#endregion
 
 //#region Helpers
-import { createJSONfiles } from './helpers/createFiles.js';
+import { createJSONfiles } from './helpers/createFiles';
 //#endregion
 
 //Creates config and other required JSON files if they do not exist
 createJSONfiles();
 
 //#region Internals
-import { addServerConfig, removeServerConfig } from './internal/settingsFunctions.js';
-import { autoRoleListener } from './internal/autoRole.js';
-import { PMHandling, messageHandling } from './internal/messageHandling.js';
-import { serverJoin } from './internal/serverJoin.js';
-import { musicHandle, setDiscordClient } from './internal/distubeHandling.js';
-import { joinToCreateHandling } from './internal/voiceHandling.js';
-import { slashCommandHandling, registerGuildSlashCommands, registerGlobalSlashCommands } from './internal/slashCommandHandling.js';
-import { MongooseServerConfig } from './models/serverConfig.js';
+import { addServerConfig, removeServerConfig } from './internal/settingsFunctions';
+import { autoRoleListener } from './internal/autoRole';
+import { PMHandling, messageHandling } from './internal/messageHandling';
+import { serverJoin } from './internal/serverJoin';
+import { musicHandle, setDiscordClient } from './internal/distubeHandling';
+import { joinToCreateHandling } from './internal/voiceHandling';
+import { slashCommandHandling, registerGuildSlashCommands, registerGlobalSlashCommands } from './internal/slashCommandHandling';
+import { MongooseServerConfig } from './models/serverConfig';
 //#endregion
 
 //#endregion

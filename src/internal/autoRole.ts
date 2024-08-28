@@ -1,5 +1,5 @@
 //#region Dependencies
-const { MessageReaction, Client } = require('discord.js');
+import { Client, MessageReaction } from 'discord.js';
 //#endregion
 
 //#region Modules
@@ -9,10 +9,10 @@ import { MongooseServerConfig } from '../models/serverConfig';
 //#region Function that generates embed fields
 /**
  * Generates the embed fields and ties the emoji to their respective role from serverConfig.
- * @param {number} serverID - Server ID for the server the command is run in
- * @returns {map} - returns a map of the emoji-role pairs
+ * @param {string} serverID - Server ID for the server the command is run in
+ * @returns {map} A map of the emoji-role pairs
  */
-async function generateEmbedFields(serverID) {
+async function generateEmbedFields(serverID: string) {
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
@@ -30,7 +30,7 @@ async function generateEmbedFields(serverID) {
  * This function starts the listening to see if a user hits a reaction, and gives them the role when they do react.
  * @param {Client} client - Discord.js Client Object
  */
-async function autoRoleListener(client) {
+async function autoRoleListener(client: Client) {
     //#region Readable constants
     // This makes the events used a bit more readable
     const events = {
@@ -93,5 +93,5 @@ async function autoRoleListener(client) {
 //#endregion
 
 //#region exports
-module.exports = { autoRoleListener, generateEmbedFields };
+export { autoRoleListener, generateEmbedFields };
 //#endregion
