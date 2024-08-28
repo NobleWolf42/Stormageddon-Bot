@@ -90,7 +90,7 @@ module.exports = {
                         serverID = interaction.guildId;
                         erroredOut = false;
                         adminTF = adminCheck(interaction);
-                        return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()];
+                        return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()[0]];
                     case 1:
                         serverConfig = _b.sent();
                         if (!serverConfig.blame.enable) return [3 /*break*/, 17];

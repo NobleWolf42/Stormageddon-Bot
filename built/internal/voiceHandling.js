@@ -60,7 +60,7 @@ function joinToCreateHandling(client) {
                             serverID = guild.id;
                             oldChannel = oldState.channel;
                             newChannel = newState.channel;
-                            return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()];
+                            return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()[0]];
                         case 1:
                             serverConfig = _a.sent();
                             if (serverConfig.setupNeeded) {

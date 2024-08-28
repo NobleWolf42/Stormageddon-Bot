@@ -62,7 +62,7 @@ function serverRoleUpdate(sRole, serverID) {
         var serverConfig, basicServerRoles, _i, _a, _b, key, value;
         return __generator(this, function (_c) {
             switch (_c.label) {
-                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()[0]];
                 case 1:
                     serverConfig = _c.sent();
                     adminRoleIDs = [];

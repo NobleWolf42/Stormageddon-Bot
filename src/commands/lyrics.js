@@ -23,7 +23,7 @@ module.exports = {
     description: 'Gets the lyrics for the currently playing song.',
     async execute(message, args, client, distube) {
         //Calls config from database
-        var serverConfig = await MongooseServerConfig.findById(message.guild.id).exec();
+        var serverConfig = await MongooseServerConfig.findById(message.guild.id).exec()[0];
 
         if (!serverConfig.music.enable) {
             warnDisabled(message, 'music', module.name);

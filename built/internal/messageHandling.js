@@ -103,7 +103,7 @@ function messageHandling(client, distube) {
                     if (!message.guild)
                         return [2 /*return*/];
                     serverID = message.channel.guild.id;
-                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()[0]];
                 case 1:
                     serverConfig = _b.sent();
                     console.log(serverConfig);

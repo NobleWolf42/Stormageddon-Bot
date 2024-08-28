@@ -14,7 +14,7 @@ import { MongooseServerConfig } from '../models/serverConfig';
 function serverJoin(client) {
     client.on('guildMemberAdd', async (guildMember) => {
         //Gets serverConfig from database
-        var serverConfig = await MongooseServerConfig.findById(guildMember.guild.id).exec();
+        var serverConfig = await MongooseServerConfig.findById(guildMember.guild.id).exec()[0];
 
         if (serverConfig.autoRole.joinroleenabled) {
             guildMember.addRole(guildMember.guild.roles.find((role) => role.name === serverConfig.autoRole.joinrole));

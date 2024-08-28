@@ -61,7 +61,7 @@ module.exports = {
                 switch (_a.label) {
                     case 0:
                         serverID = message.guild.id;
-                        return [4 /*yield*/, serverConfig_js_1.MongooseServerConfig.findById(serverID).exec()];
+                        return [4 /*yield*/, serverConfig_js_1.MongooseServerConfig.findById(serverID).exec()[0]];
                     case 1:
                         serverConfig = _a.sent();
                         if (adminCheck(message)) {

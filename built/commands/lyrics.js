@@ -62,7 +62,7 @@ module.exports = {
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(message.guild.id).exec()];
+                    case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(message.guild.id).exec()[0]];
                     case 1:
                         serverConfig = _a.sent();
                         if (!serverConfig.music.enable) {

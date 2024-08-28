@@ -69,7 +69,7 @@ function messageHandling(client, distube) {
         var serverID = message.channel.guild.id;
 
         //Gets serverConfig from database
-        var serverConfig = await MongooseServerConfig.findById(serverID).exec();
+        var serverConfig = await MongooseServerConfig.findById(serverID).exec()[0];
         console.log(serverConfig);
         var prefix = serverConfig.prefix;
         console.log(prefix);
