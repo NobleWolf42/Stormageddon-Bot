@@ -45,7 +45,7 @@ var updateConfigFile = require('./currentSettings.js').updateConfigFile;
 var Message = require('discord.js').Message;
 //#endregion
 //#region Modules
-var serverConfig_1 = require("./models/serverConfig");
+var serverConfig_1 = require("../models/serverConfig");
 //#endregion
 //Sets up global vars for following functions
 var adminRoleIDs = [];
