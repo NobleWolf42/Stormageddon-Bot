@@ -26,6 +26,7 @@ import { serverJoin } from './internal/serverJoin.js';
 import { musicHandle, setDiscordClient } from './internal/distubeHandling.js';
 import { joinToCreateHandling } from './internal/voiceHandling.js';
 import { slashCommandHandling, registerGuildSlashCommands, registerGlobalSlashCommands } from './internal/slashCommandHandling.js';
+import { MongooseServerConfig } from './models/serverConfig.js';
 //#endregion
 
 //#endregion
@@ -57,31 +58,10 @@ const client = new Client({
 });
 //#endregion
 
-//#region Initialize mongoDB client
+//#region Initialize mongoDB/mongoose client
 export const db = mongoose.connect(process.env.mongoDBURI).then(() => {
-    console.log('mongodb connected!');
+    console.log('MongoDB Connected!');
 });
-
-// const mongoDBClient = new MongoClient(process.env.mongoDBURI, {
-//     serverApi: {
-//         version: ServerApiVersion.v1,
-//         strict: true,
-//         deprecationErrors: true,
-//     },
-// });
-//#endregion
-
-//#region function to load db and Return list of servers currently using bot
-/**
- *
- * @returns
- */
-async function dbLoad() {
-    // const mongoCollection = mongoDBClient.db('server-configs').collection('guildIDs');
-    // const serverConfigs = await mongoCollection.find({ guildID: { $nin: [] } });
-    // console.log(serverConfigs);
-    // return serverConfigs;
-}
 //#endregion
 
 try {
@@ -113,7 +93,7 @@ try {
     //Logs the Bot info when bot starts
     client.on('ready', async () => {
         console.log(`Logged in as ${client.user.tag}!`);
-        var serverConfigs = await dbLoad();
+        var serverConfigs = await MongooseServerConfig.find({ guildID: { $nin: [] } }).exec();
         autoRoleListener(client);
         messageHandling(client, distube);
         PMHandling(client, distube);
@@ -122,8 +102,8 @@ try {
         musicHandle(client, distube);
         joinToCreateHandling(client);
         slashCommandHandling(client, distube);
-        for (guildId in serverConfigs) {
-            registerGuildSlashCommands(guildId);
+        for (var guild in serverConfigs) {
+            registerGuildSlashCommands(serverConfigs[guild].guildID);
         }
         registerGlobalSlashCommands();
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);

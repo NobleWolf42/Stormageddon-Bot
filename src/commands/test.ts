@@ -12,7 +12,7 @@ module.exports = {
     async execute(message, args, client, distube) {
         console.log('Start Test Command');
         const typeScriptNewConfig: ServerConfig = {
-            _id: 'testIDString',
+            _id: 'testIDString2',
             guildID: Date.now().toLocaleString(),
         };
         const newConfig = new MongooseServerConfig({ ...typeScriptNewConfig });
@@ -23,7 +23,7 @@ module.exports = {
             console.log(err);
         }
 
-        console.log(await MongooseServerConfig.findById('testIDString').exec());
+        console.log(await MongooseServerConfig.findById('testIDString2').exec());
         console.log('testing nodemon');
     },
 };

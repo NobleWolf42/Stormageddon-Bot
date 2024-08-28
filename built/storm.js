@@ -60,6 +60,7 @@ var serverJoin_js_1 = require("./internal/serverJoin.js");
 var distubeHandling_js_1 = require("./internal/distubeHandling.js");
 var voiceHandling_js_1 = require("./internal/voiceHandling.js");
 var slashCommandHandling_js_1 = require("./internal/slashCommandHandling.js");
+var serverConfig_js_1 = require("./models/serverConfig.js");
 //#endregion
 //#endregion
 //#region Initialize Discord Bot
@@ -88,30 +89,10 @@ var client = new discord_js_1.Client({
     ],
 });
 //#endregion
-//#region Initialize mongoDB client
+//#region Initialize mongoDB/mongoose client
 exports.db = mongoose_1.default.connect(process.env.mongoDBURI).then(function () {
-    console.log('mongodb connected!');
+    console.log('MongoDB Connected!');
 });
-// const mongoDBClient = new MongoClient(process.env.mongoDBURI, {
-//     serverApi: {
-//         version: ServerApiVersion.v1,
-//         strict: true,
-//         deprecationErrors: true,
-//     },
-// });
-//#endregion
-//#region function to load db and Return list of servers currently using bot
-/**
- *
- * @returns
- */
-function dbLoad() {
-    return __awaiter(this, void 0, void 0, function () {
-        return __generator(this, function (_a) {
-            return [2 /*return*/];
-        });
-    });
-}
 //#endregion
 try {
     //#region Initialize Distube(music) Functionality
@@ -138,12 +119,12 @@ try {
     client.login(process.env.authToken);
     //Logs the Bot info when bot starts
     client.on('ready', function () { return __awaiter(void 0, void 0, void 0, function () {
-        var serverConfigs;
+        var serverConfigs, guild;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     console.log("Logged in as ".concat(client.user.tag, "!"));
-                    return [4 /*yield*/, dbLoad()];
+                    return [4 /*yield*/, serverConfig_js_1.MongooseServerConfig.find({ guildID: { $nin: [] } }).exec()];
                 case 1:
                     serverConfigs = _a.sent();
                     (0, autoRole_js_1.autoRoleListener)(client);
@@ -154,8 +135,8 @@ try {
                     (0, distubeHandling_js_1.musicHandle)(client, distube_2);
                     (0, voiceHandling_js_1.joinToCreateHandling)(client);
                     (0, slashCommandHandling_js_1.slashCommandHandling)(client, distube_2);
-                    for (guildId in serverConfigs) {
-                        (0, slashCommandHandling_js_1.registerGuildSlashCommands)(guildId);
+                    for (guild in serverConfigs) {
+                        (0, slashCommandHandling_js_1.registerGuildSlashCommands)(serverConfigs[guild].guildID);
                     }
                     (0, slashCommandHandling_js_1.registerGlobalSlashCommands)();
                     client.user.setActivity("@me for more info and use the ! prefix when you dm me.");

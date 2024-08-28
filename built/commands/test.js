@@ -65,7 +65,7 @@ module.exports = {
                     case 0:
                         console.log('Start Test Command');
                         typeScriptNewConfig = {
-                            _id: 'testIDString',
+                            _id: 'testIDString2',
                             guildID: Date.now().toLocaleString(),
                         };
                         newConfig = new serverConfig_1.MongooseServerConfig(__assign({}, typeScriptNewConfig));
@@ -82,7 +82,7 @@ module.exports = {
                         return [3 /*break*/, 4];
                     case 4:
                         _b = (_a = console).log;
-                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById('testIDString').exec()];
+                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById('testIDString2').exec()];
                     case 5:
                         _b.apply(_a, [_c.sent()]);
                         console.log('testing nodemon');
