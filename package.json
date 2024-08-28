@@ -29,10 +29,12 @@
         "xmlhttprequest": "^1.8.0"
     },
     "scripts": {
-        "start": "node --env-file=.env ./built/storm.js",
-        "build": "npx tsc -w -P ."
+        "start": "nodemon --env-file=.env ./built/storm.js",
+        "build": "tsc -w -P .",
+        "dev": "tsc -w -P . & nodemon --env-file=.env ./built/storm.js"
     },
     "devDependencies": {
+        "nodemon": "^3.1.4",
         "prettier": "3.3.3",
         "typescript": "^5.5.4"
     }

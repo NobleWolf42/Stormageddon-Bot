@@ -24,6 +24,7 @@ module.exports = {
         }
 
         console.log(await MongooseServerConfig.findById('testIDString').exec());
+        console.log('testing nodemon');
     },
 };
 //#endregion

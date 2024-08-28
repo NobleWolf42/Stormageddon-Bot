@@ -85,6 +85,7 @@ module.exports = {
                         return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById('testIDString').exec()];
                     case 5:
                         _b.apply(_a, [_c.sent()]);
+                        console.log('testing nodemon');
                         return [2 /*return*/];
                 }
             });
