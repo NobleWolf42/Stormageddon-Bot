@@ -113,13 +113,13 @@ function messageHandling(client, distube) {
                         //@bot
                         if (message.mentions.users.first().id === client.user.id) {
                             if (serverConfig.setupNeeded) {
-                                return [2 /*return*/, embedCustom(message, "".concat(client.user.tag), '#5D3FD3', "Please run `".concat(prefix, "setup` in an admin only chat channel to set up the bot on your server."), {
+                                return [2 /*return*/, embedCustom(message, "".concat(client.user.tag), '#5D3FD3', "Please run `".concat(message.prefix, "setup` in an admin only chat channel to set up the bot on your server."), {
                                         text: "Requested by ".concat(message.author.tag),
                                         iconURL: null,
                                     }, getRandomDoggo(), [], null, null)];
                             }
                             else {
-                                return [2 /*return*/, embedCustom(message, "".concat(client.user.tag), '#5D3FD3', "Woof Woof, My Prefix is `".concat(prefix, "`, for more commands, please use the `").concat(prefix, "help` command."), {
+                                return [2 /*return*/, embedCustom(message, "".concat(client.user.tag), '#5D3FD3', "Woof Woof, My Prefix is `".concat(message.prefix, "`, for more commands, please use the `").concat(message.prefix, "help` command."), {
                                         text: "Requested by ".concat(message.author.tag),
                                         iconURL: null,
                                     }, getRandomDoggo(), [], null, null)];
@@ -131,7 +131,7 @@ function messageHandling(client, distube) {
                     if (message.content.toLowerCase().includes('honse')) {
                         message.channel.send('https://i.imgur.com/hKZb0pc.png');
                     }
-                    prefixRegex = new RegExp("^(<@!?".concat(client.user.id, ">|").concat(escapeRegex(prefix), ")\\s*"));
+                    prefixRegex = new RegExp("^(<@!?".concat(client.user.id, ">|").concat(escapeRegex(message.prefix), ")\\s*"));
                     if (!prefixRegex.test(message.content))
                         return [2 /*return*/];
                     _a = message.content.match(prefixRegex), matchedPrefix = _a[1];
@@ -167,7 +167,7 @@ function messageHandling(client, distube) {
                         return [2 /*return*/];
                     }
                     else if (serverConfig.setupNeeded) {
-                        return [2 /*return*/, warnCustom(message, "You must set up the bot on this server before you can use commands. You can do this by using the `".concat(prefix, "setup` command in an Admin Only chat."), command.name)];
+                        return [2 /*return*/, warnCustom(message, "You must set up the bot on this server before you can use commands. You can do this by using the `".concat(message.prefix, "setup` command in an Admin Only chat."), command.name)];
                     }
                     //#endregion
                     tryCommand(client, message, command, args, distube);
