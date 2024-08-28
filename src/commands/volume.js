@@ -3,6 +3,10 @@ const { warnCustom, warnDisabled, warnWrongChannel, embedCustom } = require('../
 const { djCheck } = require('../helpers/userPermissions.js');
 //#endregion
 
+//#region Modules
+import { MongooseServerConfig } from './models/serverConfig';
+//#endregion
+
 //#region This exports the volume command with the information about it
 module.exports = {
     name: 'volume',

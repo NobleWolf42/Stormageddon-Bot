@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,6 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 //#region Dependencies
 var PermissionFlagsBits = require('discord.js').PermissionFlagsBits;
 var readFileSync = require('fs').readFileSync;
@@ -41,6 +43,9 @@ var readFileSync = require('fs').readFileSync;
 //#region Data FIles
 var updateConfigFile = require('./currentSettings.js').updateConfigFile;
 var Message = require('discord.js').Message;
+//#endregion
+//#region Modules
+var serverConfig_1 = require("./models/serverConfig");
 //#endregion
 //Sets up global vars for following functions
 var adminRoleIDs = [];
@@ -57,7 +62,7 @@ function serverRoleUpdate(sRole, serverID) {
         var serverConfig, basicServerRoles, _i, _a, _b, key, value;
         return __generator(this, function (_c) {
             switch (_c.label) {
-                case 0: return [4 /*yield*/, MongooseServerConfig.findById(serverID).exec()];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
                     serverConfig = _c.sent();
                     adminRoleIDs = [];

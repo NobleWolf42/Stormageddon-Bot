@@ -7,8 +7,11 @@ const { join } = require('path');
 //#region Helpers
 const { warnCustom, errorCustom, embedCustom } = require('../helpers/embedMessages.js');
 const { getRandomDoggo } = require('../helpers/doggoLinks.js');
-const { updateConfigFile } = require('../helpers/currentSettings.js');
 const { addToLog } = require('../helpers/errorLog.js');
+//#endregion
+
+//#region Modules
+import { MongooseServerConfig } from './models/serverConfig';
 //#endregion
 
 //Regex that tests for str (prefix)

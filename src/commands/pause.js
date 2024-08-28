@@ -1,10 +1,10 @@
-//#region Dependencies
-const { readFileSync } = require('fs');
-//#endregion
-
 //#region Helpers
 const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } = require('../helpers/embedMessages.js');
 const { djCheck } = require('../helpers/userPermissions.js');
+//#endregion
+
+//#region Modules
+import { MongooseServerConfig } from './models/serverConfig';
 //#endregion
 
 //#region This exports the pause command with the information about it

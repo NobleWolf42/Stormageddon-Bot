@@ -3,6 +3,10 @@ const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } = r
 const { djCheck } = require('../helpers/userPermissions.js');
 //#endregion
 
+//#region Modules
+import { MongooseServerConfig } from './models/serverConfig';
+//#endregion
+
 //#region This exports the skip command with the information about it
 module.exports = {
     name: 'skip',

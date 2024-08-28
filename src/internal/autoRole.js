@@ -2,8 +2,8 @@
 const { MessageReaction, Client } = require('discord.js');
 //#endregion
 
-//#region Helpers
-const { updateConfigFile } = require('../helpers/currentSettings.js');
+//#region Modules
+import { MongooseServerConfig } from './models/serverConfig';
 //#endregion
 
 //#region Function that generates embed fields

@@ -8,6 +8,10 @@ const { updateConfigFile } = require('./currentSettings.js');
 const { Message } = require('discord.js');
 //#endregion
 
+//#region Modules
+import { MongooseServerConfig } from './models/serverConfig';
+//#endregion
+
 //Sets up global vars for following functions
 var adminRoleIDs = [];
 var djRoleIDs = [];

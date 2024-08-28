@@ -8,6 +8,10 @@ const { addToLog } = require('../helpers/errorLog.js');
 const { embedCustom, warnCustom, warnDisabled, warnWrongChannel } = require('../helpers/embedMessages.js');
 //#endregion
 
+//#region Modules
+import { MongooseServerConfig } from './models/serverConfig';
+//#endregion
+
 //#region This exports the lyrics command with the information about it
 module.exports = {
     name: 'lyrics',

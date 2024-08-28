@@ -3,6 +3,10 @@ const { warnCustom, warnDisabled, warnWrongChannel, errorNoMod, embedCustom, err
 const { modCheck, djCheck } = require('../helpers/userPermissions.js');
 //#endregion
 
+//#region Modules
+import { MongooseServerConfig } from './models/serverConfig';
+//#endregion
+
 //#region This exports the playnext command with the information about it
 module.exports = {
     name: 'playnext',
