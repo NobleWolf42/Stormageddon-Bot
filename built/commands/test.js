@@ -66,7 +66,7 @@ module.exports = {
                         console.log('Start Test Command');
                         typeScriptNewConfig = {
                             _id: 'testIDString2',
-                            guildID: "not working',
+                            guildID: 'not working',
                         };
                         newConfig = new serverConfig_1.MongooseServerConfig(__assign({}, typeScriptNewConfig));
                         _e.label = 1;
@@ -93,7 +93,7 @@ module.exports = {
                         return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById('testIDString2').exec()];
                     case 7:
                         testConfig = _e.sent();
-                        testConfig.guildID = "working";
+                        testConfig.guildID = 'working';
                         testConfig.save();
                         return [2 /*return*/];
                 }
