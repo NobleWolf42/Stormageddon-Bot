@@ -40,7 +40,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Client = require('discord.js').Client;
 //#endregion
 //#region Modules
-var serverConfig_1 = require("./models/serverConfig");
+var serverConfig_1 = require("../models/serverConfig");
 //#endregion
 //#region Function that listens for someone to join a server and then gives them a role if this feature is enabled
 /**

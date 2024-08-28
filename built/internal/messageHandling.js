@@ -47,7 +47,7 @@ var getRandomDoggo = require('../helpers/doggoLinks.js').getRandomDoggo;
 var addToLog = require('../helpers/errorLog.js').addToLog;
 //#endregion
 //#region Modules
-var serverConfig_1 = require("./models/serverConfig");
+var serverConfig_1 = require("../models/serverConfig");
 //#endregion
 //Regex that tests for str (prefix)
 var escapeRegex = function (str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); };

@@ -11,7 +11,7 @@ const { addToLog } = require('../helpers/errorLog.js');
 //#endregion
 
 //#region Modules
-import { MongooseServerConfig } from './models/serverConfig';
+import { MongooseServerConfig } from '../models/serverConfig';
 //#endregion
 
 //Regex that tests for str (prefix)
