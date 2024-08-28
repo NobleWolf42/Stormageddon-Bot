@@ -59,14 +59,14 @@ module.exports = {
     description: 'Testing command',
     execute: function (message, args, client, distube) {
         return __awaiter(this, void 0, void 0, function () {
-            var typeScriptNewConfig, newConfig, err_1, _a, _b, _c, _d;
+            var typeScriptNewConfig, newConfig, err_1, _a, _b, _c, _d, testConfig;
             return __generator(this, function (_e) {
                 switch (_e.label) {
                     case 0:
                         console.log('Start Test Command');
                         typeScriptNewConfig = {
                             _id: 'testIDString2',
-                            guildID: 'testing change',
+                            guildID: "not working',
                         };
                         newConfig = new serverConfig_1.MongooseServerConfig(__assign({}, typeScriptNewConfig));
                         _e.label = 1;
@@ -90,6 +90,11 @@ module.exports = {
                     case 6:
                         _d.apply(_c, [_e.sent()]);
                         console.log('testing nodemon');
+                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById('testIDString2').exec()];
+                    case 7:
+                        testConfig = _e.sent();
+                        testConfig.guildID = "working";
+                        testConfig.save();
                         return [2 /*return*/];
                 }
             });
