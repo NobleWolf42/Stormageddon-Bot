@@ -6,6 +6,7 @@ interface ServerConfig {
     _id: string;
     guildID: string;
     setupNeeded?: boolean;
+    prefix?: string;
     autoRole?: {
         enable: boolean;
         embedMessage: string;

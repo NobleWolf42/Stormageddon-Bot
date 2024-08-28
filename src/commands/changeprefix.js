@@ -1,19 +1,10 @@
-//#region Dependencies
-const { readFileSync, writeFileSync } = require('fs');
-//#endregion
-
-//#region Data Files
-var prefixFile = JSON.parse(readFileSync('./data/botPrefix.json'));
-//#endregion
-
 //#region Helpers
-const {
-    errorNoAdmin,
-    warnCustom,
-    embedCustom,
-    errorCustom,
-} = require('../helpers/embedMessages.js');
+const { errorNoAdmin, warnCustom, embedCustom, errorCustom } = require('../helpers/embedMessages.js');
 const { adminCheck } = require('../helpers/userPermissions.js');
+//#endregion
+
+//#region Models
+import { MongooseServerConfig } from '../models/serverConfig.js';
 //#endregion
 
 //Regex that should eliminate anything that is not ~!$%^&*()_+-={}[]|:";'<>?,.
@@ -27,30 +18,17 @@ module.exports = {
     coolDown: 3,
     class: 'admin',
     usage: 'changeprefix ***INSERT-SYMBOL***',
-    description:
-        'Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-=[];\',.{}|:"<>?```',
-    execute(message, args, client, distube) {
+    description: 'Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-=[];\',.{}|:"<>?```',
+    async execute(message, args, client, distube) {
         var serverID = message.guild.id;
+        var serverConfig = await MongooseServerConfig.findById(serverID).exec();
 
         if (adminCheck(message)) {
             if (args[0] != undefined) {
                 if (args[0].length == 1 && isSymbol.test(args[0])) {
-                    prefixFile[serverID] = { prefix: args[0] };
+                    serverConfig.prefix = args[0];
 
-                    writeFileSync(
-                        './data/botPrefix.json',
-                        JSON.stringify(prefixFile),
-                        (err) => {
-                            if (err) {
-                                return errorCustom(
-                                    message,
-                                    err.description,
-                                    module.name,
-                                    client
-                                );
-                            }
-                        }
-                    );
+                    serverConfig.save();
 
                     return embedCustom(
                         message,
@@ -67,18 +45,10 @@ module.exports = {
                         null
                     );
                 } else {
-                    return warnCustom(
-                        message,
-                        'Bot Prefix Must be ONE of the following: ```~!$%^&*()_+-={}[]|:";\'<>?,./```',
-                        module.name
-                    );
+                    return warnCustom(message, 'Bot Prefix Must be ONE of the following: ```~!$%^&*()_+-={}[]|:";\'<>?,./```', module.name);
                 }
             } else {
-                return warnCustom(
-                    message,
-                    'You must define a bot prefix.',
-                    module.name
-                );
+                return warnCustom(message, 'You must define a bot prefix.', module.name);
             }
         } else {
             return errorNoAdmin(message, module.name);

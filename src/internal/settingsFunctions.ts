@@ -737,6 +737,7 @@ async function buildConfigFile(config, serverID) {
     if (await MongooseServerConfig.findById(serverID).exec()) {
         newConfig = await MongooseServerConfig.findById(serverID).exec();
         newConfig.setupNeeded = config.setupNeeded;
+        newConfig.prefix = config.prefix;
         newConfig.autoRole = config.autoRole;
         newConfig.joinRole = config.joinRole;
         newConfig.music = config.music;
@@ -749,6 +750,7 @@ async function buildConfigFile(config, serverID) {
             _id: serverID,
             guildID: serverID,
             setupNeeded: config.setupNeeded,
+            prefix: config.prefix,
             autoRole: config.autoRole,
             joinRole: config.joinRole,
             music: config.music,
@@ -777,6 +779,7 @@ async function buildConfigFile(config, serverID) {
 async function addServerConfig(serverID) {
     var defaultConfig = {
         setupNeeded: true,
+        prefix: '!',
         autoRole: {
             enable: false,
             embedMessage: 'Not Set Up',

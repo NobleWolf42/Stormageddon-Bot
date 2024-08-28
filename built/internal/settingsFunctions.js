@@ -903,6 +903,7 @@ function buildConfigFile(config, serverID) {
                 case 2:
                     newConfig = _a.sent();
                     newConfig.setupNeeded = config.setupNeeded;
+                    newConfig.prefix = config.prefix;
                     newConfig.autoRole = config.autoRole;
                     newConfig.joinRole = config.joinRole;
                     newConfig.music = config.music;
@@ -916,6 +917,7 @@ function buildConfigFile(config, serverID) {
                         _id: serverID,
                         guildID: serverID,
                         setupNeeded: config.setupNeeded,
+                        prefix: config.prefix,
                         autoRole: config.autoRole,
                         joinRole: config.joinRole,
                         music: config.music,
@@ -953,6 +955,7 @@ function addServerConfig(serverID) {
         return __generator(this, function (_a) {
             defaultConfig = {
                 setupNeeded: true,
+                prefix: '!',
                 autoRole: {
                     enable: false,
                     embedMessage: 'Not Set Up',
