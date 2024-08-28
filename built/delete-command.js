@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var serverConfig_1 = require("./models/serverConfig");
 var discord_js_1 = require("discord.js");
-var serverConfigs = await serverConfig_1.MongooseServerConfig.find({ guildID: { $nin: [] } }).exec();
+var serverConfigs = await serverConfig_1.MongooseServerConfig.find({ guildID: { $nin: [] } })
+    .exec()
+    .toObject();
 var rest = new discord_js_1.REST().setToken(process.env.authToken);
 // for guild-based commands
 for (guildId in serverConfigs) {

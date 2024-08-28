@@ -50,13 +50,12 @@ var serverConfig_1 = require("../models/serverConfig");
 function serverJoin(client) {
     var _this = this;
     client.on('guildMemberAdd', function (guildMember) { return __awaiter(_this, void 0, void 0, function () {
-        var dbCall, serverConfig;
+        var serverConfig;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(guildMember.guild.id).exec()];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(guildMember.guild.id).exec().toObject()];
                 case 1:
-                    dbCall = _a.sent();
-                    serverConfig = dbCall[0];
+                    serverConfig = _a.sent();
                     if (serverConfig.autoRole.joinroleenabled) {
                         guildMember.addRole(guildMember.guild.roles.find(function (role) { return role.name === serverConfig.autoRole.joinrole; }));
                     }

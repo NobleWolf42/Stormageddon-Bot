@@ -1,6 +1,8 @@
 import { MongooseServerConfig } from './models/serverConfig';
 import { REST, Routes } from 'discord.js';
-var serverConfigs = await MongooseServerConfig.find({ guildID: { $nin: [] } }).exec();
+var serverConfigs = await MongooseServerConfig.find({ guildID: { $nin: [] } })
+    .exec()
+    .toObject();
 
 const rest = new REST().setToken(process.env.authToken);
 

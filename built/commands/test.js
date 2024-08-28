@@ -82,11 +82,11 @@ module.exports = {
                         return [3 /*break*/, 4];
                     case 4:
                         _b = (_a = console).log;
-                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById('testIDString2').exec()];
+                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById('testIDString2').exec().toObject()];
                     case 5:
                         _b.apply(_a, [_e.sent()]);
                         _d = (_c = console).log;
-                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById('testIDString').exec()];
+                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById('testIDString').exec().toObject()];
                     case 6:
                         _d.apply(_c, [_e.sent()]);
                         console.log('testing nodemon');

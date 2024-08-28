@@ -50,13 +50,12 @@ var serverConfig_1 = require("../models/serverConfig");
  */
 function generateEmbedFields(serverID) {
     return __awaiter(this, void 0, void 0, function () {
-        var dbCall, serverConfig;
+        var serverConfig;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
                 case 1:
-                    dbCall = _a.sent();
-                    serverConfig = dbCall[0];
+                    serverConfig = _a.sent();
                     return [2 /*return*/, serverConfig.autoRole.roles.map(function (r, e) {
                             return {
                                 emoji: serverConfig.autoRole.reactions[e],
@@ -85,7 +84,7 @@ function autoRoleListener(client) {
             //#endregion
             //#region This event handles adding/removing users from the role(s) they chose based on message reactions
             client.on('raw', function (event) { return __awaiter(_this, void 0, void 0, function () {
-                var data, user, channel, message, member, serverID, dbCall, serverConfig, emojiKey, reaction, embedFooterText, fields, _loop_1, _i, fields_1, _a, name_1, value;
+                var data, user, channel, message, member, serverID, serverConfig, emojiKey, reaction, embedFooterText, fields, _loop_1, _i, fields_1, _a, name_1, value;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
@@ -99,10 +98,9 @@ function autoRoleListener(client) {
                             message = _b.sent();
                             member = message.guild.members.cache.get(user.id);
                             serverID = message.channel.guild.id;
-                            return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
+                            return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
                         case 2:
-                            dbCall = _b.sent();
-                            serverConfig = dbCall[0];
+                            serverConfig = _b.sent();
                             emojiKey = data.emoji.id ? "".concat(data.emoji.name, ":").concat(data.emoji.id) : data.emoji.name;
                             reaction = message.reactions.cache.get(emojiKey);
                             if (!reaction) {

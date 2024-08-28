@@ -123,7 +123,9 @@ try {
             switch (_a.label) {
                 case 0:
                     console.log("Logged in as ".concat(client.user.tag, "!"));
-                    return [4 /*yield*/, serverConfig_js_1.MongooseServerConfig.find({ guildID: { $nin: [] } }).exec()];
+                    return [4 /*yield*/, serverConfig_js_1.MongooseServerConfig.find({ guildID: { $nin: [] } })
+                            .exec()
+                            .toObject()];
                 case 1:
                     serverConfigs = _a.sent();
                     (0, autoRole_js_1.autoRoleListener)(client);

@@ -18,8 +18,7 @@ module.exports = {
     description: 'Toggles wether or not the bot will automatically pick a new song when the queue is done.',
     async execute(message, args, client, distube) {
         //Calls serverConfig from database
-        var dbCall = await MongooseServerConfig.findById(message.guild.id).exec();
-        var serverConfig = dbCall[0];
+        var serverConfig = await MongooseServerConfig.findById(message.guild.id).exec().toObject();
 
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig.music.enable) {

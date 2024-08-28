@@ -56,15 +56,14 @@ module.exports = {
     description: 'Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-=[];\',.{}|:"<>?```',
     execute: function (message, args, client, distube) {
         return __awaiter(this, void 0, void 0, function () {
-            var serverID, dbCall, serverConfig;
+            var serverID, serverConfig;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         serverID = message.guild.id;
-                        return [4 /*yield*/, serverConfig_js_1.MongooseServerConfig.findById(serverID).exec()];
+                        return [4 /*yield*/, serverConfig_js_1.MongooseServerConfig.findById(serverID).exec().toObject()];
                     case 1:
-                        dbCall = _a.sent();
-                        serverConfig = dbCall[0];
+                        serverConfig = _a.sent();
                         if (adminCheck(message)) {
                             if (args[0] != undefined) {
                                 if (args[0].length == 1 && isSymbol.test(args[0])) {

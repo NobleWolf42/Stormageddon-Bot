@@ -54,13 +54,12 @@ module.exports = {
     description: 'Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered.',
     execute: function (message, args, client, distube) {
         return __awaiter(this, void 0, void 0, function () {
-            var dbCall, serverConfig, voiceChannel, queue, volume;
+            var serverConfig, voiceChannel, queue, volume;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(message.guild.id).exec()];
+                    case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(message.guild.id).exec().toObject()];
                     case 1:
-                        dbCall = _a.sent();
-                        serverConfig = dbCall[0];
+                        serverConfig = _a.sent();
                         //Checks to see if the music feature is enabled in this server
                         if (!serverConfig.music.enable) {
                             return [2 /*return*/, warnDisabled(message, 'music', module.name)];

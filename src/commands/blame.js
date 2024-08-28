@@ -22,8 +22,8 @@ module.exports = {
     description: 'Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.',
     async execute(message, args, client, distube) {
         var serverID = message.guild.id;
-        var dbCall = await MongooseServerConfig.findById(serverID).exec();
-        var serverConfig = dbCall[0];
+        var serverConfig = await MongooseServerConfig.findById(serverID).exec().toObject();
+
         var erroredOut = false;
         var adminTF = adminCheck(message);
         var oldSubCommand = ` ${args[0]}`;

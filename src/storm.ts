@@ -92,7 +92,9 @@ try {
     //Logs the Bot info when bot starts
     client.on('ready', async () => {
         console.log(`Logged in as ${client.user.tag}!`);
-        var serverConfigs = await MongooseServerConfig.find({ guildID: { $nin: [] } }).exec();
+        var serverConfigs = await MongooseServerConfig.find({ guildID: { $nin: [] } })
+            .exec()
+            .toObject();
         autoRoleListener(client);
         messageHandling(client, distube);
         PMHandling(client, distube);

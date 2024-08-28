@@ -59,13 +59,12 @@ var modRoleIDs = [];
  */
 function serverRoleUpdate(sRole, serverID) {
     return __awaiter(this, void 0, void 0, function () {
-        var dbCall, serverConfig, basicServerRoles, _i, _a, _b, key, value;
+        var serverConfig, basicServerRoles, _i, _a, _b, key, value;
         return __generator(this, function (_c) {
             switch (_c.label) {
-                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
                 case 1:
-                    dbCall = _c.sent();
-                    serverConfig = dbCall[0];
+                    serverConfig = _c.sent();
                     adminRoleIDs = [];
                     djRoleIDs = [];
                     modRoleIDs = [];

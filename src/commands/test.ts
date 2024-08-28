@@ -23,8 +23,8 @@ module.exports = {
             console.log(err);
         }
 
-        console.log(await MongooseServerConfig.findById('testIDString2').exec());
-        console.log(await MongooseServerConfig.findById('testIDString').exec());
+        console.log(await MongooseServerConfig.findById('testIDString2').exec().toObject());
+        console.log(await MongooseServerConfig.findById('testIDString').exec().toObject());
         console.log('testing nodemon');
     },
 };

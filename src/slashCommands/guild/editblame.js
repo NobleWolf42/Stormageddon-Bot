@@ -53,8 +53,7 @@ module.exports = {
         var erroredOut = false;
         var adminTF = adminCheck(interaction);
         //Calls serverConfig from database
-        var dbCall = await MongooseServerConfig.findById(message.guild.id).exec();
-        var serverConfig = dbCall[0];
+        var serverConfig = await MongooseServerConfig.findById(message.guild.id).exec().toObject();
 
         if (serverConfig.blame.enable) {
             //Handles the blame sub commands

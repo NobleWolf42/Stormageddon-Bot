@@ -18,8 +18,7 @@ module.exports = {
     description: 'Skips the currently playing song.',
     async execute(message, args, client, distube) {
         //Gets serverConfig from database
-        var dbCall = await MongooseServerConfig.findById(message.guild.id).exec();
-        var serverConfig = dbCall[0];
+        var serverConfig = await MongooseServerConfig.findById(message.guild.id).exec().toObject();
 
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig.music.enable) {
