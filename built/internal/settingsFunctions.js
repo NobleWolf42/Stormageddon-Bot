@@ -69,9 +69,9 @@ function setModMail(message) {
                 case 0:
                     serverID = message.guild.id;
                     modList = [];
-                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     message.channel.send('Please respond with `T` if you would like to enable DMing to bot to DM mods, respond with `F` if you do not.');
                     _a.label = 2;
                 case 2:
@@ -147,9 +147,9 @@ function setAutoRole(message) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     message.channel.send('Example Message:');
                     return [4 /*yield*/, (0, embedMessages_js_1.embedCustom)(message, 'Role Message', '#FFFF00', '**React to the messages below to receive the associated role.**', {
                             text: "If you do not receive the role try reacting again.",
@@ -285,9 +285,9 @@ function setJoinRole(message) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     message.channel.send('Please respond with `T` if you would like to enable assign a user a role on server join, respond with `F` if you do not.');
                     _a.label = 2;
                 case 2:
@@ -362,9 +362,9 @@ function setJoinToCreateVC(message) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     message.channel.send('Please respond with `T` if you would like to enable Join to Create VC functionality, respond with `F` if you do not.');
                     _a.label = 2;
                 case 2:
@@ -439,9 +439,9 @@ function setMusic(message) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     message.channel.send('Please respond with `T` if you would like to enable music functionality, respond with `F` if you do not.');
                     _a.label = 2;
                 case 2:
@@ -539,9 +539,9 @@ function setGeneral(message) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     message.channel.send('Please @ the roles you would like to use as Bot Admins.');
                     _a.label = 2;
                 case 2:
@@ -621,9 +621,9 @@ function setBlame(message) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     message.channel.send('Please respond with `T` if you would like to enable Blame functionality, respond with `F` if you do not.');
                     _a.label = 2;
                 case 2:
@@ -703,9 +703,9 @@ function addRemoveBlame(serverID, addTF, permTF, person) {
         var serverConfig, blame, personFound;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     blame = serverConfig.blame;
                     personFound = false;
                     if (permTF) {
@@ -817,9 +817,9 @@ function changeBlameOffset(serverID, offset) {
         var serverConfig, blame;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     blame = serverConfig.blame;
                     blame.offset = offset;
                     serverConfig.blame = blame;
@@ -848,9 +848,9 @@ function setup(message) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     //Sets up all commands
                     return [4 /*yield*/, setAutoRole(message)];
                 case 2:

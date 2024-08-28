@@ -21,7 +21,7 @@ module.exports = {
     description: 'Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-=[];\',.{}|:"<>?```',
     async execute(message, args, client, distube) {
         var serverID = message.guild.id;
-        var serverConfig = await MongooseServerConfig.findById(serverID).exec().toObject();
+        var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
         if (adminCheck(message)) {
             if (args[0] != undefined) {

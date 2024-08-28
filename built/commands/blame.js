@@ -62,9 +62,9 @@ module.exports = {
                 switch (_b.label) {
                     case 0:
                         serverID = message.guild.id;
-                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                     case 1:
-                        serverConfig = _b.sent();
+                        serverConfig = (_b.sent()).toObject();
                         erroredOut = false;
                         adminTF = adminCheck(message);
                         oldSubCommand = " ".concat(args[0]);

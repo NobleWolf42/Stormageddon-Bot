@@ -53,9 +53,9 @@ function generateEmbedFields(serverID) {
         var serverConfig;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     return [2 /*return*/, serverConfig.autoRole.roles.map(function (r, e) {
                             return {
                                 emoji: serverConfig.autoRole.reactions[e],
@@ -98,9 +98,9 @@ function autoRoleListener(client) {
                             message = _b.sent();
                             member = message.guild.members.cache.get(user.id);
                             serverID = message.channel.guild.id;
-                            return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                            return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                         case 2:
-                            serverConfig = _b.sent();
+                            serverConfig = (_b.sent()).toObject();
                             emojiKey = data.emoji.id ? "".concat(data.emoji.name, ":").concat(data.emoji.id) : data.emoji.name;
                             reaction = message.reactions.cache.get(emojiKey);
                             if (!reaction) {

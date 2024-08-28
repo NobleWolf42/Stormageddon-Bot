@@ -109,9 +109,9 @@ module.exports = {
                 switch (_b.label) {
                     case 0:
                         maxFields = 20;
-                        return [4 /*yield*/, MongooseServerConfig.findById(interaction.guildId).exec().toObject()];
+                        return [4 /*yield*/, MongooseServerConfig.findById(interaction.guildId).exec()];
                     case 1:
-                        serverConfig = _b.sent();
+                        serverConfig = (_b.sent()).toObject();
                         //Checks to see if the music feature is enabled in this server
                         if (!serverConfig.music.enable) {
                             return [2 /*return*/, warnDisabled(interaction, 'music', module.name, client)];

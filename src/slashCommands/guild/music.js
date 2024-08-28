@@ -74,7 +74,7 @@ module.exports = {
         var maxFields = 20;
 
         //Calls serverConfig from database
-        var serverConfig = await MongooseServerConfig.findById(interaction.guildId).exec().toObject();
+        var serverConfig = (await MongooseServerConfig.findById(interaction.guildId).exec()).toObject();
 
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig.music.enable) {

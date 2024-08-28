@@ -61,9 +61,9 @@ module.exports = {
                 switch (_a.label) {
                     case 0:
                         serverID = message.guild.id;
-                        return [4 /*yield*/, serverConfig_js_1.MongooseServerConfig.findById(serverID).exec().toObject()];
+                        return [4 /*yield*/, serverConfig_js_1.MongooseServerConfig.findById(serverID).exec()];
                     case 1:
-                        serverConfig = _a.sent();
+                        serverConfig = (_a.sent()).toObject();
                         if (adminCheck(message)) {
                             if (args[0] != undefined) {
                                 if (args[0].length == 1 && isSymbol.test(args[0])) {

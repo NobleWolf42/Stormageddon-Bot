@@ -53,9 +53,9 @@ function serverJoin(client) {
         var serverConfig;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(guildMember.guild.id).exec().toObject()];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(guildMember.guild.id).exec()];
                 case 1:
-                    serverConfig = _a.sent();
+                    serverConfig = (_a.sent()).toObject();
                     if (serverConfig.autoRole.joinroleenabled) {
                         guildMember.addRole(guildMember.guild.roles.find(function (role) { return role.name === serverConfig.autoRole.joinrole; }));
                     }

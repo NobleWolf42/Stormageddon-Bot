@@ -90,9 +90,9 @@ module.exports = {
                         serverID = interaction.guildId;
                         erroredOut = false;
                         adminTF = adminCheck(interaction);
-                        return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec().toObject()];
+                        return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()];
                     case 1:
-                        serverConfig = _b.sent();
+                        serverConfig = (_b.sent()).toObject();
                         if (!serverConfig.blame.enable) return [3 /*break*/, 17];
                         _a = interaction.options.getSubcommand();
                         switch (_a) {

@@ -25,7 +25,7 @@ var modRoleIDs = [];
  */
 async function serverRoleUpdate(sRole, serverID) {
     //Gets serverConfig from database
-    var serverConfig = await MongooseServerConfig.findById(serverID).exec().toObject();
+    var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
     adminRoleIDs = [];
     djRoleIDs = [];

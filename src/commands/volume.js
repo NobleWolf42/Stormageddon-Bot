@@ -18,7 +18,7 @@ module.exports = {
     description: 'Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered.',
     async execute(message, args, client, distube) {
         //Gets serverConfig from database
-        var serverConfig = await MongooseServerConfig.findById(message.guild.id).exec().toObject();
+        var serverConfig = (await MongooseServerConfig.findById(message.guild.id).exec()).toObject();
 
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig.music.enable) {

@@ -22,7 +22,7 @@ module.exports = {
     description: 'Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.',
     async execute(message, args, client, distube) {
         var serverID = message.guild.id;
-        var serverConfig = await MongooseServerConfig.findById(serverID).exec().toObject();
+        var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
         var erroredOut = false;
         var adminTF = adminCheck(message);

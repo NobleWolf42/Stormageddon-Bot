@@ -18,7 +18,7 @@ module.exports = {
     description: 'Plays the selected song next. (NOTE: Bot Moderator Command ONLY)',
     async execute(message, args, client, distube) {
         //Calls config from database
-        var serverConfig = await MongooseServerConfig.findById(message.guild.id).exec().toObject();
+        var serverConfig = (await MongooseServerConfig.findById(message.guild.id).exec()).toObject();
 
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig.music.enable) {

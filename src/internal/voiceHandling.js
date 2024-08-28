@@ -21,7 +21,7 @@ async function joinToCreateHandling(client) {
         const oldChannel = oldState.channel;
         const newChannel = newState.channel;
         //Calls serverConfig from database
-        var serverConfig = await MongooseServerConfig.findById(message.guild.id).exec().toObject();
+        var serverConfig = (await MongooseServerConfig.findById(message.guild.id).exec()).toObject();
 
         if (serverConfig.setupNeeded) {
             return;
