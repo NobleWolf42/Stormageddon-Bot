@@ -34,12 +34,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-//#region Dependencies
-var readFileSync = require('fs').readFileSync;
-//#endregion
-//#region Data Files
-var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
-//#endregion
 //#region Helpers
 var _a = require('../helpers/embedMessages.js'), warnCustom = _a.warnCustom, warnDisabled = _a.warnDisabled, warnWrongChannel = _a.warnWrongChannel, errorNoDJ = _a.errorNoDJ;
 var djCheck = require('../helpers/userPermissions.js').djCheck;
@@ -55,47 +49,51 @@ module.exports = {
     description: 'Plays the selected music in the voice channel you are in.',
     execute: function (message, args, client, distube) {
         return __awaiter(this, void 0, void 0, function () {
-            var song, voiceChannel, queue;
+            var serverConfig, song, voiceChannel, queue;
             return __generator(this, function (_a) {
-                //Checks to see if the music feature is enabled in this server
-                if (!serverConfig[message.guild.id].music.enable) {
-                    return [2 /*return*/, warnDisabled(message, 'music', module.name)];
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()];
+                    case 1:
+                        serverConfig = _a.sent();
+                        //Checks to see if the music feature is enabled in this server
+                        if (!serverConfig.music.enable) {
+                            return [2 /*return*/, warnDisabled(message, 'music', module.name)];
+                        }
+                        //Checks to see if the user has DJ access
+                        if (!djCheck(message)) {
+                            return [2 /*return*/, errorNoDJ(message, module.name)];
+                        }
+                        //Checks to see if the message was sent in the correct channel
+                        if (serverConfig.music.textChannel != message.channel.name) {
+                            return [2 /*return*/, warnWrongChannel(message, serverConfig.music.textChannel, module.name)];
+                        }
+                        song = args.join(' ');
+                        voiceChannel = message.member.voice.channel;
+                        queue = distube.getQueue(message);
+                        //Checks to see if user is in a voice channel
+                        if (!voiceChannel && !queue) {
+                            return [2 /*return*/, warnCustom(message, 'You must join a voice channel to use this command!', module.name)];
+                        }
+                        else if (queue) {
+                            if (voiceChannel != queue.voiceChannel) {
+                                return [2 /*return*/, warnCustom(message, "You must join the <#".concat(queue.voiceChannel.id, "> voice channel to use this command!"), module.name)];
+                            }
+                        }
+                        //Checks to see if a song input is detected, is there is a song it checks to see if there is a queue, if there is no queue it plays the song, if there is an queue it will add it to the end of the queue
+                        if (!song) {
+                            return [2 /*return*/, warnCustom(message, 'No song input detected, please try again.', module.name)];
+                        }
+                        else {
+                            distube.play(voiceChannel, song, {
+                                member: message.member,
+                                message: message,
+                                textChannel: message.channel,
+                            });
+                            message.delete();
+                            message.deleted = true;
+                        }
+                        return [2 /*return*/];
                 }
-                //Checks to see if the user has DJ access
-                if (!djCheck(message)) {
-                    return [2 /*return*/, errorNoDJ(message, module.name)];
-                }
-                //Checks to see if the message was sent in the correct channel
-                if (serverConfig[message.guild.id].music.textChannel !=
-                    message.channel.name) {
-                    return [2 /*return*/, warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name)];
-                }
-                song = args.join(' ');
-                voiceChannel = message.member.voice.channel;
-                queue = distube.getQueue(message);
-                //Checks to see if user is in a voice channel
-                if (!voiceChannel && !queue) {
-                    return [2 /*return*/, warnCustom(message, 'You must join a voice channel to use this command!', module.name)];
-                }
-                else if (queue) {
-                    if (voiceChannel != queue.voiceChannel) {
-                        return [2 /*return*/, warnCustom(message, "You must join the <#".concat(queue.voiceChannel.id, "> voice channel to use this command!"), module.name)];
-                    }
-                }
-                //Checks to see if a song input is detected, is there is a song it checks to see if there is a queue, if there is no queue it plays the song, if there is an queue it will add it to the end of the queue
-                if (!song) {
-                    return [2 /*return*/, warnCustom(message, 'No song input detected, please try again.', module.name)];
-                }
-                else {
-                    distube.play(voiceChannel, song, {
-                        member: message.member,
-                        message: message,
-                        textChannel: message.channel,
-                    });
-                    message.delete();
-                    message.deleted = true;
-                }
-                return [2 /*return*/];
             });
         });
     },

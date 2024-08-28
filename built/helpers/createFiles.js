@@ -47,22 +47,11 @@ function createJSONfiles() {
             maxPlaylistSize: 0,
             pruning: false,
         },
-        devIDs: [
-            'YOUR DISCORD IDS 1',
-            'YOUR DISCORD IDS 2',
-            'YOUR DISCORD IDS 3',
-        ],
+        devIDs: ['YOUR DISCORD IDS 1', 'YOUR DISCORD IDS 2', 'YOUR DISCORD IDS 3'],
     };
     //#endregion
     if (!existsSync('./data/botPrefix.json')) {
         writeFileSync('./data/botPrefix.json', JSON.stringify(emptyFile), function (err) {
-            if (err) {
-                console.log(err);
-            }
-        });
-    }
-    if (!existsSync('./data/serverConfig.json')) {
-        writeFileSync('./data/serverConfig.json', JSON.stringify(emptyFile), function (err) {
             if (err) {
                 console.log(err);
             }

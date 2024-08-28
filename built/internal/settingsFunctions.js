@@ -1,3 +1,15 @@
+"use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,16 +46,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
-//#region Dependencies
-var Message = require('discord.js').Message;
-var writeFileSync = require('fs').writeFileSync;
-//#endregion
+Object.defineProperty(exports, "__esModule", { value: true });
 //#region Helpers
-var updateConfigFile = require('../helpers/currentSettings.js').updateConfigFile;
-var embedCustom = require('../helpers/embedMessages.js').embedCustom;
+var embedMessages_js_1 = require("../helpers/embedMessages.js");
 //#endregion
-//Refreshing the serverConfig from serverConfig.json
-var serverConfig = updateConfigFile();
+//#region Modules
+var serverConfig_1 = require("../models/serverConfig");
+//#endregion
 //Defining a filter for the setup commands to ignore bot messages
 var msgFilter = function (m) { return !m.author.bot; };
 //#region Function that sets modMail settings
@@ -54,52 +63,54 @@ var msgFilter = function (m) { return !m.author.bot; };
  */
 function setModMail(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, modList, enableIn, enableTXT, enable, roleIn, err_1, err_2;
+        var serverID, modList, serverConfig, enableIn, enableTXT, enable, roleIn, err_1, err_2;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
                     modList = [];
-                    message.channel.send('Please respond with `T` if you would like to enable DMing to bot to DM mods, respond with `F` if you do not.');
-                    _a.label = 1;
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    _a.trys.push([1, 7, , 8]);
+                    serverConfig = _a.sent();
+                    message.channel.send('Please respond with `T` if you would like to enable DMing to bot to DM mods, respond with `F` if you do not.');
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 8, , 9]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 2:
+                case 3:
                     enableIn = _a.sent();
                     enableTXT = enableIn.first().content.toLowerCase();
                     enable = undefined;
-                    if (!(enableTXT == 't')) return [3 /*break*/, 6];
-                    (enable = true),
-                        message.channel.send('Please @ the people you want to receive mod mail.');
-                    _a.label = 3;
-                case 3:
-                    _a.trys.push([3, 5, , 6]);
+                    if (!(enableTXT == 't')) return [3 /*break*/, 7];
+                    (enable = true), message.channel.send('Please @ the people you want to receive mod mail.');
+                    _a.label = 4;
+                case 4:
+                    _a.trys.push([4, 6, , 7]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 4:
+                case 5:
                     roleIn = _a.sent();
                     roleIn.first().mentions.members.forEach(function (member) {
                         modList.push(member.id);
                     });
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 7];
+                case 6:
                     err_1 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 6: return [3 /*break*/, 8];
-                case 7:
+                case 7: return [3 /*break*/, 9];
+                case 8:
                     err_2 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 8:
+                case 9:
                     if (modList == undefined) {
                         modList = [];
                     }
@@ -109,13 +120,13 @@ function setModMail(message) {
                     modMail = {};
                     modMail.enable = enable;
                     modMail.modList = modList;
-                    serverConfig[serverID].modMail = modMail;
-                    return [4 /*yield*/, buildConfigFile(serverConfig)];
-                case 9:
+                    serverConfig.modMail = modMail;
+                    return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
+                case 10:
                     _a.sent();
                     message.channel.send('Mod Mail Setup Complete!');
                     return [4 /*yield*/, updateConfigFile()];
-                case 10:
+                case 11:
                     config = _a.sent();
                     return [2 /*return*/, config];
             }
@@ -131,103 +142,103 @@ function setModMail(message) {
  */
 function setAutoRole(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, enableIn, enableTXT, enable, embedMessageIn, embedMessage, err_3, embedFooter, embedRoleIn, roles, err_4, embedReactIn, reactions, err_5, err_6;
+        var serverID, serverConfig, enableIn, enableTXT, enable, embedMessageIn, embedMessage, err_3, embedFooter, embedRoleIn, roles, err_4, embedReactIn, reactions, err_5, err_6;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
+                case 1:
+                    serverConfig = _a.sent();
                     message.channel.send('Example Message:');
-                    return [4 /*yield*/, embedCustom(message, 'Role Message', '#FFFF00', '**React to the messages below to receive the associated role.**', {
+                    return [4 /*yield*/, (0, embedMessages_js_1.embedCustom)(message, 'Role Message', '#FFFF00', '**React to the messages below to receive the associated role.**', {
                             text: "If you do not receive the role try reacting again.",
                             iconURL: null,
                         }, null, [], null, null)];
-                case 1:
+                case 2:
                     _a.sent();
                     message.channel.send('Please respond with `T` if you would like to enable react to receive role feature, respond with `F` if you do not.');
-                    _a.label = 2;
-                case 2:
-                    _a.trys.push([2, 16, , 17]);
+                    _a.label = 3;
+                case 3:
+                    _a.trys.push([3, 17, , 18]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 3:
+                case 4:
                     enableIn = _a.sent();
                     enableTXT = enableIn.first().content.toLowerCase();
                     enable = undefined;
-                    if (!(enableTXT == 't')) return [3 /*break*/, 15];
+                    if (!(enableTXT == 't')) return [3 /*break*/, 16];
                     enable = true;
                     message.channel.send('Please respond with the text you would like the reactRole message to contain. Replaces (`**React to the messages below to receive the associated role.**`) in the example. You have two minutes to respond to each setting.');
-                    _a.label = 4;
-                case 4:
-                    _a.trys.push([4, 6, , 7]);
+                    _a.label = 5;
+                case 5:
+                    _a.trys.push([5, 7, , 8]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 5:
+                case 6:
                     embedMessageIn = _a.sent();
                     embedMessage = embedMessageIn.first().content;
-                    return [3 /*break*/, 7];
-                case 6:
+                    return [3 /*break*/, 8];
+                case 7:
                     err_3 = _a.sent();
                     console.log(err_3.message);
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 7:
+                case 8:
                     embedFooter = 'If you do not receive the role try reacting again.';
                     message.channel.send('Please @ the roles you would like users to be able to assign to themselves.');
-                    _a.label = 8;
-                case 8:
-                    _a.trys.push([8, 10, , 11]);
+                    _a.label = 9;
+                case 9:
+                    _a.trys.push([9, 11, , 12]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 9:
+                case 10:
                     embedRoleIn = _a.sent();
                     roles = [];
-                    embedRoleIn
-                        .first()
-                        .mentions.roles.forEach(function (role) { return roles.push(role.name); });
-                    return [3 /*break*/, 11];
-                case 10:
+                    embedRoleIn.first().mentions.roles.forEach(function (role) { return roles.push(role.name); });
+                    return [3 /*break*/, 12];
+                case 11:
                     err_4 = _a.sent();
                     console.log(err_4.message);
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 11:
-                    message.channel.send('Please respond to this message with the list of reactions you want to be used for the roles above, matching their order. Format the list with spaces separating the reactions, like this: `🐕 🎩 👾`. (NOTE: You can use custom reactions as long as they are not animated and belong to this server)');
-                    _a.label = 12;
                 case 12:
-                    _a.trys.push([12, 14, , 15]);
+                    message.channel.send('Please respond to this message with the list of reactions you want to be used for the roles above, matching their order. Format the list with spaces separating the reactions, like this: `🐕 🎩 👾`. (NOTE: You can use custom reactions as long as they are not animated and belong to this server)');
+                    _a.label = 13;
+                case 13:
+                    _a.trys.push([13, 15, , 16]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 13:
+                case 14:
                     embedReactIn = _a.sent();
                     reactions = embedReactIn.first().content.split(' ');
-                    return [3 /*break*/, 15];
-                case 14:
+                    return [3 /*break*/, 16];
+                case 15:
                     err_5 = _a.sent();
                     console.log(err_5.message);
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 15: return [3 /*break*/, 17];
-                case 16:
+                case 16: return [3 /*break*/, 18];
+                case 17:
                     err_6 = _a.sent();
                     console.log(err_6.message);
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 17:
+                case 18:
                     if (embedMessage == undefined) {
-                        embedMessage =
-                            '`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`';
+                        embedMessage = '`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`';
                     }
                     if (embedFooter == undefined) {
                         embedFooter = 'If you do not receive the role try reacting again.';
@@ -247,13 +258,13 @@ function setAutoRole(message) {
                     autoRole.embedFooter = embedFooter;
                     autoRole.roles = roles;
                     autoRole.reactions = reactions;
-                    serverConfig[serverID].autoRole = autoRole;
-                    return [4 /*yield*/, buildConfigFile(serverConfig)];
-                case 18:
+                    serverConfig.autoRole = autoRole;
+                    return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
+                case 19:
                     _a.sent();
                     message.channel.send('Auto Role Setup Complete!');
                     return [4 /*yield*/, updateConfigFile()];
-                case 19:
+                case 20:
                     config = _a.sent();
                     return [2 /*return*/, config];
             }
@@ -269,50 +280,52 @@ function setAutoRole(message) {
  */
 function setJoinRole(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, enableIn, enableTXT, enable, roleIn, role, err_7, err_8;
+        var serverID, serverConfig, enableIn, enableTXT, enable, roleIn, role, err_7, err_8;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    message.channel.send('Please respond with `T` if you would like to enable assign a user a role on server join, respond with `F` if you do not.');
-                    _a.label = 1;
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    _a.trys.push([1, 7, , 8]);
+                    serverConfig = _a.sent();
+                    message.channel.send('Please respond with `T` if you would like to enable assign a user a role on server join, respond with `F` if you do not.');
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 8, , 9]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 2:
+                case 3:
                     enableIn = _a.sent();
                     enableTXT = enableIn.first().content.toLowerCase();
                     enable = undefined;
-                    if (!(enableTXT == 't')) return [3 /*break*/, 6];
-                    (enable = true),
-                        message.channel.send('Please @ the role you would like to assign users when they join your server.');
-                    _a.label = 3;
-                case 3:
-                    _a.trys.push([3, 5, , 6]);
+                    if (!(enableTXT == 't')) return [3 /*break*/, 7];
+                    (enable = true), message.channel.send('Please @ the role you would like to assign users when they join your server.');
+                    _a.label = 4;
+                case 4:
+                    _a.trys.push([4, 6, , 7]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 4:
+                case 5:
                     roleIn = _a.sent();
                     role = roleIn.first().mentions.roles.first().name;
                     console.log(role);
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 7];
+                case 6:
                     err_7 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 6: return [3 /*break*/, 8];
-                case 7:
+                case 7: return [3 /*break*/, 9];
+                case 8:
                     err_8 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 8:
+                case 9:
                     if (role == undefined) {
                         role = '';
                     }
@@ -322,13 +335,13 @@ function setJoinRole(message) {
                     joinRole = {};
                     joinRole.enabled = enable;
                     joinRole.role = role;
-                    serverConfig[serverID].joinRole = joinRole;
-                    return [4 /*yield*/, buildConfigFile(serverConfig)];
-                case 9:
+                    serverConfig.joinRole = joinRole;
+                    return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
+                case 10:
                     _a.sent();
                     message.channel.send('Join Role Setup Complete!');
                     return [4 /*yield*/, updateConfigFile()];
-                case 10:
+                case 11:
                     config = _a.sent();
                     return [2 /*return*/, config];
             }
@@ -344,49 +357,52 @@ function setJoinRole(message) {
  */
 function setJoinToCreateVC(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, enableIn, enableTXT, enable, JTCVCTXTIn, voiceChannel, err_9, err_10;
+        var serverID, serverConfig, enableIn, enableTXT, enable, JTCVCTXTIn, voiceChannel, err_9, err_10;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    message.channel.send('Please respond with `T` if you would like to enable Join to Create VC functionality, respond with `F` if you do not.');
-                    _a.label = 1;
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    _a.trys.push([1, 7, , 8]);
+                    serverConfig = _a.sent();
+                    message.channel.send('Please respond with `T` if you would like to enable Join to Create VC functionality, respond with `F` if you do not.');
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 8, , 9]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 2:
+                case 3:
                     enableIn = _a.sent();
                     enableTXT = enableIn.first().content.toLowerCase();
                     enable = undefined;
-                    if (!(enableTXT == 't')) return [3 /*break*/, 6];
+                    if (!(enableTXT == 't')) return [3 /*break*/, 7];
                     enable = true;
                     message.channel.send('Please input the channel id you want to use as a Join to Create Channel. `You can get this by enabling developer mode in discord, then right clicking the cannel and clicking copy channel id.`');
-                    _a.label = 3;
-                case 3:
-                    _a.trys.push([3, 5, , 6]);
+                    _a.label = 4;
+                case 4:
+                    _a.trys.push([4, 6, , 7]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 4:
+                case 5:
                     JTCVCTXTIn = _a.sent();
                     voiceChannel = JTCVCTXTIn.first().content;
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 7];
+                case 6:
                     err_9 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 6: return [3 /*break*/, 8];
-                case 7:
+                case 7: return [3 /*break*/, 9];
+                case 8:
                     err_10 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 8:
+                case 9:
                     if (enable == undefined) {
                         enable = false;
                     }
@@ -396,13 +412,13 @@ function setJoinToCreateVC(message) {
                     JTCVC = {};
                     JTCVC.enable = enable;
                     JTCVC.voiceChannel = voiceChannel;
-                    serverConfig[serverID].JTCVC = JTCVC;
-                    return [4 /*yield*/, buildConfigFile(serverConfig)];
-                case 9:
+                    serverConfig.JTCVC = JTCVC;
+                    return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
+                case 10:
                     _a.sent();
                     message.channel.send('Music Setup Complete!');
                     return [4 /*yield*/, updateConfigFile()];
-                case 10:
+                case 11:
                     config = _a.sent();
                     return [2 /*return*/, config];
             }
@@ -418,70 +434,71 @@ function setJoinToCreateVC(message) {
  */
 function setMusic(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, enableIn, enableTXT, enable, djRoleIn, djRoles, err_11, musicTXTIn, textChannel, err_12, err_13;
+        var serverID, serverConfig, enableIn, enableTXT, enable, djRoleIn, djRoles, err_11, musicTXTIn, textChannel, err_12, err_13;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    message.channel.send('Please respond with `T` if you would like to enable music functionality, respond with `F` if you do not.');
-                    _a.label = 1;
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    _a.trys.push([1, 11, , 12]);
+                    serverConfig = _a.sent();
+                    message.channel.send('Please respond with `T` if you would like to enable music functionality, respond with `F` if you do not.');
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 12, , 13]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 2:
+                case 3:
                     enableIn = _a.sent();
                     enableTXT = enableIn.first().content.toLowerCase();
                     enable = undefined;
-                    if (!(enableTXT == 't')) return [3 /*break*/, 10];
+                    if (!(enableTXT == 't')) return [3 /*break*/, 11];
                     enable = true;
                     message.channel.send('Please @ the role you would like to use as a DJ role.');
-                    _a.label = 3;
-                case 3:
-                    _a.trys.push([3, 5, , 6]);
+                    _a.label = 4;
+                case 4:
+                    _a.trys.push([4, 6, , 7]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 4:
+                case 5:
                     djRoleIn = _a.sent();
                     djRoles = djRoleIn.first().mentions.roles.first().name;
                     console.log(djRoles);
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 7];
+                case 6:
                     err_11 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 6:
-                    message.channel.send('Please link the text channel you would like the music commands to be used in. `You can do that by typing "#" followed by the channel name.`');
-                    _a.label = 7;
                 case 7:
-                    _a.trys.push([7, 9, , 10]);
+                    message.channel.send('Please link the text channel you would like the music commands to be used in. `You can do that by typing "#" followed by the channel name.`');
+                    _a.label = 8;
+                case 8:
+                    _a.trys.push([8, 10, , 11]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 8:
-                    musicTXTIn = _a.sent();
-                    textChannel = message.guild.channels.cache.get(musicTXTIn
-                        .first()
-                        .content.substring(2, musicTXTIn.first().content.length - 1)).name;
-                    return [3 /*break*/, 10];
                 case 9:
+                    musicTXTIn = _a.sent();
+                    textChannel = message.guild.channels.cache.get(musicTXTIn.first().content.substring(2, musicTXTIn.first().content.length - 1)).name;
+                    return [3 /*break*/, 11];
+                case 10:
                     err_12 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 10: return [3 /*break*/, 12];
-                case 11:
+                case 11: return [3 /*break*/, 13];
+                case 12:
                     err_13 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 12:
+                case 13:
                     if (djRoles == undefined) {
                         djRoles = 'DJ';
                     }
@@ -495,13 +512,13 @@ function setMusic(message) {
                     music.enable = enable;
                     music.djRoles = djRoles;
                     music.textChannel = textChannel;
-                    serverConfig[serverID].music = music;
-                    return [4 /*yield*/, buildConfigFile(serverConfig)];
-                case 13:
+                    serverConfig.music = music;
+                    return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
+                case 14:
                     _a.sent();
                     message.channel.send('Music Setup Complete!');
                     return [4 /*yield*/, updateConfigFile()];
-                case 14:
+                case 15:
                     config = _a.sent();
                     return [2 /*return*/, config];
             }
@@ -517,58 +534,57 @@ function setMusic(message) {
  */
 function setGeneral(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, adminRolesIn, adminRoles, err_14, modRolesIn, modRoles, modRoles, err_15;
+        var serverID, serverConfig, adminRolesIn, adminRoles, err_14, modRolesIn, modRoles, modRoles, err_15;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    message.channel.send('Please @ the roles you would like to use as Bot Admins.');
-                    _a.label = 1;
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    _a.trys.push([1, 3, , 4]);
+                    serverConfig = _a.sent();
+                    message.channel.send('Please @ the roles you would like to use as Bot Admins.');
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 4, , 5]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 2:
+                case 3:
                     adminRolesIn = _a.sent();
                     adminRoles = [];
-                    adminRolesIn
-                        .first()
-                        .mentions.roles.forEach(function (role) { return adminRoles.push(role.name); });
-                    return [3 /*break*/, 4];
-                case 3:
+                    adminRolesIn.first().mentions.roles.forEach(function (role) { return adminRoles.push(role.name); });
+                    return [3 /*break*/, 5];
+                case 4:
                     err_14 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 4:
-                    message.channel.send('Please @ the roles you would like to use as Bot Mods. These automatically include you admin roles, if you wish to add none, simply reply `None`.');
-                    _a.label = 5;
                 case 5:
-                    _a.trys.push([5, 7, , 8]);
+                    message.channel.send('Please @ the roles you would like to use as Bot Mods. These automatically include you admin roles, if you wish to add none, simply reply `None`.');
+                    _a.label = 6;
+                case 6:
+                    _a.trys.push([6, 8, , 9]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 6:
+                case 7:
                     modRolesIn = _a.sent();
                     modRoles = adminRoles.map(function (x) { return x; });
                     if (modRolesIn.first().content.toLowerCase() == 'none') {
                         modRoles = adminRoles.map(function (x) { return x; });
                     }
                     else {
-                        modRolesIn
-                            .first()
-                            .mentions.roles.forEach(function (role) { return modRoles.push(role.name); });
+                        modRolesIn.first().mentions.roles.forEach(function (role) { return modRoles.push(role.name); });
                     }
-                    return [3 /*break*/, 8];
-                case 7:
+                    return [3 /*break*/, 9];
+                case 8:
                     err_15 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 8:
+                case 9:
                     if (adminRoles == undefined) {
                         adminRoles = [];
                     }
@@ -578,13 +594,13 @@ function setGeneral(message) {
                     general = {};
                     general.adminRoles = adminRoles;
                     general.modRoles = modRoles;
-                    serverConfig[serverID].general = general;
-                    return [4 /*yield*/, buildConfigFile(serverConfig)];
-                case 9:
+                    serverConfig.general = general;
+                    return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
+                case 10:
                     _a.sent();
                     message.channel.send('General Setup Complete!');
                     return [4 /*yield*/, updateConfigFile()];
-                case 10:
+                case 11:
                     config = _a.sent();
                     return [2 /*return*/, config];
             }
@@ -600,50 +616,53 @@ function setGeneral(message) {
  */
 function setBlame(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID, enableIn, enableTXT, enable, cursing, curseTXTIn, cursing, err_16, err_17;
+        var serverID, serverConfig, enableIn, enableTXT, enable, cursing, curseTXTIn, cursing, err_16, err_17;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
-                    message.channel.send('Please respond with `T` if you would like to enable Blame functionality, respond with `F` if you do not.');
-                    _a.label = 1;
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    _a.trys.push([1, 7, , 8]);
+                    serverConfig = _a.sent();
+                    message.channel.send('Please respond with `T` if you would like to enable Blame functionality, respond with `F` if you do not.');
+                    _a.label = 2;
+                case 2:
+                    _a.trys.push([2, 8, , 9]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 2:
+                case 3:
                     enableIn = _a.sent();
                     enableTXT = enableIn.first().content.toLowerCase();
                     enable = undefined;
                     cursing = undefined;
-                    if (!(enableTXT == 't')) return [3 /*break*/, 6];
+                    if (!(enableTXT == 't')) return [3 /*break*/, 7];
                     enable = true;
                     message.channel.send('Please respond with `T` if you would like to enable explicit language (`fuck`), respond with `F` if you do not.');
-                    _a.label = 3;
-                case 3:
-                    _a.trys.push([3, 5, , 6]);
+                    _a.label = 4;
+                case 4:
+                    _a.trys.push([4, 6, , 7]);
                     return [4 /*yield*/, message.channel.awaitMessages({
                             filter: msgFilter,
                             max: 1,
                             time: 120000,
                             errors: ['time'],
                         })];
-                case 4:
+                case 5:
                     curseTXTIn = _a.sent();
                     cursing = curseTXTIn.first().content;
-                    return [3 /*break*/, 6];
-                case 5:
+                    return [3 /*break*/, 7];
+                case 6:
                     err_16 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 6: return [3 /*break*/, 8];
-                case 7:
+                case 7: return [3 /*break*/, 9];
+                case 8:
                     err_17 = _a.sent();
                     return [2 /*return*/, message.channel.send('Timeout Occurred. Process Terminated.')];
-                case 8:
+                case 9:
                     if (enable == undefined) {
                         enable = false;
                     }
@@ -656,13 +675,13 @@ function setBlame(message) {
                     blame.offset = 0;
                     blame.permList = [];
                     blame.rotateList = [];
-                    serverConfig[serverID].blame = blame;
-                    return [4 /*yield*/, buildConfigFile(serverConfig)];
-                case 9:
+                    serverConfig.blame = blame;
+                    return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
+                case 10:
                     _a.sent();
                     message.channel.send('Blame Setup Complete!');
                     return [4 /*yield*/, updateConfigFile()];
-                case 10:
+                case 11:
                     config = _a.sent();
                     return [2 /*return*/, config];
             }
@@ -681,11 +700,13 @@ function setBlame(message) {
  */
 function addRemoveBlame(serverID, addTF, permTF, person) {
     return __awaiter(this, void 0, void 0, function () {
-        var blame, personFound;
+        var serverConfig, blame, personFound;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    blame = serverConfig[serverID].blame;
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
+                case 1:
+                    serverConfig = _a.sent();
+                    blame = serverConfig.blame;
                     personFound = false;
                     if (permTF) {
                         blame.permList.forEach(function (item) {
@@ -769,12 +790,12 @@ function addRemoveBlame(serverID, addTF, permTF, person) {
                             }
                         }
                     }
-                    serverConfig[serverID].blame = blame;
-                    return [4 /*yield*/, buildConfigFile(serverConfig)];
-                case 1:
+                    serverConfig.blame = blame;
+                    return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
+                case 2:
                     _a.sent();
                     return [4 /*yield*/, updateConfigFile()];
-                case 2:
+                case 3:
                     config = _a.sent();
                     return [2 /*return*/, config];
             }
@@ -793,18 +814,20 @@ function addRemoveBlame(serverID, addTF, permTF, person) {
  */
 function changeBlameOffset(serverID, offset) {
     return __awaiter(this, void 0, void 0, function () {
-        var blame;
+        var serverConfig, blame;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0:
-                    blame = serverConfig[serverID].blame;
-                    blame.offset = offset;
-                    serverConfig[serverID].blame = blame;
-                    return [4 /*yield*/, buildConfigFile(serverConfig)];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
+                    serverConfig = _a.sent();
+                    blame = serverConfig.blame;
+                    blame.offset = offset;
+                    serverConfig.blame = blame;
+                    return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
+                case 2:
                     _a.sent();
                     return [4 /*yield*/, updateConfigFile()];
-                case 2:
+                case 3:
                     config = _a.sent();
                     return [2 /*return*/, config];
             }
@@ -820,41 +843,43 @@ function changeBlameOffset(serverID, offset) {
  */
 function setup(message) {
     return __awaiter(this, void 0, void 0, function () {
-        var serverID;
+        var serverID, serverConfig;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     serverID = message.guild.id;
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
+                case 1:
+                    serverConfig = _a.sent();
                     //Sets up all commands
                     return [4 /*yield*/, setAutoRole(message)];
-                case 1:
+                case 2:
                     //Sets up all commands
                     _a.sent();
                     return [4 /*yield*/, setGeneral(message)];
-                case 2:
-                    _a.sent();
-                    return [4 /*yield*/, setJoinRole(message)];
                 case 3:
                     _a.sent();
-                    return [4 /*yield*/, setMusic(message)];
+                    return [4 /*yield*/, setJoinRole(message)];
                 case 4:
                     _a.sent();
-                    return [4 /*yield*/, setModMail(message)];
+                    return [4 /*yield*/, setMusic(message)];
                 case 5:
                     _a.sent();
-                    return [4 /*yield*/, setJoinToCreateVC(message)];
+                    return [4 /*yield*/, setModMail(message)];
                 case 6:
                     _a.sent();
-                    return [4 /*yield*/, setBlame(message)];
+                    return [4 /*yield*/, setJoinToCreateVC(message)];
                 case 7:
                     _a.sent();
-                    //Removes the Setup Needed Tag
-                    serverConfig[serverID].setupNeeded = false;
-                    return [4 /*yield*/, buildConfigFile(serverConfig)];
+                    return [4 /*yield*/, setBlame(message)];
                 case 8:
                     _a.sent();
-                    embedCustom(message, 'Server Setup Complete', '#5D3FD3', "**MAKE SURE TO PUT THE ROLE FOR THIS BOT ABOVE ROLES YOU WANT THE BOT TO MANAGE, if you don't the bot will not work properly!**", { text: "Requested by ".concat(message.author.tag), iconURL: null }, null, [], null, null);
-                    updateConfigFile();
+                    //Removes the Setup Needed Tag
+                    serverConfig.setupNeeded = false;
+                    return [4 /*yield*/, buildConfigFile(serverConfig, serverID)];
+                case 9:
+                    _a.sent();
+                    (0, embedMessages_js_1.embedCustom)(message, 'Server Setup Complete', '#5D3FD3', "**MAKE SURE TO PUT THE ROLE FOR THIS BOT ABOVE ROLES YOU WANT THE BOT TO MANAGE, if you don't the bot will not work properly!**", { text: "Requested by ".concat(message.author.tag), iconURL: null }, null, [], null, null);
                     return [2 /*return*/];
             }
         });
@@ -863,24 +888,55 @@ function setup(message) {
 //#endregion
 //#region Function that builds config file
 /**
- * This function builds the serverConfig.json file with the provided JSON.
+ * This function builds the serverConfig file with the provided JSON.
  * @param {string} config - String of JSON
  */
-function buildConfigFile(config) {
+function buildConfigFile(config, serverID) {
     return __awaiter(this, void 0, void 0, function () {
+        var newConfig, typeScriptNewConfig, err_18;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, writeFileSync('./data/serverConfig.json', JSON.stringify(config), function (err) {
-                        if (err) {
-                            console.log(err);
-                        }
-                    })];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
-                    _a.sent();
-                    return [4 /*yield*/, updateConfigFile()];
+                    if (!_a.sent()) return [3 /*break*/, 3];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 2:
+                    newConfig = _a.sent();
+                    newConfig.setupNeeded = config.setupNeeded;
+                    newConfig.autoRole = config.autoRole;
+                    newConfig.joinRole = config.joinRole;
+                    newConfig.music = config.music;
+                    newConfig.general = config.general;
+                    newConfig.modMail = config.modMail;
+                    newConfig.JTCVC = config.JTCVC;
+                    newConfig.blame = config.blame;
+                    return [3 /*break*/, 4];
+                case 3:
+                    typeScriptNewConfig = {
+                        _id: serverID,
+                        guildID: serverID,
+                        setupNeeded: config.setupNeeded,
+                        autoRole: config.autoRole,
+                        joinRole: config.joinRole,
+                        music: config.music,
+                        general: config.general,
+                        modMail: config.modMail,
+                        JTCVC: config.JTCVC,
+                        blame: config.blame,
+                    };
+                    newConfig = new serverConfig_1.MongooseServerConfig(__assign({}, typeScriptNewConfig));
+                    _a.label = 4;
+                case 4:
+                    _a.trys.push([4, 6, , 7]);
+                    return [4 /*yield*/, newConfig.save()];
+                case 5:
                     _a.sent();
-                    return [2 /*return*/];
+                    return [3 /*break*/, 7];
+                case 6:
+                    err_18 = _a.sent();
+                    console.log(err_18);
+                    return [3 /*break*/, 7];
+                case 7: return [2 /*return*/];
             }
         });
     });
@@ -892,35 +948,46 @@ function buildConfigFile(config) {
  * @param {number} serverID - Server ID for server to be added
  */
 function addServerConfig(serverID) {
-    if (serverConfig[serverID] == undefined) {
-        serverConfig[serverID] = {
-            setupNeeded: true,
-            autoRole: {
-                enable: false,
-                embedMessage: 'Not Set Up',
-                embedFooter: 'Not Set Up',
-                roles: ['Not Set Up'],
-                reactions: ['🎵'],
-            },
-            joinRole: { enable: false, role: 'Not Set Up' },
-            music: {
-                enable: false,
-                djRoles: ['Not Set Up'],
-                textChannel: 'Not Set Up',
-            },
-            general: { adminRoles: ['Not Set Up'], modRoles: ['Not Set Up'] },
-            modMail: { enable: false, modList: [] },
-            JTCVC: { enable: false, voiceChannel: 'Not Set Up' },
-            blame: {
-                enable: false,
-                cursing: false,
-                offset: 0,
-                permList: [],
-                rotateList: [],
-            },
-        };
-    }
-    buildConfigFile(serverConfig);
+    return __awaiter(this, void 0, void 0, function () {
+        var defaultConfig;
+        return __generator(this, function (_a) {
+            defaultConfig = {
+                setupNeeded: true,
+                autoRole: {
+                    enable: false,
+                    embedMessage: 'Not Set Up',
+                    embedFooter: 'Not Set Up',
+                    roles: ['Not Set Up'],
+                    reactions: ['🎵'],
+                },
+                joinRole: { enable: false, role: 'Not Set Up' },
+                music: {
+                    enable: false,
+                    djRoles: ['Not Set Up'],
+                    textChannel: 'Not Set Up',
+                },
+                general: { adminRoles: ['Not Set Up'], modRoles: ['Not Set Up'] },
+                modMail: { enable: false, modList: [] },
+                JTCVC: { enable: false, voiceChannel: 'Not Set Up' },
+                blame: {
+                    enable: false,
+                    cursing: false,
+                    offset: 0,
+                    permList: [],
+                    rotateList: [],
+                },
+                logging: {
+                    enabled: false,
+                    loggingChannel: 'Not Set Up',
+                    voice: {
+                        enabled: false,
+                    },
+                },
+            };
+            buildConfigFile(defaultConfig, serverID);
+            return [2 /*return*/];
+        });
+    });
 }
 //#endregion
 //#region Function that removes the provided server form the serverConfig.json file

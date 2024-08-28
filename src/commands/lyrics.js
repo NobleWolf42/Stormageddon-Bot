@@ -1,21 +1,11 @@
 //#region Dependencies
-const { readFileSync } = require('fs');
 const GeniusLyrics = require('genius-lyrics');
 const Genius = new GeniusLyrics.Client();
 //#endregion
 
-//#region Data Files
-var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
-//#endregion
-
 //#region Helpers
 const { addToLog } = require('../helpers/errorLog.js');
-const {
-    embedCustom,
-    warnCustom,
-    warnDisabled,
-    warnWrongChannel,
-} = require('../helpers/embedMessages.js');
+const { embedCustom, warnCustom, warnDisabled, warnWrongChannel } = require('../helpers/embedMessages.js');
 //#endregion
 
 //#region This exports the lyrics command with the information about it
@@ -28,22 +18,18 @@ module.exports = {
     usage: 'lyrics',
     description: 'Gets the lyrics for the currently playing song.',
     async execute(message, args, client, distube) {
-        if (!serverConfig[message.guild.id].music.enable) {
+        //Calls config from database
+        var serverConfig = await MongooseServerConfig.findById(message.guild.id).exec();
+
+        if (!serverConfig.music.enable) {
             warnDisabled(message, 'music', module.name);
             return;
         }
 
-        if (
-            serverConfig[message.guild.id].music.textChannel ==
-            message.channel.name
-        ) {
+        if (serverConfig.music.textChannel == message.channel.name) {
             var queue = distube.getQueue(message);
             if (!queue) {
-                return warnCustom(
-                    message,
-                    'There is nothing playing.',
-                    module.name
-                );
+                return warnCustom(message, 'There is nothing playing.', module.name);
             }
 
             var lyrics = null;
@@ -56,15 +42,7 @@ module.exports = {
                     lyrics = `No lyrics found for ${queue.songs[0].name}.`;
                 }
             } catch (error) {
-                addToLog(
-                    'fatal error',
-                    module.name,
-                    message.author.tag,
-                    message.guild.name,
-                    message.channel.name,
-                    error,
-                    client
-                );
+                addToLog('fatal error', module.name, message.author.tag, message.guild.name, message.channel.name, error, client);
                 lyrics = `No lyrics found for ${queue.songs[0].name}.`;
             }
 
@@ -92,11 +70,7 @@ module.exports = {
                 );
             });
         } else {
-            warnWrongChannel(
-                message,
-                serverConfig[message.guild.id].music.textChannel,
-                module.name
-            );
+            warnWrongChannel(message, serverConfig.music.textChannel, module.name);
         }
     },
 };

@@ -11,9 +11,6 @@ const { updateConfigFile } = require('../helpers/currentSettings.js');
 const { addToLog } = require('../helpers/errorLog.js');
 //#endregion
 
-//Refreshing the serverConfig from serverConfig.json
-var serverConfig = updateConfigFile();
-
 //Regex that tests for str (prefix)
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
@@ -56,7 +53,7 @@ function messageHandling(client, distube) {
     //#endregion
 
     //Handles messages from guilds and their responses
-    client.on('messageCreate', (message) => {
+    client.on('messageCreate', async (message) => {
         //#region Checks permissions
         // Make sure bots can't run commands
         if (message.author.bot) return;
@@ -67,26 +64,18 @@ function messageHandling(client, distube) {
 
         //#region Sets prefix/defaultPrefix
         var serverID = message.channel.guild.id;
-        var prefixFile = JSON.parse(readFileSync('./data/botPrefix.json', 'utf8'));
 
-        if (prefixFile[serverID] != undefined) {
-            if (prefixFile[serverID].prefix != undefined) {
-                var prefix = prefixFile[serverID].prefix;
-            } else {
-                var prefix = '!';
-            }
-        } else {
-            var prefix = '!';
-        }
+        //Gets serverConfig from database
+        var serverConfig = await MongooseServerConfig.findById(serverID).exec();
+        message.prefix = serverConfig.prefix;
 
-        message.prefix = prefix;
         //#endregion
 
         //#region Handles all @ Commands
         if (message.mentions.users.first() !== undefined) {
             //@bot
             if (message.mentions.users.first().id === client.user.id) {
-                if (serverConfig[serverID].setupNeeded) {
+                if (serverConfig.setupNeeded) {
                     return embedCustom(
                         message,
                         `${client.user.tag}`,
@@ -172,7 +161,7 @@ function messageHandling(client, distube) {
         if (command.name == 'setup') {
             tryCommand(client, message, command, args, distube);
             return;
-        } else if (serverConfig[serverID].setupNeeded) {
+        } else if (serverConfig.setupNeeded) {
             return warnCustom(
                 message,
                 `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in an Admin Only chat.`,

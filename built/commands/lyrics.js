@@ -35,12 +35,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 //#region Dependencies
-var readFileSync = require('fs').readFileSync;
 var GeniusLyrics = require('genius-lyrics');
 var Genius = new GeniusLyrics.Client();
-//#endregion
-//#region Data Files
-var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
 //#endregion
 //#region Helpers
 var addToLog = require('../helpers/errorLog.js').addToLog;
@@ -57,42 +53,43 @@ module.exports = {
     description: 'Gets the lyrics for the currently playing song.',
     execute: function (message, args, client, distube) {
         return __awaiter(this, void 0, void 0, function () {
-            var queue, lyrics, searches, song, error_1;
+            var serverConfig, queue, lyrics, searches, song, error_1;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0:
-                        if (!serverConfig[message.guild.id].music.enable) {
+                    case 0: return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()];
+                    case 1:
+                        serverConfig = _a.sent();
+                        if (!serverConfig.music.enable) {
                             warnDisabled(message, 'music', module.name);
                             return [2 /*return*/];
                         }
-                        if (!(serverConfig[message.guild.id].music.textChannel ==
-                            message.channel.name)) return [3 /*break*/, 6];
+                        if (!(serverConfig.music.textChannel == message.channel.name)) return [3 /*break*/, 7];
                         queue = distube.getQueue(message);
                         if (!queue) {
                             return [2 /*return*/, warnCustom(message, 'There is nothing playing.', module.name)];
                         }
                         lyrics = null;
-                        _a.label = 1;
-                    case 1:
-                        _a.trys.push([1, 4, , 5]);
-                        return [4 /*yield*/, Genius.songs.search(queue.songs[0].name)];
+                        _a.label = 2;
                     case 2:
+                        _a.trys.push([2, 5, , 6]);
+                        return [4 /*yield*/, Genius.songs.search(queue.songs[0].name)];
+                    case 3:
                         searches = _a.sent();
                         song = searches[0];
                         return [4 /*yield*/, song.lyrics()];
-                    case 3:
+                    case 4:
                         lyrics = _a.sent();
                         if (!lyrics) {
                             lyrics = "No lyrics found for ".concat(queue.songs[0].name, ".");
                         }
-                        return [3 /*break*/, 5];
-                    case 4:
+                        return [3 /*break*/, 6];
+                    case 5:
                         error_1 = _a.sent();
                         addToLog('fatal error', module.name, message.author.tag, message.guild.name, message.channel.name, error_1, client);
                         lyrics = "No lyrics found for ".concat(queue.songs[0].name, ".");
-                        return [3 /*break*/, 5];
-                    case 5:
+                        return [3 /*break*/, 6];
+                    case 6:
                         slicedLyrics = [];
                         while (lyrics.length >= 2048) {
                             slicedLyrics.push("".concat(lyrics.substring(0, 2045), "..."));
@@ -108,11 +105,11 @@ module.exports = {
                                 return [2 /*return*/];
                             });
                         }); });
-                        return [3 /*break*/, 7];
-                    case 6:
-                        warnWrongChannel(message, serverConfig[message.guild.id].music.textChannel, module.name);
-                        _a.label = 7;
-                    case 7: return [2 /*return*/];
+                        return [3 /*break*/, 8];
+                    case 7:
+                        warnWrongChannel(message, serverConfig.music.textChannel, module.name);
+                        _a.label = 8;
+                    case 8: return [2 /*return*/];
                 }
             });
         });

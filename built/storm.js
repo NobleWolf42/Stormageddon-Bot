@@ -37,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.db = void 0;
 //#region Dependencies
 var discord_js_1 = require("discord.js");
 var distube_1 = require("distube"); //sodium-native is used by this, stop deleting it you fool
@@ -90,7 +89,7 @@ var client = new discord_js_1.Client({
 });
 //#endregion
 //#region Initialize mongoDB/mongoose client
-exports.db = mongoose_1.default.connect(process.env.mongoDBURI).then(function () {
+var db = mongoose_1.default.connect(process.env.mongoDBURI).then(function () {
     console.log('MongoDB Connected!');
 });
 //#endregion

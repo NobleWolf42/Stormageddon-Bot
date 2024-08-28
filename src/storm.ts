@@ -7,7 +7,6 @@ import { SpotifyPlugin } from '@distube/spotify';
 import { SoundCloudPlugin } from '@distube/soundcloud';
 import { YtDlpPlugin } from '@distube/yt-dlp';
 import { YouTubePlugin } from '@distube/youtube';
-import { MongoClient, ServerApiVersion } from 'mongodb';
 import mongoose from 'mongoose';
 //#endregion
 
@@ -59,7 +58,7 @@ const client = new Client({
 //#endregion
 
 //#region Initialize mongoDB/mongoose client
-export const db = mongoose.connect(process.env.mongoDBURI).then(() => {
+const db = mongoose.connect(process.env.mongoDBURI).then(() => {
     console.log('MongoDB Connected!');
 });
 //#endregion

@@ -1,15 +1,10 @@
-//#region Dependencies
-const { Message } = require('discord.js');
-const { writeFileSync } = require('fs');
-//#endregion
-
 //#region Helpers
-const { updateConfigFile } = require('../helpers/currentSettings.js');
-const { embedCustom } = require('../helpers/embedMessages.js');
+import { embedCustom } from '../helpers/embedMessages.js';
 //#endregion
 
-//Refreshing the serverConfig from serverConfig.json
-var serverConfig = updateConfigFile();
+//#region Modules
+import { MongooseServerConfig, ServerConfig } from '../models/serverConfig';
+//#endregion
 
 //Defining a filter for the setup commands to ignore bot messages
 const msgFilter = (m) => !m.author.bot;
@@ -24,9 +19,10 @@ async function setModMail(message) {
     var serverID = message.guild.id;
     var modList = [];
 
-    message.channel.send(
-        'Please respond with `T` if you would like to enable DMing to bot to DM mods, respond with `F` if you do not.'
-    );
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
+
+    message.channel.send('Please respond with `T` if you would like to enable DMing to bot to DM mods, respond with `F` if you do not.');
 
     try {
         var enableIn = await message.channel.awaitMessages({
@@ -38,10 +34,7 @@ async function setModMail(message) {
         var enableTXT = enableIn.first().content.toLowerCase();
         var enable = undefined;
         if (enableTXT == 't') {
-            (enable = true),
-                message.channel.send(
-                    'Please @ the people you want to receive mod mail.'
-                );
+            (enable = true), message.channel.send('Please @ the people you want to receive mod mail.');
 
             try {
                 var roleIn = await message.channel.awaitMessages({
@@ -54,9 +47,7 @@ async function setModMail(message) {
                     modList.push(member.id);
                 });
             } catch (err) {
-                return message.channel.send(
-                    'Timeout Occurred. Process Terminated.'
-                );
+                return message.channel.send('Timeout Occurred. Process Terminated.');
             }
         }
     } catch (err) {
@@ -74,9 +65,9 @@ async function setModMail(message) {
     modMail.enable = enable;
     modMail.modList = modList;
 
-    serverConfig[serverID].modMail = modMail;
+    serverConfig.modMail = modMail;
 
-    await buildConfigFile(serverConfig);
+    await buildConfigFile(serverConfig, serverID);
 
     message.channel.send('Mod Mail Setup Complete!');
 
@@ -93,6 +84,9 @@ async function setModMail(message) {
  */
 async function setAutoRole(message) {
     var serverID = message.guild.id;
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
+
     message.channel.send('Example Message:');
     await embedCustom(
         message,
@@ -109,9 +103,7 @@ async function setAutoRole(message) {
         null
     );
 
-    message.channel.send(
-        'Please respond with `T` if you would like to enable react to receive role feature, respond with `F` if you do not.'
-    );
+    message.channel.send('Please respond with `T` if you would like to enable react to receive role feature, respond with `F` if you do not.');
 
     try {
         var enableIn = await message.channel.awaitMessages({
@@ -139,17 +131,12 @@ async function setAutoRole(message) {
                 var embedMessage = embedMessageIn.first().content;
             } catch (err) {
                 console.log(err.message);
-                return message.channel.send(
-                    'Timeout Occurred. Process Terminated.'
-                );
+                return message.channel.send('Timeout Occurred. Process Terminated.');
             }
 
-            var embedFooter =
-                'If you do not receive the role try reacting again.';
+            var embedFooter = 'If you do not receive the role try reacting again.';
 
-            message.channel.send(
-                'Please @ the roles you would like users to be able to assign to themselves.'
-            );
+            message.channel.send('Please @ the roles you would like users to be able to assign to themselves.');
 
             try {
                 var embedRoleIn = await message.channel.awaitMessages({
@@ -159,14 +146,10 @@ async function setAutoRole(message) {
                     errors: ['time'],
                 });
                 var roles = [];
-                embedRoleIn
-                    .first()
-                    .mentions.roles.forEach((role) => roles.push(role.name));
+                embedRoleIn.first().mentions.roles.forEach((role) => roles.push(role.name));
             } catch (err) {
                 console.log(err.message);
-                return message.channel.send(
-                    'Timeout Occurred. Process Terminated.'
-                );
+                return message.channel.send('Timeout Occurred. Process Terminated.');
             }
             message.channel.send(
                 'Please respond to this message with the list of reactions you want to be used for the roles above, matching their order. Format the list with spaces separating the reactions, like this: `🐕 🎩 👾`. (NOTE: You can use custom reactions as long as they are not animated and belong to this server)'
@@ -182,9 +165,7 @@ async function setAutoRole(message) {
                 var reactions = embedReactIn.first().content.split(' ');
             } catch (err) {
                 console.log(err.message);
-                return message.channel.send(
-                    'Timeout Occurred. Process Terminated.'
-                );
+                return message.channel.send('Timeout Occurred. Process Terminated.');
             }
         }
     } catch (err) {
@@ -193,8 +174,7 @@ async function setAutoRole(message) {
     }
 
     if (embedMessage == undefined) {
-        embedMessage =
-            '`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`';
+        embedMessage = '`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`';
     }
     if (embedFooter == undefined) {
         embedFooter = 'If you do not receive the role try reacting again.';
@@ -216,9 +196,9 @@ async function setAutoRole(message) {
     autoRole.roles = roles;
     autoRole.reactions = reactions;
 
-    serverConfig[serverID].autoRole = autoRole;
+    serverConfig.autoRole = autoRole;
 
-    await buildConfigFile(serverConfig);
+    await buildConfigFile(serverConfig, serverID);
 
     message.channel.send('Auto Role Setup Complete!');
 
@@ -235,10 +215,10 @@ async function setAutoRole(message) {
  */
 async function setJoinRole(message) {
     var serverID = message.guild.id;
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
 
-    message.channel.send(
-        'Please respond with `T` if you would like to enable assign a user a role on server join, respond with `F` if you do not.'
-    );
+    message.channel.send('Please respond with `T` if you would like to enable assign a user a role on server join, respond with `F` if you do not.');
 
     try {
         var enableIn = await message.channel.awaitMessages({
@@ -250,10 +230,7 @@ async function setJoinRole(message) {
         var enableTXT = enableIn.first().content.toLowerCase();
         var enable = undefined;
         if (enableTXT == 't') {
-            (enable = true),
-                message.channel.send(
-                    'Please @ the role you would like to assign users when they join your server.'
-                );
+            (enable = true), message.channel.send('Please @ the role you would like to assign users when they join your server.');
 
             try {
                 var roleIn = await message.channel.awaitMessages({
@@ -265,9 +242,7 @@ async function setJoinRole(message) {
                 var role = roleIn.first().mentions.roles.first().name;
                 console.log(role);
             } catch (err) {
-                return message.channel.send(
-                    'Timeout Occurred. Process Terminated.'
-                );
+                return message.channel.send('Timeout Occurred. Process Terminated.');
             }
         }
     } catch (err) {
@@ -285,9 +260,9 @@ async function setJoinRole(message) {
     joinRole.enabled = enable;
     joinRole.role = role;
 
-    serverConfig[serverID].joinRole = joinRole;
+    serverConfig.joinRole = joinRole;
 
-    await buildConfigFile(serverConfig);
+    await buildConfigFile(serverConfig, serverID);
 
     message.channel.send('Join Role Setup Complete!');
 
@@ -304,10 +279,10 @@ async function setJoinRole(message) {
  */
 async function setJoinToCreateVC(message) {
     var serverID = message.guild.id;
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
 
-    message.channel.send(
-        'Please respond with `T` if you would like to enable Join to Create VC functionality, respond with `F` if you do not.'
-    );
+    message.channel.send('Please respond with `T` if you would like to enable Join to Create VC functionality, respond with `F` if you do not.');
 
     try {
         var enableIn = await message.channel.awaitMessages({
@@ -334,9 +309,7 @@ async function setJoinToCreateVC(message) {
                 });
                 var voiceChannel = JTCVCTXTIn.first().content;
             } catch (err) {
-                return message.channel.send(
-                    'Timeout Occurred. Process Terminated.'
-                );
+                return message.channel.send('Timeout Occurred. Process Terminated.');
             }
         }
     } catch (err) {
@@ -353,9 +326,9 @@ async function setJoinToCreateVC(message) {
     JTCVC.enable = enable;
     JTCVC.voiceChannel = voiceChannel;
 
-    serverConfig[serverID].JTCVC = JTCVC;
+    serverConfig.JTCVC = JTCVC;
 
-    await buildConfigFile(serverConfig);
+    await buildConfigFile(serverConfig, serverID);
 
     message.channel.send('Music Setup Complete!');
 
@@ -372,10 +345,10 @@ async function setJoinToCreateVC(message) {
  */
 async function setMusic(message) {
     var serverID = message.guild.id;
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
 
-    message.channel.send(
-        'Please respond with `T` if you would like to enable music functionality, respond with `F` if you do not.'
-    );
+    message.channel.send('Please respond with `T` if you would like to enable music functionality, respond with `F` if you do not.');
 
     try {
         var enableIn = await message.channel.awaitMessages({
@@ -389,9 +362,7 @@ async function setMusic(message) {
         if (enableTXT == 't') {
             enable = true;
 
-            message.channel.send(
-                'Please @ the role you would like to use as a DJ role.'
-            );
+            message.channel.send('Please @ the role you would like to use as a DJ role.');
 
             try {
                 var djRoleIn = await message.channel.awaitMessages({
@@ -403,14 +374,10 @@ async function setMusic(message) {
                 var djRoles = djRoleIn.first().mentions.roles.first().name;
                 console.log(djRoles);
             } catch (err) {
-                return message.channel.send(
-                    'Timeout Occurred. Process Terminated.'
-                );
+                return message.channel.send('Timeout Occurred. Process Terminated.');
             }
 
-            message.channel.send(
-                'Please link the text channel you would like the music commands to be used in. `You can do that by typing "#" followed by the channel name.`'
-            );
+            message.channel.send('Please link the text channel you would like the music commands to be used in. `You can do that by typing "#" followed by the channel name.`');
 
             try {
                 var musicTXTIn = await message.channel.awaitMessages({
@@ -419,18 +386,9 @@ async function setMusic(message) {
                     time: 120000,
                     errors: ['time'],
                 });
-                var textChannel = message.guild.channels.cache.get(
-                    musicTXTIn
-                        .first()
-                        .content.substring(
-                            2,
-                            musicTXTIn.first().content.length - 1
-                        )
-                ).name;
+                var textChannel = message.guild.channels.cache.get(musicTXTIn.first().content.substring(2, musicTXTIn.first().content.length - 1)).name;
             } catch (err) {
-                return message.channel.send(
-                    'Timeout Occurred. Process Terminated.'
-                );
+                return message.channel.send('Timeout Occurred. Process Terminated.');
             }
         }
     } catch (err) {
@@ -452,9 +410,9 @@ async function setMusic(message) {
     music.djRoles = djRoles;
     music.textChannel = textChannel;
 
-    serverConfig[serverID].music = music;
+    serverConfig.music = music;
 
-    await buildConfigFile(serverConfig);
+    await buildConfigFile(serverConfig, serverID);
 
     message.channel.send('Music Setup Complete!');
 
@@ -471,10 +429,10 @@ async function setMusic(message) {
  */
 async function setGeneral(message) {
     var serverID = message.guild.id;
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
 
-    message.channel.send(
-        'Please @ the roles you would like to use as Bot Admins.'
-    );
+    message.channel.send('Please @ the roles you would like to use as Bot Admins.');
 
     try {
         var adminRolesIn = await message.channel.awaitMessages({
@@ -484,16 +442,12 @@ async function setGeneral(message) {
             errors: ['time'],
         });
         var adminRoles = [];
-        adminRolesIn
-            .first()
-            .mentions.roles.forEach((role) => adminRoles.push(role.name));
+        adminRolesIn.first().mentions.roles.forEach((role) => adminRoles.push(role.name));
     } catch (err) {
         return message.channel.send('Timeout Occurred. Process Terminated.');
     }
 
-    message.channel.send(
-        'Please @ the roles you would like to use as Bot Mods. These automatically include you admin roles, if you wish to add none, simply reply `None`.'
-    );
+    message.channel.send('Please @ the roles you would like to use as Bot Mods. These automatically include you admin roles, if you wish to add none, simply reply `None`.');
 
     try {
         var modRolesIn = await message.channel.awaitMessages({
@@ -506,9 +460,7 @@ async function setGeneral(message) {
         if (modRolesIn.first().content.toLowerCase() == 'none') {
             var modRoles = adminRoles.map((x) => x);
         } else {
-            modRolesIn
-                .first()
-                .mentions.roles.forEach((role) => modRoles.push(role.name));
+            modRolesIn.first().mentions.roles.forEach((role) => modRoles.push(role.name));
         }
     } catch (err) {
         return message.channel.send('Timeout Occurred. Process Terminated.');
@@ -525,9 +477,9 @@ async function setGeneral(message) {
     general.adminRoles = adminRoles;
     general.modRoles = modRoles;
 
-    serverConfig[serverID].general = general;
+    serverConfig.general = general;
 
-    await buildConfigFile(serverConfig);
+    await buildConfigFile(serverConfig, serverID);
 
     message.channel.send('General Setup Complete!');
 
@@ -544,10 +496,10 @@ async function setGeneral(message) {
  */
 async function setBlame(message) {
     var serverID = message.guild.id;
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
 
-    message.channel.send(
-        'Please respond with `T` if you would like to enable Blame functionality, respond with `F` if you do not.'
-    );
+    message.channel.send('Please respond with `T` if you would like to enable Blame functionality, respond with `F` if you do not.');
 
     try {
         var enableIn = await message.channel.awaitMessages({
@@ -562,9 +514,7 @@ async function setBlame(message) {
         if (enableTXT == 't') {
             enable = true;
 
-            message.channel.send(
-                'Please respond with `T` if you would like to enable explicit language (`fuck`), respond with `F` if you do not.'
-            );
+            message.channel.send('Please respond with `T` if you would like to enable explicit language (`fuck`), respond with `F` if you do not.');
 
             try {
                 var curseTXTIn = await message.channel.awaitMessages({
@@ -575,9 +525,7 @@ async function setBlame(message) {
                 });
                 var cursing = curseTXTIn.first().content;
             } catch (err) {
-                return message.channel.send(
-                    'Timeout Occurred. Process Terminated.'
-                );
+                return message.channel.send('Timeout Occurred. Process Terminated.');
             }
         }
     } catch (err) {
@@ -598,9 +546,9 @@ async function setBlame(message) {
     blame.permList = [];
     blame.rotateList = [];
 
-    serverConfig[serverID].blame = blame;
+    serverConfig.blame = blame;
 
-    await buildConfigFile(serverConfig);
+    await buildConfigFile(serverConfig, serverID);
 
     message.channel.send('Blame Setup Complete!');
 
@@ -620,7 +568,10 @@ async function setBlame(message) {
  */
 async function addRemoveBlame(serverID, addTF, permTF, person) {
     //Pulls the current blame lists
-    var blame = serverConfig[serverID].blame;
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
+
+    var blame = serverConfig.blame;
     var personFound = false;
 
     if (permTF) {
@@ -701,9 +652,9 @@ async function addRemoveBlame(serverID, addTF, permTF, person) {
         }
     }
 
-    serverConfig[serverID].blame = blame;
+    serverConfig.blame = blame;
 
-    await buildConfigFile(serverConfig);
+    await buildConfigFile(serverConfig, serverID);
 
     config = await updateConfigFile();
     return config;
@@ -720,14 +671,17 @@ async function addRemoveBlame(serverID, addTF, permTF, person) {
  * @returns {JSON} Server Config JSON
  */
 async function changeBlameOffset(serverID, offset) {
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
+
     //Pulls the current blame lists
-    var blame = serverConfig[serverID].blame;
+    var blame = serverConfig.blame;
 
     blame.offset = offset;
 
-    serverConfig[serverID].blame = blame;
+    serverConfig.blame = blame;
 
-    await buildConfigFile(serverConfig);
+    await buildConfigFile(serverConfig, serverID);
 
     config = await updateConfigFile();
     return config;
@@ -742,6 +696,8 @@ async function changeBlameOffset(serverID, offset) {
  */
 async function setup(message) {
     var serverID = message.guild.id;
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
 
     //Sets up all commands
     await setAutoRole(message);
@@ -753,8 +709,8 @@ async function setup(message) {
     await setBlame(message);
 
     //Removes the Setup Needed Tag
-    serverConfig[serverID].setupNeeded = false;
-    await buildConfigFile(serverConfig);
+    serverConfig.setupNeeded = false;
+    await buildConfigFile(serverConfig, serverID);
     embedCustom(
         message,
         'Server Setup Complete',
@@ -766,28 +722,50 @@ async function setup(message) {
         null,
         null
     );
-    updateConfigFile();
     return;
 }
 //#endregion
 
 //#region Function that builds config file
 /**
- * This function builds the serverConfig.json file with the provided JSON.
+ * This function builds the serverConfig file with the provided JSON.
  * @param {string} config - String of JSON
  */
-async function buildConfigFile(config) {
-    await writeFileSync(
-        './data/serverConfig.json',
-        JSON.stringify(config),
-        function (err) {
-            if (err) {
-                console.log(err);
-            }
-        }
-    );
+async function buildConfigFile(config, serverID) {
+    var newConfig;
 
-    await updateConfigFile();
+    if (await MongooseServerConfig.findById(serverID).exec()) {
+        newConfig = await MongooseServerConfig.findById(serverID).exec();
+        newConfig.setupNeeded = config.setupNeeded;
+        newConfig.autoRole = config.autoRole;
+        newConfig.joinRole = config.joinRole;
+        newConfig.music = config.music;
+        newConfig.general = config.general;
+        newConfig.modMail = config.modMail;
+        newConfig.JTCVC = config.JTCVC;
+        newConfig.blame = config.blame;
+    } else {
+        const typeScriptNewConfig: ServerConfig = {
+            _id: serverID,
+            guildID: serverID,
+            setupNeeded: config.setupNeeded,
+            autoRole: config.autoRole,
+            joinRole: config.joinRole,
+            music: config.music,
+            general: config.general,
+            modMail: config.modMail,
+            JTCVC: config.JTCVC,
+            blame: config.blame,
+        };
+
+        newConfig = new MongooseServerConfig({ ...typeScriptNewConfig });
+    }
+
+    try {
+        await newConfig.save();
+    } catch (err) {
+        console.log(err);
+    }
 }
 //#endregion
 
@@ -796,37 +774,42 @@ async function buildConfigFile(config) {
  * This function adds the provided server to the serverConfig.json file.
  * @param {number} serverID - Server ID for server to be added
  */
-function addServerConfig(serverID) {
-    if (serverConfig[serverID] == undefined) {
-        serverConfig[serverID] = {
-            setupNeeded: true,
-            autoRole: {
-                enable: false,
-                embedMessage: 'Not Set Up',
-                embedFooter: 'Not Set Up',
-                roles: ['Not Set Up'],
-                reactions: ['🎵'],
+async function addServerConfig(serverID) {
+    var defaultConfig = {
+        setupNeeded: true,
+        autoRole: {
+            enable: false,
+            embedMessage: 'Not Set Up',
+            embedFooter: 'Not Set Up',
+            roles: ['Not Set Up'],
+            reactions: ['🎵'],
+        },
+        joinRole: { enable: false, role: 'Not Set Up' },
+        music: {
+            enable: false,
+            djRoles: ['Not Set Up'],
+            textChannel: 'Not Set Up',
+        },
+        general: { adminRoles: ['Not Set Up'], modRoles: ['Not Set Up'] },
+        modMail: { enable: false, modList: [] },
+        JTCVC: { enable: false, voiceChannel: 'Not Set Up' },
+        blame: {
+            enable: false,
+            cursing: false,
+            offset: 0,
+            permList: [],
+            rotateList: [],
+        },
+        logging: {
+            enabled: false,
+            loggingChannel: 'Not Set Up',
+            voice: {
+                enabled: false,
             },
-            joinRole: { enable: false, role: 'Not Set Up' },
-            music: {
-                enable: false,
-                djRoles: ['Not Set Up'],
-                textChannel: 'Not Set Up',
-            },
-            general: { adminRoles: ['Not Set Up'], modRoles: ['Not Set Up'] },
-            modMail: { enable: false, modList: [] },
-            JTCVC: { enable: false, voiceChannel: 'Not Set Up' },
-            blame: {
-                enable: false,
-                cursing: false,
-                offset: 0,
-                permList: [],
-                rotateList: [],
-            },
-        };
-    }
+        },
+    };
 
-    buildConfigFile(serverConfig);
+    buildConfigFile(defaultConfig, serverID);
 }
 //#endregion
 

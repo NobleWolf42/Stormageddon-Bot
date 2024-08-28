@@ -1,9 +1,12 @@
-var _a = require('discord.js'), REST = _a.REST, Routes = _a.Routes;
-var serverConfig = require('./data/serverConfig.json');
-var rest = new REST().setToken(process.env.authToken);
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var serverConfig_1 = require("./models/serverConfig");
+var discord_js_1 = require("discord.js");
+var serverConfigs = await serverConfig_1.MongooseServerConfig.find({ guildID: { $nin: [] } }).exec();
+var rest = new discord_js_1.REST().setToken(process.env.authToken);
 // for guild-based commands
-for (guildId in serverConfig) {
-    rest.delete(Routes.applicationGuildCommand(process.env.clientID, guildId, 
+for (guildId in serverConfigs) {
+    rest.delete(discord_js_1.Routes.applicationGuildCommand(process.env.clientID, guildId, 
     //command ID from discord
     '1259523754447343681'))
         .then(function () { return console.log('Successfully deleted guild command'); })

@@ -1,23 +1,10 @@
-//#region Data Files
-var serverConfig = require('../data/serverConfig.json');
-//#endregion
-
 //#region Helpers
-const {
-    embedCustom,
-    warnDisabled,
-    errorCustom,
-    warnCustom,
-    errorNoAdmin,
-} = require('../helpers/embedMessages.js');
+const { embedCustom, warnDisabled, errorCustom, warnCustom, errorNoAdmin } = require('../helpers/embedMessages.js');
 const { adminCheck } = require('../helpers/userPermissions.js');
 //#endregion
 
 //#region Internals
-const {
-    addRemoveBlame,
-    changeBlameOffset,
-} = require('../internal/settingsFunctions.js');
+const { addRemoveBlame, changeBlameOffset } = require('../internal/settingsFunctions.js');
 //#endregion
 
 //#region This exports the blame command with the information about it
@@ -32,11 +19,12 @@ module.exports = {
         'Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.',
     async execute(message, args, client, distube) {
         var serverID = message.guild.id;
+        var serverConfig = await MongooseServerConfig.findById(serverID).exec();
         var erroredOut = false;
         var adminTF = adminCheck(message);
         var oldSubCommand = ` ${args[0]}`;
 
-        if (serverConfig[serverID].blame.enable) {
+        if (serverConfig.blame.enable) {
             //Handles the blame sub commands
             switch (args[0]) {
                 //Adds a person to the blame rotation
@@ -46,28 +34,11 @@ module.exports = {
                     }
                     args = args.splice(1);
                     var argsString = args.join(' ');
-                    serverConfig = await addRemoveBlame(
-                        serverID,
-                        true,
-                        false,
-                        argsString
-                    ).catch((err) => {
-                        if (
-                            err.name == 'PersonExists' ||
-                            err.name == 'PersonNotExists'
-                        ) {
-                            warnCustom(
-                                message,
-                                err.message,
-                                'blame' + oldSubCommand
-                            );
+                    serverConfig = await addRemoveBlame(serverID, true, false, argsString).catch((err) => {
+                        if (err.name == 'PersonExists' || err.name == 'PersonNotExists') {
+                            warnCustom(message, err.message, 'blame' + oldSubCommand);
                         } else {
-                            errorCustom(
-                                message,
-                                err.message,
-                                'blame' + oldSubCommand,
-                                client
-                            );
+                            errorCustom(message, err.message, 'blame' + oldSubCommand, client);
                         }
 
                         erroredOut = true;
@@ -99,28 +70,11 @@ module.exports = {
                     }
                     args = args.splice(1);
                     var argsString = args.join(' ');
-                    serverConfig = await addRemoveBlame(
-                        serverID,
-                        true,
-                        true,
-                        argsString
-                    ).catch((err) => {
-                        if (
-                            err.name == 'PersonExists' ||
-                            err.name == 'PersonNotExists'
-                        ) {
-                            warnCustom(
-                                message,
-                                err.message,
-                                'blame' + oldSubCommand
-                            );
+                    serverConfig = await addRemoveBlame(serverID, true, true, argsString).catch((err) => {
+                        if (err.name == 'PersonExists' || err.name == 'PersonNotExists') {
+                            warnCustom(message, err.message, 'blame' + oldSubCommand);
                         } else {
-                            errorCustom(
-                                message,
-                                err.message,
-                                'blame' + oldSubCommand,
-                                client
-                            );
+                            errorCustom(message, err.message, 'blame' + oldSubCommand, client);
                         }
 
                         erroredOut = true;
@@ -152,28 +106,11 @@ module.exports = {
                     }
                     args = args.splice(1);
                     var argsString = args.join(' ');
-                    serverConfig = await addRemoveBlame(
-                        serverID,
-                        false,
-                        false,
-                        argsString
-                    ).catch((err) => {
-                        if (
-                            err.name == 'PersonExists' ||
-                            err.name == 'PersonNotExists'
-                        ) {
-                            warnCustom(
-                                message,
-                                err.message,
-                                'blame' + oldSubCommand
-                            );
+                    serverConfig = await addRemoveBlame(serverID, false, false, argsString).catch((err) => {
+                        if (err.name == 'PersonExists' || err.name == 'PersonNotExists') {
+                            warnCustom(message, err.message, 'blame' + oldSubCommand);
                         } else {
-                            errorCustom(
-                                message,
-                                err.message,
-                                'blame' + oldSubCommand,
-                                client
-                            );
+                            errorCustom(message, err.message, 'blame' + oldSubCommand, client);
                         }
 
                         erroredOut = true;
@@ -205,28 +142,11 @@ module.exports = {
                     }
                     args = args.splice(1);
                     var argsString = args.join(' ');
-                    serverConfig = await addRemoveBlame(
-                        serverID,
-                        false,
-                        true,
-                        argsString
-                    ).catch((err) => {
-                        if (
-                            err.name == 'PersonExists' ||
-                            err.name == 'PersonNotExists'
-                        ) {
-                            warnCustom(
-                                message,
-                                err.message,
-                                'blame' + oldSubCommand
-                            );
+                    serverConfig = await addRemoveBlame(serverID, false, true, argsString).catch((err) => {
+                        if (err.name == 'PersonExists' || err.name == 'PersonNotExists') {
+                            warnCustom(message, err.message, 'blame' + oldSubCommand);
                         } else {
-                            errorCustom(
-                                message,
-                                err.message,
-                                'blame' + oldSubCommand,
-                                client
-                            );
+                            errorCustom(message, err.message, 'blame' + oldSubCommand, client);
                         }
 
                         erroredOut = true;
@@ -260,25 +180,19 @@ module.exports = {
                         errorNoAdmin(message, module.name + oldSubCommand);
                     }
 
-                    for (key in serverConfig[serverID].blame.permList) {
-                        if (
-                            key ==
-                            serverConfig[serverID].blame.permList.length - 1
-                        ) {
-                            pBlameString += `${serverConfig[serverID].blame.permList[key]}`;
+                    for (key in serverConfig.blame.permList) {
+                        if (key == serverConfig.blame.permList.length - 1) {
+                            pBlameString += `${serverConfig.blame.permList[key]}`;
                         } else {
-                            pBlameString += `${serverConfig[serverID].blame.permList[key]}, `;
+                            pBlameString += `${serverConfig.blame.permList[key]}, `;
                         }
                     }
 
-                    for (key in serverConfig[serverID].blame.rotateList) {
-                        if (
-                            key ==
-                            serverConfig[serverID].blame.rotateList.length - 1
-                        ) {
-                            rBlameString += `${serverConfig[serverID].blame.rotateList[key]}`;
+                    for (key in serverConfig.blame.rotateList) {
+                        if (key == serverConfig.blame.rotateList.length - 1) {
+                            rBlameString += `${serverConfig.blame.rotateList[key]}`;
                         } else {
-                            rBlameString += `${serverConfig[serverID].blame.rotateList[key]}, `;
+                            rBlameString += `${serverConfig.blame.rotateList[key]}, `;
                         }
                     }
 
@@ -302,22 +216,11 @@ module.exports = {
                 case 'fix':
                     var currentVal =
                         Math.floor((Date.now() - 493200000) / 604800000) -
-                        Math.floor(
-                            Math.floor((Date.now() - 493200000) / 604800000) /
-                                serverConfig[serverID].blame.rotateList.length
-                        ) *
-                            serverConfig[serverID].blame.rotateList.length;
+                        Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) *
+                            serverConfig.blame.rotateList.length;
 
-                    if (
-                        args[1] == undefined ||
-                        args[1] < 1 ||
-                        args[1] > serverConfig[serverID].blame.rotateList
-                    ) {
-                        return warnCustom(
-                            message,
-                            `You must put a number between 1 and ${serverConfig[serverID].blame.rotateList.length}`,
-                            module.name
-                        );
+                    if (args[1] == undefined || args[1] < 1 || args[1] > serverConfig.blame.rotateList) {
+                        return warnCustom(message, `You must put a number between 1 and ${serverConfig.blame.rotateList.length}`, module.name);
                     }
 
                     var wantedVal = args[1] - 1;
@@ -325,16 +228,8 @@ module.exports = {
                     if (currentVal != wantedVal) {
                         var offset = currentVal - wantedVal;
 
-                        serverConfig = await changeBlameOffset(
-                            serverID,
-                            offset
-                        ).catch((err) => {
-                            errorCustom(
-                                message,
-                                err.message,
-                                'blame' + oldSubCommand,
-                                client
-                            );
+                        serverConfig = await changeBlameOffset(serverID, offset).catch((err) => {
+                            errorCustom(message, err.message, 'blame' + oldSubCommand, client);
 
                             erroredOut = true;
                             return serverConfig;
@@ -345,7 +240,7 @@ module.exports = {
                                 message,
                                 'Success',
                                 '#00FF00',
-                                `Successfully changed ${serverConfig[serverID].blame.rotateList[wantedVal]} to the current one to blame.`,
+                                `Successfully changed ${serverConfig.blame.rotateList[wantedVal]} to the current one to blame.`,
                                 {
                                     text: `Requested by ${message.author.tag}`,
                                     iconURL: null,
@@ -357,11 +252,7 @@ module.exports = {
                             );
                         }
                     } else {
-                        warnCustom(
-                            message,
-                            "It is already that user's week!",
-                            module.name
-                        );
+                        warnCustom(message, "It is already that user's week!", module.name);
                     }
                     break;
 
@@ -369,50 +260,31 @@ module.exports = {
                 default:
                     var blameList = [];
 
-                    for (key in serverConfig[serverID].blame.permList) {
-                        blameList.push(
-                            serverConfig[serverID].blame.permList[key]
-                        );
+                    for (key in serverConfig.blame.permList) {
+                        blameList.push(serverConfig.blame.permList[key]);
                     }
 
                     var blameString = '';
-                    if (serverConfig[serverID].blame.rotateList.length > 0) {
+                    if (serverConfig.blame.rotateList.length > 0) {
                         var rotateIndex =
                             Math.floor((Date.now() - 493200000) / 604800000) -
-                            Math.floor(
-                                Math.floor(
-                                    (Date.now() - 493200000) / 604800000
-                                ) /
-                                    serverConfig[serverID].blame.rotateList
-                                        .length
-                            ) *
-                                serverConfig[serverID].blame.rotateList.length -
-                            serverConfig[serverID].blame.offset;
+                            Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) *
+                                serverConfig.blame.rotateList.length -
+                            serverConfig.blame.offset;
 
-                        if (
-                            rotateIndex >=
-                            serverConfig[serverID].blame.rotateList.length
-                        ) {
-                            rotateIndex -=
-                                serverConfig[serverID].blame.rotateList.length;
+                        if (rotateIndex >= serverConfig.blame.rotateList.length) {
+                            rotateIndex -= serverConfig.blame.rotateList.length;
                         } else if (rotateIndex < 0) {
-                            rotateIndex +=
-                                serverConfig[serverID].blame.rotateList.length;
+                            rotateIndex += serverConfig.blame.rotateList.length;
                         }
 
-                        blameList.push(
-                            serverConfig[serverID].blame.rotateList[rotateIndex]
-                        );
+                        blameList.push(serverConfig.blame.rotateList[rotateIndex]);
                     } else if (blameList.length < 1) {
-                        return warnCustom(
-                            message,
-                            'The blame list is empty!',
-                            module.name
-                        );
+                        return warnCustom(message, 'The blame list is empty!', module.name);
                     }
 
                     if (blameList.length == 1) {
-                        if (serverConfig[serverID].blame.cursing) {
+                        if (serverConfig.blame.cursing) {
                             embedCustom(
                                 message,
                                 'Blame',
@@ -460,7 +332,7 @@ module.exports = {
                             }
                         }
 
-                        if (serverConfig[serverID].blame.cursing) {
+                        if (serverConfig.blame.cursing) {
                             embedCustom(
                                 message,
                                 'Blame',

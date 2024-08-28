@@ -1,10 +1,11 @@
-const { REST, Routes } = require('discord.js');
-const serverConfig = require('./data/serverConfig.json');
+import { MongooseServerConfig } from './models/serverConfig';
+import { REST, Routes } from 'discord.js';
+var serverConfigs = await MongooseServerConfig.find({ guildID: { $nin: [] } }).exec();
 
 const rest = new REST().setToken(process.env.authToken);
 
 // for guild-based commands
-for (guildId in serverConfig) {
+for (guildId in serverConfigs) {
     rest.delete(
         Routes.applicationGuildCommand(
             process.env.clientID,

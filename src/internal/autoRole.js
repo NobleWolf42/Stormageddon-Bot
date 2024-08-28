@@ -6,19 +6,19 @@ const { MessageReaction, Client } = require('discord.js');
 const { updateConfigFile } = require('../helpers/currentSettings.js');
 //#endregion
 
-//Refreshing the serverConfig from serverConfig.json
-var serverConfig = updateConfigFile();
-
 //#region Function that generates embed fields
 /**
- * Generates the embed fields and ties the emoji to their respective role from serverConfig.json.
+ * Generates the embed fields and ties the emoji to their respective role from serverConfig.
  * @param {number} serverID - Server ID for the server the command is run in
  * @returns {map} - returns a map of the emoji-role pairs
  */
-function generateEmbedFields(serverID) {
-    return serverConfig[serverID].autoRole.roles.map((r, e) => {
+async function generateEmbedFields(serverID) {
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
+
+    return serverConfig.autoRole.roles.map((r, e) => {
         return {
-            emoji: serverConfig[serverID].autoRole.reactions[e],
+            emoji: serverConfig.autoRole.reactions[e],
             role: r,
         };
     });
@@ -30,8 +30,10 @@ function generateEmbedFields(serverID) {
  * This function starts the listening to see if a user hits a reaction, and gives them the role when they do react.
  * @param {Client} client - Discord.js Client Object
  */
-function autoRoleListener(client) {
-    serverConfig = updateConfigFile();
+async function autoRoleListener(client) {
+    //Gets serverConfig from database
+    var serverConfig = await MongooseServerConfig.findById(serverID).exec();
+
     //#region Readable constants
     // This makes the events used a bit more readable
     const events = {
@@ -52,50 +54,27 @@ function autoRoleListener(client) {
         const member = message.guild.members.cache.get(user.id);
         var serverID = message.channel.guild.id;
 
-        const emojiKey = data.emoji.id
-            ? `${data.emoji.name}:${data.emoji.id}`
-            : data.emoji.name;
+        const emojiKey = data.emoji.id ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
         let reaction = message.reactions.cache.get(emojiKey);
 
         if (!reaction) {
             // Create an object that can be passed through the event like normal
-            reaction = new MessageReaction(
-                client,
-                data,
-                message,
-                1,
-                data.user_id === client.user.id
-            );
+            reaction = new MessageReaction(client, data, message, 1, data.user_id === client.user.id);
         }
 
         let embedFooterText;
-        if (message.embeds[0] && message.embeds[0].footer != null)
-            embedFooterText = message.embeds[0].footer.text;
+        if (message.embeds[0] && message.embeds[0].footer != null) embedFooterText = message.embeds[0].footer.text;
 
-        if (
-            message.author.id === client.user.id &&
-            (message.content !==
-                serverConfig[serverID].autoRole.initialMessage ||
-                (message.embeds[0] &&
-                    embedFooterText !==
-                        serverConfig[serverID].autoRole.embedFooter))
-        ) {
+        if (message.author.id === client.user.id && (message.content !== serverConfig.autoRole.initialMessage || (message.embeds[0] && embedFooterText !== serverConfig.autoRole.embedFooter))) {
             if (message.embeds.length >= 1) {
                 const fields = message.embeds[0].fields;
 
                 for (const { name, value } of fields) {
                     if (member.id !== client.user.id) {
-                        const guildRole = message.guild.roles.cache.find(
-                            (r) => r.name === value
-                        );
-                        if (
-                            name === reaction.emoji.name ||
-                            name === reaction.emoji.toString()
-                        ) {
-                            if (event.t === 'MESSAGE_REACTION_ADD')
-                                member.roles.add(guildRole.id);
-                            else if (event.t === 'MESSAGE_REACTION_REMOVE')
-                                member.roles.remove(guildRole.id);
+                        const guildRole = message.guild.roles.cache.find((r) => r.name === value);
+                        if (name === reaction.emoji.name || name === reaction.emoji.toString()) {
+                            if (event.t === 'MESSAGE_REACTION_ADD') member.roles.add(guildRole.id);
+                            else if (event.t === 'MESSAGE_REACTION_REMOVE') member.roles.remove(guildRole.id);
                         }
                     }
                 }

@@ -59,9 +59,9 @@ module.exports = {
     description: 'Testing command',
     execute: function (message, args, client, distube) {
         return __awaiter(this, void 0, void 0, function () {
-            var typeScriptNewConfig, newConfig, err_1, _a, _b;
-            return __generator(this, function (_c) {
-                switch (_c.label) {
+            var typeScriptNewConfig, newConfig, err_1, _a, _b, _c, _d;
+            return __generator(this, function (_e) {
+                switch (_e.label) {
                     case 0:
                         console.log('Start Test Command');
                         typeScriptNewConfig = {
@@ -69,22 +69,26 @@ module.exports = {
                             guildID: Date.now().toLocaleString(),
                         };
                         newConfig = new serverConfig_1.MongooseServerConfig(__assign({}, typeScriptNewConfig));
-                        _c.label = 1;
+                        _e.label = 1;
                     case 1:
-                        _c.trys.push([1, 3, , 4]);
+                        _e.trys.push([1, 3, , 4]);
                         return [4 /*yield*/, newConfig.save()];
                     case 2:
-                        _c.sent();
+                        _e.sent();
                         return [3 /*break*/, 4];
                     case 3:
-                        err_1 = _c.sent();
+                        err_1 = _e.sent();
                         console.log(err_1);
                         return [3 /*break*/, 4];
                     case 4:
                         _b = (_a = console).log;
                         return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById('testIDString2').exec()];
                     case 5:
-                        _b.apply(_a, [_c.sent()]);
+                        _b.apply(_a, [_e.sent()]);
+                        _d = (_c = console).log;
+                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById('testIDString').exec()];
+                    case 6:
+                        _d.apply(_c, [_e.sent()]);
                         console.log('testing nodemon');
                         return [2 /*return*/];
                 }

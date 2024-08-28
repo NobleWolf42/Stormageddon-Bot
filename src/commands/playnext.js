@@ -1,20 +1,5 @@
-//#region Dependencies
-const { readFileSync } = require('fs');
-//#endregion
-
-//#region Data Files
-var serverConfig = JSON.parse(readFileSync('./data/serverConfig.json', 'utf8'));
-//#endregion
-
 //#region Helpers
-const {
-    warnCustom,
-    warnDisabled,
-    warnWrongChannel,
-    errorNoMod,
-    embedCustom,
-    errorCustom,
-} = require('../helpers/embedMessages.js');
+const { warnCustom, warnDisabled, warnWrongChannel, errorNoMod, embedCustom, errorCustom } = require('../helpers/embedMessages.js');
 const { modCheck, djCheck } = require('../helpers/userPermissions.js');
 //#endregion
 
@@ -26,11 +11,13 @@ module.exports = {
     coolDown: 0,
     class: 'music',
     usage: 'playnext ***QUEUE-NUMBER/SEARCH-TERM/YOUTUBE-LINK/SPOTIFY-LINK/SOUNDCLOUD-LINK***',
-    description:
-        'Plays the selected song next. (NOTE: Bot Moderator Command ONLY)',
+    description: 'Plays the selected song next. (NOTE: Bot Moderator Command ONLY)',
     async execute(message, args, client, distube) {
+        //Calls config from database
+        var serverConfig = await MongooseServerConfig.findById(message.guild.id).exec();
+
         //Checks to see if the music feature is enabled in this server
-        if (!serverConfig[message.guild.id].music.enable) {
+        if (!serverConfig.music.enable) {
             return warnDisabled(message, 'music', module.name);
         }
 
@@ -40,15 +27,8 @@ module.exports = {
         }
 
         //Checks to see if the message was sent in the correct channel
-        if (
-            serverConfig[message.guild.id].music.textChannel !=
-            message.channel.name
-        ) {
-            return warnWrongChannel(
-                message,
-                serverConfig[message.guild.id].music.textChannel,
-                module.name
-            );
+        if (serverConfig.music.textChannel != message.channel.name) {
+            return warnWrongChannel(message, serverConfig.music.textChannel, module.name);
         }
 
         //Checks to see if user is a bot mod
@@ -60,29 +40,14 @@ module.exports = {
         var queue = distube.getQueue(message);
 
         if (!queue) {
-            return warnCustom(
-                message,
-                'Nothing is playing right now.',
-                module.name
-            );
+            return warnCustom(message, 'Nothing is playing right now.', module.name);
         } else if (voiceChannel != queue.voiceChannel) {
-            return warnCustom(
-                message,
-                `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`,
-                module.name
-            );
+            return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
         } else if (args[0] > 0 && args[0] <= queue.songs.length) {
             var playNext = queue.songs.splice(args[0] - 1, 1)[0];
 
             if (!playNext) {
-                return (
-                    errorCustom(
-                        message,
-                        'Failed to find the track in the queue.',
-                        module.name
-                    ),
-                    client
-                );
+                return errorCustom(message, 'Failed to find the track in the queue.', module.name), client;
             }
 
             distube.play(voiceChannel, playNext, {
@@ -95,11 +60,7 @@ module.exports = {
             message.delete();
             message.deleted = true;
         } else if (!args[0] || isNaN(args[0])) {
-            return warnCustom(
-                message,
-                'No song information was included in the command.',
-                module.name
-            );
+            return warnCustom(message, 'No song information was included in the command.', module.name);
         } else {
             var song = args.join(' ');
             distube.play(voiceChannel, song, {
