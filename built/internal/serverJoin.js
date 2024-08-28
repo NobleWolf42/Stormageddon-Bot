@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,9 +35,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 //#region Helpers
 var Client = require('discord.js').Client;
-var updateConfigFile = require('../helpers/currentSettings.js').updateConfigFile;
+//#endregion
+//#region Modules
+var serverConfig_1 = require("./models/serverConfig");
 //#endregion
 //#region Function that listens for someone to join a server and then gives them a role if this feature is enabled
 /**
@@ -49,7 +53,7 @@ function serverJoin(client) {
         var serverConfig;
         return __generator(this, function (_a) {
             switch (_a.label) {
-                case 0: return [4 /*yield*/, MongooseServerConfig.findById(guildMember.guild.id).exec()];
+                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(guildMember.guild.id).exec()];
                 case 1:
                     serverConfig = _a.sent();
                     if (serverConfig.autoRole.joinroleenabled) {

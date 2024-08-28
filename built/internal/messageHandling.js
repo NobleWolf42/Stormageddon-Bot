@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,6 +35,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 //#region Dependencies
 var Collection = require('discord.js').Collection;
 var _a = require('fs'), readdirSync = _a.readdirSync, readFileSync = _a.readFileSync;
@@ -42,8 +44,10 @@ var join = require('path').join;
 //#region Helpers
 var _b = require('../helpers/embedMessages.js'), warnCustom = _b.warnCustom, errorCustom = _b.errorCustom, embedCustom = _b.embedCustom;
 var getRandomDoggo = require('../helpers/doggoLinks.js').getRandomDoggo;
-var updateConfigFile = require('../helpers/currentSettings.js').updateConfigFile;
 var addToLog = require('../helpers/errorLog.js').addToLog;
+//#endregion
+//#region Modules
+var serverConfig_1 = require("./models/serverConfig");
 //#endregion
 //Regex that tests for str (prefix)
 var escapeRegex = function (str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); };
@@ -99,7 +103,7 @@ function messageHandling(client, distube) {
                     if (!message.guild)
                         return [2 /*return*/];
                     serverID = message.channel.guild.id;
-                    return [4 /*yield*/, MongooseServerConfig.findById(serverID).exec()];
+                    return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                 case 1:
                     serverConfig = _b.sent();
                     message.prefix = serverConfig.prefix;

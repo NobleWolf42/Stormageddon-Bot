@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,9 +35,13 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 //#region Helpers
 var _a = require('../helpers/embedMessages.js'), warnCustom = _a.warnCustom, warnDisabled = _a.warnDisabled, warnWrongChannel = _a.warnWrongChannel, errorNoDJ = _a.errorNoDJ, embedCustom = _a.embedCustom;
 var djCheck = require('../helpers/userPermissions.js').djCheck;
+//#endregion
+//#region Modules
+var serverConfig_1 = require("./models/serverConfig");
 //#endregion
 //#region This exports the remove command with the information about it
 module.exports = {
@@ -52,7 +57,7 @@ module.exports = {
             var serverConfig, voiceChannel, queue, song, removeMe;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, MongooseServerConfig.findById(message.guild.id).exec()];
+                    case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(message.guild.id).exec()];
                     case 1:
                         serverConfig = _a.sent();
                         //Checks to see if the music feature is enabled in this server

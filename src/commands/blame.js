@@ -7,6 +7,10 @@ const { adminCheck } = require('../helpers/userPermissions.js');
 const { addRemoveBlame, changeBlameOffset } = require('../internal/settingsFunctions.js');
 //#endregion
 
+//#region Modules
+import { MongooseServerConfig } from './models/serverConfig';
+//#endregion
+
 //#region This exports the blame command with the information about it
 module.exports = {
     name: 'blame',
@@ -15,8 +19,7 @@ module.exports = {
     coolDown: 0,
     class: 'fun',
     usage: 'blame ""/add/remove/addperm/removeperm/list/fix ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE***/***FIX-ONLY-NUMBER-IN-LIST-OF-PERSON***',
-    description:
-        'Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.',
+    description: 'Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.',
     async execute(message, args, client, distube) {
         var serverID = message.guild.id;
         var serverConfig = await MongooseServerConfig.findById(serverID).exec();
@@ -216,8 +219,7 @@ module.exports = {
                 case 'fix':
                     var currentVal =
                         Math.floor((Date.now() - 493200000) / 604800000) -
-                        Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) *
-                            serverConfig.blame.rotateList.length;
+                        Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) * serverConfig.blame.rotateList.length;
 
                     if (args[1] == undefined || args[1] < 1 || args[1] > serverConfig.blame.rotateList) {
                         return warnCustom(message, `You must put a number between 1 and ${serverConfig.blame.rotateList.length}`, module.name);
@@ -268,8 +270,7 @@ module.exports = {
                     if (serverConfig.blame.rotateList.length > 0) {
                         var rotateIndex =
                             Math.floor((Date.now() - 493200000) / 604800000) -
-                            Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) *
-                                serverConfig.blame.rotateList.length -
+                            Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) * serverConfig.blame.rotateList.length -
                             serverConfig.blame.offset;
 
                         if (rotateIndex >= serverConfig.blame.rotateList.length) {

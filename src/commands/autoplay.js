@@ -1,10 +1,10 @@
-//#region Dependencies
-import { readFileSync } from 'fs';
-//#endregion
-
 //#region Helpers
 import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
+//#endregion
+
+//#region Modules
+import { MongooseServerConfig } from './models/serverConfig';
 //#endregion
 
 //#region This exports the play command with the information about it
@@ -48,17 +48,7 @@ module.exports = {
         }
 
         var autoPlay = queue.toggleAutoplay();
-        embedCustom(
-            message,
-            'Autoplay Toggled',
-            '#0000FF',
-            `Autoplay is now ${autoPlay ? 'On' : 'Off'}.`,
-            { text: `Requested by ${message.author.tag}`, iconURL: null },
-            null,
-            [],
-            null,
-            null
-        );
+        embedCustom(message, 'Autoplay Toggled', '#0000FF', `Autoplay is now ${autoPlay ? 'On' : 'Off'}.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
     },
 };
 //#endregion

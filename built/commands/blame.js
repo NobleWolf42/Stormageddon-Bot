@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,12 +35,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 //#region Helpers
 var _a = require('../helpers/embedMessages.js'), embedCustom = _a.embedCustom, warnDisabled = _a.warnDisabled, errorCustom = _a.errorCustom, warnCustom = _a.warnCustom, errorNoAdmin = _a.errorNoAdmin;
 var adminCheck = require('../helpers/userPermissions.js').adminCheck;
 //#endregion
 //#region Internals
 var _b = require('../internal/settingsFunctions.js'), addRemoveBlame = _b.addRemoveBlame, changeBlameOffset = _b.changeBlameOffset;
+//#endregion
+//#region Modules
+var serverConfig_1 = require("./models/serverConfig");
 //#endregion
 //#region This exports the blame command with the information about it
 module.exports = {
@@ -57,7 +62,7 @@ module.exports = {
                 switch (_b.label) {
                     case 0:
                         serverID = message.guild.id;
-                        return [4 /*yield*/, MongooseServerConfig.findById(serverID).exec()];
+                        return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                     case 1:
                         serverConfig = _b.sent();
                         erroredOut = false;
@@ -203,8 +208,7 @@ module.exports = {
                         return [3 /*break*/, 16];
                     case 11:
                         currentVal = Math.floor((Date.now() - 493200000) / 604800000) -
-                            Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) *
-                                serverConfig.blame.rotateList.length;
+                            Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) * serverConfig.blame.rotateList.length;
                         if (args[1] == undefined || args[1] < 1 || args[1] > serverConfig.blame.rotateList) {
                             return [2 /*return*/, warnCustom(message, "You must put a number between 1 and ".concat(serverConfig.blame.rotateList.length), module.name)];
                         }
@@ -237,8 +241,7 @@ module.exports = {
                         blameString = '';
                         if (serverConfig.blame.rotateList.length > 0) {
                             rotateIndex = Math.floor((Date.now() - 493200000) / 604800000) -
-                                Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) *
-                                    serverConfig.blame.rotateList.length -
+                                Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) * serverConfig.blame.rotateList.length -
                                 serverConfig.blame.offset;
                             if (rotateIndex >= serverConfig.blame.rotateList.length) {
                                 rotateIndex -= serverConfig.blame.rotateList.length;

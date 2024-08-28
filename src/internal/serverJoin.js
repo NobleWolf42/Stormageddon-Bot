@@ -1,6 +1,9 @@
 //#region Helpers
 const { Client } = require('discord.js');
-const { updateConfigFile } = require('../helpers/currentSettings.js');
+//#endregion
+
+//#region Modules
+import { MongooseServerConfig } from './models/serverConfig';
 //#endregion
 
 //#region Function that listens for someone to join a server and then gives them a role if this feature is enabled
