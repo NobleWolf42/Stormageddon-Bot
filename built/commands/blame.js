@@ -44,7 +44,7 @@ var adminCheck = require('../helpers/userPermissions.js').adminCheck;
 var _b = require('../internal/settingsFunctions.js'), addRemoveBlame = _b.addRemoveBlame, changeBlameOffset = _b.changeBlameOffset;
 //#endregion
 //#region Modules
-var serverConfig_1 = require("../models/serverConfig.");
+var serverConfig_1 = require("../models/serverConfig");
 //#endregion
 //#region This exports the blame command with the information about it
 module.exports = {
