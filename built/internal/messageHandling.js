@@ -107,8 +107,8 @@ function messageHandling(client, distube) {
                 case 1:
                     dbCall = (_b.sent()).toObject();
                     console.log(dbCall);
-                    serverConfig = dbCall[0];
-                    console.log(dbCall[0]);
+                    serverConfig = dbCall;
+                    console.log(dbCall.prefix);
                     prefix = serverConfig.prefix;
                     console.log(prefix);
                     message.prefix = prefix;

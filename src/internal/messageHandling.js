@@ -71,8 +71,8 @@ function messageHandling(client, distube) {
         //Gets serverConfig from database
         var dbCall = (await MongooseServerConfig.findById(serverID).exec()).toObject();
         console.log(dbCall);
-        var serverConfig = dbCall[0];
-        console.log(dbCall[0]);
+        var serverConfig = dbCall;
+        console.log(dbCall.prefix);
         var prefix = serverConfig.prefix;
         console.log(prefix);
         message.prefix = prefix;
