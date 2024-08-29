@@ -41,6 +41,7 @@ async function autoRoleListener(client: Client) {
 
     //#region This event handel adding a role to a user when the react to the add role message
     client.on('messageReactionAdd', async (event) => {
+        console.log(event);
         const message = event.message;
 
         //This escapes if the reaction was in a vc or a dm
@@ -50,7 +51,7 @@ async function autoRoleListener(client: Client) {
 
         const serverID = message.channel.guild.id;
         //const member = message.guild.members.cache.get();
-        console.log(event);
+
         //Gets serverConfig from database
         let serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 

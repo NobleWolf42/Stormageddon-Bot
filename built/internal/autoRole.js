@@ -88,14 +88,13 @@ function autoRoleListener(client) {
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
+                            console.log(event);
                             message = event.message;
                             //This escapes if the reaction was in a vc or a dm
                             if (!message.channel.isTextBased() || message.channel.isDMBased()) {
                                 return [2 /*return*/];
                             }
                             serverID = message.channel.guild.id;
-                            //const member = message.guild.members.cache.get();
-                            console.log(event);
                             return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                         case 1:
                             serverConfig = (_b.sent()).toObject();
