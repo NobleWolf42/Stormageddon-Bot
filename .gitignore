@@ -4,3 +4,5 @@
 log.json
 errorLog.json
 package-lock.json
+currentSettings.js
+botPrefix.json
