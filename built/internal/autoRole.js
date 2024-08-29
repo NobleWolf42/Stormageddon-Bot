@@ -82,11 +82,12 @@ function autoRoleListener(client) {
                 MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
             };
             //#endregion
+            console.log('autoRoleListener');
             //#region This event handel adding a role to a user when the react to the add role message
             client.on('messageReactionAdd', function (event) { return __awaiter(_this, void 0, void 0, function () {
-                var message, serverID, serverConfig, fields, _loop_1, _i, fields_1, _a, name_1, value;
-                return __generator(this, function (_b) {
-                    switch (_b.label) {
+                var message, serverID, serverConfig;
+                return __generator(this, function (_a) {
+                    switch (_a.label) {
                         case 0:
                             console.log(event);
                             message = event.message;
@@ -97,28 +98,7 @@ function autoRoleListener(client) {
                             serverID = message.channel.guild.id;
                             return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
                         case 1:
-                            serverConfig = (_b.sent()).toObject();
-                            if (message.author.id === client.user.id &&
-                                (message.content !== serverConfig.autoRole.embedMessage || (message.embeds[0] && message.embeds[0].footer.text !== serverConfig.autoRole.embedFooter))) {
-                                if (message.embeds.length >= 1) {
-                                    fields = message.embeds[0].fields;
-                                    _loop_1 = function (name_1, value) {
-                                        if (member.id !== client.user.id) {
-                                            var guildRole = message.guild.roles.cache.find(function (r) { return r.name === value; });
-                                            if (name_1 === reaction.emoji.name || name_1 === reaction.emoji.toString()) {
-                                                if (event.t === 'MESSAGE_REACTION_ADD')
-                                                    member.roles.add(guildRole.id);
-                                                else if (event.t === 'MESSAGE_REACTION_REMOVE')
-                                                    member.roles.remove(guildRole.id);
-                                            }
-                                        }
-                                    };
-                                    for (_i = 0, fields_1 = fields; _i < fields_1.length; _i++) {
-                                        _a = fields_1[_i], name_1 = _a.name, value = _a.value;
-                                        _loop_1(name_1, value);
-                                    }
-                                }
-                            }
+                            serverConfig = (_a.sent()).toObject();
                             return [2 /*return*/];
                     }
                 });

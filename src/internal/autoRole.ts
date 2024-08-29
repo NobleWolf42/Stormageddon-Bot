@@ -38,6 +38,7 @@ async function autoRoleListener(client: Client) {
         MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
     };
     //#endregion
+    console.log('autoRoleListener');
 
     //#region This event handel adding a role to a user when the react to the add role message
     client.on('messageReactionAdd', async (event) => {
@@ -55,24 +56,24 @@ async function autoRoleListener(client: Client) {
         //Gets serverConfig from database
         let serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
-        if (
-            message.author.id === client.user.id &&
-            (message.content !== serverConfig.autoRole.embedMessage || (message.embeds[0] && message.embeds[0].footer.text !== serverConfig.autoRole.embedFooter))
-        ) {
-            if (message.embeds.length >= 1) {
-                const fields = message.embeds[0].fields;
+        // if (
+        //     message.author.id === client.user.id &&
+        //     (message.content !== serverConfig.autoRole.embedMessage || (message.embeds[0] && message.embeds[0].footer.text !== serverConfig.autoRole.embedFooter))
+        // ) {
+        //     if (message.embeds.length >= 1) {
+        //         const fields = message.embeds[0].fields;
 
-                for (const { name, value } of fields) {
-                    if (member.id !== client.user.id) {
-                        const guildRole = message.guild.roles.cache.find((r) => r.name === value);
-                        if (name === reaction.emoji.name || name === reaction.emoji.toString()) {
-                            if (event.t === 'MESSAGE_REACTION_ADD') member.roles.add(guildRole.id);
-                            else if (event.t === 'MESSAGE_REACTION_REMOVE') member.roles.remove(guildRole.id);
-                        }
-                    }
-                }
-            }
-        }
+        //         for (const { name, value } of fields) {
+        //             if (member.id !== client.user.id) {
+        //                 const guildRole = message.guild.roles.cache.find((r) => r.name === value);
+        //                 if (name === reaction.emoji.name || name === reaction.emoji.toString()) {
+        //                     if (event.t === 'MESSAGE_REACTION_ADD') member.roles.add(guildRole.id);
+        //                     else if (event.t === 'MESSAGE_REACTION_REMOVE') member.roles.remove(guildRole.id);
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
     });
     //#endregion
 
