@@ -90,13 +90,15 @@ function autoRoleListener(client) {
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            if (!events.hasOwnProperty(event.t))
+                            console.log(typeof event);
+                            if (!events.hasOwnProperty(event.t)) {
                                 return [2 /*return*/];
+                            }
                             data = event.d;
                             user = client.users.cache.get(data.user_id);
                             channel = client.channels.cache.get(data.channel_id);
-                            if (!channel.isTextBased()) {
-                                console.error('Channel is not a text-based channel');
+                            //I hate typescript but this filers out the channels we don't want to watch
+                            if (!channel.isTextBased() || channel.isDMBased()) {
                                 return [2 /*return*/];
                             }
                             return [4 /*yield*/, channel.messages.fetch(data.message_id)];

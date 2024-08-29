@@ -1,5 +1,5 @@
 //#region Dependencies
-import { Client, Message, MessageReaction } from 'discord.js';
+import { Client, DMChannel, Message, MessageReaction, PartialGroupDMChannel } from 'discord.js';
 //#endregion
 
 //#region Modules
@@ -41,14 +41,17 @@ async function autoRoleListener(client: Client) {
 
     //#region This event handles adding/removing users from the role(s) they chose based on message reactions
     client.on('raw', async (event) => {
-        if (!events.hasOwnProperty(event.t)) return;
+        console.log(typeof event);
+        if (!events.hasOwnProperty(event.t)) {
+            return;
+        }
 
         const { d: data } = event;
         const user = client.users.cache.get(data.user_id);
         const channel = client.channels.cache.get(data.channel_id);
 
-        if (!channel.isTextBased()) {
-            console.error('Channel is not a text-based channel');
+        //I hate typescript but this filers out the channels we don't want to watch
+        if (!channel.isTextBased() || channel.isDMBased()) {
             return;
         }
 
