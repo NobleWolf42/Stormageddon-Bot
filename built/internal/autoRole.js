@@ -90,7 +90,7 @@ function autoRoleListener(client) {
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            console.log(typeof event);
+                            console.log(event);
                             if (!events.hasOwnProperty(event.t)) {
                                 return [2 /*return*/];
                             }

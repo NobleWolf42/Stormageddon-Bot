@@ -41,7 +41,7 @@ async function autoRoleListener(client: Client) {
 
     //#region This event handles adding/removing users from the role(s) they chose based on message reactions
     client.on('raw', async (event) => {
-        console.log(typeof event);
+        console.log(event);
         if (!events.hasOwnProperty(event.t)) {
             return;
         }
