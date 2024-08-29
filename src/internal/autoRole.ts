@@ -39,41 +39,25 @@ async function autoRoleListener(client: Client) {
     };
     //#endregion
 
-    //#region This event handles adding/removing users from the role(s) they chose based on message reactions
-    client.on('raw', async (event) => {
+    //#region This event handel adding a role to a user when the react to the add role message
+    client.on('messageReactionAdd', async (event) => {
+        const message = event.message;
+
+        //This escapes if the reaction was in a vc or a dm
+        if (!message.channel.isTextBased() || message.channel.isDMBased()) {
+            return;
+        }
+
+        const serverID = message.channel.guild.id;
+        //const member = message.guild.members.cache.get();
         console.log(event);
-        if (!events.hasOwnProperty(event.t)) {
-            return;
-        }
-
-        const { d: data } = event;
-        const user = client.users.cache.get(data.user_id);
-        const channel = client.channels.cache.get(data.channel_id);
-
-        //I hate typescript but this filers out the channels we don't want to watch
-        if (!channel.isTextBased() || channel.isDMBased()) {
-            return;
-        }
-
-        const message = await channel.messages.fetch(data.message_id);
-        const member = message.guild.members.cache.get(user.id);
-        let serverID = message.channel.guild.id;
-
         //Gets serverConfig from database
-        var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
+        let serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
-        const emojiKey = data.emoji.id ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
-        let reaction = message.reactions.cache.get(emojiKey);
-
-        if (!reaction) {
-            // Create an object that can be passed through the event like normal
-            reaction = new MessageReaction(client, data, message, 1, data.user_id === client.user.id);
-        }
-
-        let embedFooterText;
-        if (message.embeds[0] && message.embeds[0].footer != null) embedFooterText = message.embeds[0].footer.text;
-
-        if (message.author.id === client.user.id && (message.content !== serverConfig.autoRole.initialMessage || (message.embeds[0] && embedFooterText !== serverConfig.autoRole.embedFooter))) {
+        if (
+            message.author.id === client.user.id &&
+            (message.content !== serverConfig.autoRole.embedMessage || (message.embeds[0] && message.embeds[0].footer.text !== serverConfig.autoRole.embedFooter))
+        ) {
             if (message.embeds.length >= 1) {
                 const fields = message.embeds[0].fields;
 
@@ -91,11 +75,63 @@ async function autoRoleListener(client: Client) {
     });
     //#endregion
 
-    //#region This handles unhandled rejections
-    process.on('unhandledRejection', (err) => {
-        const msg = err.stack.replace(new RegExp(`${__dirname}/`, 'g'), './');
-        console.error('Unhandled Rejection', msg);
-    });
+    //#region This event handles adding/removing users from the role(s) they chose based on message reactions
+    // client.on('raw', async (event) => {
+    //     console.log(event);
+    //     if (!events.hasOwnProperty(event.t)) {
+    //         return;
+    //     }
+
+    //     const { d: data } = event;
+    //     const user = client.users.cache.get(data.user_id);
+    //     const channel = client.channels.cache.get(data.channel_id);
+
+    //     //I hate typescript but this filers out the channels we don't want to watch
+    //     if (!channel.isTextBased() || channel.isDMBased()) {
+    //         return;
+    //     }
+
+    //     const message = await channel.messages.fetch(data.message_id);
+    //     const member = message.guild.members.cache.get(user.id);
+    //     let serverID = message.channel.guild.id;
+
+    //     //Gets serverConfig from database
+    //     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
+
+    //     const emojiKey = data.emoji.id ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
+    //     let reaction = message.reactions.cache.get(emojiKey);
+
+    //     if (!reaction) {
+    //         // Create an object that can be passed through the event like normal
+    //         reaction = new MessageReaction(client, data, message, 1, data.user_id === client.user.id);
+    //     }
+
+    //     let embedFooterText;
+    //     if (message.embeds[0] && message.embeds[0].footer != null) embedFooterText = message.embeds[0].footer.text;
+
+    //     if (message.author.id === client.user.id && (message.content !== serverConfig.autoRole.initialMessage || (message.embeds[0] && embedFooterText !== serverConfig.autoRole.embedFooter))) {
+    //         if (message.embeds.length >= 1) {
+    //             const fields = message.embeds[0].fields;
+
+    //             for (const { name, value } of fields) {
+    //                 if (member.id !== client.user.id) {
+    //                     const guildRole = message.guild.roles.cache.find((r) => r.name === value);
+    //                     if (name === reaction.emoji.name || name === reaction.emoji.toString()) {
+    //                         if (event.t === 'MESSAGE_REACTION_ADD') member.roles.add(guildRole.id);
+    //                         else if (event.t === 'MESSAGE_REACTION_REMOVE') member.roles.remove(guildRole.id);
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
+    // //#endregion
+
+    // //#region This handles unhandled rejections
+    // process.on('unhandledRejection', (err) => {
+    //     const msg = err.stack.replace(new RegExp(`${__dirname}/`, 'g'), './');
+    //     console.error('Unhandled Rejection', msg);
+    // });
     //#endregion
 }
 //#endregion

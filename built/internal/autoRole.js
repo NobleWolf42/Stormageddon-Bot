@@ -38,8 +38,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.autoRoleListener = autoRoleListener;
 exports.generateEmbedFields = generateEmbedFields;
-//#region Dependencies
-var discord_js_1 = require("discord.js");
 //#endregion
 //#region Modules
 var serverConfig_1 = require("../models/serverConfig");
@@ -84,40 +82,25 @@ function autoRoleListener(client) {
                 MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
             };
             //#endregion
-            //#region This event handles adding/removing users from the role(s) they chose based on message reactions
-            client.on('raw', function (event) { return __awaiter(_this, void 0, void 0, function () {
-                var data, user, channel, message, member, serverID, serverConfig, emojiKey, reaction, embedFooterText, fields, _loop_1, _i, fields_1, _a, name_1, value;
+            //#region This event handel adding a role to a user when the react to the add role message
+            client.on('messageReactionAdd', function (event) { return __awaiter(_this, void 0, void 0, function () {
+                var message, serverID, serverConfig, fields, _loop_1, _i, fields_1, _a, name_1, value;
                 return __generator(this, function (_b) {
                     switch (_b.label) {
                         case 0:
-                            console.log(event);
-                            if (!events.hasOwnProperty(event.t)) {
+                            message = event.message;
+                            //This escapes if the reaction was in a vc or a dm
+                            if (!message.channel.isTextBased() || message.channel.isDMBased()) {
                                 return [2 /*return*/];
                             }
-                            data = event.d;
-                            user = client.users.cache.get(data.user_id);
-                            channel = client.channels.cache.get(data.channel_id);
-                            //I hate typescript but this filers out the channels we don't want to watch
-                            if (!channel.isTextBased() || channel.isDMBased()) {
-                                return [2 /*return*/];
-                            }
-                            return [4 /*yield*/, channel.messages.fetch(data.message_id)];
-                        case 1:
-                            message = _b.sent();
-                            member = message.guild.members.cache.get(user.id);
                             serverID = message.channel.guild.id;
+                            //const member = message.guild.members.cache.get();
+                            console.log(event);
                             return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
-                        case 2:
+                        case 1:
                             serverConfig = (_b.sent()).toObject();
-                            emojiKey = data.emoji.id ? "".concat(data.emoji.name, ":").concat(data.emoji.id) : data.emoji.name;
-                            reaction = message.reactions.cache.get(emojiKey);
-                            if (!reaction) {
-                                // Create an object that can be passed through the event like normal
-                                reaction = new discord_js_1.MessageReaction(client, data, message, 1, data.user_id === client.user.id);
-                            }
-                            if (message.embeds[0] && message.embeds[0].footer != null)
-                                embedFooterText = message.embeds[0].footer.text;
-                            if (message.author.id === client.user.id && (message.content !== serverConfig.autoRole.initialMessage || (message.embeds[0] && embedFooterText !== serverConfig.autoRole.embedFooter))) {
+                            if (message.author.id === client.user.id &&
+                                (message.content !== serverConfig.autoRole.embedMessage || (message.embeds[0] && message.embeds[0].footer.text !== serverConfig.autoRole.embedFooter))) {
                                 if (message.embeds.length >= 1) {
                                     fields = message.embeds[0].fields;
                                     _loop_1 = function (name_1, value) {
@@ -141,12 +124,6 @@ function autoRoleListener(client) {
                     }
                 });
             }); });
-            //#endregion
-            //#region This handles unhandled rejections
-            process.on('unhandledRejection', function (err) {
-                var msg = err.stack.replace(new RegExp("".concat(__dirname, "/"), 'g'), './');
-                console.error('Unhandled Rejection', msg);
-            });
             return [2 /*return*/];
         });
     });
