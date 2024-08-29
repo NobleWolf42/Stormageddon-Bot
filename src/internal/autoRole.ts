@@ -54,7 +54,7 @@ async function autoRoleListener(client: Client) {
 
         const message = await channel.messages.fetch(data.message_id);
         const member = message.guild.members.cache.get(user.id);
-        var serverID = message.channel.guild.id;
+        let serverID = message.channel.guild.id;
 
         //Gets serverConfig from database
         var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
