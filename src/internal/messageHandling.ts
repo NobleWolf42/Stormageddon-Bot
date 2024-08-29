@@ -1,13 +1,13 @@
 //#region Dependencies
-const { Collection } = require('discord.js');
-const { readdirSync, readFileSync } = require('fs');
-const { join } = require('path');
+import { Collection } from 'discord.js';
+import { readdirSync } from 'fs';
+import { join } from 'path';
 //#endregion
 
 //#region Helpers
-const { warnCustom, errorCustom, embedCustom } = require('../helpers/embedMessages.js');
-const { getRandomDoggo } = require('../helpers/doggoLinks.js');
-const { addToLog } = require('../helpers/errorLog.js');
+import { warnCustom, errorCustom, embedCustom } from '../helpers/embedMessages';
+import { getRandomDoggo } from '../helpers/doggoLinks';
+import { addToLog } from '../helpers/errorLog';
 //#endregion
 
 //#region Modules
@@ -28,9 +28,9 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 function tryCommand(client, message, command, args, distube) {
     try {
         command.execute(message, args, client, distube);
-        addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
+        addToLog('success', command.name, message.author.tag, message.guild.name, message.channel.name);
     } catch (error) {
-        addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+        addToLog('fatal error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
         errorCustom(message, 'There was an error executing that command.', command.name, client);
         console.log(error);
     }
@@ -45,7 +45,7 @@ function tryCommand(client, message, command, args, distube) {
  */
 function messageHandling(client, distube) {
     client.commands = new Collection();
-    const coolDowns = new Collection();
+    const coolDowns: Collection<string, Collection<string, number>> = new Collection();
 
     //#region Imports commands from ./commands
     const commandFiles = readdirSync(join(__dirname, '../commands')).filter((file) => file.endsWith('.js'));
@@ -189,7 +189,7 @@ function messageHandling(client, distube) {
 function PMHandling(client, distube) {
     client.on('messageCreate', (message) => {
         var prefix = '!';
-        const coolDowns = new Collection();
+        const coolDowns: Collection<string, Collection<string, number>> = new Collection();
         //#region Check permissions
         // Make sure the command can only be run in a PM
         if (message.guild) return;
@@ -260,9 +260,9 @@ function PMHandling(client, distube) {
 
         try {
             command.execute(message, args, client, distube);
-            addToLog('Success', command.name, message.author.tag, 'DM', 'Private Message');
+            addToLog('success', command.name, message.author.tag, 'DM', 'Private Message');
         } catch (error) {
-            addToLog('Fatal Error', command.name, message.author.tag, 'DM', 'Private Message', error, client);
+            addToLog('fatal error', command.name, message.author.tag, 'DM', 'Private Message', error, client);
             errorCustom(message, 'There was an error executing that command.', command.name, client);
             console.log(error);
         }
@@ -272,5 +272,5 @@ function PMHandling(client, distube) {
 //#endregion
 
 //#region exports
-module.exports = { messageHandling, PMHandling };
+export { messageHandling, PMHandling };
 //#endregion

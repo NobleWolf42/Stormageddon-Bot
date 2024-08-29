@@ -960,9 +960,9 @@ function buildConfigFile(config, serverID) {
     });
 }
 //#endregion
-//#region Function that adds the provided server to the serverConfig.json file
+//#region Function that adds the provided server to the serverConfig file
 /**
- * This function adds the provided server to the serverConfig.json file.
+ * This function adds the provided server to the serverConfig file.
  * @param {string} serverID - Server ID for server to be added
  * @returns {void} Void
  */
@@ -1024,9 +1024,9 @@ function addServerConfig(serverID) {
     });
 }
 //#endregion
-//#region Function that removes the provided server form the serverConfig.json file
+//#region Function that removes the provided server form the serverConfig file
 /**
- * This function removes the provided server from the serverConfig.json file
+ * This function removes the provided server from the serverConfig file
  * @param {string} serverID - Server ID for server to be added
  * @returns {void} Void
  */

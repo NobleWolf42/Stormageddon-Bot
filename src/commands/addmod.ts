@@ -1,15 +1,15 @@
 //#region Helpers
-const { updateConfigFile } = require('../helpers/currentSettings.js');
-const {
-    errorNoServerAdmin,
-    errorCustom,
-    warnCustom,
-    embedCustom,
-} = require('../helpers/embedMessages.js');
+import { Client, Message, PermissionFlagsBits } from 'discord.js';
+import { DisTube } from 'distube';
+import { errorNoServerAdmin, errorCustom, warnCustom, embedCustom } from '../helpers/embedMessages';
 //##endregion
 
 //#region Internals
-const { buildConfigFile } = require('../internal/settingsFunctions.js');
+import { buildConfigFile } from '../internal/settingsFunctions';
+//#endregion
+
+//#region Modules
+import { MongooseServerConfig } from '../models/serverConfig';
 //#endregion
 
 //#region This exports the addmod command with the information about it
@@ -20,24 +20,20 @@ module.exports = {
     coolDown: 0,
     class: 'admin',
     usage: 'addmod ***MENTION-USERS***',
-    description:
-        'Adds users to the list of people that get the PM when someone whispers the bot with the modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.',
-    execute(message, args, client, distube) {
-        //Gets current config file
-        var serverConfig = updateConfigFile();
+    description: 'Adds users to the list of people that get the PM when someone whispers the bot with the modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.',
+    async execute(message: Message, args: string[], client: Client, distube: DisTube) {
+        //Gets serverConfig from database
+        var serverConfig = (await MongooseServerConfig.findById(message.channel.guild.id).exec()).toObject();
+
         if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
             if (message.channel.guild.id in serverConfig) {
                 if (message.mentions.members.size == 0) {
-                    return warnCustom(
-                        message,
-                        'No user input detected, Did you make sure to @ them?',
-                        module.name
-                    );
+                    return warnCustom(message, 'No user input detected, Did you make sure to @ them?', this.name);
                 }
 
                 message.mentions.members.forEach(async (user) => {
                     var serverID = message.channel.guild.id;
-                    var array = serverConfig[serverID].modMail.modList;
+                    var array = serverConfig.modMail.modList;
                     var userFound = false;
 
                     array.forEach((item) => {
@@ -49,19 +45,18 @@ module.exports = {
                     if (!userFound) {
                         array.push(user.id);
                     } else {
-                        return warnCustom(
-                            message,
-                            `User ${user.tag} is already a Mod!`,
-                            module.name
-                        );
+                        return warnCustom(message, `User ${user.tag} is already a Mod!`, this.name);
                     }
 
-                    var modMail = {};
+                    var modMail = {
+                        enable: false,
+                        modList: [],
+                    };
                     modMail.modList = array;
                     modMail.enable = true;
-                    serverConfig[serverID].modMail = modMail;
+                    serverConfig.modMail = modMail;
 
-                    await buildConfigFile(serverConfig);
+                    await buildConfigFile(serverConfig, serverID);
 
                     embedCustom(
                         message,
@@ -77,19 +72,12 @@ module.exports = {
                         null,
                         null
                     );
-
-                    serverConfig = updateConfigFile();
                 });
             } else {
-                return errorCustom(
-                    message,
-                    'Server is not set up with the bot yet!',
-                    module.name,
-                    client
-                );
+                return errorCustom(message, 'Server is not set up with the bot yet!', this.name, client);
             }
         } else {
-            return errorNoServerAdmin(message, module.name);
+            return errorNoServerAdmin(message, this.name);
         }
     },
 };

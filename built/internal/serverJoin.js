@@ -36,8 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-//#region Helpers
-var Client = require('discord.js').Client;
+exports.serverJoin = serverJoin;
 //#endregion
 //#region Modules
 var serverConfig_1 = require("../models/serverConfig");
@@ -56,15 +55,12 @@ function serverJoin(client) {
                 case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(guildMember.guild.id).exec()];
                 case 1:
                     serverConfig = (_a.sent()).toObject();
-                    if (serverConfig.autoRole.joinroleenabled) {
-                        guildMember.addRole(guildMember.guild.roles.find(function (role) { return role.name === serverConfig.autoRole.joinrole; }));
+                    if (serverConfig.joinRole.enabled) {
+                        guildMember.addRole(guildMember.guild.roles.find(function (role) { return role.name === serverConfig.joinRole.role; }));
                     }
                     return [2 /*return*/];
             }
         });
     }); });
 }
-//#endregion
-//#region exports
-module.exports = { serverJoin: serverJoin };
 //#endregion

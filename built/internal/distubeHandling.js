@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,15 +35,18 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.musicHandle = musicHandle;
+exports.setDiscordClient = setDiscordClient;
 //#region Dependencies
-var _a = require('discord.js'), EmbedBuilder = _a.EmbedBuilder, ComponentType = _a.ComponentType, ActionRowBuilder = _a.ActionRowBuilder;
-var GeniusLyrics = require('genius-lyrics');
-var Genius = new GeniusLyrics.Client();
+var discord_js_1 = require("discord.js");
+var genius_lyrics_1 = require("genius-lyrics");
+var Genius = new genius_lyrics_1.Client();
 //#endregion
 //#region Helpers
-var addToLog = require('../helpers/errorLog.js').addToLog;
-var _b = require('../helpers/musicButtons.js'), pause = _b.pause, skip = _b.skip, stop = _b.stop, volumeDown = _b.volumeDown, volumeUp = _b.volumeUp, repeat = _b.repeat, loop = _b.loop, noLoop = _b.noLoop, shuffle = _b.shuffle, autoplay = _b.autoplay;
-var embedCustom = require('../helpers/embedSlashMessages.js').embedCustom;
+var errorLog_1 = require("../helpers/errorLog");
+var musicButtons_1 = require("../helpers/musicButtons");
+var embedSlashMessages_1 = require("../helpers/embedSlashMessages");
 //#endregion
 //Discord client
 var dClient = null;
@@ -63,7 +67,7 @@ function musicHandle(client, distube) {
         var _this = this;
         return __generator(this, function (_a) {
             nowPlayingMessage = {};
-            //This handles the even issues when a new song starts playing
+            //#region This handles the even issues when a new song starts playing
             distube.on('playSong', function (queue, song) { return __awaiter(_this, void 0, void 0, function () {
                 var embMsg, searches, songPic, buttons1, buttons2, _a, _b, collector;
                 var _this = this;
@@ -74,7 +78,7 @@ function musicHandle(client, distube) {
                             if (nowPlayingMessage[queue.id]) {
                                 nowPlayingMessage[queue.id].edit({ components: [] });
                             }
-                            embMsg = new EmbedBuilder()
+                            embMsg = new discord_js_1.EmbedBuilder()
                                 .setTitle('Now Playing')
                                 .setColor('#0000FF')
                                 .setDescription("[`".concat(song.name, "`](").concat(song.url, ") requested by - ").concat(song.user, "\nDuration: ").concat(song.formattedDuration, "\nVolume: ").concat(queue.volume, "%\nLoop: ").concat(queue.repeatMode ? (queue.repeatMode === 2 ? 'All Queue' : 'This Song') : 'Off', "\nAutoplay: ").concat(queue.autoplay ? 'On' : 'Off'))
@@ -86,8 +90,8 @@ function musicHandle(client, distube) {
                             if (songPic != undefined) {
                                 embMsg.setImage(songPic.image);
                             }
-                            buttons1 = new ActionRowBuilder().addComponents(pause, skip, stop, volumeDown, volumeUp);
-                            buttons2 = new ActionRowBuilder().addComponents(repeat, loop, noLoop, shuffle, autoplay);
+                            buttons1 = new discord_js_1.ActionRowBuilder().addComponents(musicButtons_1.pause, musicButtons_1.skip, musicButtons_1.stop, musicButtons_1.volumeDown, musicButtons_1.volumeUp);
+                            buttons2 = new discord_js_1.ActionRowBuilder().addComponents(musicButtons_1.repeat, musicButtons_1.loop, musicButtons_1.noLoop, musicButtons_1.shuffle, musicButtons_1.autoplay);
                             _a = nowPlayingMessage;
                             _b = queue.id;
                             return [4 /*yield*/, queue.textChannel.send({
@@ -97,9 +101,9 @@ function musicHandle(client, distube) {
                         case 2:
                             _a[_b] = _c.sent();
                             collector = nowPlayingMessage[queue.id].createMessageComponentCollector({
-                                componentType: ComponentType.Button,
+                                componentType: discord_js_1.ComponentType.Button,
                             });
-                            //Handles the buttons for the now playing message
+                            //#region Handles the buttons for the now playing message
                             collector.on('collect', function (interaction) { return __awaiter(_this, void 0, void 0, function () {
                                 var autoPlay;
                                 return __generator(this, function (_a) {
@@ -107,14 +111,14 @@ function musicHandle(client, distube) {
                                         case 'pause':
                                             if (queue.paused) {
                                                 queue.resume();
-                                                embedCustom(interaction, 'Music Resumed', '#0000FF', "Playing [`".concat(queue.songs[0].name, "`](").concat(queue.songs[0].url, ")."), {
+                                                (0, embedSlashMessages_1.embedCustom)(interaction, 'Music Resumed', '#0000FF', "Playing [`".concat(queue.songs[0].name, "`](").concat(queue.songs[0].url, ")."), {
                                                     text: "Requested by ".concat(interaction.user.username),
                                                     iconURL: null,
                                                 }, null, [], null, null);
                                             }
                                             else {
                                                 queue.pause();
-                                                embedCustom(interaction, 'Pause', '#0000FF', "Music Paused.", {
+                                                (0, embedSlashMessages_1.embedCustom)(interaction, 'Pause', '#0000FF', "Music Paused.", {
                                                     text: "Requested by ".concat(interaction.user.username),
                                                     iconURL: null,
                                                 }, null, [], null, null);
@@ -122,7 +126,7 @@ function musicHandle(client, distube) {
                                             break;
                                         case 'skip':
                                             queue.skip().then(function () {
-                                                embedCustom(interaction, 'Skipped', '#0000FF', "[`".concat(song.name, "`](").concat(song.url, ") successfully skipped."), {
+                                                (0, embedSlashMessages_1.embedCustom)(interaction, 'Skipped', '#0000FF', "[`".concat(song.name, "`](").concat(song.url, ") successfully skipped."), {
                                                     text: "Requested by ".concat(interaction.user.username),
                                                     iconURL: null,
                                                 }, null, [], null, null);
@@ -132,7 +136,7 @@ function musicHandle(client, distube) {
                                         case 'stop':
                                             queue.stop().then(function () {
                                                 queue.voice.leave();
-                                                embedCustom(interaction, 'Stop', '#0000FF', "Music Stopped.", {
+                                                (0, embedSlashMessages_1.embedCustom)(interaction, 'Stop', '#0000FF', "Music Stopped.", {
                                                     text: "Requested by ".concat(interaction.user.username),
                                                     iconURL: null,
                                                 }, null, [], null, null);
@@ -141,49 +145,49 @@ function musicHandle(client, distube) {
                                             break;
                                         case 'volUp':
                                             queue.setVolume(queue.volume + 5);
-                                            embedCustom(interaction, 'Volume', '#0000FF', "Volume changed to ".concat(queue.volume, "%."), {
+                                            (0, embedSlashMessages_1.embedCustom)(interaction, 'Volume', '#0000FF', "Volume changed to ".concat(queue.volume, "%."), {
                                                 text: "Requested by ".concat(interaction.user.username),
                                                 iconURL: null,
                                             }, null, [], null, null);
                                             break;
                                         case 'volDown':
                                             queue.setVolume(queue.volume - 5);
-                                            embedCustom(interaction, 'Volume', '#0000FF', "Volume changed to ".concat(queue.volume, "%."), {
+                                            (0, embedSlashMessages_1.embedCustom)(interaction, 'Volume', '#0000FF', "Volume changed to ".concat(queue.volume, "%."), {
                                                 text: "Requested by ".concat(interaction.user.username),
                                                 iconURL: null,
                                             }, null, [], null, null);
                                             break;
                                         case 'repeat':
                                             queue.setRepeatMode(1);
-                                            embedCustom(interaction, "Loop On", '#0E4CB0', 'Music set to loop song.', {
+                                            (0, embedSlashMessages_1.embedCustom)(interaction, "Loop On", '#0E4CB0', 'Music set to loop song.', {
                                                 text: "Requested by ".concat(interaction.user.username),
                                                 iconURL: null,
                                             }, null, [], null, null);
                                             break;
                                         case 'loop':
                                             queue.setRepeatMode(2);
-                                            embedCustom(interaction, "Loop On", '#0E4CB0', 'Music set to loop queue.', {
+                                            (0, embedSlashMessages_1.embedCustom)(interaction, "Loop On", '#0E4CB0', 'Music set to loop queue.', {
                                                 text: "Requested by ".concat(interaction.user.username),
                                                 iconURL: null,
                                             }, null, [], null, null);
                                             break;
                                         case 'noLoop':
                                             queue.setRepeatMode(0);
-                                            embedCustom(interaction, "Loop Off", '#0E4CB0', 'Music has returned to normal playback.', {
+                                            (0, embedSlashMessages_1.embedCustom)(interaction, "Loop Off", '#0E4CB0', 'Music has returned to normal playback.', {
                                                 text: "Requested by ".concat(interaction.user.username),
                                                 iconURL: null,
                                             }, null, [], null, null);
                                             break;
                                         case 'shuffle':
                                             queue.shuffle();
-                                            embedCustom(interaction, 'Shuffled', '#0000FF', "Queue successfully shuffled.", {
+                                            (0, embedSlashMessages_1.embedCustom)(interaction, 'Shuffled', '#0000FF', "Queue successfully shuffled.", {
                                                 text: "Requested by ".concat(interaction.user.username),
                                                 iconURL: null,
                                             }, null, [], null, null);
                                             break;
                                         case 'autoplay':
                                             autoPlay = queue.toggleAutoplay();
-                                            embedCustom(interaction, 'Autoplay Toggled', '#0000FF', "Autoplay is now ".concat(autoPlay ? 'On' : 'Off', "."), {
+                                            (0, embedSlashMessages_1.embedCustom)(interaction, 'Autoplay Toggled', '#0000FF', "Autoplay is now ".concat(autoPlay ? 'On' : 'Off', "."), {
                                                 text: "Requested by ".concat(interaction.user.username),
                                                 iconURL: null,
                                             }, null, [], null, null);
@@ -196,11 +200,12 @@ function musicHandle(client, distube) {
                     }
                 });
             }); });
-            //Handles when a song is added to the queue
+            //#endregion
+            //#region Handles when a song is added to the queue
             distube.on('addSong', function (queue, song) { return __awaiter(_this, void 0, void 0, function () {
                 var embMsg;
                 return __generator(this, function (_a) {
-                    embMsg = new EmbedBuilder()
+                    embMsg = new discord_js_1.EmbedBuilder()
                         .setTitle('Song Added to Queue')
                         .setColor('#0000FF')
                         .setDescription("[`".concat(song.name, "`](").concat(song.url, ") requested by - ").concat(song.user, "\nDuration: ").concat(song.formattedDuration))
@@ -209,13 +214,10 @@ function musicHandle(client, distube) {
                     return [2 /*return*/];
                 });
             }); });
-            //Handles whe the vc is empty for some time
+            //#endregion
+            //#region Handles whe the vc is empty for some time
             distube.on('empty', function (queue) {
-                var embMsg = new EmbedBuilder()
-                    .setTitle("Empty Voice Channel")
-                    .setColor('#0000FF')
-                    .setDescription("".concat(queue.voiceChannel, " is empty! Leaving the voice channel."))
-                    .setTimestamp();
+                var embMsg = new discord_js_1.EmbedBuilder().setTitle("Empty Voice Channel").setColor('#0000FF').setDescription("".concat(queue.voiceChannel, " is empty! Leaving the voice channel.")).setTimestamp();
                 queue.textChannel.send({ embeds: [embMsg] });
                 queue.voice.leave();
                 if (nowPlayingMessage[queue.id]) {
@@ -223,13 +225,10 @@ function musicHandle(client, distube) {
                     delete nowPlayingMessage[queue.id];
                 }
             });
-            //Handles when the queue finishes
+            //#endregion
+            //#region Handles when the queue finishes
             distube.on('finish', function (queue) {
-                var embMsg = new EmbedBuilder()
-                    .setTitle("Finished Queue")
-                    .setColor('#0000FF')
-                    .setDescription("Queue is empty! Leaving the voice channel.")
-                    .setTimestamp();
+                var embMsg = new discord_js_1.EmbedBuilder().setTitle("Finished Queue").setColor('#0000FF').setDescription("Queue is empty! Leaving the voice channel.").setTimestamp();
                 queue.textChannel.send({ embeds: [embMsg] });
                 queue.voice.leave();
                 if (nowPlayingMessage[queue.id]) {
@@ -237,15 +236,12 @@ function musicHandle(client, distube) {
                     delete nowPlayingMessage[queue.id];
                 }
             });
-            //Handles when the bot disconnects from a voice channel
+            //#endregion
+            //#region Handles when the bot disconnects from a voice channel
             distube.on('disconnect', function (queue) { return __awaiter(_this, void 0, void 0, function () {
                 var embMsg;
                 return __generator(this, function (_a) {
-                    embMsg = new EmbedBuilder()
-                        .setTitle("Disconnected")
-                        .setColor('#0000FF')
-                        .setDescription("Disconnected from voice.")
-                        .setTimestamp();
+                    embMsg = new discord_js_1.EmbedBuilder().setTitle("Disconnected").setColor('#0000FF').setDescription("Disconnected from voice.").setTimestamp();
                     queue.textChannel.send({ embeds: [embMsg] });
                     if (nowPlayingMessage[queue.id]) {
                         nowPlayingMessage[queue.id].edit({ components: [] });
@@ -254,21 +250,23 @@ function musicHandle(client, distube) {
                     return [2 /*return*/];
                 });
             }); });
-            //Handles when a playlist is added to the queue
+            //#endregion
+            //#region Handles when a playlist is added to the queue
             distube.on('addList', function (queue, playlist) {
-                var embMsg = new EmbedBuilder()
+                var embMsg = new discord_js_1.EmbedBuilder()
                     .setTitle("Playlist Added to Queue")
                     .setColor('#0000FF')
                     .setDescription("[`".concat(playlist.name, "`](").concat(playlist.url, ") requested by - ").concat(playlist.user, "\nNumber of Songs: ").concat(playlist.songs.length))
                     .setTimestamp();
                 queue.textChannel.send({ embeds: [embMsg] });
             });
-            //Error handling
+            //#endregion
+            //#region Error handling
             distube.on('error', function (textChannel, e) { return __awaiter(_this, void 0, void 0, function () {
                 var embMsg;
                 return __generator(this, function (_a) {
-                    addToLog('Fatal Error', 'Distube', 'Distube', textChannel.guild.name, textChannel.name, e.message.slice(0, 2000), dClient);
-                    embMsg = new EmbedBuilder()
+                    (0, errorLog_1.addToLog)('Fatal Error', 'Distube', 'Distube', textChannel.guild.name, textChannel.name, e.message.slice(0, 2000), dClient);
+                    embMsg = new discord_js_1.EmbedBuilder()
                         .setTitle("Error Encountered")
                         .setColor('#FF0000')
                         .setDescription("Error: ".concat(e.message.slice(0, 2000)))
@@ -281,7 +279,4 @@ function musicHandle(client, distube) {
         });
     });
 }
-//#endregion
-//#region exports
-module.exports = { musicHandle: musicHandle, setDiscordClient: setDiscordClient };
 //#endregion

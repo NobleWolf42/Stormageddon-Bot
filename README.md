@@ -5,15 +5,15 @@
 
 ## 📖 Table of Contents
 
--   [🐺 Stormageddon (Discord Bot)](#-stormageddon-discord-bot)
-    -   [📖 Table of Contents](#-table-of-contents)
-    -   [📝 Features](#-features)
-    -   [✅ Requirements](#-requirements)
-    -   [🚀 Getting Started](#-getting-started)
-    -   [⚙️ Configuration](#️-configuration)
-    -   [🏎️ Running the Bot](#️-running-the-bot)
-    -   [📝 Commands](#-commands)
-    -   [🤝 Contributing](#-contributing)
+- [🐺 Stormageddon (Discord Bot)](#-stormageddon-discord-bot)
+  - [📖 Table of Contents](#-table-of-contents)
+  - [📝 Features](#-features)
+  - [✅ Requirements](#-requirements)
+  - [🚀 Getting Started](#-getting-started)
+  - [⚙️ Configuration](#️-configuration)
+  - [🏎️ Running the Bot](#️-running-the-bot)
+  - [📝 Commands](#-commands)
+  - [🤝 Contributing](#-contributing)
 
 ## 📝 Features
 
@@ -72,7 +72,7 @@ npm install
 
 ## ⚙️ Configuration
 
-Copy or Rename `botConfig.example.json` located in the `data` folder to `botConfig.json` and fill out the values:
+Copy or Rename `.env.example` located in the `root` folder to `.env` and fill out the values:
 
 ⚠️ **Note: Never commit or share your token or api keys publicly** ⚠️
 

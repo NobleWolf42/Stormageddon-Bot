@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,11 +35,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 //#region Dependencies
-var _a = require('discord.js'), Collection = _a.Collection, ChannelType = _a.ChannelType, PermissionFlagsBits = _a.PermissionFlagsBits;
+var discord_js_1 = require("discord.js");
 //#endregion
 //#region Helpers
-var addToLog = require('../helpers/errorLog.js').addToLog;
+var errorLog_1 = require("../helpers/errorLog");
 //#endregion
 //#region Function that starts the listener that handles Join to Create Channels
 /**
@@ -49,7 +51,7 @@ function joinToCreateHandling(client) {
     return __awaiter(this, void 0, void 0, function () {
         var _this = this;
         return __generator(this, function (_a) {
-            client.voiceGenerator = new Collection();
+            client.voiceGenerator = new discord_js_1.Collection();
             //This handles the event of a user joining or disconnecting from a voice channel
             client.on('voiceStateUpdate', function (oldState, newState) { return __awaiter(_this, void 0, void 0, function () {
                 var member, guild, serverID, oldChannel, newChannel, serverConfig, voiceChannel;
@@ -69,7 +71,7 @@ function joinToCreateHandling(client) {
                             if (!(serverConfig.JTCVC.enable && oldChannel !== newChannel && newChannel && newChannel.id === serverConfig.JTCVC.voiceChannel)) return [3 /*break*/, 4];
                             return [4 /*yield*/, guild.channels.create({
                                     name: "".concat(member.user.tag, "'s Channel"),
-                                    type: ChannelType.GuildVoice,
+                                    type: discord_js_1.ChannelType.GuildVoice,
                                     parent: newChannel.parent,
                                     permissionOverwrites: newChannel.parent.permissionOverwrites.cache.map(function (p) {
                                         return {
@@ -86,7 +88,7 @@ function joinToCreateHandling(client) {
                             client.voiceGenerator.set(member.id, voiceChannel.id);
                             //Times the user out from spamming new voice channels, currently set to 10 seconds and apparently works intermittently, probably dur to the permissions when testing it
                             return [4 /*yield*/, newChannel.permissionOverwrites.edit(member, {
-                                    deny: PermissionFlagsBits.Connect,
+                                    deny: discord_js_1.PermissionFlagsBits.Connect,
                                 })];
                         case 3:
                             //Times the user out from spamming new voice channels, currently set to 10 seconds and apparently works intermittently, probably dur to the permissions when testing it
@@ -118,7 +120,7 @@ function joinToCreateHandling(client) {
                                 }
                             }
                             catch (err) {
-                                addToLog('Fatal Error', 'JTCVC Handler', member.tag, guild.name, oldChannel.name, err, client);
+                                (0, errorLog_1.addToLog)('Fatal Error', 'JTCVC Handler', member.tag, guild.name, oldChannel.name, err, client);
                             }
                             return [2 /*return*/];
                     }

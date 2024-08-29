@@ -3,40 +3,26 @@ const https = require('https');
 const DiscordOauth2 = require('discord-oauth2');
 const { writeFileSync, readFileSync } = require('fs');
 const { parse } = require('url');
-const botConfig = require('../data/botConfig.json');
 var currentdate = new Date();
-const months = [
-    'January',
-    'Feburary',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-];
+const months = ['January', 'Feburary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-var privateKey = readFileSync(botConfig.oauth.privateKey, 'utf8');
-var certificate = readFileSync(botConfig.oauth.publicKey, 'utf8');
+var privateKey = readFileSync(process.env.oauthPrivateKey, 'utf8');
+var certificate = readFileSync(process.env.oauthPublicKey, 'utf8');
 var credentials = { key: privateKey, cert: certificate };
-const port = botConfig.oauth.port;
+const port = process.env.oauthPort;
 
 const oauth = new DiscordOauth2();
 
 async function saveUserInfo(accessCode) {
     tokenInfo = await oauth.tokenRequest({
-        clientId: botConfig.general.clientId,
-        clientSecret: botConfig.auth.clientSecret,
+        clientId: process.env.clientId,
+        clientSecret: process.env.clientSecret,
 
         code: accessCode,
         scope: 'identify email connections',
         grantType: 'authorization_code',
 
-        redirectUri: botConfig.general.redirectUri,
+        redirectUri: process.env.redirectUri,
     });
 
     userObj = await oauth.getUser(tokenInfo.access_token);
@@ -75,15 +61,11 @@ async function saveUserInfo(accessCode) {
 
     oldInfo[userID] = finalObj;
 
-    writeFileSync(
-        '../data/userInfo.json',
-        JSON.stringify(oldInfo),
-        function (err) {
-            if (err) {
-                console.log(err);
-            }
+    writeFileSync('../data/userInfo.json', JSON.stringify(oldInfo), function (err) {
+        if (err) {
+            console.log(err);
         }
-    );
+    });
 }
 
 https

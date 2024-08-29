@@ -1,9 +1,6 @@
-.env
 /.vscode
 /node_modules
-/data/log.json
-/data/errorLog.json
+.env
+log.json
+errorLog.json
 package-lock.json
-botConfig.json
-botPrefix.json
-serverConfig.json

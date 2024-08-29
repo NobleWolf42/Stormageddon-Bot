@@ -1,9 +1,9 @@
 //#region Dependencies
-const { Collection, ChannelType, PermissionFlagsBits } = require('discord.js');
+import { Collection, ChannelType, PermissionFlagsBits } from 'discord.js';
 //#endregion
 
 //#region Helpers
-const { addToLog } = require('../helpers/errorLog.js');
+import { addToLog } from '../helpers/errorLog';
 //#endregion
 
 //#region Function that starts the listener that handles Join to Create Channels

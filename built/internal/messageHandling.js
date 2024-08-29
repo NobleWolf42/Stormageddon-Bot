@@ -36,15 +36,17 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.messageHandling = messageHandling;
+exports.PMHandling = PMHandling;
 //#region Dependencies
-var Collection = require('discord.js').Collection;
-var _a = require('fs'), readdirSync = _a.readdirSync, readFileSync = _a.readFileSync;
-var join = require('path').join;
+var discord_js_1 = require("discord.js");
+var fs_1 = require("fs");
+var path_1 = require("path");
 //#endregion
 //#region Helpers
-var _b = require('../helpers/embedMessages.js'), warnCustom = _b.warnCustom, errorCustom = _b.errorCustom, embedCustom = _b.embedCustom;
-var getRandomDoggo = require('../helpers/doggoLinks.js').getRandomDoggo;
-var addToLog = require('../helpers/errorLog.js').addToLog;
+var embedMessages_1 = require("../helpers/embedMessages");
+var doggoLinks_1 = require("../helpers/doggoLinks");
+var errorLog_1 = require("../helpers/errorLog");
 //#endregion
 //#region Modules
 var serverConfig_1 = require("../models/serverConfig");
@@ -62,11 +64,11 @@ var escapeRegex = function (str) { return str.replace(/[.*+?^${}()|[\]\\]/g, '\\
 function tryCommand(client, message, command, args, distube) {
     try {
         command.execute(message, args, client, distube);
-        addToLog('Success', command.name, message.author.tag, message.guild.name, message.channel.name);
+        (0, errorLog_1.addToLog)('success', command.name, message.author.tag, message.guild.name, message.channel.name);
     }
     catch (error) {
-        addToLog('Fatal Error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
-        errorCustom(message, 'There was an error executing that command.', command.name, client);
+        (0, errorLog_1.addToLog)('fatal error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+        (0, embedMessages_1.errorCustom)(message, 'There was an error executing that command.', command.name, client);
         console.log(error);
     }
 }
@@ -79,13 +81,13 @@ function tryCommand(client, message, command, args, distube) {
  */
 function messageHandling(client, distube) {
     var _this = this;
-    client.commands = new Collection();
-    var coolDowns = new Collection();
+    client.commands = new discord_js_1.Collection();
+    var coolDowns = new discord_js_1.Collection();
     //#region Imports commands from ./commands
-    var commandFiles = readdirSync(join(__dirname, '../commands')).filter(function (file) { return file.endsWith('.js'); });
+    var commandFiles = (0, fs_1.readdirSync)((0, path_1.join)(__dirname, '../commands')).filter(function (file) { return file.endsWith('.js'); });
     for (var _i = 0, commandFiles_1 = commandFiles; _i < commandFiles_1.length; _i++) {
         var file = commandFiles_1[_i];
-        var command = require(join(__dirname, '../commands', "".concat(file)));
+        var command = require((0, path_1.join)(__dirname, '../commands', "".concat(file)));
         client.commands.set(command.name, command);
     }
     //#endregion
@@ -114,16 +116,16 @@ function messageHandling(client, distube) {
                         //@bot
                         if (message.mentions.users.first().id === client.user.id) {
                             if (serverConfig.setupNeeded) {
-                                return [2 /*return*/, embedCustom(message, "".concat(client.user.tag), '#5D3FD3', "Please run `".concat(prefix, "setup` in an admin only chat channel to set up the bot on your server."), {
+                                return [2 /*return*/, (0, embedMessages_1.embedCustom)(message, "".concat(client.user.tag), '#5D3FD3', "Please run `".concat(prefix, "setup` in an admin only chat channel to set up the bot on your server."), {
                                         text: "Requested by ".concat(message.author.tag),
                                         iconURL: null,
-                                    }, getRandomDoggo(), [], null, null)];
+                                    }, (0, doggoLinks_1.getRandomDoggo)(), [], null, null)];
                             }
                             else {
-                                return [2 /*return*/, embedCustom(message, "".concat(client.user.tag), '#5D3FD3', "Woof Woof, My Prefix is `".concat(prefix, "`, for more commands, please use the `").concat(prefix, "help` command."), {
+                                return [2 /*return*/, (0, embedMessages_1.embedCustom)(message, "".concat(client.user.tag), '#5D3FD3', "Woof Woof, My Prefix is `".concat(prefix, "`, for more commands, please use the `").concat(prefix, "help` command."), {
                                         text: "Requested by ".concat(message.author.tag),
                                         iconURL: null,
-                                    }, getRandomDoggo(), [], null, null)];
+                                    }, (0, doggoLinks_1.getRandomDoggo)(), [], null, null)];
                             }
                         }
                     }
@@ -147,7 +149,7 @@ function messageHandling(client, distube) {
                     //#region Anti-Spam (CoolDown) Code
                     //Checks to see if command has a coolDown set and if it does executes the code to prevent overuse of command
                     if (!coolDowns.has(command.name)) {
-                        coolDowns.set(command.name, new Collection());
+                        coolDowns.set(command.name, new discord_js_1.Collection());
                     }
                     now = Date.now();
                     timestamps = coolDowns.get(command.name);
@@ -156,7 +158,7 @@ function messageHandling(client, distube) {
                         expirationTime = timestamps.get(message.author.id) + coolDownAmount;
                         if (now < expirationTime) {
                             timeLeft = (expirationTime - now) / 1000;
-                            return [2 /*return*/, warnCustom(message, "Please wait ".concat(timeLeft.toFixed(1), " more second(s) before reusing the `").concat(command.name, "` command."), command.name)];
+                            return [2 /*return*/, (0, embedMessages_1.warnCustom)(message, "Please wait ".concat(timeLeft.toFixed(1), " more second(s) before reusing the `").concat(command.name, "` command."), command.name)];
                         }
                     }
                     timestamps.set(message.author.id, now);
@@ -168,7 +170,7 @@ function messageHandling(client, distube) {
                         return [2 /*return*/];
                     }
                     else if (serverConfig.setupNeeded) {
-                        return [2 /*return*/, warnCustom(message, "You must set up the bot on this server before you can use commands. You can do this by using the `".concat(prefix, "setup` command in an Admin Only chat."), command.name)];
+                        return [2 /*return*/, (0, embedMessages_1.warnCustom)(message, "You must set up the bot on this server before you can use commands. You can do this by using the `".concat(prefix, "setup` command in an Admin Only chat."), command.name)];
                     }
                     //#endregion
                     tryCommand(client, message, command, args, distube);
@@ -187,7 +189,7 @@ function messageHandling(client, distube) {
 function PMHandling(client, distube) {
     client.on('messageCreate', function (message) {
         var prefix = '!';
-        var coolDowns = new Collection();
+        var coolDowns = new discord_js_1.Collection();
         //#region Check permissions
         // Make sure the command can only be run in a PM
         if (message.guild)
@@ -200,10 +202,10 @@ function PMHandling(client, distube) {
         if (message.mentions.users.first() !== undefined) {
             //@bot
             if (message.mentions.users.first().id === client.user.id) {
-                return embedCustom(message, "".concat(client.user.tag), '#5D3FD3', "Woof Woof, My Prefix is `".concat(prefix, "`, for more commands, please use the `").concat(prefix, "help` command."), {
+                return (0, embedMessages_1.embedCustom)(message, "".concat(client.user.tag), '#5D3FD3', "Woof Woof, My Prefix is `".concat(prefix, "`, for more commands, please use the `").concat(prefix, "help` command."), {
                     text: "Requested by ".concat(message.author.tag),
                     iconURL: null,
-                }, getRandomDoggo(), [], null, null);
+                }, (0, doggoLinks_1.getRandomDoggo)(), [], null, null);
             }
         }
         //#endregion
@@ -227,7 +229,7 @@ function PMHandling(client, distube) {
         //#region Anti-Spam (CoolDown) Code
         //Checks to see if command has a coolDown set and if it does executes the code to prevent overuse of command
         if (!coolDowns.has(command.name)) {
-            coolDowns.set(command.name, new Collection());
+            coolDowns.set(command.name, new discord_js_1.Collection());
         }
         var now = Date.now();
         var timestamps = coolDowns.get(command.name);
@@ -236,7 +238,7 @@ function PMHandling(client, distube) {
             var expirationTime = timestamps.get(message.author.id) + coolDownAmount;
             if (now < expirationTime) {
                 var timeLeft = (expirationTime - now) / 1000;
-                return warnCustom(message, "Please wait ".concat(timeLeft.toFixed(1), " more second(s) before reusing the `").concat(command.name, "` command."), command.name);
+                return (0, embedMessages_1.warnCustom)(message, "Please wait ".concat(timeLeft.toFixed(1), " more second(s) before reusing the `").concat(command.name, "` command."), command.name);
             }
         }
         timestamps.set(message.author.id, now);
@@ -244,17 +246,14 @@ function PMHandling(client, distube) {
         //#endregion
         try {
             command.execute(message, args, client, distube);
-            addToLog('Success', command.name, message.author.tag, 'DM', 'Private Message');
+            (0, errorLog_1.addToLog)('success', command.name, message.author.tag, 'DM', 'Private Message');
         }
         catch (error) {
-            addToLog('Fatal Error', command.name, message.author.tag, 'DM', 'Private Message', error, client);
-            errorCustom(message, 'There was an error executing that command.', command.name, client);
+            (0, errorLog_1.addToLog)('fatal error', command.name, message.author.tag, 'DM', 'Private Message', error, client);
+            (0, embedMessages_1.errorCustom)(message, 'There was an error executing that command.', command.name, client);
             console.log(error);
         }
         //#endregion
     });
 }
-//#endregion
-//#region exports
-module.exports = { messageHandling: messageHandling, PMHandling: PMHandling };
 //#endregion

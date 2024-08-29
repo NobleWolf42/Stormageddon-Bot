@@ -39,26 +39,12 @@ var https = require('https');
 var DiscordOauth2 = require('discord-oauth2');
 var _a = require('fs'), writeFileSync = _a.writeFileSync, readFileSync = _a.readFileSync;
 var parse = require('url').parse;
-var botConfig = require('../data/botConfig.json');
 var currentdate = new Date();
-var months = [
-    'January',
-    'Feburary',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-];
-var privateKey = readFileSync(botConfig.oauth.privateKey, 'utf8');
-var certificate = readFileSync(botConfig.oauth.publicKey, 'utf8');
+var months = ['January', 'Feburary', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+var privateKey = readFileSync(process.env.oauthPrivateKey, 'utf8');
+var certificate = readFileSync(process.env.oauthPublicKey, 'utf8');
 var credentials = { key: privateKey, cert: certificate };
-var port = botConfig.oauth.port;
+var port = process.env.oauthPort;
 var oauth = new DiscordOauth2();
 function saveUserInfo(accessCode) {
     return __awaiter(this, void 0, void 0, function () {
@@ -66,12 +52,12 @@ function saveUserInfo(accessCode) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0: return [4 /*yield*/, oauth.tokenRequest({
-                        clientId: botConfig.general.clientId,
-                        clientSecret: botConfig.auth.clientSecret,
+                        clientId: process.env.clientId,
+                        clientSecret: process.env.clientSecret,
                         code: accessCode,
                         scope: 'identify email connections',
                         grantType: 'authorization_code',
-                        redirectUri: botConfig.general.redirectUri,
+                        redirectUri: process.env.redirectUri,
                     })];
                 case 1:
                     tokenInfo = _a.sent();

@@ -1,15 +1,15 @@
 //#region Dependencies
-const { EmbedBuilder, Client } = require('discord.js');
-const { readFileSync, writeFileSync, existsSync } = require('fs');
+import { Client, EmbedBuilder } from 'discord.js';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 //#endregion
 
 //#region Data Files
-var errorLogFile = JSON.parse(readFileSync('./data/errorLog.json'));
-var logFile = JSON.parse(readFileSync('./data/log.json'));
+var errorLogFile = JSON.parse(readFileSync('./data/errorLog.json').toString());
+var logFile = JSON.parse(readFileSync('./data/log.json').toString());
 //#endregion
 
 //#region Helpers
-const { capitalize } = require('./stringHelpers.js');
+import { capitalize } from './stringHelpers.js';
 //#endregion
 
 //#region Function that adds an item to the log file and sends any fatal errors to the bot developers
@@ -23,19 +23,20 @@ const { capitalize } = require('./stringHelpers.js');
  * @param {string} error - String containing error
  * @param {Client} client - Discord.js Client Object
  */
-function addToLog(logType, command, user, server, channel, error, client) {
+function addToLog(logType: 'success' | 'warning' | 'alert' | 'fatal error', command: string, user: string, server: string, channel: string, error?: string, client?: Client) {
     try {
         reloadLog();
         var d = new Date();
         var i = logFile.logging.length;
         var j = errorLogFile.logging.length;
 
-        logAdd = {};
+        var logAdd = {
+            Log: '',
+            Date: d.toTimeString(),
+            Code: logType,
+        };
 
-        if (
-            logType.toLowerCase() === 'success' ||
-            logType.toLowerCase() === 'warning'
-        ) {
+        if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
             logAdd.Log = `${logType} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel}`;
         } else {
             logAdd.Log = `${logType} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel} --- Error: ${error}`;
@@ -44,13 +45,7 @@ function addToLog(logType, command, user, server, channel, error, client) {
         console.log(logAdd.Log);
         console.log('');
 
-        logAdd.Date = d.toTimeString();
-        logAdd.Code = logType;
-
-        if (
-            logType.toLowerCase() === 'success' ||
-            logType.toLowerCase() === 'warning'
-        ) {
+        if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
             logFile.logging[i] = logAdd;
         } else {
             errorLogFile.logging[j] = logAdd;
@@ -58,15 +53,10 @@ function addToLog(logType, command, user, server, channel, error, client) {
 
         addInput(logType);
 
-        if (
-            logType.toLowerCase() === 'fatal error' ||
-            logType.toLowerCase() === 'alert'
-        ) {
-            var devList = process.env.devIDs;
-            for (key in devList) {
-                const embMsg = new EmbedBuilder()
-                    .setDescription(`${logAdd.Log}`)
-                    .setTimestamp();
+        if (logType.toLowerCase() === 'fatal error' || logType.toLowerCase() === 'alert') {
+            var devList = process.env.devIDs.split(',');
+            for (var key in devList) {
+                const embMsg = new EmbedBuilder().setDescription(`${logAdd.Log}`).setTimestamp();
 
                 if (logType.toLowerCase() === 'fatal error') {
                     embMsg.setTitle('Fatal Errors Detected!');
@@ -99,31 +89,10 @@ function addToLog(logType, command, user, server, channel, error, client) {
  * This function saves the current state of the logFile buffer to ./data/errorLog.json.
  */
 function addInput(logType) {
-    if (
-        logType.toLowerCase() === 'success' ||
-        logType.toLowerCase() === 'warning'
-    ) {
-        writeFileSync(
-            './data/log.json',
-            JSON.stringify(logFile, null, 2),
-            function (err) {
-                if (err) {
-                    console.log(err);
-                    console.log('');
-                }
-            }
-        );
+    if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
+        writeFileSync('./data/log.json', JSON.stringify(logFile, null, 2));
     } else {
-        writeFileSync(
-            './data/errorLog.json',
-            JSON.stringify(errorLogFile, null, 2),
-            function (err) {
-                if (err) {
-                    console.log(err);
-                    console.log('');
-                }
-            }
-        );
+        writeFileSync('./data/errorLog.json', JSON.stringify(errorLogFile, null, 2));
     }
     reloadLog();
 
@@ -142,10 +111,7 @@ function addInput(logType) {
 function resetLog(logType) {
     var didDelete = false;
 
-    if (
-        logType.toLowerCase() === 'success' ||
-        logType.toLowerCase() === 'warning'
-    ) {
+    if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
         if (existsSync('./data/log.json')) {
             buildLog(logType);
             didDelete = true;
@@ -201,33 +167,12 @@ function buildLog(logType) {
         ],
     };
 
-    if (
-        logType.toLowerCase() === 'success' ||
-        logType.toLowerCase() === 'warning'
-    ) {
-        writeFileSync(
-            './data/log.json',
-            JSON.stringify(f, null, 2),
-            function (err) {
-                if (err) {
-                    console.log(err);
-                    console.log('');
-                }
-            }
-        );
+    if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
+        writeFileSync('./data/log.json', JSON.stringify(f, null, 2));
     } else {
-        writeFileSync(
-            './data/errorLog.json',
-            JSON.stringify(f, null, 2),
-            function (err) {
-                if (err) {
-                    console.log(err);
-                    console.log('');
-                }
-            }
-        );
+        writeFileSync('./data/errorLog.json', JSON.stringify(f, null, 2));
     }
 }
 //#endregion
 
-module.exports = { addToLog };
+export { addToLog };

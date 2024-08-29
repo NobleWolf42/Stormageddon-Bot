@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,12 +35,16 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 //#region Helpers
-var updateConfigFile = require('../helpers/currentSettings.js').updateConfigFile;
-var _a = require('../helpers/embedMessages.js'), errorNoServerAdmin = _a.errorNoServerAdmin, errorCustom = _a.errorCustom, warnCustom = _a.warnCustom, embedCustom = _a.embedCustom;
+var discord_js_1 = require("discord.js");
+var embedMessages_1 = require("../helpers/embedMessages");
 //##endregion
 //#region Internals
-var buildConfigFile = require('../internal/settingsFunctions.js').buildConfigFile;
+var settingsFunctions_1 = require("../internal/settingsFunctions");
+//#endregion
+//#region Modules
+var serverConfig_1 = require("../models/serverConfig");
 //#endregion
 //#region This exports the addmod command with the information about it
 module.exports = {
@@ -51,57 +56,68 @@ module.exports = {
     usage: 'addmod ***MENTION-USERS***',
     description: 'Adds users to the list of people that get the PM when someone whispers the bot with the modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.',
     execute: function (message, args, client, distube) {
-        var _this = this;
-        //Gets current config file
-        var serverConfig = updateConfigFile();
-        if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
-            if (message.channel.guild.id in serverConfig) {
-                if (message.mentions.members.size == 0) {
-                    return warnCustom(message, 'No user input detected, Did you make sure to @ them?', module.name);
-                }
-                message.mentions.members.forEach(function (user) { return __awaiter(_this, void 0, void 0, function () {
-                    var serverID, array, userFound, modMail;
-                    return __generator(this, function (_a) {
-                        switch (_a.label) {
-                            case 0:
-                                serverID = message.channel.guild.id;
-                                array = serverConfig[serverID].modMail.modList;
-                                userFound = false;
-                                array.forEach(function (item) {
-                                    if (item == user) {
-                                        userFound = true;
-                                    }
-                                });
-                                if (!userFound) {
-                                    array.push(user.id);
+        return __awaiter(this, void 0, void 0, function () {
+            var serverConfig;
+            var _this = this;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(message.channel.guild.id).exec()];
+                    case 1:
+                        serverConfig = (_a.sent()).toObject();
+                        if (message.member.permissions.has(discord_js_1.PermissionFlagsBits.Administrator)) {
+                            if (message.channel.guild.id in serverConfig) {
+                                if (message.mentions.members.size == 0) {
+                                    return [2 /*return*/, (0, embedMessages_1.warnCustom)(message, 'No user input detected, Did you make sure to @ them?', this.name)];
                                 }
-                                else {
-                                    return [2 /*return*/, warnCustom(message, "User ".concat(user.tag, " is already a Mod!"), module.name)];
-                                }
-                                modMail = {};
-                                modMail.modList = array;
-                                modMail.enable = true;
-                                serverConfig[serverID].modMail = modMail;
-                                return [4 /*yield*/, buildConfigFile(serverConfig)];
-                            case 1:
-                                _a.sent();
-                                embedCustom(message, 'Mods Added', '#5D3FD3', "Mod ".concat(user.tag, " has been successfully added!"), {
-                                    text: "Requested by ".concat(message.author.tag),
-                                    iconURL: null,
-                                }, null, [], null, null);
-                                serverConfig = updateConfigFile();
-                                return [2 /*return*/];
+                                message.mentions.members.forEach(function (user) { return __awaiter(_this, void 0, void 0, function () {
+                                    var serverID, array, userFound, modMail;
+                                    return __generator(this, function (_a) {
+                                        switch (_a.label) {
+                                            case 0:
+                                                serverID = message.channel.guild.id;
+                                                array = serverConfig.modMail.modList;
+                                                userFound = false;
+                                                array.forEach(function (item) {
+                                                    if (item == user) {
+                                                        userFound = true;
+                                                    }
+                                                });
+                                                if (!userFound) {
+                                                    array.push(user.id);
+                                                }
+                                                else {
+                                                    return [2 /*return*/, (0, embedMessages_1.warnCustom)(message, "User ".concat(user.tag, " is already a Mod!"), this.name)];
+                                                }
+                                                modMail = {
+                                                    enable: false,
+                                                    modList: [],
+                                                };
+                                                modMail.modList = array;
+                                                modMail.enable = true;
+                                                serverConfig.modMail = modMail;
+                                                return [4 /*yield*/, (0, settingsFunctions_1.buildConfigFile)(serverConfig, serverID)];
+                                            case 1:
+                                                _a.sent();
+                                                (0, embedMessages_1.embedCustom)(message, 'Mods Added', '#5D3FD3', "Mod ".concat(user.tag, " has been successfully added!"), {
+                                                    text: "Requested by ".concat(message.author.tag),
+                                                    iconURL: null,
+                                                }, null, [], null, null);
+                                                return [2 /*return*/];
+                                        }
+                                    });
+                                }); });
+                            }
+                            else {
+                                return [2 /*return*/, (0, embedMessages_1.errorCustom)(message, 'Server is not set up with the bot yet!', this.name, client)];
+                            }
                         }
-                    });
-                }); });
-            }
-            else {
-                return errorCustom(message, 'Server is not set up with the bot yet!', module.name, client);
-            }
-        }
-        else {
-            return errorNoServerAdmin(message, module.name);
-        }
+                        else {
+                            return [2 /*return*/, (0, embedMessages_1.errorNoServerAdmin)(message, this.name)];
+                        }
+                        return [2 /*return*/];
+                }
+            });
+        });
     },
 };
 //#endregion

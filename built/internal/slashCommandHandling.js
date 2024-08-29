@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,13 +35,14 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
 //#region Dependencies
-var _a = require('discord.js'), REST = _a.REST, Routes = _a.Routes, Collection = _a.Collection;
-var _b = require('fs'), readdirSync = _b.readdirSync, readFileSync = _b.readFileSync;
-var join = require('path').join;
+var discord_js_1 = require("discord.js");
+var fs_1 = require("fs");
+var path_1 = require("path");
 //#endregion
 //#region Helpers
-var addToLog = require('../helpers/errorLog.js').addToLog;
+var errorLog_1 = require("../helpers/errorLog");
 //#endregion
 //#region Slash Command Handler
 function slashCommandHandling(client, distube) {
@@ -48,18 +50,16 @@ function slashCommandHandling(client, distube) {
         var foldersPath, commandFolders, _i, commandFolders_1, folder, commandsPath, commandFiles, _a, commandFiles_1, file, filePath, command;
         var _this = this;
         return __generator(this, function (_b) {
-            client.slashCommands = new Collection();
-            foldersPath = join(__dirname, '../slashCommands');
-            commandFolders = readdirSync(foldersPath);
+            client.slashCommands = new discord_js_1.Collection();
+            foldersPath = (0, path_1.join)(__dirname, '../slashCommands');
+            commandFolders = (0, fs_1.readdirSync)(foldersPath);
             for (_i = 0, commandFolders_1 = commandFolders; _i < commandFolders_1.length; _i++) {
                 folder = commandFolders_1[_i];
-                commandsPath = join(foldersPath, folder);
-                commandFiles = readdirSync(commandsPath).filter(function (file) {
-                    return file.endsWith('.js');
-                });
+                commandsPath = (0, path_1.join)(foldersPath, folder);
+                commandFiles = (0, fs_1.readdirSync)(commandsPath).filter(function (file) { return file.endsWith('.js'); });
                 for (_a = 0, commandFiles_1 = commandFiles; _a < commandFiles_1.length; _a++) {
                     file = commandFiles_1[_a];
-                    filePath = join(commandsPath, file);
+                    filePath = (0, path_1.join)(commandsPath, file);
                     command = require(filePath);
                     // Set a new item in the Collection with the key as the command name and the value as the exported module
                     if ('data' in command && 'execute' in command) {
@@ -100,7 +100,7 @@ function slashCommandHandling(client, distube) {
                             return [4 /*yield*/, client.channels.fetch(interaction.channelId)];
                         case 4:
                             channel = _a.sent();
-                            addToLog('fatal error', command.data.name, interaction.user.username, guild, channel.name, error_1, client);
+                            (0, errorLog_1.addToLog)('fatal error', command.data.name, interaction.user.username, guild, channel.name, error_1, client);
                             if (!(interaction.replied || interaction.deferred)) return [3 /*break*/, 6];
                             return [4 /*yield*/, interaction.followUp({
                                     content: 'There was an error while executing this command!',
@@ -133,11 +133,11 @@ function registerGuildSlashCommands(guildId) {
         var _this = this;
         return __generator(this, function (_a) {
             commands = [];
-            commandFiles = readdirSync(join(__dirname, '../slashCommands/guild')).filter(function (file) { return file.endsWith('.js'); });
+            commandFiles = (0, fs_1.readdirSync)((0, path_1.join)(__dirname, '../slashCommands/guild')).filter(function (file) { return file.endsWith('.js'); });
             // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
             for (_i = 0, commandFiles_2 = commandFiles; _i < commandFiles_2.length; _i++) {
                 file = commandFiles_2[_i];
-                command = require(join(__dirname, '../slashCommands/guild', "".concat(file)));
+                command = require((0, path_1.join)(__dirname, '../slashCommands/guild', "".concat(file)));
                 if ('data' in command && 'execute' in command) {
                     commands.push(command.data.toJSON());
                 }
@@ -145,7 +145,7 @@ function registerGuildSlashCommands(guildId) {
                     console.log("[WARNING] The command at ../slashCommands/guild/".concat(file, " is missing a required \"data\" or \"execute\" property."));
                 }
             }
-            rest = new REST().setToken(process.env.authToken);
+            rest = new discord_js_1.REST().setToken(process.env.authToken);
             // and deploy your commands!
             (function () { return __awaiter(_this, void 0, void 0, function () {
                 var data, error_2;
@@ -154,9 +154,10 @@ function registerGuildSlashCommands(guildId) {
                         case 0:
                             _a.trys.push([0, 2, , 3]);
                             console.log("Started refreshing ".concat(commands.length, " guild (/) commands."));
-                            return [4 /*yield*/, rest.put(Routes.applicationGuildCommands(process.env.clientID, guildId), { body: commands })];
+                            return [4 /*yield*/, rest.put(discord_js_1.Routes.applicationGuildCommands(process.env.clientID, guildId), { body: commands })];
                         case 1:
                             data = _a.sent();
+                            console.log(data);
                             console.log("Successfully reloaded ".concat(data.length, " application (/) commands."));
                             return [3 /*break*/, 3];
                         case 2:
@@ -180,11 +181,11 @@ function registerGlobalSlashCommands() {
         var _this = this;
         return __generator(this, function (_a) {
             commands = [];
-            commandFiles = readdirSync(join(__dirname, '../slashCommands/global')).filter(function (file) { return file.endsWith('.js'); });
+            commandFiles = (0, fs_1.readdirSync)((0, path_1.join)(__dirname, '../slashCommands/global')).filter(function (file) { return file.endsWith('.js'); });
             // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
             for (_i = 0, commandFiles_3 = commandFiles; _i < commandFiles_3.length; _i++) {
                 file = commandFiles_3[_i];
-                command = require(join(__dirname, '../slashCommands/global', "".concat(file)));
+                command = require((0, path_1.join)(__dirname, '../slashCommands/global', "".concat(file)));
                 if ('data' in command && 'execute' in command) {
                     commands.push(command.data.toJSON());
                 }
@@ -192,7 +193,7 @@ function registerGlobalSlashCommands() {
                     console.log("[WARNING] The command at ../slashCommands/global/".concat(file, " is missing a required \"data\" or \"execute\" property."));
                 }
             }
-            rest = new REST().setToken(process.env.authToken);
+            rest = new discord_js_1.REST().setToken(process.env.authToken);
             // and deploy your commands!
             (function () { return __awaiter(_this, void 0, void 0, function () {
                 var data, error_3;
@@ -201,7 +202,7 @@ function registerGlobalSlashCommands() {
                         case 0:
                             _a.trys.push([0, 2, , 3]);
                             console.log("Started refreshing ".concat(commands.length, " application (/) commands."));
-                            return [4 /*yield*/, rest.put(Routes.applicationCommands(process.env.clientID), { body: commands })];
+                            return [4 /*yield*/, rest.put(discord_js_1.Routes.applicationCommands(process.env.clientID), { body: commands })];
                         case 1:
                             data = _a.sent();
                             console.log("Successfully reloaded ".concat(data.length, " application (/) commands."));
