@@ -95,6 +95,10 @@ function autoRoleListener(client) {
                             data = event.d;
                             user = client.users.cache.get(data.user_id);
                             channel = client.channels.cache.get(data.channel_id);
+                            if (!channel.isTextBased()) {
+                                console.error('Channel is not a text-based channel');
+                                return [2 /*return*/];
+                            }
                             return [4 /*yield*/, channel.messages.fetch(data.message_id)];
                         case 1:
                             message = _b.sent();

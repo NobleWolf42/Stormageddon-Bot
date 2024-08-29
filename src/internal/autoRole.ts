@@ -1,5 +1,5 @@
 //#region Dependencies
-import { Client, MessageReaction } from 'discord.js';
+import { Client, Message, MessageReaction } from 'discord.js';
 //#endregion
 
 //#region Modules
@@ -46,6 +46,11 @@ async function autoRoleListener(client: Client) {
         const { d: data } = event;
         const user = client.users.cache.get(data.user_id);
         const channel = client.channels.cache.get(data.channel_id);
+
+        if (!channel.isTextBased()) {
+            console.error('Channel is not a text-based channel');
+            return;
+        }
 
         const message = await channel.messages.fetch(data.message_id);
         const member = message.guild.members.cache.get(user.id);
