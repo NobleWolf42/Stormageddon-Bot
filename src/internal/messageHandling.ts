@@ -1,5 +1,5 @@
 //#region Dependencies
-import { Collection } from 'discord.js';
+import { Client, Collection, Message } from 'discord.js';
 import { readdirSync } from 'fs';
 import { join } from 'path';
 //#endregion
@@ -12,6 +12,7 @@ import { addToLog } from '../helpers/errorLog';
 
 //#region Modules
 import { MongooseServerConfig } from '../models/serverConfig';
+import DisTube from 'distube';
 //#endregion
 
 //Regex that tests for str (prefix)
@@ -25,7 +26,7 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
  * @param {string} command - String of command keyword
  * @param {Array} args - Array of the words after the command keyword
  */
-function tryCommand(client, message, command, args, distube) {
+function tryCommand(client: Client, message: Message, command, args: string[], distube: DisTube) {
     try {
         command.execute(message, args, client, distube);
         addToLog('success', command.name, message.author.tag, message.guild.name, message.channel.name);

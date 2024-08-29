@@ -157,7 +157,6 @@ function registerGuildSlashCommands(guildId) {
                             return [4 /*yield*/, rest.put(discord_js_1.Routes.applicationGuildCommands(process.env.clientID, guildId), { body: commands })];
                         case 1:
                             data = _a.sent();
-                            console.log(data);
                             console.log("Successfully reloaded ".concat(data.length, " application (/) commands."));
                             return [3 /*break*/, 3];
                         case 2:
