@@ -37,12 +37,8 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 //#region Dependencies
-var PermissionFlagsBits = require('discord.js').PermissionFlagsBits;
-var readFileSync = require('fs').readFileSync;
-//#endregion
-//#region Data FIles
-var updateConfigFile = require('./currentSettings.js').updateConfigFile;
-var Message = require('discord.js').Message;
+var discord_js_1 = require("discord.js");
+var fs_1 = require("fs");
 //#endregion
 //#region Modules
 var serverConfig_1 = require("../models/serverConfig");
@@ -54,8 +50,8 @@ var modRoleIDs = [];
 //#region Function that calls the server roles and saves the roles that match the adminRoleIDs, modRoleIDs, and djRoleIDs in serverConfig to their own arrays
 /**
  * This function calls the server roles and saves the roles that match the adminRoleIDs, modRoleIDs, and djRoleIDs in serverConfig to their own arrays (global).
- * @param {Array} sRole - Array of the roles in a server
- * @param {number} serverID - The server ID
+ * @param sRole - Array of the roles in a server
+ * @param serverID - The server ID
  */
 function serverRoleUpdate(sRole, serverID) {
     return __awaiter(this, void 0, void 0, function () {
@@ -119,7 +115,7 @@ function adminCheck(message) {
     }
     serverConfig = updateConfigFile();
     //Checks to see if user is server admin
-    if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
+    if (message.member.permissions.has(discord_js_1.PermissionFlagsBits.Administrator)) {
         return true;
     }
     //Calls a function that updates the server role information
@@ -211,7 +207,7 @@ function djCheck(message) {
  * This function refreshes the userInfo.json in memory.
  */
 function refreshUser() {
-    userAccountInfo = JSON.parse(readFileSync('./data/userInfo.json', 'utf8'));
+    userAccountInfo = JSON.parse((0, fs_1.readFileSync)('./data/userInfo.json', 'utf8'));
 }
 //#endregion
 //#region exports

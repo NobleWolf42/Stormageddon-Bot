@@ -1,3 +1,4 @@
+"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -34,42 +35,49 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.errorNoAdmin = errorNoAdmin;
+exports.errorNoMod = errorNoMod;
+exports.errorNoDJ = errorNoDJ;
+exports.errorNoServerAdmin = errorNoServerAdmin;
+exports.errorCustom = errorCustom;
+exports.warnWrongChannel = warnWrongChannel;
+exports.warnDisabled = warnDisabled;
+exports.embedCustom = embedCustom;
+exports.warnCustom = warnCustom;
+exports.embedHelp = embedHelp;
+exports.embedCustomDM = embedCustomDM;
 //#region Dependencies
-var EmbedBuilder = require('discord.js').EmbedBuilder;
+var discord_js_1 = require("discord.js");
 //#endregion
 //#region Helpers
-var addToLog = require('./errorLog.js').addToLog;
+var errorLog_js_1 = require("./errorLog.js");
 //#endregion
 //#region Function that takes several inputs and creates an embedded interaction and sends it in the channel that is attached to the Interaction Object
 /**
  * This function takes several inputs and creates an embed interaction and then sends it in a server.
- * @param {Interaction} interaction - A Discord.js Interaction Object
- * @param {string} title - String for the Title/Header of the interaction
- * @param {string} color - String Hex Code for the color of the border
- * @param {string} text - String for the body of the embedded interaction
- * @param {object} footer - Object for the footer of the embedded interaction - Default: { text: `Requested by ${interaction.user.username}`, iconURL: null }
- * @param {URL} img - URL to an Image to include - Default: null
- * @param {array} fields - addField arguments - Default: []
- * @param {URL} url - URL to add as the embedURL - Default: null
- * @param {URL} thumbnail - URL to thumbnail - Default: null
- * @returns {*} interaction.reply({ embeds: [embMsg] }) (Interaction Object)
+ * @param interaction - A Discord.js Interaction Object
+ * @param title - String for the Title/Header of the interaction
+ * @param color - String Hex Code for the color of the border
+ * @param text - String for the body of the embedded interaction
+ * @param footer - Object for the footer of the embedded interaction - Default: { text: `Requested by ${interaction.user.username}`, iconURL: null }
+ * @param img - URL to an Image to include - Default: null
+ * @param fields - addField arguments - Default: []
+ * @param url - URL to add as the embedURL - Default: null
+ * @param thumbnail - URL to thumbnail - Default: null
+ * @returns interaction.reply({ embeds: [embMsg] }) (Interaction Object)
  */
-function embedCustom(interaction, title, color, text, footer, img, fields, url, thumbnail) {
-    return __awaiter(this, void 0, void 0, function () {
+function embedCustom(interaction_1, title_1, color_1, text_1, footer_1) {
+    return __awaiter(this, arguments, void 0, function (interaction, title, color, text, footer, img, fields, url, thumbnail) {
         var embMsg;
+        if (img === void 0) { img = null; }
+        if (fields === void 0) { fields = []; }
+        if (url === void 0) { url = null; }
+        if (thumbnail === void 0) { thumbnail = null; }
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    embMsg = new EmbedBuilder()
-                        .setTitle(title)
-                        .setColor(color)
-                        .setDescription(text)
-                        .setFooter(footer)
-                        .setImage(img)
-                        .addFields(fields)
-                        .setURL(url)
-                        .setThumbnail(thumbnail)
-                        .setTimestamp();
+                    embMsg = new discord_js_1.EmbedBuilder().setTitle(title).setColor(color).setDescription(text).setFooter(footer).setImage(img).addFields(fields).setURL(url).setThumbnail(thumbnail).setTimestamp();
                     return [4 /*yield*/, interaction.reply({ embeds: [embMsg] })];
                 case 1: return [2 /*return*/, _a.sent()];
             }
@@ -80,20 +88,20 @@ function embedCustom(interaction, title, color, text, footer, img, fields, url, 
 //#region Function that takes several inputs and creates an embedded interaction and dms the user that is attached to the Interaction Object
 /**
  * This function takes several inputs and creates an embed interaction and then sends it in a DM.
- * @param {Interaction} interaction - A Discord.js Interaction Object
- * @param {string} title - String for the Title/Header of the interaction
- * @param {string} color - String Hex Code for the color of the border
- * @param {string} text - String for the body of the embedded interaction
- * @param {URL} img - URL to an Image to include (optional)
- * @param {Client} client - A Discord.js Client Object
+ * @param interaction - A Discord.js Interaction Object
+ * @param title - String for the Title/Header of the interaction
+ * @param color - String Hex Code for the color of the border
+ * @param text - String for the body of the embedded interaction
+ * @param img - URL to an Image to include (optional)
+ * @param client - A Discord.js Client Object
  */
 function embedCustomDM(interaction, title, color, text, img, client) {
     return __awaiter(this, void 0, void 0, function () {
-        var embMsg, usr;
+        var embMsg, user;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    embMsg = new EmbedBuilder()
+                    embMsg = new discord_js_1.EmbedBuilder()
                         .setTitle(title)
                         .setColor(color)
                         .setDescription(text)
@@ -104,8 +112,8 @@ function embedCustomDM(interaction, title, color, text, img, client) {
                         .setImage(img);
                     return [4 /*yield*/, client.users.fetch(interaction.member.user.id)];
                 case 1:
-                    usr = _a.sent();
-                    usr.send({ embeds: [embMsg] });
+                    user = _a.sent();
+                    user.send({ embeds: [embMsg] });
                     interaction.reply({
                         content: 'Sent',
                         ephemeral: true,
@@ -119,16 +127,15 @@ function embedCustomDM(interaction, title, color, text, img, client) {
 //#region Function that takes several inputs and creates an embedded interaction for the help command
 /**
  * This function takes several inputs and creates an embed interaction for the help command.
- * @param {Interaction} interaction - A Discord.js Interaction Object
- * @param {string} title - String for the Title/Header of the interaction
- * @param {string} text - String for the body of the embedded interaction
- * @param {Client} client - A Discord.js Client Object
+ * @param interaction - A Discord.js Interaction Object
+ * @param title - String for the Title/Header of the interaction
+ * @param text - String for the body of the embedded interaction
  */
-function embedHelp(interaction, title, text, client) {
+function embedHelp(interaction, title, text) {
     return __awaiter(this, void 0, void 0, function () {
         var embMsg;
         return __generator(this, function (_a) {
-            embMsg = new EmbedBuilder()
+            embMsg = new discord_js_1.EmbedBuilder()
                 .setTitle(title)
                 .setColor('#1459C7')
                 .setDescription(text)
@@ -145,10 +152,10 @@ function embedHelp(interaction, title, text, client) {
 //#region Function that takes several inputs and creates an embedded interaction for a custom warning
 /**
  * This function takes several inputs and creates an embed interaction for a custom warning.
- * @param {Interaction} interaction - A Discord.js Interaction Object
- * @param {string} text - String for the body of the embedded interaction
- * @param {string} commandName - String of the name of the command
- * @param {Client} client - A Discord.js Client Object
+ * @param interaction - A Discord.js Interaction Object
+ * @param text - String for the body of the embedded interaction
+ * @param commandName - String of the name of the command
+ * @param client - A Discord.js Client Object
  */
 function warnCustom(interaction, text, commandName, client) {
     return __awaiter(this, void 0, void 0, function () {
@@ -156,7 +163,7 @@ function warnCustom(interaction, text, commandName, client) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    embMsg = new EmbedBuilder()
+                    embMsg = new discord_js_1.EmbedBuilder()
                         .setTitle('Warning!')
                         .setColor('#F8AA2A')
                         .setDescription(text)
@@ -164,18 +171,17 @@ function warnCustom(interaction, text, commandName, client) {
                         text: "Requested by ".concat(interaction.user.username),
                         iconURL: null,
                     });
-                    if (!(interaction.guildId != null)) return [3 /*break*/, 2];
                     return [4 /*yield*/, client.channels.fetch(interaction.channelId)];
                 case 1:
                     channel = _a.sent();
                     interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, text);
-                    return [3 /*break*/, 3];
-                case 2:
-                    interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
-                    _a.label = 3;
-                case 3: return [2 /*return*/];
+                    if (!channel.isDMBased()) {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, text);
+                    }
+                    else {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
+                    }
+                    return [2 /*return*/];
             }
         });
     });
@@ -184,9 +190,9 @@ function warnCustom(interaction, text, commandName, client) {
 //#region Function that takes several inputs and creates an embedded interaction for a lack of bot admin privileges
 /**
  * This function takes several inputs and creates an embed interaction for an Error stating a lack of bot admin privileges.
- * @param {Interaction} interaction - A Discord.js Interaction Object
- * @param {string} commandName - String of the name of the command
- * @param {Client} client - A Discord.js Client Object
+ * @param interaction - A Discord.js Interaction Object
+ * @param commandName - String of the name of the command
+ * @param client - A Discord.js Client Object
  */
 function errorNoAdmin(interaction, commandName, client) {
     return __awaiter(this, void 0, void 0, function () {
@@ -194,7 +200,7 @@ function errorNoAdmin(interaction, commandName, client) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    embMsg = new EmbedBuilder()
+                    embMsg = new discord_js_1.EmbedBuilder()
                         .setTitle('Error!')
                         .setColor('#FF0000')
                         .setDescription('You do not have permission to use this command. This command requires *BOT ADMIN* access to use!')
@@ -202,18 +208,17 @@ function errorNoAdmin(interaction, commandName, client) {
                         text: "Requested by ".concat(interaction.user.username),
                         iconURL: null,
                     });
-                    if (!(interaction.guildId != null)) return [3 /*break*/, 2];
                     return [4 /*yield*/, client.channels.fetch(interaction.channelId)];
                 case 1:
                     channel = _a.sent();
                     interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, 'Not Bot Admin!');
-                    return [3 /*break*/, 3];
-                case 2:
-                    interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Bot Admin!');
-                    _a.label = 3;
-                case 3: return [2 /*return*/];
+                    if (!channel.isDMBased()) {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Not Bot Admin!');
+                    }
+                    else {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Bot Admin!');
+                    }
+                    return [2 /*return*/];
             }
         });
     });
@@ -222,9 +227,9 @@ function errorNoAdmin(interaction, commandName, client) {
 //#region Function that takes several inputs and creates an embedded interaction for a lack of mod privileges
 /**
  * This function takes several inputs and creates an embed interaction for an Error stating a lack of mod privileges.
- * @param {Interaction} interaction - A Discord.js Interaction Object
- * @param {string} commandName - String of the name of the command
- * @param {Client} client - A Discord.js Client Object
+ * @param interaction - A Discord.js Interaction Object
+ * @param commandName - String of the name of the command
+ * @param client - A Discord.js Client Object
  */
 function errorNoMod(interaction, commandName, client) {
     return __awaiter(this, void 0, void 0, function () {
@@ -232,7 +237,7 @@ function errorNoMod(interaction, commandName, client) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    embMsg = new EmbedBuilder()
+                    embMsg = new discord_js_1.EmbedBuilder()
                         .setTitle('Error!')
                         .setColor('#FF0000')
                         .setDescription('You do not have permission to use this command. This command requires *BOT MOD* access to use!')
@@ -240,18 +245,17 @@ function errorNoMod(interaction, commandName, client) {
                         text: "Requested by ".concat(interaction.user.username),
                         iconURL: null,
                     });
-                    if (!(interaction.guildId != null)) return [3 /*break*/, 2];
                     return [4 /*yield*/, client.channels.fetch(interaction.channelId)];
                 case 1:
                     channel = _a.sent();
                     interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, 'Not Bot Moderator!');
-                    return [3 /*break*/, 3];
-                case 2:
-                    interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Bot Moderator!');
-                    _a.label = 3;
-                case 3: return [2 /*return*/];
+                    if (!channel.isDMBased()) {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Not Bot Moderator!');
+                    }
+                    else {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Bot Moderator!');
+                    }
+                    return [2 /*return*/];
             }
         });
     });
@@ -260,9 +264,9 @@ function errorNoMod(interaction, commandName, client) {
 //#region Function that takes several inputs and creates an embedded interaction for a lack of DJ privileges
 /**
  * This function takes several inputs and creates an embed interaction for an Error stating a lack of DJ privileges.
- * @param {Interaction} interaction - A Discord.js Interaction Object
- * @param {string} commandName - String of the name of the command
- * @param {Client} client - A Discord.js Client Object
+ * @param interaction - A Discord.js Interaction Object
+ * @param commandName - String of the name of the command
+ * @param client - A Discord.js Client Object
  */
 function errorNoDJ(interaction, commandName, client) {
     return __awaiter(this, void 0, void 0, function () {
@@ -270,7 +274,7 @@ function errorNoDJ(interaction, commandName, client) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    embMsg = new EmbedBuilder()
+                    embMsg = new discord_js_1.EmbedBuilder()
                         .setTitle('Error!')
                         .setColor('#FF0000')
                         .setDescription('You do not have permission to use this command. This command requires *DJ* access to use!')
@@ -278,18 +282,17 @@ function errorNoDJ(interaction, commandName, client) {
                         text: "Requested by ".concat(interaction.user.username),
                         iconURL: null,
                     });
-                    if (!(interaction.guildId != null)) return [3 /*break*/, 2];
                     return [4 /*yield*/, client.channels.fetch(interaction.channelId)];
                 case 1:
                     channel = _a.sent();
                     interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, 'Not a DJ!');
-                    return [3 /*break*/, 3];
-                case 2:
-                    interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not DJ!');
-                    _a.label = 3;
-                case 3: return [2 /*return*/];
+                    if (!channel.isDMBased()) {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Not a DJ!');
+                    }
+                    else {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not DJ!');
+                    }
+                    return [2 /*return*/];
             }
         });
     });
@@ -298,9 +301,9 @@ function errorNoDJ(interaction, commandName, client) {
 //#region Function that takes several inputs and creates an embedded interaction for a lack of server admin privileges
 /**
  * This function takes several inputs and creates an embed interaction for an Error stating a lack of server admin privileges.
- * @param {Interaction} interaction - A Discord.js Interaction Object
- * @param {string} commandName - String of the name of the command
- * @param {Client} client - A Discord.js Client Object
+ * @param interaction - A Discord.js Interaction Object
+ * @param commandName - String of the name of the command
+ * @param client - A Discord.js Client Object
  */
 function errorNoServerAdmin(interaction, commandName, client) {
     return __awaiter(this, void 0, void 0, function () {
@@ -308,7 +311,7 @@ function errorNoServerAdmin(interaction, commandName, client) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    embMsg = new EmbedBuilder()
+                    embMsg = new discord_js_1.EmbedBuilder()
                         .setTitle('Error!')
                         .setColor('#FF0000')
                         .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!')
@@ -316,18 +319,17 @@ function errorNoServerAdmin(interaction, commandName, client) {
                         text: "Requested by ".concat(interaction.user.username),
                         iconURL: null,
                     });
-                    if (!(interaction.guildId != null)) return [3 /*break*/, 2];
                     return [4 /*yield*/, client.channels.fetch(interaction.channelId)];
                 case 1:
                     channel = _a.sent();
                     interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, 'Not Server Admin!');
-                    return [3 /*break*/, 3];
-                case 2:
-                    interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Server Admin!');
-                    _a.label = 3;
-                case 3: return [2 /*return*/];
+                    if (!channel.isDMBased()) {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Not Server Admin!');
+                    }
+                    else {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Server Admin!');
+                    }
+                    return [2 /*return*/];
             }
         });
     });
@@ -347,7 +349,7 @@ function errorCustom(interaction, text, commandName, client) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    embMsg = new EmbedBuilder()
+                    embMsg = new discord_js_1.EmbedBuilder()
                         .setTitle('Error!')
                         .setColor('#FF0000')
                         .setDescription(text)
@@ -355,18 +357,17 @@ function errorCustom(interaction, text, commandName, client) {
                         text: "Requested by ".concat(interaction.user.username),
                         iconURL: null,
                     });
-                    if (!(interaction.guildId != null)) return [3 /*break*/, 2];
                     return [4 /*yield*/, client.channels.fetch(interaction.channelId)];
                 case 1:
                     channel = _a.sent();
                     interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Fatal Error', commandName, interaction.user.username, interaction.member.guild.name, channel.name, text, client);
-                    return [3 /*break*/, 3];
-                case 2:
-                    interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    addToLog('Fatal Error', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
-                    _a.label = 3;
-                case 3: return [2 /*return*/];
+                    if (!channel.isDMBased()) {
+                        (0, errorLog_js_1.addToLog)('fatal error', commandName, interaction.user.username, interaction.guild.name, channel.name, text, client);
+                    }
+                    else {
+                        (0, errorLog_js_1.addToLog)('fatal error', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
+                    }
+                    return [2 /*return*/];
             }
         });
     });
@@ -375,10 +376,10 @@ function errorCustom(interaction, text, commandName, client) {
 //#region Function that takes several inputs and creates an embedded interaction for a wrong channel error
 /**
  * This function takes several inputs and creates an embed interaction for a custom error.
- * @param {Interaction} interaction - A Discord.js Interaction Object
- * @param {string} correctChannel - String for the correct channel to send the command in
- * @param {string} commandName - String of the name of the command
- * @param {Client} client - A Discord.js Client Object
+ * @param interaction - A Discord.js Interaction Object
+ * @param correctChannel - String for the correct channel to send the command in
+ * @param commandName - String of the name of the command
+ * @param client - A Discord.js Client Object
  */
 function warnWrongChannel(interaction, correctChannel, commandName, client) {
     return __awaiter(this, void 0, void 0, function () {
@@ -386,7 +387,7 @@ function warnWrongChannel(interaction, correctChannel, commandName, client) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    embMsg = new EmbedBuilder()
+                    embMsg = new discord_js_1.EmbedBuilder()
                         .setTitle('Warning!')
                         .setColor('#F8AA2A')
                         .setDescription("That was not the correct channel for that command. The correct channel for this command is #".concat(correctChannel))
@@ -394,17 +395,17 @@ function warnWrongChannel(interaction, correctChannel, commandName, client) {
                         text: "Requested by ".concat(interaction.user.username),
                         iconURL: null,
                     });
-                    interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    if (!(interaction.guildId != null)) return [3 /*break*/, 2];
                     return [4 /*yield*/, client.channels.fetch(interaction.channelId)];
                 case 1:
                     channel = _a.sent();
-                    addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, 'Wrong Text Channel');
-                    return [3 /*break*/, 3];
-                case 2:
-                    addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Wrong Text Channel');
-                    _a.label = 3;
-                case 3: return [2 /*return*/];
+                    interaction.reply({ embeds: [embMsg], ephemeral: true });
+                    if (!channel.isDMBased()) {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Wrong Text Channel');
+                    }
+                    else {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Wrong Text Channel');
+                    }
+                    return [2 /*return*/];
             }
         });
     });
@@ -413,10 +414,10 @@ function warnWrongChannel(interaction, correctChannel, commandName, client) {
 //#region Function that takes several inputs and creates an embedded interaction for a disabled command error
 /**
  * This function takes several inputs and creates an embed interaction for a custom error.
- * @param {Interaction} interaction - A Discord.js Interaction Object
- * @param {string} feature - String for the name of the feature
- * @param {string} commandName - String of the name of the command
- * @param {Client} client - A Discord.js Client Object
+ * @param interaction - A Discord.js Interaction Object
+ * @param feature - String for the name of the feature
+ * @param commandName - String of the name of the command
+ * @param client - A Discord.js Client Object
  */
 function warnDisabled(interaction, feature, commandName, client) {
     return __awaiter(this, void 0, void 0, function () {
@@ -424,7 +425,7 @@ function warnDisabled(interaction, feature, commandName, client) {
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
-                    embMsg = new EmbedBuilder()
+                    embMsg = new discord_js_1.EmbedBuilder()
                         .setTitle('Warning!')
                         .setColor('#F8AA2A')
                         .setDescription("This feature is currently disabled. To enable it, please run the !set ".concat(feature, ". NOTE: This command is only available to a server admin."))
@@ -432,34 +433,19 @@ function warnDisabled(interaction, feature, commandName, client) {
                         text: "Requested by ".concat(interaction.user.username),
                         iconURL: null,
                     });
-                    interaction.reply({ embeds: [embMsg], ephemeral: true });
-                    if (!(interaction.guildId != null)) return [3 /*break*/, 2];
                     return [4 /*yield*/, client.channels.fetch(interaction.channelId)];
                 case 1:
                     channel = _a.sent();
-                    addToLog('Warning', commandName, interaction.user.username, interaction.member.guild.name, channel.name, 'Feature Disabled');
-                    return [3 /*break*/, 3];
-                case 2:
-                    addToLog('Warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Feature Disabled');
-                    _a.label = 3;
-                case 3: return [2 /*return*/];
+                    interaction.reply({ embeds: [embMsg], ephemeral: true });
+                    if (!channel.isDMBased()) {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Feature Disabled');
+                    }
+                    else {
+                        (0, errorLog_js_1.addToLog)('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Feature Disabled');
+                    }
+                    return [2 /*return*/];
             }
         });
     });
 }
-//#endregion
-//#region exports
-module.exports = {
-    errorNoAdmin: errorNoAdmin,
-    errorNoMod: errorNoMod,
-    errorNoDJ: errorNoDJ,
-    errorNoServerAdmin: errorNoServerAdmin,
-    errorCustom: errorCustom,
-    warnWrongChannel: warnWrongChannel,
-    warnDisabled: warnDisabled,
-    embedCustom: embedCustom,
-    warnCustom: warnCustom,
-    embedHelp: embedHelp,
-    embedCustomDM: embedCustomDM,
-};
 //#endregion

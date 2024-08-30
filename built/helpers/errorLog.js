@@ -15,13 +15,13 @@ var stringHelpers_js_1 = require("./stringHelpers.js");
 //#region Function that adds an item to the log file and sends any fatal errors to the bot developers
 /**
  * This function adds an item to the log file and sends any fatal errors to the bot developers.
- * @param {string} logType - Type of log "Success", "Warning", "Alert", or "Fatal Error"
- * @param {string} command String of the command name that was executed
- * @param {string} user - String of the user who executed the command
- * @param {string} server - String of the server name that the command was executed in
- * @param {string} channel - String of the channel name that the command was executed in
- * @param {string} error - String containing error
- * @param {Client} client - Discord.js Client Object
+ * @param logType - Type of log "success", "warning", "alert", or "fatal error"
+ * @param command String of the command name that was executed
+ * @param user - String of the user who executed the command
+ * @param server - String of the server name that the command was executed in
+ * @param channel - String of the channel name that the command was executed in
+ * @param error - String containing error
+ * @param client - Discord.js Client Object
  */
 function addToLog(logType, command, user, server, channel, error, client) {
     try {
@@ -82,6 +82,7 @@ function addToLog(logType, command, user, server, channel, error, client) {
 //#region Function that saves the current state of the logFile buffer to ./data/errorLog.json
 /**
  * This function saves the current state of the logFile buffer to ./data/errorLog.json.
+ * @param logType - Type of log "success", "warning", "alert", or "fatal error"
  */
 function addInput(logType) {
     if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
@@ -101,6 +102,7 @@ function addInput(logType) {
 //#region Function that reset the log file to empty (intended to keep the file from getting too large)
 /**
  * This function resets the log file to empty (intended to keep the file from getting too large).
+ * @param logType - Type of log "success", "warning", "alert", or "fatal error"
  */
 function resetLog(logType) {
     var didDelete = false;
@@ -146,6 +148,7 @@ function reloadLog() {
 //#region Builds An empty log file with the date and time of build logged at the top
 /**
  * This function builds An empty log file with the date and time of build logged at the top.
+ * @param logType - Type of log "success", "warning", "alert", or "fatal error"
  */
 function buildLog(logType) {
     var d = new Date();

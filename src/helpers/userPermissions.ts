@@ -1,11 +1,6 @@
 //#region Dependencies
-const { PermissionFlagsBits } = require('discord.js');
-const { readFileSync } = require('fs');
-//#endregion
-
-//#region Data FIles
-const { updateConfigFile } = require('./currentSettings.js');
-const { Message } = require('discord.js');
+import { PermissionFlagsBits } from 'discord.js';
+import { readFileSync } from 'fs';
 //#endregion
 
 //#region Modules
@@ -20,10 +15,10 @@ var modRoleIDs = [];
 //#region Function that calls the server roles and saves the roles that match the adminRoleIDs, modRoleIDs, and djRoleIDs in serverConfig to their own arrays
 /**
  * This function calls the server roles and saves the roles that match the adminRoleIDs, modRoleIDs, and djRoleIDs in serverConfig to their own arrays (global).
- * @param {Array} sRole - Array of the roles in a server
- * @param {number} serverID - The server ID
+ * @param sRole - Array of the roles in a server
+ * @param serverID - The server ID
  */
-async function serverRoleUpdate(sRole, serverID) {
+async function serverRoleUpdate(sRole: string[], serverID: string) {
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
