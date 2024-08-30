@@ -103,6 +103,14 @@ function autoRoleListener(client) {
                     }
                 });
             }); });
+            //#endregion
+            //#region This handles when people remove a reaction in order to remove a role
+            client.on('messageReactionRemove', function (event) { return __awaiter(_this, void 0, void 0, function () {
+                return __generator(this, function (_a) {
+                    console.log(event);
+                    return [2 /*return*/];
+                });
+            }); });
             return [2 /*return*/];
         });
     });

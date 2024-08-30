@@ -77,6 +77,12 @@ async function autoRoleListener(client: Client) {
     });
     //#endregion
 
+    //#region This handles when people remove a reaction in order to remove a role
+    client.on('messageReactionRemove', async (event) => {
+        console.log(event);
+    });
+    //#endregion
+
     //#region This event handles adding/removing users from the role(s) they chose based on message reactions
     // client.on('raw', async (event) => {
     //     console.log(event);
