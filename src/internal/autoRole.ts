@@ -42,7 +42,7 @@ async function autoRoleListener(client: Client) {
 
     //#region This event handel adding a role to a user when the react to the add role message
     client.on('messageReactionAdd', async (event) => {
-        console.log(event);
+        console.log('addReact');
         const message = event.message;
 
         //This escapes if the reaction was in a vc or a dm
@@ -79,7 +79,7 @@ async function autoRoleListener(client: Client) {
 
     //#region This handles when people remove a reaction in order to remove a role
     client.on('messageReactionRemove', async (event) => {
-        console.log(event);
+        console.log('removeReact');
     });
     //#endregion
 
