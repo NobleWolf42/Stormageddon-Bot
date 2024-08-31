@@ -1,38 +1,36 @@
 //#region Dependencies
-var SlashCommandBuilder = require('discord.js').SlashCommandBuilder;
+const { SlashCommandBuilder } = require('discord.js');
 //#endregion
 //#region Helpers
-var _a = require('../../helpers/embedSlashMessages.js'), embedHelp = _a.embedHelp, warnCustom = _a.warnCustom, errorNoAdmin = _a.errorNoAdmin;
-var adminCheck = require('../../helpers/userPermissions.js').adminCheck;
-var capitalize = require('../../helpers/stringHelpers.js').capitalize;
+const { embedHelp, warnCustom, errorNoAdmin, } = require('../../helpers/embedSlashMessages.js');
+const { adminCheck } = require('../../helpers/userPermissions.js');
+const { capitalize } = require('../../helpers/stringHelpers.js');
 //#endregion
 //#region This exports the help command with the information about it
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('help')
         .setDescription('Displays Help Message.')
-        .addStringOption(function (option) {
-        return option
-            .setName('helppage')
-            .setDescription('Select a help page (admin/direct/fun/gaming/help/music).')
-            .setRequired(false)
-            .setChoices({ name: 'Admin', value: 'admin' }, { name: 'Direct', value: 'direct' }, { name: 'Fun', value: 'fun' }, { name: 'Gaming', value: 'gaming' }, { name: 'Help', value: 'help' }, { name: 'Music', value: 'music' });
-    }),
-    execute: function (client, interaction, distube) {
-        var adminTF = adminCheck(interaction);
-        var commands = client.commands;
-        var commandClasses = [];
-        var helpMessageCommands = [];
+        .addStringOption((option) => option
+        .setName('helppage')
+        .setDescription('Select a help page (admin/direct/fun/gaming/help/music).')
+        .setRequired(false)
+        .setChoices({ name: 'Admin', value: 'admin' }, { name: 'Direct', value: 'direct' }, { name: 'Fun', value: 'fun' }, { name: 'Gaming', value: 'gaming' }, { name: 'Help', value: 'help' }, { name: 'Music', value: 'music' })),
+    execute(client, interaction, distube) {
+        const adminTF = adminCheck(interaction);
+        const commands = client.commands;
+        let commandClasses = [];
+        let helpMessageCommands = [];
         //Checks to see if your an admin and only adds the admin page to the commandClasses array if you are
         if (process.env.devIDs.includes(interaction.author.id)) {
-            commands.forEach(function (cmd) {
+            commands.forEach((cmd) => {
                 if (!commandClasses.includes(capitalize(cmd.class))) {
                     commandClasses.push(capitalize(cmd.class));
                 }
             });
         }
         else if (adminTF) {
-            commands.forEach(function (cmd) {
+            commands.forEach((cmd) => {
                 if (!commandClasses.includes(capitalize(cmd.class)) &&
                     capitalize(cmd.class) != 'Developer') {
                     commandClasses.push(capitalize(cmd.class));
@@ -40,7 +38,7 @@ module.exports = {
             });
         }
         else {
-            commands.forEach(function (cmd) {
+            commands.forEach((cmd) => {
                 if (!commandClasses.includes(capitalize(cmd.class)) &&
                     capitalize(cmd.class) != 'Developer' &&
                     capitalize(cmd.class) != 'Admin') {
@@ -53,7 +51,7 @@ module.exports = {
         //Outputs the default help page if no page or help page is detected, otherwise handles it in the switch statement
         if (interaction.options.getString('helppage') == undefined ||
             interaction.options.getString('helppage') == 'help') {
-            commands.forEach(function (cmd) {
+            commands.forEach((cmd) => {
                 if (cmd.class == 'help') {
                     helpMessageCommands.push(cmd);
                 }
@@ -70,13 +68,13 @@ module.exports = {
                 //Outputs admin page if user is admin in the server its run in, otherwise sends an error message
                 case 'admin':
                     if (adminTF) {
-                        commands.forEach(function (cmd) {
+                        commands.forEach((cmd) => {
                             if (cmd.class ==
                                 interaction.options.getString('helppage')) {
                                 helpMessageCommands.push(cmd);
                             }
                         });
-                        title = "".concat(capitalize(interaction.options.getString('helppage')), " Help");
+                        title = `${capitalize(interaction.options.getString('helppage'))} Help`;
                         makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF, client);
                     }
                     else {
@@ -86,34 +84,34 @@ module.exports = {
                 //Outputs developer page if user is a dev, otherwise sends an error message
                 case 'developer':
                     if (process.env.devIDs.includes(interaction.author.id)) {
-                        commands.forEach(function (cmd) {
+                        commands.forEach((cmd) => {
                             if (cmd.class == args[0]) {
                                 helpMessageCommands.push(cmd);
                             }
                         });
-                        title = "".concat(capitalize(args[0]), " Help");
+                        title = `${capitalize(args[0])} Help`;
                         makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF);
                     }
                     else {
-                        return warnCustom(interaction, "The **".concat(args[0], "** page you requested does not exit. Please select from these pages: `").concat(makeCommandPageList(commandClasses), "`"), module.name);
+                        return warnCustom(interaction, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, module.name);
                     }
                     break;
                 //Outputs the commands for the chosen page
                 default:
-                    commands.forEach(function (cmd) {
+                    commands.forEach((cmd) => {
                         if (cmd.class ==
                             interaction.options.getString('helppage') &&
                             cmd.name != 'devsend') {
                             helpMessageCommands.push(cmd);
                         }
                     });
-                    title = "".concat(capitalize(interaction.options.getString('helppage')), " Help");
+                    title = `${capitalize(interaction.options.getString('helppage'))} Help`;
                     makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, adminTF, client);
                     break;
             }
         }
         else {
-            return warnCustom(interaction, "The **".concat(interaction.options.getString('helppage'), "** page you requested does not exit. Please select from these pages: `").concat(makeCommandPageList(commandClasses), "`"), module.name);
+            return warnCustom(interaction, `The **${interaction.options.getString('helppage')}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, module.name);
         }
     },
 };
@@ -132,36 +130,36 @@ function makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, ad
     var helpMsg = '';
     commandClasses.sort();
     for (i = 0; i < helpMessageCommands.length; i++) {
-        var key = helpMessageCommands[i];
-        var aliasesLength = key.aliases.length;
+        let key = helpMessageCommands[i];
+        let aliasesLength = key.aliases.length;
         if (aliasesLength == 0) {
-            helpMsg += "".concat(key.usage, " - Aliases: None - ").concat(key.description);
+            helpMsg += `${key.usage} - Aliases: None - ${key.description}`;
         }
         else if (aliasesLength == 1) {
-            helpMsg += "".concat(key.usage, " - Aliases: ").concat(key.aliases[0], " - ").concat(key.description);
+            helpMsg += `${key.usage} - Aliases: ${key.aliases[0]} - ${key.description}`;
         }
         else {
-            var aliasList = '';
+            let aliasList = '';
             for (a = 0; a < aliasesLength; a++) {
                 if (a != aliasesLength - 1) {
-                    aliasList += "".concat(key.aliases[a], ", ");
+                    aliasList += `${key.aliases[a]}, `;
                 }
                 else {
                     aliasList += key.aliases[a];
                 }
             }
-            helpMsg += "".concat(key.usage, " - Aliases: ").concat(aliasList, " - ").concat(key.description);
+            helpMsg += `${key.usage} - Aliases: ${aliasList} - ${key.description}`;
         }
         if (i != helpMessageCommands.length - 1) {
-            helpMsg += "\n\n";
+            helpMsg += `\n\n`;
         }
     }
     var pageList = makeCommandPageList(commandClasses);
     if (adminTF) {
-        embedHelp(interaction, title, "`Help Pages: ".concat(pageList, "`\n**NOTE: !help Admin can only be run in a server!!!\n\n\n").concat(helpMsg), client);
+        embedHelp(interaction, title, `\`Help Pages: ${pageList}\`\n**NOTE: !help Admin can only be run in a server!!!\n\n\n${helpMsg}`, client);
     }
     else {
-        embedHelp(interaction, title, "`Help Pages: ".concat(pageList, "`\n").concat(helpMsg), client);
+        embedHelp(interaction, title, `\`Help Pages: ${pageList}\`\n${helpMsg}`, client);
     }
 }
 //#endregion
@@ -169,7 +167,7 @@ function makeHelpMsg(interaction, title, helpMessageCommands, commandClasses, ad
 function makeCommandPageList(commandClasses) {
     var pageList = '';
     for (i = 0; i < commandClasses.length; i++) {
-        pageList += "".concat(commandClasses[i], ", ");
+        pageList += `${commandClasses[i]}, `;
     }
     return pageList;
 }

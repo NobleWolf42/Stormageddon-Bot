@@ -1,8 +1,8 @@
 //#region Dependencies
-var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+const { XMLHttpRequest } = require('xmlhttprequest');
 //#endregion
 //#region Helpers
-var _a = require('../helpers/embedMessages.js'), errorCustom = _a.errorCustom, warnCustom = _a.warnCustom, embedCustom = _a.embedCustom;
+const { errorCustom, warnCustom, embedCustom, } = require('../helpers/embedMessages.js');
 //#endregion
 //#region This exports the agify command with the information about it
 module.exports = {
@@ -13,8 +13,8 @@ module.exports = {
     class: 'fun',
     usage: 'agify ***INSERT-NAME***',
     description: "Uses [Agify.io](https://agify.io/) to estimate someone's age based off of their name. (Works in Direct Messages too.)",
-    execute: function (message, args, client, distube) {
-        var request = new XMLHttpRequest();
+    execute(message, args, client, distube) {
+        const request = new XMLHttpRequest();
         var userInput = message.content.toLowerCase().split(' ');
         if (userInput[1] == undefined) {
             return warnCustom(message, 'No user input detected, are you sure you put a name?', module.name);
@@ -32,7 +32,7 @@ module.exports = {
                     ' is estimated at ' +
                     data.age +
                     '.', {
-                    text: "Requested by ".concat(message.author.tag),
+                    text: `Requested by ${message.author.tag}`,
                     iconURL: null,
                 }, null, [], null, null);
             }

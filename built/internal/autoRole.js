@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -8,39 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
-    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.autoRoleListener = autoRoleListener;
-exports.generateEmbedFields = generateEmbedFields;
 //#endregion
 //#region Modules
-var serverConfig_1 = require("../models/serverConfig");
+import { MongooseServerConfig } from '../models/serverConfig';
 //#endregion
 //#region Function that generates embed fields
 /**
@@ -49,20 +18,14 @@ var serverConfig_1 = require("../models/serverConfig");
  * @returns {map} A map of the emoji-role pairs
  */
 function generateEmbedFields(serverID) {
-    return __awaiter(this, void 0, void 0, function () {
-        var serverConfig;
-        return __generator(this, function (_a) {
-            switch (_a.label) {
-                case 0: return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
-                case 1:
-                    serverConfig = (_a.sent()).toObject();
-                    return [2 /*return*/, serverConfig.autoRole.roles.map(function (r, e) {
-                            return {
-                                emoji: serverConfig.autoRole.reactions[e],
-                                role: r,
-                            };
-                        })];
-            }
+    return __awaiter(this, void 0, void 0, function* () {
+        //Gets serverConfig from database
+        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
+        return serverConfig.autoRole.roles.map((r, e) => {
+            return {
+                emoji: serverConfig.autoRole.reactions[e],
+                role: r,
+            };
         });
     });
 }
@@ -73,46 +36,102 @@ function generateEmbedFields(serverID) {
  * @param {Client} client - Discord.js Client Object
  */
 function autoRoleListener(client) {
-    return __awaiter(this, void 0, void 0, function () {
-        var events;
-        var _this = this;
-        return __generator(this, function (_a) {
-            events = {
-                MESSAGE_REACTION_ADD: 'messageReactionAdd',
-                MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
-            };
-            //#endregion
-            console.log('autoRoleListener');
-            //#region This event handel adding a role to a user when the react to the add role message
-            client.on('messageReactionAdd', function (event) { return __awaiter(_this, void 0, void 0, function () {
-                var message, serverID, serverConfig;
-                return __generator(this, function (_a) {
-                    switch (_a.label) {
-                        case 0:
-                            console.log('addReact');
-                            message = event.message;
-                            //This escapes if the reaction was in a vc or a dm
-                            if (!message.channel.isTextBased() || message.channel.isDMBased()) {
-                                return [2 /*return*/];
-                            }
-                            serverID = message.channel.guild.id;
-                            return [4 /*yield*/, serverConfig_1.MongooseServerConfig.findById(serverID).exec()];
-                        case 1:
-                            serverConfig = (_a.sent()).toObject();
-                            return [2 /*return*/];
-                    }
-                });
-            }); });
-            //#endregion
-            //#region This handles when people remove a reaction in order to remove a role
-            client.on('messageReactionRemove', function (event) { return __awaiter(_this, void 0, void 0, function () {
-                return __generator(this, function (_a) {
-                    console.log('removeReact');
-                    return [2 /*return*/];
-                });
-            }); });
-            return [2 /*return*/];
-        });
+    return __awaiter(this, void 0, void 0, function* () {
+        //#region Readable constants
+        // This makes the events used a bit more readable
+        const events = {
+            MESSAGE_REACTION_ADD: 'messageReactionAdd',
+            MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
+        };
+        //#endregion
+        console.log('autoRoleListener');
+        //#region This event handel adding a role to a user when the react to the add role message
+        client.on('messageReactionAdd', (event) => __awaiter(this, void 0, void 0, function* () {
+            console.log('addReact');
+            const message = event.message;
+            //This escapes if the reaction was in a vc or a dm
+            if (!message.channel.isTextBased() || message.channel.isDMBased()) {
+                return;
+            }
+            const serverID = message.channel.guild.id;
+            //const member = message.guild.members.cache.get();
+            //Gets serverConfig from database
+            let serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
+            // if (
+            //     message.author.id === client.user.id &&
+            //     (message.content !== serverConfig.autoRole.embedMessage || (message.embeds[0] && message.embeds[0].footer.text !== serverConfig.autoRole.embedFooter))
+            // ) {
+            //     if (message.embeds.length >= 1) {
+            //         const fields = message.embeds[0].fields;
+            //         for (const { name, value } of fields) {
+            //             if (member.id !== client.user.id) {
+            //                 const guildRole = message.guild.roles.cache.find((r) => r.name === value);
+            //                 if (name === reaction.emoji.name || name === reaction.emoji.toString()) {
+            //                     if (event.t === 'MESSAGE_REACTION_ADD') member.roles.add(guildRole.id);
+            //                     else if (event.t === 'MESSAGE_REACTION_REMOVE') member.roles.remove(guildRole.id);
+            //                 }
+            //             }
+            //         }
+            //     }
+            // }
+        }));
+        //#endregion
+        //#region This handles when people remove a reaction in order to remove a role
+        client.on('messageReactionRemove', (event) => __awaiter(this, void 0, void 0, function* () {
+            console.log('removeReact');
+        }));
+        //#endregion
+        //#region This event handles adding/removing users from the role(s) they chose based on message reactions
+        // client.on('raw', async (event) => {
+        //     console.log(event);
+        //     if (!events.hasOwnProperty(event.t)) {
+        //         return;
+        //     }
+        //     const { d: data } = event;
+        //     const user = client.users.cache.get(data.user_id);
+        //     const channel = client.channels.cache.get(data.channel_id);
+        //     //I hate typescript but this filers out the channels we don't want to watch
+        //     if (!channel.isTextBased() || channel.isDMBased()) {
+        //         return;
+        //     }
+        //     const message = await channel.messages.fetch(data.message_id);
+        //     const member = message.guild.members.cache.get(user.id);
+        //     let serverID = message.channel.guild.id;
+        //     //Gets serverConfig from database
+        //     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
+        //     const emojiKey = data.emoji.id ? `${data.emoji.name}:${data.emoji.id}` : data.emoji.name;
+        //     let reaction = message.reactions.cache.get(emojiKey);
+        //     if (!reaction) {
+        //         // Create an object that can be passed through the event like normal
+        //         reaction = new MessageReaction(client, data, message, 1, data.user_id === client.user.id);
+        //     }
+        //     let embedFooterText;
+        //     if (message.embeds[0] && message.embeds[0].footer != null) embedFooterText = message.embeds[0].footer.text;
+        //     if (message.author.id === client.user.id && (message.content !== serverConfig.autoRole.initialMessage || (message.embeds[0] && embedFooterText !== serverConfig.autoRole.embedFooter))) {
+        //         if (message.embeds.length >= 1) {
+        //             const fields = message.embeds[0].fields;
+        //             for (const { name, value } of fields) {
+        //                 if (member.id !== client.user.id) {
+        //                     const guildRole = message.guild.roles.cache.find((r) => r.name === value);
+        //                     if (name === reaction.emoji.name || name === reaction.emoji.toString()) {
+        //                         if (event.t === 'MESSAGE_REACTION_ADD') member.roles.add(guildRole.id);
+        //                         else if (event.t === 'MESSAGE_REACTION_REMOVE') member.roles.remove(guildRole.id);
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // });
+        // //#endregion
+        // //#region This handles unhandled rejections
+        // process.on('unhandledRejection', (err) => {
+        //     const msg = err.stack.replace(new RegExp(`${__dirname}/`, 'g'), './');
+        //     console.error('Unhandled Rejection', msg);
+        // });
+        //#endregion
     });
 }
+//#endregion
+//#region exports
+export { autoRoleListener, generateEmbedFields };
 //#endregion

@@ -1,14 +1,12 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.MongooseServerConfig = void 0;
-var mongoose_1 = require("mongoose");
-var Schema = mongoose_1.default.Schema, model = mongoose_1.default.model;
+import { Schema, model } from 'mongoose';
 //#endregion
 //#region ServerConfig Schema
-var serverConfigSchema = new Schema({
+const serverConfigSchema = new Schema({
     _id: { type: String, required: true },
     guildID: { type: String, required: true },
 });
-var MongooseServerConfig = model('Server-Config', serverConfigSchema);
-exports.MongooseServerConfig = MongooseServerConfig;
+const MongooseServerConfig = model('Server-Config', serverConfigSchema);
+//#endregion
+//#region exports
+export { MongooseServerConfig };
 //#endregion

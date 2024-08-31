@@ -1,16 +1,15 @@
 //#region Dependencies
-import { PermissionFlagsBits } from 'discord.js';
-import { readFileSync } from 'fs';
+import { GuildMemberRoleManager, Message, PermissionFlagsBits, RoleManager } from 'discord.js';
 //#endregion
 
 //#region Modules
 import { MongooseServerConfig } from '../models/serverConfig';
 //#endregion
 
-//Sets up global vars for following functions
-var adminRoleIDs = [];
-var djRoleIDs = [];
-var modRoleIDs = [];
+//Sets up global vars for following functions This is horrible, fix this later, why are these global I hate past me it consume so much more cache read/writes
+let adminRoleIDs = [];
+let djRoleIDs = [];
+let modRoleIDs = [];
 
 //#region Function that calls the server roles and saves the roles that match the adminRoleIDs, modRoleIDs, and djRoleIDs in serverConfig to their own arrays
 /**
@@ -18,7 +17,7 @@ var modRoleIDs = [];
  * @param sRole - Array of the roles in a server
  * @param serverID - The server ID
  */
-async function serverRoleUpdate(sRole: string[], serverID: string) {
+async function serverRoleUpdate(sRole: RoleManager, serverID: string) {
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
@@ -31,29 +30,33 @@ async function serverRoleUpdate(sRole: string[], serverID: string) {
 
     //Saves the Server Roles to an object by name
     for (let [key, value] of sRole.cache) {
-        index = value.name;
+        let index = value.name;
         basicServerRoles[index] = key;
     }
 
     //Loops through the Admin Role Names, pushing them to an array
-    for (key in serverConfig.general.adminRoles) {
+    for (let key in serverConfig.general.adminRoles) {
         //Pushes role IDs to Admin if they Match serverConfig.general.adminRoles
         if (basicServerRoles[serverConfig.general.adminRoles[key]]) {
             adminRoleIDs.push(basicServerRoles[serverConfig.general.adminRoles[key]]);
         }
     }
+    console.log(adminRoleIDs);
 
     //Loops through the Mod Role Names, pushing them to an array
-    for (key in serverConfig.general.modRoles) {
+    for (let key in serverConfig.general.modRoles) {
         //Pushes role IDs to Mods if they Match serverConfig.general.modRoles
         if (basicServerRoles[serverConfig.general.modRoles[key]]) {
             modRoleIDs.push(basicServerRoles[serverConfig.general.modRoles[key]]);
         }
     }
 
-    //Pushes role IDs to DJs if they Match serverConfig.music.djRoles
-    if (basicServerRoles[String(serverConfig.music.djRoles)] != undefined) {
-        djRoleIDs.push(basicServerRoles[String(serverConfig.music.djRoles)]);
+    //Loops through the DJ Role Names, pushing them to an array
+    for (let key in serverConfig.general.modRoles) {
+        //Pushes role IDs to DJs if they Match serverConfig.music.djRoles
+        if (basicServerRoles[serverConfig.music.djRoles] != undefined) {
+            djRoleIDs.push(basicServerRoles[serverConfig.music.djRoles[key]]);
+        }
     }
 }
 //#endregion
@@ -61,23 +64,21 @@ async function serverRoleUpdate(sRole: string[], serverID: string) {
 //#region Function that returns boolean for if the user who sent the message is a bot Admin (based off serverConfig.connection.adminRoles)
 /**
  * This Function checks to see if the user who sent the message is a bot Admin (based off serverConfig.connection.adminRoles).
- * @param {Message} message - Discord.js Message Object
- * @returns {boolean} True if the user in the message object is a bot admin
+ * @param message - Discord.js Message Object
+ * @returns True if the user in the message object is a bot admin
  */
-function adminCheck(message) {
-    var userRolesArray = [];
-    var serverRolesArray = [];
+async function adminCheck(message: Message) {
+    var userRolesArray: GuildMemberRoleManager;
+    var serverRolesArray: RoleManager;
     var serverID = '';
 
     if (message.member != null) {
-        userRolesArray = message.member._roles;
+        userRolesArray = message.member.roles;
         serverRolesArray = message.guild.roles;
         serverID = message.guild.id;
     } else {
         return false;
     }
-
-    serverConfig = updateConfigFile();
 
     //Checks to see if user is server admin
     if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
@@ -88,8 +89,8 @@ function adminCheck(message) {
     serverRoleUpdate(serverRolesArray, serverID);
 
     //Checks to see if any of the user role ids match any of the admin role ids
-    for (key in userRolesArray) {
-        for (a in adminRoleIDs) {
+    for (let key in userRolesArray) {
+        for (let a in adminRoleIDs) {
             if (userRolesArray[key] == adminRoleIDs[a]) {
                 return true;
             }
@@ -102,23 +103,21 @@ function adminCheck(message) {
 //#region Function that returns boolean for if the user who sent the message is a bot Moderator (based off serverConfig.connection.modRoles)
 /**
  * This Function checks to see if the user who sent the message is a bot Moderator (based off serverConfig.connection.adminRoles).
- * @param {Message} message - Discord.js Message Object
- * @returns {boolean} True if the user in the message object is a bot moderator
+ * @param message - Discord.js Message Object
+ * @returns True if the user in the message object is a bot moderator
  */
-function modCheck(message) {
-    var userRolesArray = [];
-    var serverRolesArray = [];
+function modCheck(message: Message) {
+    var userRolesArray: GuildMemberRoleManager;
+    var serverRolesArray: RoleManager;
     var serverID = '';
 
     if (message.member != null) {
-        userRolesArray = message.member._roles;
+        userRolesArray = message.member.roles;
         serverRolesArray = message.guild.roles;
         serverID = message.guild.id;
     } else {
         return false;
     }
-
-    serverConfig = updateConfigFile();
 
     //Checks to see if user is admin
     if (adminCheck(message)) {
@@ -129,8 +128,8 @@ function modCheck(message) {
     serverRoleUpdate(serverRolesArray, serverID);
 
     //Checks to see if user role ids match any of the mod role ids
-    for (key in userRolesArray) {
-        for (a in modRoleIDs) {
+    for (let key in userRolesArray) {
+        for (let a in modRoleIDs) {
             if (userRolesArray[key] == modRoleIDs[a]) {
                 return true;
             }
@@ -144,27 +143,31 @@ function modCheck(message) {
 //#region Function that returns boolean for if the user who sent the message is a bot DJ (based off serverConfig.connection.djRole)
 /**
  * This Function checks to see if the user who sent the message is a bot DJ (based off serverConfig.connection.adminRoles).
- * @param {Message} message - Discord.js Message Object
- * @returns {boolean} True if the user in the message object is a bot DJ
+ * @param message - Discord.js Message Object
+ * @returns True if the user in the message object is a bot DJ
  */
-function djCheck(message) {
-    var userRolesArray = [];
-    var serverRolesArray = [];
+function djCheck(message: Message) {
+    var userRolesArray: GuildMemberRoleManager;
+    var serverRolesArray: RoleManager;
     var serverID = '';
 
     if (message.member != null) {
-        userRolesArray = message.member._roles;
+        userRolesArray = message.member.roles;
         serverRolesArray = message.guild.roles;
         serverID = message.guild.id;
     } else {
         return false;
     }
 
-    serverConfig = updateConfigFile();
+    if (modCheck(message)) {
+        return true;
+    }
+
     serverRoleUpdate(serverRolesArray, serverID);
-    if (djRoleIDs != []) {
-        for (key in userRolesArray) {
-            for (a in djRoleIDs) {
+
+    if (djRoleIDs != 0) {
+        for (let key in userRolesArray) {
+            for (let a in djRoleIDs) {
                 if (userRolesArray[key] == djRoleIDs[a]) {
                     return true;
                 }
@@ -178,15 +181,6 @@ function djCheck(message) {
 }
 //#endregion
 
-//#region Function that refreshes the userInfo.json in memory
-/**
- * This function refreshes the userInfo.json in memory.
- */
-function refreshUser() {
-    userAccountInfo = JSON.parse(readFileSync('./data/userInfo.json', 'utf8'));
-}
-//#endregion
-
 //#region exports
-module.exports = { adminCheck, modCheck, djCheck, refreshUser };
+export { adminCheck, modCheck, djCheck };
 //#endregion

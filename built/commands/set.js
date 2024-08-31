@@ -1,8 +1,8 @@
 //#region Helpers
-var _a = require('../helpers/embedMessages.js'), errorNoServerAdmin = _a.errorNoServerAdmin, errorCustom = _a.errorCustom;
+const { errorNoServerAdmin, errorCustom, } = require('../helpers/embedMessages.js');
 //#endregion
 //#region Internals
-var _b = require('../internal/settingsFunctions.js'), setAutoRole = _b.setAutoRole, setJoinRole = _b.setJoinRole, setMusic = _b.setMusic, setGeneral = _b.setGeneral, setModMail = _b.setModMail, setJoinToCreateVC = _b.setJoinToCreateVC, setBlame = _b.setBlame;
+const { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame, } = require('../internal/settingsFunctions.js');
 //#endregion
 //#region This exports the set command with the information about it
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     class: 'admin',
     usage: 'set autorole/general/joinrole/jointocreatevc/modmail/music',
     description: 'Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.',
-    execute: function (message, args, client, distube) {
+    execute(message, args, client, distube) {
         if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
             switch (args[0]) {
                 case 'autorole':

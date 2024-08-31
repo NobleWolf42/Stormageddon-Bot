@@ -1,5 +1,5 @@
 //#region Helpers
-var _a = require('../helpers/embedMessages.js'), warnCustom = _a.warnCustom, embedCustomDM = _a.embedCustomDM;
+const { warnCustom, embedCustomDM } = require('../helpers/embedMessages.js');
 //#endregion
 //#region This exports the set command with the information about it
 module.exports = {
@@ -10,8 +10,8 @@ module.exports = {
     class: 'misc.',
     usage: 'jointocreate name ***YOUR NAME HERE***',
     description: 'Allows you to change the settings for your voice channel.',
-    execute: function (message, args, client, distube) {
-        var voiceChannel = message.member.voice.channel;
+    execute(message, args, client, distube) {
+        const voiceChannel = message.member.voice.channel;
         if (client.voiceGenerator.get(message.member.id) &&
             client.voiceGenerator.get(message.member.id) == voiceChannel.id) {
             switch (args[0]) {
@@ -19,10 +19,10 @@ module.exports = {
                     var newName = '';
                     for (i = 1; i < args.length; i++) {
                         if (i != args.length - 1) {
-                            newName += "".concat(args[i], " ");
+                            newName += `${args[i]} `;
                         }
                         else {
-                            newName += "".concat(args[i]);
+                            newName += `${args[i]}`;
                         }
                     }
                     if (newName.length > 22 || newName.length < 1) {

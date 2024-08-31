@@ -1,9 +1,9 @@
 //#region Dependencies
-var EmbedBuilder = require('discord.js').EmbedBuilder;
+const { EmbedBuilder } = require('discord.js');
 //#endregion
 //#region Helpers
-var errorCustom = require('../helpers/embedMessages.js').errorCustom;
-var addToLog = require('../helpers/errorLog.js').addToLog;
+const { errorCustom } = require('../helpers/embedMessages.js');
+const { addToLog } = require('../helpers/errorLog.js');
 //#endregion
 //#region This exports the log command with the information about it
 module.exports = {
@@ -14,10 +14,10 @@ module.exports = {
     class: 'developer',
     usage: 'logs',
     description: 'Triggers the bot to send you the log files.',
-    execute: function (message, args, client, distube) {
+    execute(message, args, client, distube) {
         if (process.env.devIDs.includes(message.author.id)) {
-            var embMsg = new EmbedBuilder()
-                .setDescription("Log files attached.")
+            const embMsg = new EmbedBuilder()
+                .setDescription(`Log files attached.`)
                 .setTimestamp()
                 .setTitle('Logs')
                 .setColor('#5D3FD3');

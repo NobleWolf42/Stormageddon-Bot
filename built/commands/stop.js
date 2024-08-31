@@ -1,7 +1,7 @@
 //#region Helpers
-var updateConfigFile = require('../helpers/currentSettings.js').updateConfigFile;
-var _a = require('../helpers/embedMessages.js'), warnCustom = _a.warnCustom, warnDisabled = _a.warnDisabled, warnWrongChannel = _a.warnWrongChannel, errorNoDJ = _a.errorNoDJ, embedCustom = _a.embedCustom;
-var djCheck = require('../helpers/userPermissions.js').djCheck;
+const { updateConfigFile } = require('../helpers/currentSettings.js');
+const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom, } = require('../helpers/embedMessages.js');
+const { djCheck } = require('../helpers/userPermissions.js');
 //#endregion
 //#region This exports the stop command with the information about it
 module.exports = {
@@ -12,7 +12,7 @@ module.exports = {
     class: 'music',
     usage: 'stop',
     description: 'Stops the playing music.',
-    execute: function (message, args, client, distube) {
+    execute(message, args, client, distube) {
         //Gets current config file
         var serverConfig = updateConfigFile();
         //Checks to see if the music feature is enabled in this server
@@ -34,13 +34,13 @@ module.exports = {
             return warnCustom(message, 'Nothing is playing right now.', module.name);
         }
         else if (voiceChannel != queue.voiceChannel) {
-            return warnCustom(message, "You must join the <#".concat(queue.voiceChannel.id, "> voice channel to use this command!"), module.name);
+            return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
         }
         else {
-            queue.stop().then(function (s) {
+            queue.stop().then((s) => {
                 queue.voice.leave();
-                embedCustom(message, 'Stop', '#0000FF', "Music Stopped.", {
-                    text: "Requested by ".concat(message.author.tag),
+                embedCustom(message, 'Stop', '#0000FF', `Music Stopped.`, {
+                    text: `Requested by ${message.author.tag}`,
                     iconURL: null,
                 }, null, [], null, null);
             });

@@ -1,7 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRandomInt = getRandomInt;
-exports.isInteger = isInteger;
 //#region Function that will give you a random number between 0 and the max number passed
 /**
  * This function will give you a random number between 0 and the max number passed.
@@ -21,4 +17,7 @@ function getRandomInt(max) {
 function isInteger(value) {
     return /^\d+$/.test(value);
 }
+//#endregion
+//#region Exports
+export { getRandomInt, isInteger };
 //#endregion

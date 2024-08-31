@@ -1,8 +1,8 @@
 //#region Dependencies
-var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+const { XMLHttpRequest } = require('xmlhttprequest');
 //#endregion
 //#region Helpers
-var _a = require('../helpers/embedMessages.js'), errorCustom = _a.errorCustom, embedCustom = _a.embedCustom;
+const { errorCustom, embedCustom } = require('../helpers/embedMessages.js');
 //#endregion
 //#region This exports the iss command with the information about it
 module.exports = {
@@ -13,7 +13,7 @@ module.exports = {
     class: 'fun',
     usage: 'iss',
     description: 'Displays the names of all the astronauts that are in transit to/from, or currently aboard the International Space Station. (Works in Direct Messages too.)',
-    execute: function (message, args, client, distube) {
+    execute(message, args, client, distube) {
         var request = new XMLHttpRequest();
         request.open('GET', 'http://api.open-notify.org/astros.json', true);
         request.onload = function () {
@@ -25,7 +25,7 @@ module.exports = {
                     response += '\n ' + people.name + ' : ' + people.craft;
                 });
                 embedCustom(message, 'Astronaut Information:', '#000000', response, {
-                    text: "Requested by ".concat(message.author.tag),
+                    text: `Requested by ${message.author.tag}`,
                     iconURL: null,
                 }, null, [], null, null);
             }

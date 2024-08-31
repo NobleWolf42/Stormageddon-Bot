@@ -1,6 +1,3 @@
-"use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-exports.capitalize = capitalize;
 //#region Function that capitalizes the first letter of a passed word
 /**
  * This function capitalizes the first letter of a passed word.
@@ -13,4 +10,7 @@ function capitalize(word) {
     }
     return;
 }
+//#endregion
+//#region exports
+export { capitalize };
 //#endregion

@@ -1,6 +1,6 @@
 //#region Helpers
-var adminCheck = require('../helpers/userPermissions.js').adminCheck;
-var _a = require('../helpers/embedMessages.js'), errorNoAdmin = _a.errorNoAdmin, errorCustom = _a.errorCustom;
+const { adminCheck } = require('../helpers/userPermissions.js');
+const { errorNoAdmin, errorCustom } = require('../helpers/embedMessages.js');
 //#endregion
 //#region This exports the say command with the information about it
 module.exports = {
@@ -11,7 +11,7 @@ module.exports = {
     class: 'admin',
     usage: 'say ***MESSAGE-CONTENT***',
     description: 'Sends a message as the bot.',
-    execute: function (message, args, client, distube) {
+    execute(message, args, client, distube) {
         if (adminCheck(message)) {
             var argsString = args.join(' ');
             if (argsString != '') {

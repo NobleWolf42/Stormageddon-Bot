@@ -1,16 +1,16 @@
 //#region Dependencies
-var SlashCommandBuilder = require('discord.js').SlashCommandBuilder;
-var XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest;
+const { SlashCommandBuilder } = require('discord.js');
+const { XMLHttpRequest } = require('xmlhttprequest');
 //#endregion
 //#region Helpers
-var _a = require('../../helpers/embedSlashMessages.js'), errorCustom = _a.errorCustom, embedCustom = _a.embedCustom;
+const { errorCustom, embedCustom, } = require('../../helpers/embedSlashMessages.js');
 //#endregion
 //#region This exports the iss command with the information about it
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('iss')
         .setDescription('Displays the names of all the astronauts that are aboard the ISS.'),
-    execute: function (client, interaction, distube) {
+    execute(client, interaction, distube) {
         var request = new XMLHttpRequest();
         request.open('GET', 'http://api.open-notify.org/astros.json', true);
         request.onload = function () {
@@ -22,7 +22,7 @@ module.exports = {
                     response += '\n ' + people.name + ' : ' + people.craft;
                 });
                 embedCustom(interaction, 'Astronaut Information:', '#000000', response, {
-                    text: "Requested by ".concat(interaction.user.username),
+                    text: `Requested by ${interaction.user.username}`,
                     iconURL: null,
                 }, null, [], null, null);
             }

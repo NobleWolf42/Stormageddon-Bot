@@ -4,7 +4,7 @@ import { embedCustom } from '../helpers/embedMessages.js';
 //#endregion
 
 //#region Modules
-import { MongooseServerConfig, ServerConfig } from '../models/serverConfig';
+import { MongooseServerConfig, ServerConfig } from '../models/serverConfig.js';
 //#endregion
 
 //Defining a filter for the setup commands to ignore bot messages
