@@ -1,14 +1,15 @@
-//#region Helpers
-import { Message } from 'discord.js';
+//#region Imports
+import { ButtonBuilder, ButtonStyle, EmbedBuilder, Message } from 'discord.js';
 import { embedCustom } from '../helpers/embedMessages.js';
-//#endregion
-
-//#region Modules
 import { MongooseServerConfig, ServerConfig } from '../models/serverConfig.js';
 //#endregion
 
 //Defining a filter for the setup commands to ignore bot messages
 const msgFilter = (m) => !m.author.bot;
+
+//Defining some buttons used in all the setup functions
+const enable = new ButtonBuilder().setCustomId('enable').setLabel('Enable').setStyle(ButtonStyle.Primary);
+const disable = new ButtonBuilder().setCustomId('disable').setLabel('Disable').setStyle(ButtonStyle.Primary);
 
 //#region Function that sets modMail settings
 /**
@@ -22,6 +23,7 @@ async function setModMail(message: Message) {
 
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
+    const embMsg = new EmbedBuilder().setTitle('ModMail Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
 
     message.channel.send('Please respond with `T` if you would like to enable DMing to bot to DM mods, respond with `F` if you do not.');
 

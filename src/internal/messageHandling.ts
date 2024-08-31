@@ -188,7 +188,7 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
  * @param client - Discord.js Client Object
  * @param distube - DisTube Client Object
  */
-function PMHandling(client: Client, distube: DisTube) {
+function PMHandling(client: Client, distube: DisTube, collections: ExtraCollections) {
     client.on('messageCreate', (message) => {
         var prefix = '!';
         const coolDowns: Collection<string, Collection<string, number>> = new Collection();
@@ -232,7 +232,7 @@ function PMHandling(client: Client, distube: DisTube) {
         const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
         const commandName = args.shift().toLowerCase();
         //Checks to see if it is a valid command and ignores message if it is not
-        const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+        const command = collections.commands.get(commandName) || collections.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
         if (!command) return;
         if (!command.type.includes('DM')) return;
         //#endregion

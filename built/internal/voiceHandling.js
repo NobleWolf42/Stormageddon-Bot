@@ -16,6 +16,7 @@ import { MongooseServerConfig } from '../models/serverConfig.js';
 /**
  * This function starts the listener that handles that handles Join to Create Channels.
  * @param client - Discord.js Client Object
+ * @param collections - Class containing all the extra collections for the bot
  */
 function joinToCreateHandling(client, collections) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -47,8 +48,7 @@ function joinToCreateHandling(client, collections) {
                 });
                 //Adds the voice channel just made to the collection
                 collections.voiceGenerator.set(voiceChannel.id, member.id);
-                //collections.voiceGenerator.set(member.id, voiceChannel.id);
-                //Times the user out from spamming new voice channels, currently set to 10 seconds and apparently works intermittently, probably due to the permissions when testing it FIX
+                //Times the user out from spamming new voice channels, currently set to 10 seconds and apparently works intermittently, probably due to the permissions when testing it
                 yield newChannel.permissionOverwrites.set([
                     {
                         id: member.id,
@@ -63,6 +63,8 @@ function joinToCreateHandling(client, collections) {
                 if (oldChannel == null) {
                     return;
                 }
+                console.log(collections.voiceGenerator);
+                console.log(collections.voiceGenerator.get(oldChannel.id));
                 if (oldChannel != null && collections.voiceGenerator.get(oldChannel.id) && oldChannel.members.size == 0) {
                     //This deletes a channel if it was created byt the bot and is empty
                     oldChannel.delete();
@@ -70,19 +72,18 @@ function joinToCreateHandling(client, collections) {
                     collections.voiceGenerator.delete(oldChannel.id);
                 }
                 else if (collections.voiceGenerator.get(oldChannel.id) && member.id == collections.voiceGenerator.get(oldChannel.id)) {
-                    //This should restore default permissions to the channel when the owner leaves, and remove owner THIS IS BROKEN AND SERVERS NO PURPOSE RIGHT NOW fix pls
-                    /*await oldChannel.permissionOverwrites.edit(oldChannel.parent.permissionOverwrites.cache.map((p) => {
+                    //This should restore default permissions to the channel when the owner leaves, and remove owner
+                    yield oldChannel.permissionOverwrites.set(oldChannel.parent.permissionOverwrites.cache.map((p) => {
                         return {
                             id: p.id,
                             allow: p.allow.toArray(),
-                            deny: p.deny.toArray()
-                        }
-                    }));*/
-                    collections.voiceGenerator.delete(collections.voiceGenerator.get(oldChannel.id));
+                            deny: p.deny.toArray(),
+                        };
+                    }));
                 }
             }
             catch (err) {
-                addToLog('fatal error', 'JTCVC Handler', member.tag, guild.name, oldChannel.name, err, client);
+                addToLog('fatal error', 'JTCVC Handler', member.user.tag, guild.name, oldChannel.name, err, client);
             }
         }));
     });

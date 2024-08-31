@@ -20,7 +20,7 @@ function serverJoin(client) {
     client.on('guildMemberAdd', (guildMember) => __awaiter(this, void 0, void 0, function* () {
         //Gets serverConfig from database
         var serverConfig = (yield MongooseServerConfig.findById(guildMember.guild.id).exec()).toObject();
-        //If this isnt working the issue is here and we need to make it by role id not name FIX
+        //If this isn't working the issue is here and we need to make it by role id not name FIX
         if (serverConfig.joinRole.enable) {
             guildMember.roles.add(guildMember.guild.roles.resolve(serverConfig.joinRole.role));
         }

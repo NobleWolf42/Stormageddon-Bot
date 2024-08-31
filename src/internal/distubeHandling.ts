@@ -11,15 +11,6 @@ import { pause, skip, stop, volumeDown, volumeUp, repeat, loop, noLoop, shuffle,
 import { embedCustom } from '../helpers/embedSlashMessages.js';
 //#endregion
 
-//Discord client
-var dClient = null;
-
-//#region Gets discord client and set it to global variable, Why did I do this? it sucks, FIX
-function setDiscordClient(client: Client) {
-    dClient = client;
-}
-//#endregion
-
 //#region music handler, controls the persistent functions of the music feature
 /**
  * Controls the persistent functions of the music feature.
@@ -353,5 +344,5 @@ async function musicHandle(client: Client, distube: DisTube) {
 //#endregion
 
 //#region exports
-export { musicHandle, setDiscordClient };
+export { musicHandle };
 //#endregion

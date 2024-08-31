@@ -10,10 +10,7 @@ const { setup } = require('../../internal/settingsFunctions.js');
 
 //#region This exports the setup command with the information about it
 module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('setup')
-        .setDescription('Fist time set up on a server.')
-        .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
+    data: new SlashCommandBuilder().setName('setup').setDescription('Fist time set up on a server.').setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
     async execute(message, args, client, distube) {
         //Loads current server config settings
         var serverConfig = updateConfigFile();
@@ -25,12 +22,7 @@ module.exports = {
                 errorNoServerAdmin(message, module.name);
             }
         } else {
-            errorCustom(
-                message,
-                'Server Setup has already been completed.',
-                module.name,
-                client
-            );
+            errorCustom(message, 'Server Setup has already been completed.', module.name, client);
         }
         return;
     },

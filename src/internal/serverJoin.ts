@@ -1,5 +1,5 @@
 //#region Helpers
-import { Client, GuildMember, Role } from 'discord.js';
+import { Client, GuildMember } from 'discord.js';
 //#endregion
 
 //#region Modules
@@ -16,7 +16,7 @@ function serverJoin(client: Client) {
         //Gets serverConfig from database
         var serverConfig = (await MongooseServerConfig.findById(guildMember.guild.id).exec()).toObject();
 
-        //If this isnt working the issue is here and we need to make it by role id not name FIX
+        //If this isn't working the issue is here and we need to make it by role id not name FIX
         if (serverConfig.joinRole.enable) {
             guildMember.roles.add(guildMember.guild.roles.resolve(serverConfig.joinRole.role));
         }
