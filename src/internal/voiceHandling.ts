@@ -1,5 +1,5 @@
 //#region Imports
-import { Collection, ChannelType, PermissionFlagsBits, Client } from 'discord.js';
+import { Collection, ChannelType, PermissionFlagsBits, Client, Events } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { MongooseServerConfig } from '../models/serverConfig.js';
 import { ExtraCollections } from '../models/extraCollections.js';
@@ -15,7 +15,7 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
     collections.voiceGenerator = new Collection();
 
     //This handles the event of a user joining or disconnecting from a voice channel
-    client.on('voiceStateUpdate', async (oldState, newState) => {
+    client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
         const { member, guild } = newState;
         const serverID = guild.id;
         const oldChannel = oldState.channel;

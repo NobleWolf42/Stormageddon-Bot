@@ -7,6 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+//#region Dependencies
+import { Events } from 'discord.js';
 //#endregion
 //#region Modules
 import { MongooseServerConfig } from '../models/serverConfig.js';
@@ -46,7 +48,7 @@ function autoRoleListener(client) {
         //#endregion
         console.log('autoRoleListener');
         //#region This event handel adding a role to a user when the react to the add role message
-        client.on('messageReactionAdd', (event) => __awaiter(this, void 0, void 0, function* () {
+        client.on(Events.MessageReactionAdd, (event) => __awaiter(this, void 0, void 0, function* () {
             console.log('addReact');
             const message = event.message;
             //This escapes if the reaction was in a vc or a dm
@@ -77,12 +79,12 @@ function autoRoleListener(client) {
         }));
         //#endregion
         //#region This handles when people remove a reaction in order to remove a role
-        client.on('messageReactionRemove', (event) => __awaiter(this, void 0, void 0, function* () {
+        client.on(Events.MessageReactionRemove, (event) => __awaiter(this, void 0, void 0, function* () {
             console.log('removeReact');
         }));
         //#endregion
         //#region This event handles adding/removing users from the role(s) they chose based on message reactions
-        // client.on('raw', async (event) => {
+        // client.on(Events.Raw, async (event) => {
         //     console.log(event);
         //     if (!events.hasOwnProperty(event.t)) {
         //         return;

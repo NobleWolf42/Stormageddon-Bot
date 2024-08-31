@@ -12,12 +12,12 @@ import { SoundCloudPlugin } from '@distube/soundcloud';
 import { SpotifyPlugin } from '@distube/spotify';
 import { YouTubePlugin } from '@distube/youtube';
 import { YtDlpPlugin } from '@distube/yt-dlp';
-import { Client, GatewayIntentBits, Partials } from 'discord.js';
+import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
 import { DisTube } from 'distube';
 import mongoose from 'mongoose';
 import { createJSONfiles } from './helpers/createFiles.js';
 import { autoRoleListener } from './internal/autoRole.js';
-import { musicHandle } from './internal/distubeHandling.js';
+import { musicHandler } from './internal/distubeHandling.js';
 import { PMHandling, messageHandling } from './internal/messageHandling.js';
 import { serverJoin } from './internal/serverJoin.js';
 import { addServerConfig, removeServerConfig } from './internal/settingsFunctions.js';
@@ -85,14 +85,14 @@ try {
     //Logs the bot into discord, using it's auth token
     client.login(process.env.authToken);
     //Logs the Bot info when bot starts
-    client.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
+    client.on(Events.ClientReady, () => __awaiter(void 0, void 0, void 0, function* () {
         console.log(`Logged in as ${client.user.tag}!`);
         var serverConfigs = yield MongooseServerConfig.find({ guildID: { $nin: [] } }).exec();
         autoRoleListener(client);
         messageHandling(client, distube, extraColl);
         PMHandling(client, distube, extraColl);
         serverJoin(client);
-        musicHandle(client, distube);
+        musicHandler(client, distube);
         joinToCreateHandling(client, extraColl);
         slashCommandHandling(client, distube);
         for (var guild in serverConfigs) {
@@ -102,13 +102,13 @@ try {
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
     }));
     //Adds New Servers to Config
-    client.on('guildCreate', (newGuild) => {
+    client.on(Events.GuildCreate, (newGuild) => {
         addServerConfig(newGuild.id);
         registerGuildSlashCommands(newGuild.id);
         console.log(`Joined New Server: ${newGuild.name}#${newGuild.id}`);
     });
     //Removes Server from Config
-    client.on('guildDelete', (oldGuild) => {
+    client.on(Events.GuildDelete, (oldGuild) => {
         removeServerConfig(oldGuild.id);
         console.log(`Left Server: ${oldGuild.name}#${oldGuild.id}`);
     });
@@ -117,6 +117,6 @@ catch (err) {
     console.log(err);
 }
 //Logs Errors
-client.on('warn', (info) => console.log(info));
-client.on('error', console.error);
+client.on(Events.Warn, (info) => console.log(info));
+client.on(Events.Error, console.error);
 //#endregion

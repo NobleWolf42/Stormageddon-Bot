@@ -1,11 +1,20 @@
-//#region Dependencies
-import { EmbedBuilder, ComponentType, ActionRowBuilder, Client, TextChannel } from 'discord.js';
-import { DisTube, Playlist, Queue, Song } from 'distube';
+//#region Imports
+import {
+    EmbedBuilder,
+    ComponentType,
+    ActionRowBuilder,
+    Client,
+    TextChannel,
+    Events as DiscordEvents,
+    VoiceState,
+    ButtonBuilder,
+    Interaction,
+    InteractionCollector,
+    InteractionButtonComponentData,
+} from 'discord.js';
+import { DisTube, Events, isVoiceChannelEmpty, Playlist, Queue, Song } from 'distube';
 import { Client as GeniusLyrics } from 'genius-lyrics';
 const Genius = new GeniusLyrics();
-//#endregion
-
-//#region Helpers
 import { addToLog } from '../helpers/errorLog.js';
 import { pause, skip, stop, volumeDown, volumeUp, repeat, loop, noLoop, shuffle, autoplay } from '../helpers/musicButtons.js';
 import { embedCustom } from '../helpers/embedSlashMessages.js';
@@ -17,12 +26,12 @@ import { embedCustom } from '../helpers/embedSlashMessages.js';
  * @param client - Discord.js Client Object
  * @param distube - DisTube Object
  */
-async function musicHandle(client: Client, distube: DisTube) {
+async function musicHandler(client: Client, distube: DisTube) {
     //This global variable is intentionally so, it makes it so when switching songs it removes the buttons from the old now playing message
     var nowPlayingMessage = {};
 
     //#region This handles the even issues when a new song starts playing
-    distube.on('playSong', async (queue: Queue, song: Song) => {
+    distube.on(Events.PLAY_SONG, async (queue, song) => {
         //Removes buttons from old now playing message
         if (nowPlayingMessage[queue.id]) {
             nowPlayingMessage[queue.id].edit({ components: [] });
@@ -43,8 +52,8 @@ async function musicHandle(client: Client, distube: DisTube) {
             embMsg.setImage(songPic.image);
         }
 
-        var buttons1 = new ActionRowBuilder().addComponents(pause, skip, stop, volumeDown, volumeUp);
-        var buttons2 = new ActionRowBuilder().addComponents(repeat, loop, noLoop, shuffle, autoplay);
+        var buttons1 = new ActionRowBuilder<ButtonBuilder>().addComponents(pause, skip, stop, volumeDown, volumeUp);
+        var buttons2 = new ActionRowBuilder<ButtonBuilder>().addComponents(repeat, loop, noLoop, shuffle, autoplay);
 
         nowPlayingMessage[queue.id] = await queue.textChannel.send({
             embeds: [embMsg],
@@ -57,6 +66,7 @@ async function musicHandle(client: Client, distube: DisTube) {
 
         //#region Handles the buttons for the now playing message
         collector.on('collect', async (interaction) => {
+            console.log(typeof interaction);
             switch (interaction.customId) {
                 case 'pause':
                     if (queue.paused) {
@@ -267,7 +277,7 @@ async function musicHandle(client: Client, distube: DisTube) {
     //#endregion
 
     //#region Handles when a song is added to the queue
-    distube.on('addSong', async (queue: Queue, song: Song) => {
+    distube.on(Events.ADD_SONG, async (queue, song) => {
         var embMsg = new EmbedBuilder()
             .setTitle('Song Added to Queue')
             .setColor('#0000FF')
@@ -278,21 +288,32 @@ async function musicHandle(client: Client, distube: DisTube) {
     });
     //#endregion
 
-    //#region Handles whe the vc is empty for some time
-    distube.on('empty', (queue: Queue) => {
-        var embMsg = new EmbedBuilder().setTitle(`Empty Voice Channel`).setColor('#0000FF').setDescription(`${queue.voiceChannel} is empty! Leaving the voice channel.`).setTimestamp();
+    //#region Handles whe the vc is empty for some time (FIX remove any once the bugfix mentioned here https://github.com/discordjs/discord.js/issues/10358 gets pushed into a built release)
+    client.on(DiscordEvents.VoiceStateUpdate, (oldState: any) => {
+        if (!oldState?.channel) {
+            return;
+        } else {
+            const queue = this.queues.get(oldState);
+            if (!queue) {
+                return;
+            } else {
+                if (isVoiceChannelEmpty(oldState)) {
+                    var embMsg = new EmbedBuilder().setTitle(`Empty Voice Channel`).setColor('#0000FF').setDescription(`${queue.voiceChannel} is empty! Leaving the voice channel.`).setTimestamp();
 
-        queue.textChannel.send({ embeds: [embMsg] });
-        queue.voice.leave();
-        if (nowPlayingMessage[queue.id]) {
-            nowPlayingMessage[queue.id].edit({ components: [] });
-            delete nowPlayingMessage[queue.id];
+                    queue.textChannel.send({ embeds: [embMsg] });
+                    queue.voice.leave();
+                    if (nowPlayingMessage[queue.id]) {
+                        nowPlayingMessage[queue.id].edit({ components: [] });
+                        delete nowPlayingMessage[queue.id];
+                    }
+                }
+            }
         }
     });
     //#endregion
 
     //#region Handles when the queue finishes
-    distube.on('finish', (queue: Queue) => {
+    distube.on(Events.FINISH, (queue) => {
         var embMsg = new EmbedBuilder().setTitle(`Finished Queue`).setColor('#0000FF').setDescription(`Queue is empty! Leaving the voice channel.`).setTimestamp();
 
         queue.textChannel.send({ embeds: [embMsg] });
@@ -305,7 +326,7 @@ async function musicHandle(client: Client, distube: DisTube) {
     //#endregion
 
     //#region Handles when the bot disconnects from a voice channel
-    distube.on('disconnect', async (queue: Queue) => {
+    distube.on(Events.DISCONNECT, async (queue) => {
         var embMsg = new EmbedBuilder().setTitle(`Disconnected`).setColor('#0000FF').setDescription(`Disconnected from voice.`).setTimestamp();
 
         queue.textChannel.send({ embeds: [embMsg] });
@@ -317,7 +338,7 @@ async function musicHandle(client: Client, distube: DisTube) {
     //#endregion
 
     //#region Handles when a playlist is added to the queue
-    distube.on('addList', (queue: Queue, playlist: Playlist) => {
+    distube.on(Events.ADD_LIST, (queue, playlist) => {
         var embMsg = new EmbedBuilder()
             .setTitle(`Playlist Added to Queue`)
             .setColor('#0000FF')
@@ -329,20 +350,20 @@ async function musicHandle(client: Client, distube: DisTube) {
     //#endregion
 
     //#region Error handling
-    distube.on('error', async (textChannel: TextChannel, e) => {
-        addToLog('fatal error', 'Distube', 'Distube', textChannel.guild.name, textChannel.name, e.message.slice(0, 2000), dClient);
+    distube.on(Events.ERROR, async (e, queue) => {
+        addToLog('fatal error', 'Distube', 'Distube', queue.textChannel.guild.name, queue.textChannel.name, e.message.slice(0, 2000), client);
         var embMsg = new EmbedBuilder()
             .setTitle(`Error Encountered`)
             .setColor('#FF0000')
             .setDescription(`Error: ${e.message.slice(0, 2000)}`)
             .setTimestamp();
 
-        textChannel.send({ embeds: [embMsg] });
+        queue.textChannel.send({ embeds: [embMsg] });
     });
     //#endregion
 }
 //#endregion
 
 //#region exports
-export { musicHandle };
+export { musicHandler };
 //#endregion

@@ -64,7 +64,7 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
         if (message.author.bot) return;
 
         // Make sure the commands can only be run in a server
-        if (!message.guild) return;
+        if (message.channel.isDMBased()) return;
         //#endregion
 
         //#region Sets prefix/defaultPrefix
@@ -194,7 +194,7 @@ function PMHandling(client: Client, distube: DisTube, collections: ExtraCollecti
         const coolDowns: Collection<string, Collection<string, number>> = new Collection();
         //#region Check permissions
         // Make sure the command can only be run in a PM
-        if (message.guild) return;
+        if (!message.channel.isDMBased()) return;
 
         // Make sure bots can't run this command
         if (message.author.bot) return;

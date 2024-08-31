@@ -1,5 +1,5 @@
 //#region Dependencies
-import { Client, DMChannel, Message, MessageReaction, PartialGroupDMChannel } from 'discord.js';
+import { Client, DMChannel, Events, Message, MessageReaction, PartialGroupDMChannel } from 'discord.js';
 //#endregion
 
 //#region Modules
@@ -41,7 +41,7 @@ async function autoRoleListener(client: Client) {
     console.log('autoRoleListener');
 
     //#region This event handel adding a role to a user when the react to the add role message
-    client.on('messageReactionAdd', async (event) => {
+    client.on(Events.MessageReactionAdd, async (event) => {
         console.log('addReact');
         const message = event.message;
 
@@ -78,13 +78,13 @@ async function autoRoleListener(client: Client) {
     //#endregion
 
     //#region This handles when people remove a reaction in order to remove a role
-    client.on('messageReactionRemove', async (event) => {
+    client.on(Events.MessageReactionRemove, async (event) => {
         console.log('removeReact');
     });
     //#endregion
 
     //#region This event handles adding/removing users from the role(s) they chose based on message reactions
-    // client.on('raw', async (event) => {
+    // client.on(Events.Raw, async (event) => {
     //     console.log(event);
     //     if (!events.hasOwnProperty(event.t)) {
     //         return;

@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Imports
-import { Collection, ChannelType, PermissionFlagsBits } from 'discord.js';
+import { Collection, ChannelType, PermissionFlagsBits, Events } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { MongooseServerConfig } from '../models/serverConfig.js';
 //#endregion
@@ -22,7 +22,7 @@ function joinToCreateHandling(client, collections) {
     return __awaiter(this, void 0, void 0, function* () {
         collections.voiceGenerator = new Collection();
         //This handles the event of a user joining or disconnecting from a voice channel
-        client.on('voiceStateUpdate', (oldState, newState) => __awaiter(this, void 0, void 0, function* () {
+        client.on(Events.VoiceStateUpdate, (oldState, newState) => __awaiter(this, void 0, void 0, function* () {
             const { member, guild } = newState;
             const serverID = guild.id;
             const oldChannel = oldState.channel;
