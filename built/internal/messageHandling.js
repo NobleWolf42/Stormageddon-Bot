@@ -7,37 +7,42 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Dependencies
+//#region Imports
 import { Collection } from 'discord.js';
-import { readdirSync } from 'fs';
-import { join } from 'path';
-//#endregion
-//#region Helpers
-import { warnCustom, errorCustom, embedCustom } from '../helpers/embedMessages';
-import { getRandomDoggo } from '../helpers/doggoLinks';
-import { addToLog } from '../helpers/errorLog';
-//#endregion
-//#region Modules
-import { MongooseServerConfig } from '../models/serverConfig';
+import { activeCommands } from '../commands/activeCommands.js';
+import { getRandomDoggo } from '../helpers/doggoLinks.js';
+import { embedCustom, errorCustom, warnCustom } from '../helpers/embedMessages.js';
+import { addToLog } from '../helpers/errorLog.js';
+import { MongooseServerConfig } from '../models/serverConfig.js';
 //#endregion
 //Regex that tests for str (prefix)
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 //#region Function for trying a command and catching the error if it fails
 /**
  * This function tries a command and catches the error if it fails.
- * @param {Client} client - Discord.js Client Object
- * @param {Message} message - Discord.js Message Object
- * @param {string} command - String of command keyword
- * @param {Array} args - Array of the words after the command keyword
+ * @param client - Discord.js Client Object
+ * @param message - Discord.js Message Object
+ * @param command - String of command keyword
+ * @param args - Array of the words after the command keyword
  */
 function tryCommand(client, message, command, args, distube) {
     try {
         command.execute(message, args, client, distube);
-        addToLog('success', command.name, message.author.tag, message.guild.name, message.channel.name);
+        if (message.channel.isDMBased()) {
+            addToLog('success', command.name, message.author.tag, 'DM', 'DM');
+        }
+        else {
+            addToLog('success', command.name, message.author.tag, message.guild.name, message.channel.name);
+        }
     }
     catch (error) {
-        addToLog('fatal error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
-        errorCustom(message, 'There was an error executing that command.', command.name, client);
+        if (message.channel.isDMBased()) {
+            addToLog('success', command.name, message.author.tag, 'DM', 'DM');
+        }
+        else {
+            addToLog('fatal error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+        }
+        errorCustom(message, `There was an error executing the ${command.name} command.`, command.name, client);
         console.log(error);
     }
 }
@@ -45,16 +50,15 @@ function tryCommand(client, message, command, args, distube) {
 //#region Function that starts the listener that handles executing all commands in servers
 /**
  * This function starts the listener that handles executing all commands in a server.
- * @param {Client} client - Discord.js Client Object
- * @param {DisTube} distube - DisTube Client Object
+ * @param client - Discord.js Client Object
+ * @param distube - DisTube Client Object
  */
 function messageHandling(client, distube) {
-    client.commands = new Collection();
     const coolDowns = new Collection();
+    client.commands = new Collection();
     //#region Imports commands from ./commands
-    const commandFiles = readdirSync(join(__dirname, '../commands')).filter((file) => file.endsWith('.js'));
-    for (const file of commandFiles) {
-        const command = require(join(__dirname, '../commands', `${file}`));
+    for (let i = 0; i < activeCommands.length; i++) {
+        const command = activeCommands[i];
         client.commands.set(command.name, command);
     }
     //#endregion
@@ -69,7 +73,7 @@ function messageHandling(client, distube) {
             return;
         //#endregion
         //#region Sets prefix/defaultPrefix
-        var serverID = message.channel.guild.id;
+        var serverID = message.guild.id;
         //Gets serverConfig from database
         var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
         var prefix = serverConfig.prefix;

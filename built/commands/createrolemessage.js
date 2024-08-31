@@ -136,4 +136,5 @@ module.exports = {
         message.deleted = true;
     },
 };
+export {};
 //#endregion

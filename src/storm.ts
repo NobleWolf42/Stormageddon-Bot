@@ -1,37 +1,27 @@
-//#region Initial Set-Up
-
-//#region Dependencies
+//#region Imports
+import { SoundCloudPlugin } from '@distube/soundcloud';
+import { SpotifyPlugin } from '@distube/spotify';
+import { YouTubePlugin } from '@distube/youtube';
+import { YtDlpPlugin } from '@distube/yt-dlp';
 import { Client, GatewayIntentBits, Partials } from 'discord.js';
 import { DisTube } from 'distube'; //sodium-native is used by this, stop deleting it you fool
-import { SpotifyPlugin } from '@distube/spotify';
-import { SoundCloudPlugin } from '@distube/soundcloud';
-import { YtDlpPlugin } from '@distube/yt-dlp';
-import { YouTubePlugin } from '@distube/youtube';
 import mongoose from 'mongoose';
-//#endregion
-
-//#region Helpers
 import { createJSONfiles } from './helpers/createFiles.js';
-//#endregion
-
-//Creates config and other required JSON files if they do not exist
-createJSONfiles();
-
-//#region Internals
-import { addServerConfig, removeServerConfig } from './internal/settingsFunctions.js';
 import { autoRoleListener } from './internal/autoRole.js';
+import { musicHandle, setDiscordClient } from './internal/distubeHandling.js';
 import { PMHandling, messageHandling } from './internal/messageHandling.js';
 import { serverJoin } from './internal/serverJoin.js';
-import { musicHandle, setDiscordClient } from './internal/distubeHandling.js';
+import { addServerConfig, removeServerConfig } from './internal/settingsFunctions.js';
+import { registerGlobalSlashCommands, registerGuildSlashCommands, slashCommandHandling } from './internal/slashCommandHandling.js';
 import { joinToCreateHandling } from './internal/voiceHandling.js';
-import { slashCommandHandling, registerGuildSlashCommands, registerGlobalSlashCommands } from './internal/slashCommandHandling.js';
 import { MongooseServerConfig } from './models/serverConfig.js';
+import { CommandClient } from './models/client.js';
 //#endregion
 
-//#endregion
+createJSONfiles();
 
 //#region Initialize Discord Bot
-const client = new Client({
+const ogClient = new Client({
     partials: [Partials.Channel, Partials.Message],
     intents: [
         GatewayIntentBits.DirectMessagePolls,
@@ -55,6 +45,8 @@ const client = new Client({
         GatewayIntentBits.MessageContent,
     ],
 });
+
+const client: CommandClient = ogClient;
 //#endregion
 
 //#region Initialize mongoDB/mongoose client
@@ -65,7 +57,7 @@ const db = mongoose.connect(process.env.mongoDBURI).then(() => {
 
 try {
     //#region Initialize Distube(music) Functionality
-    const distube = new DisTube(client, {
+    const distube = new DisTube(ogClient, {
         emitNewSongOnly: false,
         savePreviousSongs: true,
         plugins: [

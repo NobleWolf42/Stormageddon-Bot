@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //#endregion
 //#region Modules
-import { MongooseServerConfig } from '../models/serverConfig';
+import { MongooseServerConfig } from '../models/serverConfig.js';
 //#endregion
 //#region Function that generates embed fields
 /**

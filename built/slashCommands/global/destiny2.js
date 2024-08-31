@@ -60,4 +60,5 @@ function getClan(interaction, clan_name, client) {
     };
     request.send();
 }
+export {};
 //#endregion

@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { Collection, ChannelType, PermissionFlagsBits } from 'discord.js';
 //#endregion
 //#region Helpers
-import { addToLog } from '../helpers/errorLog';
+import { addToLog } from '../helpers/errorLog.js';
 //#endregion
 //#region Function that starts the listener that handles Join to Create Channels
 /**
@@ -87,5 +87,5 @@ function joinToCreateHandling(client) {
 }
 //#endregion
 //#region exports
-module.exports = { joinToCreateHandling };
+export { joinToCreateHandling };
 //#endregion

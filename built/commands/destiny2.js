@@ -64,4 +64,5 @@ function getClan(message, clan_name) {
     };
     request.send();
 }
+export {};
 //#endregion

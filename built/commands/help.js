@@ -228,4 +228,5 @@ function makeCommandPageList(commandClasses) {
     pageList += `DM, Server, and All.`;
     return pageList;
 }
+export {};
 //#endregion

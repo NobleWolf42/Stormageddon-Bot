@@ -68,4 +68,5 @@ module.exports = {
         }
     },
 };
+export {};
 //#endregion

@@ -13,9 +13,9 @@ import { Client as GeniusLyrics } from 'genius-lyrics';
 const Genius = new GeniusLyrics();
 //#endregion
 //#region Helpers
-import { addToLog } from '../helpers/errorLog';
-import { pause, skip, stop, volumeDown, volumeUp, repeat, loop, noLoop, shuffle, autoplay } from '../helpers/musicButtons';
-import { embedCustom } from '../helpers/embedSlashMessages';
+import { addToLog } from '../helpers/errorLog.js';
+import { pause, skip, stop, volumeDown, volumeUp, repeat, loop, noLoop, shuffle, autoplay } from '../helpers/musicButtons.js';
+import { embedCustom } from '../helpers/embedSlashMessages.js';
 //#endregion
 //Discord client
 var dClient = null;
