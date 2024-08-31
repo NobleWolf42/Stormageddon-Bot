@@ -3,7 +3,7 @@ import { GuildMemberRoleManager, Message, PermissionFlagsBits, RoleManager } fro
 //#endregion
 
 //#region Modules
-import { MongooseServerConfig } from '../models/serverConfig';
+import { MongooseServerConfig } from '../models/serverConfig.js';
 //#endregion
 
 //Sets up global vars for following functions This is horrible, fix this later, why are these global I hate past me it consume so much more cache read/writes

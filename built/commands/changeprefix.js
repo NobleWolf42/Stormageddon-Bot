@@ -7,17 +7,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Helpers
-const { errorNoAdmin, warnCustom, embedCustom, errorCustom } = require('../helpers/embedMessages.js');
-const { adminCheck } = require('../helpers/userPermissions.js');
-//#endregion
-//#region Models
+//#region Imports
+import { errorNoAdmin, warnCustom, embedCustom } from '../helpers/embedMessages.js';
+import { adminCheck } from '../helpers/userPermissions.js';
 import { MongooseServerConfig } from '../models/serverConfig.js';
 //#endregion
 //Regex that should eliminate anything that is not ~!$%^&*()_+-={}[]|:";'<>?,.
 const isSymbol = /[~!$%^&*()_+\-={}[\]\|:";'<>?,.]/;
 //#region This exports the changeprefix command with the information about it
-module.exports = {
+const changePrefixCommand = {
     name: 'changeprefix',
     type: ['Guild'],
     aliases: [],
@@ -28,7 +26,7 @@ module.exports = {
     execute(message, args, client, distube) {
         return __awaiter(this, void 0, void 0, function* () {
             var serverID = message.guild.id;
-            var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
+            var serverConfig = yield MongooseServerConfig.findById(serverID).exec();
             if (adminCheck(message)) {
                 if (args[0] != undefined) {
                     if (args[0].length == 1 && isSymbol.test(args[0])) {
@@ -40,17 +38,23 @@ module.exports = {
                         }, null, [], null, null);
                     }
                     else {
-                        return warnCustom(message, 'Bot Prefix Must be ONE of the following: ```~!$%^&*()_+-={}[]|:";\'<>?,./```', module.name);
+                        warnCustom(message, 'Bot Prefix Must be ONE of the following: ```~!$%^&*()_+-={}[]|:";\'<>?,./```', this.name);
+                        return;
                     }
                 }
                 else {
-                    return warnCustom(message, 'You must define a bot prefix.', module.name);
+                    warnCustom(message, 'You must define a bot prefix.', this.name);
+                    return;
                 }
             }
             else {
-                return errorNoAdmin(message, module.name);
+                errorNoAdmin(message, this.name);
+                return;
             }
         });
     },
 };
+//#endregion
+//#region Exports
+export default changePrefixCommand;
 //#endregion

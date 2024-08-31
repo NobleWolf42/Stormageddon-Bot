@@ -17,8 +17,8 @@ const msgFilter = (m) => !m.author.bot;
 //#region Function that sets modMail settings
 /**
  * This function runs the setup for the ModMail feature.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 function setModMail(message) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -79,8 +79,8 @@ function setModMail(message) {
 //#region Function that sets autoRole settings
 /**
  * This function runs the setup for the AutoRole feature.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 function setAutoRole(message) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -191,8 +191,8 @@ function setAutoRole(message) {
 //#region Function that sets joinRole settings
 /**
  * This function runs the setup for the JoinRole feature.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 function setJoinRole(message) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -251,8 +251,8 @@ function setJoinRole(message) {
 //#region Function that sets joinToCreateVC settings
 /**
  * This function runs the setup for the joinToCreateVC feature.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 function setJoinToCreateVC(message) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -311,8 +311,8 @@ function setJoinToCreateVC(message) {
 //#region Function that sets music settings
 /**
  * This function runs the setup for the Music feature.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 function setMusic(message) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -390,8 +390,8 @@ function setMusic(message) {
 //#region Function that sets general settings
 /**
  * This function runs the setup for the general features.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 function setGeneral(message) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -453,8 +453,8 @@ function setGeneral(message) {
 //#region Function that sets blame settings
 /**
  * This function runs the setup for the blame features.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 function setBlame(message) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -523,11 +523,11 @@ function setBlame(message) {
 //#region Function that adds/removes from blame lists in settings
 /**
  * This function takes several inputs and adds/removes someone from the blame command.
- * @param {string} serverID - The id for the server this is run in
- * @param {boolean} addTF - True makes it add the person, False removes them
- * @param {boolean} permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
- * @param {string} person - Name of the person
- * @returns {object} Server Config JSON
+ * @param serverID - The id for the server this is run in
+ * @param addTF - True makes it add the person, False removes them
+ * @param permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
+ * @param person - Name of the person
+ * @returns Server Config JSON
  */
 function addRemoveBlame(serverID, addTF, permTF, person) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -627,9 +627,9 @@ function addRemoveBlame(serverID, addTF, permTF, person) {
 //#region Function that changes offsets for blame lists in settings
 /**
  * This function takes several inputs and adds/removes someone from the blame command.
- * @param {string} serverID - The id for the server this is run in
- * @param {number} offset - Number of places to offset the blame by
- * @returns {JSON} Server Config JSON
+ * @param serverID - The id for the server this is run in
+ * @param offset - Number of places to offset the blame by
+ * @returns Server Config JSON
  */
 function changeBlameOffset(serverID, offset) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -647,8 +647,8 @@ function changeBlameOffset(serverID, offset) {
 //#region Function that runs all setup commands
 /**
  * This function runs the setup for all features.
- * @param {Message} message - Discord.js Message Object
- * @returns {void} Void
+ * @param message - Discord.js Message Object
+ * @returns Void
  */
 function setup(message) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -674,15 +674,16 @@ function setup(message) {
 //#region Function that builds config file
 /**
  * This function builds the serverConfig file with the provided JSON.
- * @param {ServerConfig} config - String of JSON
- * @param {string} serverID - String of numbers for the server/guild ID
- * @returns {void} Void
+ * @param config - String of JSON
+ * @param serverID - String of numbers for the server/guild ID
+ * @returns Void
  */
 function buildConfigFile(config, serverID) {
     return __awaiter(this, void 0, void 0, function* () {
         var newConfig;
         if ((yield MongooseServerConfig.findById(serverID).exec()) != null) {
             newConfig = yield MongooseServerConfig.findById(serverID).exec();
+            console.log(typeof newConfig);
             newConfig.setupNeeded = config.setupNeeded;
             newConfig.prefix = config.prefix;
             newConfig.autoRole = config.autoRole;
@@ -722,8 +723,8 @@ function buildConfigFile(config, serverID) {
 //#region Function that adds the provided server to the serverConfig file
 /**
  * This function adds the provided server to the serverConfig file.
- * @param {string} serverID - Server ID for server to be added
- * @returns {void} Void
+ * @param serverID - Server ID for server to be added
+ * @returns Void
  */
 function addServerConfig(serverID) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -783,8 +784,8 @@ function addServerConfig(serverID) {
 //#region Function that removes the provided server form the serverConfig file
 /**
  * This function removes the provided server from the serverConfig file
- * @param {string} serverID - Server ID for server to be added
- * @returns {void} Void
+ * @param serverID - Server ID for server to be added
+ * @returns Void
  */
 function removeServerConfig(serverID) {
     MongooseServerConfig.findByIdAndDelete(serverID);

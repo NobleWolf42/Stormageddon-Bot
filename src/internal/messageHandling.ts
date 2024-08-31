@@ -1,18 +1,13 @@
-//#region Dependencies
+//#region Imports
 import { Client, Collection, Message } from 'discord.js';
-import { readdirSync } from 'fs';
-import { join } from 'path';
-//#endregion
-
-//#region Helpers
-import { warnCustom, errorCustom, embedCustom } from '../helpers/embedMessages';
-import { getRandomDoggo } from '../helpers/doggoLinks';
-import { addToLog } from '../helpers/errorLog';
-//#endregion
-
-//#region Modules
-import { MongooseServerConfig } from '../models/serverConfig';
-import DisTube from 'distube';
+import { DisTube } from 'distube';
+import { activeCommands } from '../commands/activeCommands.js';
+import { getRandomDoggo } from '../helpers/doggoLinks.js';
+import { embedCustom, errorCustom, warnCustom } from '../helpers/embedMessages.js';
+import { addToLog } from '../helpers/errorLog.js';
+import { Command } from '../models/command.js';
+import { MongooseServerConfig } from '../models/serverConfig.js';
+import { ExtraCollections } from '../models/extraCollections.js';
 //#endregion
 
 //Regex that tests for str (prefix)
@@ -21,18 +16,26 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 //#region Function for trying a command and catching the error if it fails
 /**
  * This function tries a command and catches the error if it fails.
- * @param {Client} client - Discord.js Client Object
- * @param {Message} message - Discord.js Message Object
- * @param {string} command - String of command keyword
- * @param {Array} args - Array of the words after the command keyword
+ * @param client - Discord.js Client Object
+ * @param message - Discord.js Message Object
+ * @param command - String of command keyword
+ * @param args - Array of the words after the command keyword
  */
-function tryCommand(client: Client, message: Message, command, args: string[], distube: DisTube) {
+function tryCommand(client: Client, message: Message, command: Command, args: string[], distube: DisTube) {
     try {
         command.execute(message, args, client, distube);
-        addToLog('success', command.name, message.author.tag, message.guild.name, message.channel.name);
+        if (message.channel.isDMBased()) {
+            addToLog('success', command.name, message.author.tag, 'DM', 'DM');
+        } else {
+            addToLog('success', command.name, message.author.tag, message.guild.name, message.channel.name);
+        }
     } catch (error) {
-        addToLog('fatal error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
-        errorCustom(message, 'There was an error executing that command.', command.name, client);
+        if (message.channel.isDMBased()) {
+            addToLog('success', command.name, message.author.tag, 'DM', 'DM');
+        } else {
+            addToLog('fatal error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+        }
+        errorCustom(message, `There was an error executing the ${command.name} command.`, command.name, client);
         console.log(error);
     }
 }
@@ -41,18 +44,16 @@ function tryCommand(client: Client, message: Message, command, args: string[], d
 //#region Function that starts the listener that handles executing all commands in servers
 /**
  * This function starts the listener that handles executing all commands in a server.
- * @param {Client} client - Discord.js Client Object
- * @param {DisTube} distube - DisTube Client Object
+ * @param client - Discord.js Client Object
+ * @param distube - DisTube Client Object
  */
-function messageHandling(client, distube) {
-    client.commands = new Collection();
+function messageHandling(client: Client, distube: DisTube, collections: ExtraCollections) {
     const coolDowns: Collection<string, Collection<string, number>> = new Collection();
 
     //#region Imports commands from ./commands
-    const commandFiles = readdirSync(join(__dirname, '../commands')).filter((file) => file.endsWith('.js'));
-    for (const file of commandFiles) {
-        const command = require(join(__dirname, '../commands', `${file}`));
-        client.commands.set(command.name, command);
+    for (let i = 0; i < activeCommands.length; i++) {
+        const command = activeCommands[i];
+        collections.commands.set(command.name, command);
     }
     //#endregion
 
@@ -67,12 +68,11 @@ function messageHandling(client, distube) {
         //#endregion
 
         //#region Sets prefix/defaultPrefix
-        var serverID = message.channel.guild.id;
+        var serverID = message.guild.id;
 
         //Gets serverConfig from database
         var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
         var prefix = serverConfig.prefix;
-        message.prefix = prefix;
 
         //#endregion
 
@@ -133,7 +133,7 @@ function messageHandling(client, distube) {
         const commandName = args.shift().toLowerCase();
 
         //Checks to see if it is a valid command and ignores message if it is not
-        const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+        const command = collections.commands.get(commandName) || collections.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
         if (!command) return;
 
         if (!command.type.includes('Guild')) return;

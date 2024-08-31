@@ -3,11 +3,7 @@ const { XMLHttpRequest } = require('xmlhttprequest');
 //#endregion
 
 //#region Helpers
-const {
-    embedCustom,
-    warnCustom,
-    errorCustom,
-} = require('../helpers/embedMessages.js');
+const { embedCustom, warnCustom, errorCustom } = require('../helpers/embedMessages.js');
 //#endregion
 
 //#region This exports the destiny2 command with the information about it
@@ -18,8 +14,7 @@ module.exports = {
     coolDown: 0,
     class: 'gaming',
     usage: 'destiny2 clan ***INSERT-CLAN-NAME***',
-    description:
-        "Displays Destiny 2 clan's bio, avatar, motto, and founder. (Works in Direct Messages too.)",
+    description: "Displays Destiny 2 clan's bio, avatar, motto, and founder. (Works in Direct Messages too.)",
     execute(message, args, client, distube) {
         if (args[0] == 'clan') {
             var clanName = '';
@@ -34,11 +29,7 @@ module.exports = {
 
             getClan(message, clanName);
         } else {
-            return warnCustom(
-                message,
-                `You did not use the command correctly, please try again (${message.prefix}destiny2 clan ***INSERT-CLAN-NAME***).`,
-                module.name
-            );
+            return warnCustom(message, `You did not use the command correctly, please try again (${serverConfig.prefix}destiny2 clan ***INSERT-CLAN-NAME***).`, module.name);
         }
     },
 };
@@ -48,11 +39,7 @@ module.exports = {
 function getClan(message, clan_name) {
     // Request initialized and created
     var request = new XMLHttpRequest();
-    request.open(
-        'GET',
-        'https://www.bungie.net/Platform/GroupV2/Name/' + clan_name + '/1',
-        true
-    );
+    request.open('GET', 'https://www.bungie.net/Platform/GroupV2/Name/' + clan_name + '/1', true);
     request.setRequestHeader('X-API-KEY', process.env.d2ApiKey);
     request.onload = function () {
         // After request is received, parse it.
@@ -63,8 +50,7 @@ function getClan(message, clan_name) {
             if (data != null && data != undefined) {
                 var domain = 'https://www.bungie.net/';
 
-                var attachment =
-                    domain + data['founder']['bungieNetUserInfo']['iconPath'];
+                var attachment = domain + data['founder']['bungieNetUserInfo']['iconPath'];
                 return embedCustom(
                     message,
                     `${clan_name} Clan Information`,
@@ -80,25 +66,12 @@ function getClan(message, clan_name) {
                     null
                 );
             } else {
-                return warnCustom(
-                    message,
-                    `The Search for \`${clan_name}\` returned no results.\n Try something else.`,
-                    module.name
-                );
+                return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
             }
         } else if (error.ErrorStatus == 'ClanNotFound') {
-            return warnCustom(
-                message,
-                `The Search for \`${clan_name}\` returned no results.\n Try something else.`,
-                module.name
-            );
+            return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
         } else {
-            return errorCustom(
-                message,
-                'The Destiny API was unable to be reached at this time.\n Try again later.',
-                module.name,
-                client
-            );
+            return errorCustom(message, 'The Destiny API was unable to be reached at this time.\n Try again later.', module.name, client);
         }
     };
 

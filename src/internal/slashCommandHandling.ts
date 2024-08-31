@@ -1,33 +1,33 @@
-//#region Dependencies
-import { REST, Routes, Collection, Client } from 'discord.js';
+//#region Imports
+import { Collection, REST, Routes } from 'discord.js';
 import { readdirSync } from 'fs';
 import { join } from 'path';
-//#endregion
-
-//#region Helpers
-import { addToLog } from '../helpers/errorLog';
-import DisTube from 'distube';
+import { addToLog } from '../helpers/errorLog.js';
+import { DisTube } from 'distube';
+import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCommands/activeSlashCommands.js';
+import { CommandClient } from '../models/client.js';
 //#endregion
 
 //#region Slash Command Handler
-async function slashCommandHandling(client: Client, distube: DisTube) {
+async function slashCommandHandling(client: CommandClient, distube: DisTube) {
     client.slashCommands = new Collection();
 
-    const foldersPath = join(__dirname, '../slashCommands');
-    const commandFolders = readdirSync(foldersPath);
+    //This Loops through the active command array and adds them to the collection
+    for (let i = 0; i < activeGlobalSlashCommands.length; i++) {
+        const command = activeGlobalSlashCommands[i];
+        if ('data' in command && 'execute' in command) {
+            client.slashCommands.set(command.data.name, command);
+        } else {
+            console.log(`[WARNING] The command at activeGlobalSlashCommands[${i}] is missing a required "data" or "execute" property.`);
+        }
+    }
 
-    for (const folder of commandFolders) {
-        const commandsPath = join(foldersPath, folder);
-        const commandFiles = readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
-        for (const file of commandFiles) {
-            const filePath = join(commandsPath, file);
-            const command = require(filePath);
-            // Set a new item in the Collection with the key as the command name and the value as the exported module
-            if ('data' in command && 'execute' in command) {
-                client.slashCommands.set(command.data.name, command);
-            } else {
-                console.log(`[WARNING] The command at ${filePath} is missing a required "data" or "execute" property.`);
-            }
+    for (let i = 0; i < activeGuildSlashCommands.length; i++) {
+        const command = activeGuildSlashCommands[i];
+        if ('data' in command && 'execute' in command) {
+            client.slashCommands.set(command.data.name, command);
+        } else {
+            console.log(`[WARNING] The command at activeGuildSlashCommands[${i}] is missing a required "data" or "execute" property.`);
         }
     }
 
@@ -36,7 +36,8 @@ async function slashCommandHandling(client: Client, distube: DisTube) {
             return;
         }
 
-        const command = interaction.client.slashCommands.get(interaction.commandName);
+        const interactionClient: CommandClient = interaction.client;
+        const command = interactionClient.slashCommands.get(interaction.commandName);
 
         if (!command) {
             console.error(`No command matching ${interaction.commandName} was found.`);
@@ -71,16 +72,14 @@ async function slashCommandHandling(client: Client, distube: DisTube) {
 
 //#region Registers Guild Slash Commands with discord
 async function registerGuildSlashCommands(guildId) {
-    const commands = [];
-    const commandFiles = readdirSync(join(__dirname, '../slashCommands/guild')).filter((file) => file.endsWith('.js'));
-
-    // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
-    for (const file of commandFiles) {
-        const command = require(join(__dirname, '../slashCommands/guild', `${file}`));
+    let commands = [];
+    //This Loops through the active command array and adds them to the collection
+    for (let i = 0; i < activeGuildSlashCommands.length; i++) {
+        const command = activeGuildSlashCommands[i];
         if ('data' in command && 'execute' in command) {
             commands.push(command.data.toJSON());
         } else {
-            console.log(`[WARNING] The command at ../slashCommands/guild/${file} is missing a required "data" or "execute" property.`);
+            console.log(`[WARNING] The command at activeGuildSlashCommands[${i}] is missing a required "data" or "execute" property.`);
         }
     }
 
@@ -106,16 +105,14 @@ async function registerGuildSlashCommands(guildId) {
 
 //#region Registers Global Slash Commands with discord
 async function registerGlobalSlashCommands() {
-    const commands = [];
-    const commandFiles = readdirSync(join(__dirname, '../slashCommands/global')).filter((file) => file.endsWith('.js'));
-
-    // Grab the SlashCommandBuilder#toJSON() output of each command's data for deployment
-    for (const file of commandFiles) {
-        const command = require(join(__dirname, '../slashCommands/global', `${file}`));
+    let commands = [];
+    //This Loops through the active command array and adds them to the collection
+    for (let i = 0; i < activeGlobalSlashCommands.length; i++) {
+        const command = activeGlobalSlashCommands[i];
         if ('data' in command && 'execute' in command) {
             commands.push(command.data.toJSON());
         } else {
-            console.log(`[WARNING] The command at ../slashCommands/global/${file} is missing a required "data" or "execute" property.`);
+            console.log(`[WARNING] The command at activeGlobalSlashCommands[${i}] is missing a required "data" or "execute" property.`);
         }
     }
 
@@ -140,9 +137,5 @@ async function registerGlobalSlashCommands() {
 //#endregion
 
 //#region exports
-module.exports = {
-    slashCommandHandling,
-    registerGuildSlashCommands,
-    registerGlobalSlashCommands,
-};
+export { slashCommandHandling, registerGuildSlashCommands, registerGlobalSlashCommands };
 //#endregion

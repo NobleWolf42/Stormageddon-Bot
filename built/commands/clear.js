@@ -1,5 +1,5 @@
 //#region Helpers
-const { errorCustom, embedCustom, warnCustom, errorNoMod, } = require('../helpers/embedMessages.js');
+const { errorCustom, embedCustom, warnCustom, errorNoMod } = require('../helpers/embedMessages.js');
 const { modCheck } = require('../helpers/userPermissions.js');
 //#endregion
 //#region This exports the clear command with the information about it
@@ -17,7 +17,7 @@ module.exports = {
             return errorNoMod(message, module.name);
         }
         if (isNaN(amount)) {
-            return warnCustom(message, `That is not a valid number for the \`${message.prefix}clear\` command!`, module.name);
+            return warnCustom(message, `That is not a valid number for the \`${serverConfig.prefix}clear\` command!`, module.name);
         }
         else if (amount < 2 || amount > 99) {
             return warnCustom(message, `${args[0]} is an invalid number! __**Number must be between 1 and 100!**__`, module.name);
@@ -34,8 +34,7 @@ module.exports = {
                 }, null, [], null, null);
             })
                 .catch((err) => {
-                if (err.message ==
-                    'You can only bulk delete messages that are under 14 days old.') {
+                if (err.message == 'You can only bulk delete messages that are under 14 days old.') {
                     return warnCustom(message, `You can only bulk delete messages that are under 14 days old.`, module.name);
                 }
                 else {

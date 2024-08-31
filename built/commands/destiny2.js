@@ -2,7 +2,7 @@
 const { XMLHttpRequest } = require('xmlhttprequest');
 //#endregion
 //#region Helpers
-const { embedCustom, warnCustom, errorCustom, } = require('../helpers/embedMessages.js');
+const { embedCustom, warnCustom, errorCustom } = require('../helpers/embedMessages.js');
 //#endregion
 //#region This exports the destiny2 command with the information about it
 module.exports = {
@@ -27,7 +27,7 @@ module.exports = {
             getClan(message, clanName);
         }
         else {
-            return warnCustom(message, `You did not use the command correctly, please try again (${message.prefix}destiny2 clan ***INSERT-CLAN-NAME***).`, module.name);
+            return warnCustom(message, `You did not use the command correctly, please try again (${serverConfig.prefix}destiny2 clan ***INSERT-CLAN-NAME***).`, module.name);
         }
     },
 };

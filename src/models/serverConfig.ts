@@ -61,5 +61,5 @@ const MongooseServerConfig = model('Server-Config', serverConfigSchema);
 //#endregion
 
 //#region exports
-export { MongooseServerConfig, ServerConfig };
+export { MongooseServerConfig, ServerConfig, serverConfigSchema };
 //#endregion

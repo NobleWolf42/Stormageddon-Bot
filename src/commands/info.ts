@@ -1,19 +1,19 @@
-//#region Helpers
-const { embedCustom } = require('../helpers/embedMessages.js');
+//#region Imports
+import { embedCustom } from '../helpers/embedMessages.js';
+import { Command } from '../models/command.js';
 //#endregion
 
 //#region This exports the info command with the information about it
-module.exports = {
+const infoCommand: Command = {
     name: 'info',
     type: ['DM', 'Guild'],
     aliases: [],
     coolDown: 60,
     class: 'help',
     usage: 'info',
-    description:
-        "Displays information about the bot, it's creators, and where you can go if you would like to contribute to it. (Works in Direct Messages too.)",
+    description: "Displays information about the bot, it's creators, and where you can go if you would like to contribute to it. (Works in Direct Messages too.)",
     async execute(message, args, client, distube) {
-        return embedCustom(
+        embedCustom(
             message,
             'Information',
             '#200132',
@@ -27,3 +27,5 @@ module.exports = {
     },
 };
 //#endregion
+
+export default infoCommand;

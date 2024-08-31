@@ -1,10 +1,10 @@
 //#region Helpers
-import { Guild, Message } from 'discord.js';
+import { Message } from 'discord.js';
 import { embedCustom } from '../helpers/embedMessages.js';
 //#endregion
 
 //#region Modules
-import { MongooseServerConfig, ServerConfig } from '../models/serverConfig.js';
+import { MongooseServerConfig, ServerConfig, serverConfigSchema } from '../models/serverConfig.js';
 //#endregion
 
 //Defining a filter for the setup commands to ignore bot messages
@@ -13,8 +13,8 @@ const msgFilter = (m) => !m.author.bot;
 //#region Function that sets modMail settings
 /**
  * This function runs the setup for the ModMail feature.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 async function setModMail(message: Message) {
     var serverID = message.guild.id;
@@ -82,8 +82,8 @@ async function setModMail(message: Message) {
 //#region Function that sets autoRole settings
 /**
  * This function runs the setup for the AutoRole feature.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 async function setAutoRole(message: Message) {
     var serverID = message.guild.id;
@@ -218,8 +218,8 @@ async function setAutoRole(message: Message) {
 //#region Function that sets joinRole settings
 /**
  * This function runs the setup for the JoinRole feature.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 async function setJoinRole(message: Message) {
     var serverID = message.guild.id;
@@ -284,8 +284,8 @@ async function setJoinRole(message: Message) {
 //#region Function that sets joinToCreateVC settings
 /**
  * This function runs the setup for the joinToCreateVC feature.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 async function setJoinToCreateVC(message: Message) {
     var serverID = message.guild.id;
@@ -352,8 +352,8 @@ async function setJoinToCreateVC(message: Message) {
 //#region Function that sets music settings
 /**
  * This function runs the setup for the Music feature.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 async function setMusic(message: Message) {
     var serverID = message.guild.id;
@@ -439,8 +439,8 @@ async function setMusic(message: Message) {
 //#region Function that sets general settings
 /**
  * This function runs the setup for the general features.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 async function setGeneral(message: Message) {
     var serverID = message.guild.id;
@@ -508,8 +508,8 @@ async function setGeneral(message: Message) {
 //#region Function that sets blame settings
 /**
  * This function runs the setup for the blame features.
- * @param {Message} message - Discord.js Message Object
- * @returns {object} Server Config JSON
+ * @param message - Discord.js Message Object
+ * @returns Server Config JSON
  */
 async function setBlame(message: Message) {
     var serverID = message.guild.id;
@@ -584,11 +584,11 @@ async function setBlame(message: Message) {
 //#region Function that adds/removes from blame lists in settings
 /**
  * This function takes several inputs and adds/removes someone from the blame command.
- * @param {string} serverID - The id for the server this is run in
- * @param {boolean} addTF - True makes it add the person, False removes them
- * @param {boolean} permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
- * @param {string} person - Name of the person
- * @returns {object} Server Config JSON
+ * @param serverID - The id for the server this is run in
+ * @param addTF - True makes it add the person, False removes them
+ * @param permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
+ * @param person - Name of the person
+ * @returns Server Config JSON
  */
 async function addRemoveBlame(serverID: string, addTF: boolean, permTF: boolean, person: string) {
     //Pulls the current blame lists
@@ -687,9 +687,9 @@ async function addRemoveBlame(serverID: string, addTF: boolean, permTF: boolean,
 //#region Function that changes offsets for blame lists in settings
 /**
  * This function takes several inputs and adds/removes someone from the blame command.
- * @param {string} serverID - The id for the server this is run in
- * @param {number} offset - Number of places to offset the blame by
- * @returns {JSON} Server Config JSON
+ * @param serverID - The id for the server this is run in
+ * @param offset - Number of places to offset the blame by
+ * @returns Server Config JSON
  */
 async function changeBlameOffset(serverID: string, offset: number) {
     //Gets serverConfig from database
@@ -711,8 +711,8 @@ async function changeBlameOffset(serverID: string, offset: number) {
 //#region Function that runs all setup commands
 /**
  * This function runs the setup for all features.
- * @param {Message} message - Discord.js Message Object
- * @returns {void} Void
+ * @param message - Discord.js Message Object
+ * @returns Void
  */
 async function setup(message: Message) {
     var serverID = message.guild.id;
@@ -749,15 +749,16 @@ async function setup(message: Message) {
 //#region Function that builds config file
 /**
  * This function builds the serverConfig file with the provided JSON.
- * @param {ServerConfig} config - String of JSON
- * @param {string} serverID - String of numbers for the server/guild ID
- * @returns {void} Void
+ * @param config - String of JSON
+ * @param serverID - String of numbers for the server/guild ID
+ * @returns Void
  */
 async function buildConfigFile(config: ServerConfig, serverID: string) {
     var newConfig;
 
     if ((await MongooseServerConfig.findById(serverID).exec()) != null) {
         newConfig = await MongooseServerConfig.findById(serverID).exec();
+        console.log(typeof newConfig);
         newConfig.setupNeeded = config.setupNeeded;
         newConfig.prefix = config.prefix;
         newConfig.autoRole = config.autoRole;
@@ -797,8 +798,8 @@ async function buildConfigFile(config: ServerConfig, serverID: string) {
 //#region Function that adds the provided server to the serverConfig file
 /**
  * This function adds the provided server to the serverConfig file.
- * @param {string} serverID - Server ID for server to be added
- * @returns {void} Void
+ * @param serverID - Server ID for server to be added
+ * @returns Void
  */
 async function addServerConfig(serverID: string) {
     var defaultConfig: ServerConfig = {
@@ -858,8 +859,8 @@ async function addServerConfig(serverID: string) {
 //#region Function that removes the provided server form the serverConfig file
 /**
  * This function removes the provided server from the serverConfig file
- * @param {string} serverID - Server ID for server to be added
- * @returns {void} Void
+ * @param serverID - Server ID for server to be added
+ * @returns Void
  */
 function removeServerConfig(serverID: string) {
     MongooseServerConfig.findByIdAndDelete(serverID);

@@ -3,7 +3,7 @@ import { Client, GuildMember, Role } from 'discord.js';
 //#endregion
 
 //#region Modules
-import { MongooseServerConfig } from '../models/serverConfig';
+import { MongooseServerConfig } from '../models/serverConfig.js';
 //#endregion
 
 //#region Function that listens for someone to join a server and then gives them a role if this feature is enabled

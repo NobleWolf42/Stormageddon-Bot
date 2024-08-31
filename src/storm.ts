@@ -4,7 +4,7 @@ import { SpotifyPlugin } from '@distube/spotify';
 import { YouTubePlugin } from '@distube/youtube';
 import { YtDlpPlugin } from '@distube/yt-dlp';
 import { Client, GatewayIntentBits, Partials } from 'discord.js';
-import { DisTube } from 'distube'; //sodium-native is used by this, stop deleting it you fool
+import { DisTube } from 'distube';
 import mongoose from 'mongoose';
 import { createJSONfiles } from './helpers/createFiles.js';
 import { autoRoleListener } from './internal/autoRole.js';
@@ -14,14 +14,14 @@ import { serverJoin } from './internal/serverJoin.js';
 import { addServerConfig, removeServerConfig } from './internal/settingsFunctions.js';
 import { registerGlobalSlashCommands, registerGuildSlashCommands, slashCommandHandling } from './internal/slashCommandHandling.js';
 import { joinToCreateHandling } from './internal/voiceHandling.js';
+import { ExtraCollections } from './models/extraCollections.js';
 import { MongooseServerConfig } from './models/serverConfig.js';
-import { CommandClient } from './models/client.js';
 //#endregion
 
 createJSONfiles();
 
 //#region Initialize Discord Bot
-const ogClient = new Client({
+const client = new Client({
     partials: [Partials.Channel, Partials.Message],
     intents: [
         GatewayIntentBits.DirectMessagePolls,
@@ -45,19 +45,21 @@ const ogClient = new Client({
         GatewayIntentBits.MessageContent,
     ],
 });
-
-const client: CommandClient = ogClient;
 //#endregion
 
 //#region Initialize mongoDB/mongoose client
-const db = mongoose.connect(process.env.mongoDBURI).then(() => {
+mongoose.connect(process.env.mongoDBURI).then(() => {
     console.log('MongoDB Connected!');
 });
 //#endregion
 
+//#region Initialize ExtraCollections
+const extraColl = new ExtraCollections();
+//#endregion
+
 try {
     //#region Initialize Distube(music) Functionality
-    const distube = new DisTube(ogClient, {
+    const distube = new DisTube(client, {
         emitNewSongOnly: false,
         savePreviousSongs: true,
         plugins: [
@@ -86,12 +88,12 @@ try {
         console.log(`Logged in as ${client.user.tag}!`);
         var serverConfigs = await MongooseServerConfig.find({ guildID: { $nin: [] } }).exec();
         autoRoleListener(client);
-        messageHandling(client, distube);
+        messageHandling(client, distube, extraColl);
         PMHandling(client, distube);
         serverJoin(client);
         setDiscordClient(client);
         musicHandle(client, distube);
-        joinToCreateHandling(client);
+        joinToCreateHandling(client, extraColl);
         slashCommandHandling(client, distube);
         for (var guild in serverConfigs) {
             registerGuildSlashCommands(serverConfigs[guild].guildID);

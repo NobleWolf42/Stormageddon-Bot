@@ -53,13 +53,12 @@ function tryCommand(client, message, command, args, distube) {
  * @param client - Discord.js Client Object
  * @param distube - DisTube Client Object
  */
-function messageHandling(client, distube) {
+function messageHandling(client, distube, collections) {
     const coolDowns = new Collection();
-    client.commands = new Collection();
     //#region Imports commands from ./commands
     for (let i = 0; i < activeCommands.length; i++) {
         const command = activeCommands[i];
-        client.commands.set(command.name, command);
+        collections.commands.set(command.name, command);
     }
     //#endregion
     //Handles messages from guilds and their responses
@@ -77,7 +76,6 @@ function messageHandling(client, distube) {
         //Gets serverConfig from database
         var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
         var prefix = serverConfig.prefix;
-        message.prefix = prefix;
         //#endregion
         //#region Handles all @ Commands
         if (message.mentions.users.first() !== undefined) {
@@ -114,7 +112,7 @@ function messageHandling(client, distube) {
         const args = message.content.slice(matchedPrefix.length).trim().split(/ +/);
         const commandName = args.shift().toLowerCase();
         //Checks to see if it is a valid command and ignores message if it is not
-        const command = client.commands.get(commandName) || client.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
+        const command = collections.commands.get(commandName) || collections.commands.find((cmd) => cmd.aliases && cmd.aliases.includes(commandName));
         if (!command)
             return;
         if (!command.type.includes('Guild'))
