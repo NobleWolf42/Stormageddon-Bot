@@ -236,10 +236,10 @@ function setJoinRole(message) {
             enable = false;
         }
         var joinRole = {
-            enabled: false,
+            enable: false,
             role: '',
         };
-        joinRole.enabled = enable;
+        joinRole.enable = enable;
         joinRole.role = role;
         serverConfig.joinRole = joinRole;
         yield buildConfigFile(serverConfig, serverID);
@@ -339,7 +339,8 @@ function setMusic(message) {
                         time: 120000,
                         errors: ['time'],
                     });
-                    var djRoles = djRoleIn.first().mentions.roles.first().name;
+                    var djRoles = [];
+                    djRoles.push(djRoleIn.first().mentions.roles.first().name);
                     console.log(djRoles);
                 }
                 catch (err) {
@@ -364,7 +365,7 @@ function setMusic(message) {
             return message.channel.send('Timeout Occurred. Process Terminated.');
         }
         if (djRoles == undefined) {
-            djRoles = 'DJ';
+            djRoles = ['DJ'];
         }
         if (textChannel == undefined) {
             textChannel = 'Music';
@@ -374,7 +375,7 @@ function setMusic(message) {
         }
         var music = {
             enable: false,
-            djRoles: 'DJ',
+            djRoles: ['DJ'],
             textChannel: 'Music',
         };
         music.enable = enable;
@@ -680,43 +681,96 @@ function setup(message) {
  */
 function buildConfigFile(config, serverID) {
     return __awaiter(this, void 0, void 0, function* () {
-        var newConfig;
-        if ((yield MongooseServerConfig.findById(serverID).exec()) != null) {
-            newConfig = yield MongooseServerConfig.findById(serverID).exec();
-            console.log(typeof newConfig);
-            newConfig.setupNeeded = config.setupNeeded;
-            newConfig.prefix = config.prefix;
-            newConfig.autoRole = config.autoRole;
-            newConfig.joinRole = config.joinRole;
-            newConfig.music = config.music;
-            newConfig.general = config.general;
-            newConfig.modMail = config.modMail;
-            newConfig.JTCVC = config.JTCVC;
-            newConfig.blame = config.blame;
-        }
-        else {
-            const typeScriptNewConfig = {
+        try {
+            const update = {
                 _id: serverID,
                 guildID: serverID,
                 setupNeeded: config.setupNeeded,
                 prefix: config.prefix,
-                autoRole: config.autoRole,
-                joinRole: config.joinRole,
-                music: config.music,
-                general: config.general,
-                modMail: config.modMail,
-                JTCVC: config.JTCVC,
-                blame: config.blame,
+                autoRole: {
+                    enable: config.autoRole.enable,
+                    embedMessage: config.autoRole.embedMessage,
+                    embedFooter: config.autoRole.embedFooter,
+                    roles: config.autoRole.roles,
+                    reactions: config.autoRole.reactions,
+                },
+                joinRole: {
+                    enable: config.joinRole.enable,
+                    role: config.joinRole.role,
+                },
+                music: {
+                    enable: config.music.enable,
+                    djRoles: config.music.djRoles,
+                    textChannel: config.music.textChannel,
+                },
+                general: {
+                    adminRoles: config.general.adminRoles,
+                    modRoles: config.general.modRoles,
+                },
+                modMail: {
+                    enable: config.modMail.enable,
+                    modList: config.modMail.modList,
+                },
+                JTCVC: {
+                    enable: config.JTCVC.enable,
+                    voiceChannel: config.JTCVC.voiceChannel,
+                },
+                blame: {
+                    enable: config.blame.enable,
+                    cursing: config.blame.cursing,
+                    offset: config.blame.offset,
+                    permList: config.blame.permList,
+                    rotateList: config.blame.rotateList,
+                },
+                logging: {
+                    enable: config.logging.enable,
+                    loggingChannel: config.logging.loggingChannel,
+                    voice: {
+                        enable: config.logging.voice.enable,
+                    },
+                },
             };
-            newConfig = new MongooseServerConfig(Object.assign({}, typeScriptNewConfig));
-        }
-        try {
-            yield newConfig.save();
+            console.log(update.prefix);
+            yield MongooseServerConfig.findByIdAndUpdate(serverID, update, {
+                new: true,
+                upsert: true,
+            })
+                .exec()
+                .then((res) => {
+                console.log(res.toObject().prefix);
+            });
+            // if ((await MongooseServerConfig.findById(serverID).exec()) != null) {
+            //     newConfig.setupNeeded = config.setupNeeded;
+            //     newConfig.prefix = config.prefix;
+            //     newConfig.autoRole = config.autoRole;
+            //     newConfig.joinRole = config.joinRole;
+            //     newConfig.music = config.music;
+            //     newConfig.general = config.general;
+            //     newConfig.modMail = config.modMail;
+            //     newConfig.JTCVC = config.JTCVC;
+            //     newConfig.blame = config.blame;
+            //     await newConfig.save();
+            // } else {
+            //     const typeScriptNewConfig: ServerConfig = {
+            //         _id: serverID,
+            //         guildID: serverID,
+            //         setupNeeded: config.setupNeeded,
+            //         prefix: config.prefix,
+            //         autoRole: config.autoRole,
+            //         joinRole: config.joinRole,
+            //         music: config.music,
+            //         general: config.general,
+            //         modMail: config.modMail,
+            //         JTCVC: config.JTCVC,
+            //         blame: config.blame,
+            //     };
+            //     newConfig = new MongooseServerConfig({ ...typeScriptNewConfig });
+            //     await newConfig.save();
+            // }
         }
         catch (err) {
             console.log(err);
         }
-        return;
     });
 }
 //#endregion
@@ -741,12 +795,12 @@ function addServerConfig(serverID) {
                 reactions: ['🎵'],
             },
             joinRole: {
-                enabled: false,
+                enable: false,
                 role: 'Not Set Up',
             },
             music: {
                 enable: false,
-                djRoles: Array['Not Set Up'],
+                djRoles: ['Not Set Up'],
                 textChannel: 'Not Set Up',
             },
             general: {
@@ -772,7 +826,7 @@ function addServerConfig(serverID) {
                 enable: false,
                 loggingChannel: 'Not Set Up',
                 voice: {
-                    enabled: false,
+                    enable: false,
                 },
             },
         };

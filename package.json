@@ -30,7 +30,7 @@
         "xmlhttprequest": "^1.8.0"
     },
     "scripts": {
-        "start": "nodemon --env-file=.env ./built/storm.js",
+        "start": "nodemon --ignore ./built/data --watch built --env-file=.env ./built/storm.js",
         "build": "tsc -w -P .",
         "dev": "tsc -w -P . & nodemon --env-file=.env ./built/storm.js"
     },

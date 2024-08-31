@@ -9,8 +9,8 @@ import { MongooseServerConfig } from '../models/serverConfig.js';
 //#region Function that generates embed fields
 /**
  * Generates the embed fields and ties the emoji to their respective role from serverConfig.
- * @param {string} serverID - Server ID for the server the command is run in
- * @returns {map} A map of the emoji-role pairs
+ * @param serverID - Server ID for the server the command is run in
+ * @returns A map of the emoji-role pairs
  */
 async function generateEmbedFields(serverID: string) {
     //Gets serverConfig from database
@@ -28,7 +28,7 @@ async function generateEmbedFields(serverID: string) {
 //#region Function that starts the listening to see if a user hits a reaction, and gives them the role when they do react
 /**
  * This function starts the listening to see if a user hits a reaction, and gives them the role when they do react.
- * @param {Client} client - Discord.js Client Object
+ * @param client - Discord.js Client Object
  */
 async function autoRoleListener(client: Client) {
     //#region Readable constants

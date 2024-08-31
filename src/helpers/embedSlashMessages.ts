@@ -236,10 +236,10 @@ async function errorNoServerAdmin(interaction: InteractionWithChanges, commandNa
 //#region Function that takes several inputs and creates an embedded interaction for a custom error
 /**
  * This function takes several inputs and creates an embed interaction for a custom error.
- * @param {Interaction} interaction - A Discord.js Interaction Object
- * @param {string} text - String for the body of the embedded interaction
- * @param {string} commandName - String of the name of the command
- * @param {Client} client - A Discord.js Client Object
+ * @param interaction - A Discord.js Interaction Object
+ * @param text - String for the body of the embedded interaction
+ * @param commandName - String of the name of the command
+ * @param client - A Discord.js Client Object
  */
 async function errorCustom(interaction: InteractionWithChanges, text: string, commandName: string, client: Client) {
     const embMsg = new EmbedBuilder()

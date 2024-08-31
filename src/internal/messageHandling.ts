@@ -163,7 +163,8 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
         //#endregion
 
         //#region Checks to see if server is set up
-        if (command.name == 'setup') {
+        if (command.name == 'setup' || command.name == 'test') {
+            console.log(command.name);
             tryCommand(client, message, command, args, distube);
             return;
         } else if (serverConfig.setupNeeded) {
@@ -184,10 +185,10 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
 //#region Function that starts the listener that handles executing all commands in DMs
 /**
  * This function starts the listener that handles executing all commands in DMs.
- * @param {Client} client - Discord.js Client Object
- * @param {DisTube} distube - DisTube Client Object
+ * @param client - Discord.js Client Object
+ * @param distube - DisTube Client Object
  */
-function PMHandling(client, distube) {
+function PMHandling(client: Client, distube: DisTube) {
     client.on('messageCreate', (message) => {
         var prefix = '!';
         const coolDowns: Collection<string, Collection<string, number>> = new Collection();

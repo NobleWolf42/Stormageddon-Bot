@@ -137,7 +137,8 @@ function messageHandling(client, distube, collections) {
         setTimeout(() => timestamps.delete(message.author.id), coolDownAmount);
         //#endregion
         //#region Checks to see if server is set up
-        if (command.name == 'setup') {
+        if (command.name == 'setup' || command.name == 'test') {
+            console.log(command.name);
             tryCommand(client, message, command, args, distube);
             return;
         }
@@ -153,8 +154,8 @@ function messageHandling(client, distube, collections) {
 //#region Function that starts the listener that handles executing all commands in DMs
 /**
  * This function starts the listener that handles executing all commands in DMs.
- * @param {Client} client - Discord.js Client Object
- * @param {DisTube} distube - DisTube Client Object
+ * @param client - Discord.js Client Object
+ * @param distube - DisTube Client Object
  */
 function PMHandling(client, distube) {
     client.on('messageCreate', (message) => {

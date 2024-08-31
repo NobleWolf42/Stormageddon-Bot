@@ -1,6 +1,6 @@
 //#region Dependencies
 import { EmbedBuilder, ComponentType, ActionRowBuilder, Client, TextChannel } from 'discord.js';
-import DisTube, { Playlist, Queue, Song } from 'distube';
+import { DisTube, Playlist, Queue, Song } from 'distube';
 import { Client as GeniusLyrics } from 'genius-lyrics';
 const Genius = new GeniusLyrics();
 //#endregion
@@ -14,8 +14,8 @@ import { embedCustom } from '../helpers/embedSlashMessages.js';
 //Discord client
 var dClient = null;
 
-//#region Gets discord client and set it to global variable
-function setDiscordClient(client) {
+//#region Gets discord client and set it to global variable, Why did I do this? it sucks, FIX
+function setDiscordClient(client: Client) {
     dClient = client;
 }
 //#endregion
@@ -23,8 +23,8 @@ function setDiscordClient(client) {
 //#region music handler, controls the persistent functions of the music feature
 /**
  * Controls the persistent functions of the music feature.
- * @param {client} client - Discord.js Client Object
- * @param {distube} distube - DisTube Object
+ * @param client - Discord.js Client Object
+ * @param distube - DisTube Object
  */
 async function musicHandle(client: Client, distube: DisTube) {
     //This global variable is intentionally so, it makes it so when switching songs it removes the buttons from the old now playing message
@@ -339,7 +339,7 @@ async function musicHandle(client: Client, distube: DisTube) {
 
     //#region Error handling
     distube.on('error', async (textChannel: TextChannel, e) => {
-        addToLog('Fatal Error', 'Distube', 'Distube', textChannel.guild.name, textChannel.name, e.message.slice(0, 2000), dClient);
+        addToLog('fatal error', 'Distube', 'Distube', textChannel.guild.name, textChannel.name, e.message.slice(0, 2000), dClient);
         var embMsg = new EmbedBuilder()
             .setTitle(`Error Encountered`)
             .setColor('#FF0000')

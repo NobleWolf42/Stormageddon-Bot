@@ -7,9 +7,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { MongooseServerConfig } from '../models/serverConfig';
+import { MongooseServerConfig } from '../models/serverConfig.js';
 //#region This exports the test command with the information about it
-module.exports = {
+const testCommand = {
     name: 'test',
     type: ['Guild', 'DM'],
     aliases: [],
@@ -21,23 +21,40 @@ module.exports = {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('Start Test Command');
             const typeScriptNewConfig = {
-                _id: 'testIDString2',
-                guildID: 'not working',
+                _id: '644966355875135499',
+                guildID: '644966355875135499',
+                prefix: '*',
+                setupNeeded: false,
+                autoRole: {
+                    enable: true,
+                    embedMessage: 'heal',
+                    embedFooter: 'If you do not receive the role try reacting again.',
+                    roles: ["Sona's DJs", 'Stormageddon Bot Contributor'],
+                    reactions: ['<:scareddog:818542767449702420>', '🐕'],
+                },
+                joinRole: { enable: true, role: 'Queue Bot Contributor' },
+                music: { enable: true, djRoles: ["Sona's DJs"], textChannel: 'botspam' },
+                general: { adminRoles: ['Server Admin'], modRoles: ['Server Admin', 'Some people the devs know'] },
+                modMail: { modList: ['201665936049176576'], enable: true },
+                JTCVC: { enable: true, voiceChannel: '1259031022658650132' },
+                blame: { enable: true, cursing: true, permList: [], rotateList: ['HypersonicWalrus', 'NobleWolf42', 'End3rman07', 'Chris Cugs', '--Thor--', 'spacewulf'], offset: -2 },
+                logging: { enable: true, voice: { enable: true }, loggingChannel: '649109835404673024' },
             };
-            const newConfig = new MongooseServerConfig(Object.assign({}, typeScriptNewConfig));
-            try {
-                yield newConfig.save();
-            }
-            catch (err) {
-                console.log(err);
-            }
-            console.log(yield MongooseServerConfig.findById('testIDString2').exec());
-            console.log(yield MongooseServerConfig.findById('testIDString').exec());
+            //const newConfig = new MongooseServerConfig({ ...typeScriptNewConfig });
+            //try {
+            //    await newConfig.save();
+            //} catch (err) {
+            //    console.log(err);
+            //}
+            //console.log(await MongooseServerConfig.findById('testIDString2').exec());
+            //console.log(await MongooseServerConfig.findById('testIDString').exec());
             console.log('testing nodemon');
-            var testConfig = yield MongooseServerConfig.findById('testIDString2').exec();
-            testConfig.guildID = 'working';
-            testConfig.save();
+            yield MongooseServerConfig.findByIdAndUpdate(message.guild.id, typeScriptNewConfig).exec();
+            //testConfig.save();
         });
     },
 };
+//#endregion
+//#region Exports
+export default testCommand;
 //#endregion

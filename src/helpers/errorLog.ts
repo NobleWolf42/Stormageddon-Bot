@@ -37,9 +37,9 @@ function addToLog(logType: 'success' | 'warning' | 'alert' | 'fatal error', comm
         };
 
         if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
-            logAdd.Log = `${logType} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel}`;
+            logAdd.Log = `${capitalize(logType)} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel}`;
         } else {
-            logAdd.Log = `${logType} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel} --- Error: ${error}`;
+            logAdd.Log = `${capitalize(logType)} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel} --- Error: ${error}`;
         }
 
         console.log(logAdd.Log);

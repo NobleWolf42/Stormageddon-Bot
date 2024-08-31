@@ -1,6 +1,8 @@
 //#region Imports
 import { errorNoAdmin, warnCustom, embedCustom } from '../helpers/embedMessages.js';
 import { adminCheck } from '../helpers/userPermissions.js';
+import { buildConfigFile } from '../internal/settingsFunctions.js';
+import { Command } from '../models/command.js';
 import { MongooseServerConfig } from '../models/serverConfig.js';
 //#endregion
 
@@ -8,7 +10,7 @@ import { MongooseServerConfig } from '../models/serverConfig.js';
 const isSymbol = /[~!$%^&*()_+\-={}[\]\|:";'<>?,.]/;
 
 //#region This exports the changeprefix command with the information about it
-const changePrefixCommand = {
+const changePrefixCommand: Command = {
     name: 'changeprefix',
     type: ['Guild'],
     aliases: [],
@@ -18,20 +20,20 @@ const changePrefixCommand = {
     description: 'Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-=[];\',.{}|:"<>?```',
     async execute(message, args, client, distube) {
         var serverID = message.guild.id;
-        var serverConfig = await MongooseServerConfig.findById(serverID).exec();
+        var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
         if (adminCheck(message)) {
             if (args[0] != undefined) {
                 if (args[0].length == 1 && isSymbol.test(args[0])) {
                     serverConfig.prefix = args[0];
 
-                    serverConfig.save();
+                    buildConfigFile(serverConfig, serverID);
 
-                    return embedCustom(
+                    embedCustom(
                         message,
                         'Current Prefix:',
                         '#008000',
-                        `Current Prefix is ${args[0]}`,
+                        `Current Prefix is ${serverConfig.prefix}`,
                         {
                             text: `Requested by ${message.author.tag}`,
                             iconURL: null,
@@ -43,15 +45,12 @@ const changePrefixCommand = {
                     );
                 } else {
                     warnCustom(message, 'Bot Prefix Must be ONE of the following: ```~!$%^&*()_+-={}[]|:";\'<>?,./```', this.name);
-                    return;
                 }
             } else {
                 warnCustom(message, 'You must define a bot prefix.', this.name);
-                return;
             }
         } else {
             errorNoAdmin(message, this.name);
-            return;
         }
     },
 };

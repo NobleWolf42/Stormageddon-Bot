@@ -19,7 +19,7 @@ import { embedCustom } from '../helpers/embedSlashMessages.js';
 //#endregion
 //Discord client
 var dClient = null;
-//#region Gets discord client and set it to global variable
+//#region Gets discord client and set it to global variable, Why did I do this? it sucks, FIX
 function setDiscordClient(client) {
     dClient = client;
 }
@@ -27,8 +27,8 @@ function setDiscordClient(client) {
 //#region music handler, controls the persistent functions of the music feature
 /**
  * Controls the persistent functions of the music feature.
- * @param {client} client - Discord.js Client Object
- * @param {distube} distube - DisTube Object
+ * @param client - Discord.js Client Object
+ * @param distube - DisTube Object
  */
 function musicHandle(client, distube) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -205,7 +205,7 @@ function musicHandle(client, distube) {
         //#endregion
         //#region Error handling
         distube.on('error', (textChannel, e) => __awaiter(this, void 0, void 0, function* () {
-            addToLog('Fatal Error', 'Distube', 'Distube', textChannel.guild.name, textChannel.name, e.message.slice(0, 2000), dClient);
+            addToLog('fatal error', 'Distube', 'Distube', textChannel.guild.name, textChannel.name, e.message.slice(0, 2000), dClient);
             var embMsg = new EmbedBuilder()
                 .setTitle(`Error Encountered`)
                 .setColor('#FF0000')

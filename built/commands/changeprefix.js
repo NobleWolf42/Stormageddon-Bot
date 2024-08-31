@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //#region Imports
 import { errorNoAdmin, warnCustom, embedCustom } from '../helpers/embedMessages.js';
 import { adminCheck } from '../helpers/userPermissions.js';
+import { buildConfigFile } from '../internal/settingsFunctions.js';
 import { MongooseServerConfig } from '../models/serverConfig.js';
 //#endregion
 //Regex that should eliminate anything that is not ~!$%^&*()_+-={}[]|:";'<>?,.
@@ -26,30 +27,27 @@ const changePrefixCommand = {
     execute(message, args, client, distube) {
         return __awaiter(this, void 0, void 0, function* () {
             var serverID = message.guild.id;
-            var serverConfig = yield MongooseServerConfig.findById(serverID).exec();
+            var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
             if (adminCheck(message)) {
                 if (args[0] != undefined) {
                     if (args[0].length == 1 && isSymbol.test(args[0])) {
                         serverConfig.prefix = args[0];
-                        serverConfig.save();
-                        return embedCustom(message, 'Current Prefix:', '#008000', `Current Prefix is ${args[0]}`, {
+                        buildConfigFile(serverConfig, serverID);
+                        embedCustom(message, 'Current Prefix:', '#008000', `Current Prefix is ${serverConfig.prefix}`, {
                             text: `Requested by ${message.author.tag}`,
                             iconURL: null,
                         }, null, [], null, null);
                     }
                     else {
                         warnCustom(message, 'Bot Prefix Must be ONE of the following: ```~!$%^&*()_+-={}[]|:";\'<>?,./```', this.name);
-                        return;
                     }
                 }
                 else {
                     warnCustom(message, 'You must define a bot prefix.', this.name);
-                    return;
                 }
             }
             else {
                 errorNoAdmin(message, this.name);
-                return;
             }
         });
     },

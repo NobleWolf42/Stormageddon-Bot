@@ -4,7 +4,7 @@ import { embedCustom } from '../helpers/embedMessages.js';
 //#endregion
 
 //#region Modules
-import { MongooseServerConfig, ServerConfig, serverConfigSchema } from '../models/serverConfig.js';
+import { MongooseServerConfig, ServerConfig } from '../models/serverConfig.js';
 //#endregion
 
 //Defining a filter for the setup commands to ignore bot messages
@@ -265,10 +265,10 @@ async function setJoinRole(message: Message) {
     }
 
     var joinRole = {
-        enabled: false,
+        enable: false,
         role: '',
     };
-    joinRole.enabled = enable;
+    joinRole.enable = enable;
     joinRole.role = role;
 
     serverConfig.joinRole = joinRole;
@@ -383,7 +383,8 @@ async function setMusic(message: Message) {
                     time: 120000,
                     errors: ['time'],
                 });
-                var djRoles = djRoleIn.first().mentions.roles.first().name;
+                var djRoles = [];
+                djRoles.push(djRoleIn.first().mentions.roles.first().name);
                 console.log(djRoles);
             } catch (err) {
                 return message.channel.send('Timeout Occurred. Process Terminated.');
@@ -408,7 +409,7 @@ async function setMusic(message: Message) {
     }
 
     if (djRoles == undefined) {
-        djRoles = 'DJ';
+        djRoles = ['DJ'];
     }
     if (textChannel == undefined) {
         textChannel = 'Music';
@@ -419,7 +420,7 @@ async function setMusic(message: Message) {
 
     var music = {
         enable: false,
-        djRoles: 'DJ',
+        djRoles: ['DJ'],
         textChannel: 'Music',
     };
     music.enable = enable;
@@ -754,44 +755,98 @@ async function setup(message: Message) {
  * @returns Void
  */
 async function buildConfigFile(config: ServerConfig, serverID: string) {
-    var newConfig;
-
-    if ((await MongooseServerConfig.findById(serverID).exec()) != null) {
-        newConfig = await MongooseServerConfig.findById(serverID).exec();
-        console.log(typeof newConfig);
-        newConfig.setupNeeded = config.setupNeeded;
-        newConfig.prefix = config.prefix;
-        newConfig.autoRole = config.autoRole;
-        newConfig.joinRole = config.joinRole;
-        newConfig.music = config.music;
-        newConfig.general = config.general;
-        newConfig.modMail = config.modMail;
-        newConfig.JTCVC = config.JTCVC;
-        newConfig.blame = config.blame;
-    } else {
-        const typeScriptNewConfig: ServerConfig = {
+    try {
+        const update = {
             _id: serverID,
             guildID: serverID,
             setupNeeded: config.setupNeeded,
             prefix: config.prefix,
-            autoRole: config.autoRole,
-            joinRole: config.joinRole,
-            music: config.music,
-            general: config.general,
-            modMail: config.modMail,
-            JTCVC: config.JTCVC,
-            blame: config.blame,
+            autoRole: {
+                enable: config.autoRole.enable,
+                embedMessage: config.autoRole.embedMessage,
+                embedFooter: config.autoRole.embedFooter,
+                roles: config.autoRole.roles,
+                reactions: config.autoRole.reactions,
+            },
+            joinRole: {
+                enable: config.joinRole.enable,
+                role: config.joinRole.role,
+            },
+            music: {
+                enable: config.music.enable,
+                djRoles: config.music.djRoles,
+                textChannel: config.music.textChannel,
+            },
+            general: {
+                adminRoles: config.general.adminRoles,
+                modRoles: config.general.modRoles,
+            },
+            modMail: {
+                enable: config.modMail.enable,
+                modList: config.modMail.modList,
+            },
+            JTCVC: {
+                enable: config.JTCVC.enable,
+                voiceChannel: config.JTCVC.voiceChannel,
+            },
+            blame: {
+                enable: config.blame.enable,
+                cursing: config.blame.cursing,
+                offset: config.blame.offset,
+                permList: config.blame.permList,
+                rotateList: config.blame.rotateList,
+            },
+            logging: {
+                enable: config.logging.enable,
+                loggingChannel: config.logging.loggingChannel,
+                voice: {
+                    enable: config.logging.voice.enable,
+                },
+            },
         };
+        console.log(update.prefix);
+        await MongooseServerConfig.findByIdAndUpdate(serverID, update, {
+            new: true,
+            upsert: true,
+        })
+            .exec()
+            .then((res) => {
+                console.log(res.toObject().prefix);
+            });
 
-        newConfig = new MongooseServerConfig({ ...typeScriptNewConfig });
-    }
+        // if ((await MongooseServerConfig.findById(serverID).exec()) != null) {
+        //     newConfig.setupNeeded = config.setupNeeded;
+        //     newConfig.prefix = config.prefix;
+        //     newConfig.autoRole = config.autoRole;
+        //     newConfig.joinRole = config.joinRole;
+        //     newConfig.music = config.music;
+        //     newConfig.general = config.general;
+        //     newConfig.modMail = config.modMail;
+        //     newConfig.JTCVC = config.JTCVC;
+        //     newConfig.blame = config.blame;
+        //     await newConfig.save();
+        // } else {
+        //     const typeScriptNewConfig: ServerConfig = {
+        //         _id: serverID,
+        //         guildID: serverID,
+        //         setupNeeded: config.setupNeeded,
+        //         prefix: config.prefix,
+        //         autoRole: config.autoRole,
+        //         joinRole: config.joinRole,
+        //         music: config.music,
+        //         general: config.general,
+        //         modMail: config.modMail,
+        //         JTCVC: config.JTCVC,
+        //         blame: config.blame,
+        //     };
 
-    try {
-        await newConfig.save();
+        //     newConfig = new MongooseServerConfig({ ...typeScriptNewConfig });
+
+        //     await newConfig.save();
+        // }
     } catch (err) {
         console.log(err);
     }
-    return;
 }
 //#endregion
 
@@ -815,12 +870,12 @@ async function addServerConfig(serverID: string) {
             reactions: ['🎵'],
         },
         joinRole: {
-            enabled: false,
+            enable: false,
             role: 'Not Set Up',
         },
         music: {
             enable: false,
-            djRoles: Array['Not Set Up'],
+            djRoles: ['Not Set Up'],
             textChannel: 'Not Set Up',
         },
         general: {
@@ -846,7 +901,7 @@ async function addServerConfig(serverID: string) {
             enable: false,
             loggingChannel: 'Not Set Up',
             voice: {
-                enabled: false,
+                enable: false,
             },
         },
     };

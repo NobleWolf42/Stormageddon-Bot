@@ -53,9 +53,9 @@ function serverRoleUpdate(sRole, serverID) {
             }
         }
         //Loops through the DJ Role Names, pushing them to an array
-        for (let key in serverConfig.general.modRoles) {
+        for (let key in serverConfig.music.djRoles) {
             //Pushes role IDs to DJs if they Match serverConfig.music.djRoles
-            if (basicServerRoles[serverConfig.music.djRoles] != undefined) {
+            if (basicServerRoles[serverConfig.music.djRoles[key]] != undefined) {
                 djRoleIDs.push(basicServerRoles[serverConfig.music.djRoles[key]]);
             }
         }
@@ -156,7 +156,7 @@ function djCheck(message) {
         return true;
     }
     serverRoleUpdate(serverRolesArray, serverID);
-    if (djRoleIDs != 0) {
+    if (djRoleIDs.length != 0) {
         for (let key in userRolesArray) {
             for (let a in djRoleIDs) {
                 if (userRolesArray[key] == djRoleIDs[a]) {
