@@ -8,13 +8,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Imports
-import { EmbedBuilder, ComponentType, ActionRowBuilder, Events as DiscordEvents, } from 'discord.js';
+import { ActionRowBuilder, ComponentType, Events as DiscordEvents, EmbedBuilder } from 'discord.js';
 import { Events, isVoiceChannelEmpty } from 'distube';
 import { Client as GeniusLyrics } from 'genius-lyrics';
-const Genius = new GeniusLyrics();
-import { addToLog } from '../helpers/errorLog.js';
-import { pause, skip, stop, volumeDown, volumeUp, repeat, loop, noLoop, shuffle, autoplay } from '../helpers/musicButtons.js';
 import { embedCustom } from '../helpers/embedSlashMessages.js';
+import { addToLog } from '../helpers/errorLog.js';
+import { autoplay, loop, noLoop, pause, repeat, shuffle, skip, stop, volumeDown, volumeUp } from '../helpers/musicButtons.js';
+const Genius = new GeniusLyrics();
 //#endregion
 //#region music handler, controls the persistent functions of the music feature
 /**
@@ -53,7 +53,6 @@ function musicHandler(client, distube) {
             });
             //#region Handles the buttons for the now playing message
             collector.on('collect', (interaction) => __awaiter(this, void 0, void 0, function* () {
-                console.log(typeof interaction);
                 switch (interaction.customId) {
                     case 'pause':
                         if (queue.paused) {
@@ -160,7 +159,7 @@ function musicHandler(client, distube) {
                 return;
             }
             else {
-                const queue = this.queues.get(oldState);
+                const queue = distube.queues.get(oldState.guild.id);
                 if (!queue) {
                     return;
                 }

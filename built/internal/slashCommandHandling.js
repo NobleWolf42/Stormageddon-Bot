@@ -13,14 +13,14 @@ import { addToLog } from '../helpers/errorLog.js';
 import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCommands/activeSlashCommands.js';
 //#endregion
 //#region Slash Command Handler
-function slashCommandHandling(client, distube) {
+function slashCommandHandling(client, distube, collections) {
     return __awaiter(this, void 0, void 0, function* () {
-        client.slashCommands = new Collection();
+        collections.slashCommands = new Collection();
         //This Loops through the active command array and adds them to the collection
         for (let i = 0; i < activeGlobalSlashCommands.length; i++) {
             const command = activeGlobalSlashCommands[i];
             if ('data' in command && 'execute' in command) {
-                client.slashCommands.set(command.data.name, command);
+                collections.slashCommands.set(command.data.name, command);
             }
             else {
                 console.log(`[WARNING] The command at activeGlobalSlashCommands[${i}] is missing a required "data" or "execute" property.`);
@@ -29,7 +29,7 @@ function slashCommandHandling(client, distube) {
         for (let i = 0; i < activeGuildSlashCommands.length; i++) {
             const command = activeGuildSlashCommands[i];
             if ('data' in command && 'execute' in command) {
-                client.slashCommands.set(command.data.name, command);
+                collections.slashCommands.set(command.data.name, command);
             }
             else {
                 console.log(`[WARNING] The command at activeGuildSlashCommands[${i}] is missing a required "data" or "execute" property.`);
@@ -39,8 +39,7 @@ function slashCommandHandling(client, distube) {
             if (!interaction.isChatInputCommand()) {
                 return;
             }
-            const interactionClient = interaction.client;
-            const command = interactionClient.slashCommands.get(interaction.commandName);
+            const command = collections.slashCommands.get(interaction.commandName);
             if (!command) {
                 console.error(`No command matching ${interaction.commandName} was found.`);
                 return;
@@ -50,12 +49,13 @@ function slashCommandHandling(client, distube) {
             }
             catch (error) {
                 console.error(error);
-                var guild = null;
-                if (interaction.guildId) {
-                    guild = interaction.guild.name;
-                }
                 var channel = yield client.channels.fetch(interaction.channelId);
-                addToLog('fatal error', command.data.name, interaction.user.username, guild, channel.name, error, client);
+                if (channel.isDMBased()) {
+                    addToLog('fatal error', command.data.name, interaction.user.username, 'DM', 'DM', error, client);
+                }
+                else {
+                    addToLog('fatal error', command.data.name, interaction.user.username, interaction.guild.name, channel.name, error, client);
+                }
                 if (interaction.replied || interaction.deferred) {
                     yield interaction.followUp({
                         content: 'There was an error while executing this command!',
@@ -138,5 +138,5 @@ function registerGlobalSlashCommands() {
 }
 //#endregion
 //#region exports
-export { slashCommandHandling, registerGuildSlashCommands, registerGlobalSlashCommands };
+export { registerGlobalSlashCommands, registerGuildSlashCommands, slashCommandHandling };
 //#endregion

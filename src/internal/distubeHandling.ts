@@ -1,23 +1,11 @@
 //#region Imports
-import {
-    EmbedBuilder,
-    ComponentType,
-    ActionRowBuilder,
-    Client,
-    TextChannel,
-    Events as DiscordEvents,
-    VoiceState,
-    ButtonBuilder,
-    Interaction,
-    InteractionCollector,
-    InteractionButtonComponentData,
-} from 'discord.js';
-import { DisTube, Events, isVoiceChannelEmpty, Playlist, Queue, Song } from 'distube';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, Client, ComponentType, Events as DiscordEvents, EmbedBuilder, VoiceState } from 'discord.js';
+import { DisTube, Events, isVoiceChannelEmpty } from 'distube';
 import { Client as GeniusLyrics } from 'genius-lyrics';
-const Genius = new GeniusLyrics();
-import { addToLog } from '../helpers/errorLog.js';
-import { pause, skip, stop, volumeDown, volumeUp, repeat, loop, noLoop, shuffle, autoplay } from '../helpers/musicButtons.js';
 import { embedCustom } from '../helpers/embedSlashMessages.js';
+import { addToLog } from '../helpers/errorLog.js';
+import { autoplay, loop, noLoop, pause, repeat, shuffle, skip, stop, volumeDown, volumeUp } from '../helpers/musicButtons.js';
+const Genius = new GeniusLyrics();
 //#endregion
 
 //#region music handler, controls the persistent functions of the music feature
@@ -65,8 +53,7 @@ async function musicHandler(client: Client, distube: DisTube) {
         });
 
         //#region Handles the buttons for the now playing message
-        collector.on('collect', async (interaction) => {
-            console.log(typeof interaction);
+        collector.on('collect', async (interaction: ButtonInteraction) => {
             switch (interaction.customId) {
                 case 'pause':
                     if (queue.paused) {
@@ -289,11 +276,11 @@ async function musicHandler(client: Client, distube: DisTube) {
     //#endregion
 
     //#region Handles whe the vc is empty for some time (FIX remove any once the bugfix mentioned here https://github.com/discordjs/discord.js/issues/10358 gets pushed into a built release)
-    client.on(DiscordEvents.VoiceStateUpdate, (oldState: any) => {
+    client.on(DiscordEvents.VoiceStateUpdate, (oldState) => {
         if (!oldState?.channel) {
             return;
         } else {
-            const queue = this.queues.get(oldState);
+            const queue = distube.queues.get(oldState.guild.id);
             if (!queue) {
                 return;
             } else {

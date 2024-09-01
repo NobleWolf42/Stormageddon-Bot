@@ -93,7 +93,7 @@ try {
         serverJoin(client);
         musicHandler(client, distube);
         joinToCreateHandling(client, extraColl);
-        slashCommandHandling(client, distube);
+        slashCommandHandling(client, distube, extraColl);
         for (var guild in serverConfigs) {
             registerGuildSlashCommands(serverConfigs[guild].guildID);
         }

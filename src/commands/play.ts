@@ -1,4 +1,6 @@
 //#region Import
+//import('discord.js', { with: { 'resolution-mode': 'import' } }).VoiceBasedChannel;
+import { VoiceBasedChannel } from 'discord.js';
 import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
 import { Command } from '../models/command.js';
@@ -36,7 +38,7 @@ const playCommand: Command = {
         }
 
         var song = args.join(' ');
-        var voiceChannel = message.member.voice.channel;
+        var voiceChannel: VoiceBasedChannel = message.member.voice.channel;
         var queue = distube.getQueue(message.guild.id);
 
         //Checks to see if user is in a voice channel

@@ -44,7 +44,6 @@ function serverRoleUpdate(sRole, serverID) {
                 adminRoleIDs.push(basicServerRoles[serverConfig.general.adminRoles[key]]);
             }
         }
-        console.log(adminRoleIDs);
         //Loops through the Mod Role Names, pushing them to an array
         for (let key in serverConfig.general.modRoles) {
             //Pushes role IDs to Mods if they Match serverConfig.general.modRoles

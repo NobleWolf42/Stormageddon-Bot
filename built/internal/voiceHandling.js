@@ -63,8 +63,6 @@ function joinToCreateHandling(client, collections) {
                 if (oldChannel == null) {
                     return;
                 }
-                console.log(collections.voiceGenerator);
-                console.log(collections.voiceGenerator.get(oldChannel.id));
                 if (oldChannel != null && collections.voiceGenerator.get(oldChannel.id) && oldChannel.members.size == 0) {
                     //This deletes a channel if it was created byt the bot and is empty
                     oldChannel.delete();

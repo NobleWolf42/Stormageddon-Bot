@@ -1,22 +1,20 @@
 //#region Imports
-import { Collection, REST, Routes } from 'discord.js';
-import { readdirSync } from 'fs';
-import { join } from 'path';
-import { addToLog } from '../helpers/errorLog.js';
+import { ApplicationCommand, Client, Collection, REST, Routes } from 'discord.js';
 import { DisTube } from 'distube';
+import { addToLog } from '../helpers/errorLog.js';
 import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCommands/activeSlashCommands.js';
-import { CommandClient } from '../models/client.js';
+import { ExtraCollections } from '../models/extraCollections.js';
 //#endregion
 
 //#region Slash Command Handler
-async function slashCommandHandling(client: CommandClient, distube: DisTube) {
-    client.slashCommands = new Collection();
+async function slashCommandHandling(client: Client, distube: DisTube, collections: ExtraCollections) {
+    collections.slashCommands = new Collection();
 
     //This Loops through the active command array and adds them to the collection
     for (let i = 0; i < activeGlobalSlashCommands.length; i++) {
         const command = activeGlobalSlashCommands[i];
         if ('data' in command && 'execute' in command) {
-            client.slashCommands.set(command.data.name, command);
+            collections.slashCommands.set(command.data.name, command);
         } else {
             console.log(`[WARNING] The command at activeGlobalSlashCommands[${i}] is missing a required "data" or "execute" property.`);
         }
@@ -25,7 +23,7 @@ async function slashCommandHandling(client: CommandClient, distube: DisTube) {
     for (let i = 0; i < activeGuildSlashCommands.length; i++) {
         const command = activeGuildSlashCommands[i];
         if ('data' in command && 'execute' in command) {
-            client.slashCommands.set(command.data.name, command);
+            collections.slashCommands.set(command.data.name, command);
         } else {
             console.log(`[WARNING] The command at activeGuildSlashCommands[${i}] is missing a required "data" or "execute" property.`);
         }
@@ -36,8 +34,7 @@ async function slashCommandHandling(client: CommandClient, distube: DisTube) {
             return;
         }
 
-        const interactionClient: CommandClient = interaction.client;
-        const command = interactionClient.slashCommands.get(interaction.commandName);
+        const command = collections.slashCommands.get(interaction.commandName);
 
         if (!command) {
             console.error(`No command matching ${interaction.commandName} was found.`);
@@ -48,12 +45,12 @@ async function slashCommandHandling(client: CommandClient, distube: DisTube) {
             await command.execute(client, interaction, distube);
         } catch (error) {
             console.error(error);
-            var guild = null;
-            if (interaction.guildId) {
-                guild = interaction.guild.name;
-            }
             var channel = await client.channels.fetch(interaction.channelId);
-            addToLog('fatal error', command.data.name, interaction.user.username, guild, channel.name, error, client);
+            if (channel.isDMBased()) {
+                addToLog('fatal error', command.data.name, interaction.user.username, 'DM', 'DM', error, client);
+            } else {
+                addToLog('fatal error', command.data.name, interaction.user.username, interaction.guild.name, channel.name, error, client);
+            }
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp({
                     content: 'There was an error while executing this command!',
@@ -71,7 +68,7 @@ async function slashCommandHandling(client: CommandClient, distube: DisTube) {
 //#endregion
 
 //#region Registers Guild Slash Commands with discord
-async function registerGuildSlashCommands(guildId) {
+async function registerGuildSlashCommands(guildId: string) {
     let commands = [];
     //This Loops through the active command array and adds them to the collection
     for (let i = 0; i < activeGuildSlashCommands.length; i++) {
@@ -94,7 +91,7 @@ async function registerGuildSlashCommands(guildId) {
             // The put method is used to fully refresh all commands in the guild with the current set
             const data = await rest.put(Routes.applicationGuildCommands(process.env.clientID, guildId), { body: commands });
 
-            console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+            console.log(`Successfully reloaded ${(<ApplicationCommand[]>data).length} application (/) commands.`);
         } catch (error) {
             // And of course, make sure you catch and log any errors!
             console.error(error);
@@ -127,7 +124,7 @@ async function registerGlobalSlashCommands() {
             // The put method is used to fully refresh all commands in the guild with the current set
             const data = await rest.put(Routes.applicationCommands(process.env.clientID), { body: commands });
 
-            console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+            console.log(`Successfully reloaded ${(<ApplicationCommand[]>data).length} application (/) commands.`);
         } catch (error) {
             // And of course, make sure you catch and log any errors!
             console.error(error);
@@ -137,5 +134,5 @@ async function registerGlobalSlashCommands() {
 //#endregion
 
 //#region exports
-export { slashCommandHandling, registerGuildSlashCommands, registerGlobalSlashCommands };
+export { registerGlobalSlashCommands, registerGuildSlashCommands, slashCommandHandling };
 //#endregion

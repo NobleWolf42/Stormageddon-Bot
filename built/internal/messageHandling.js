@@ -138,7 +138,6 @@ function messageHandling(client, distube, collections) {
         //#endregion
         //#region Checks to see if server is set up
         if (command.name == 'setup' || command.name == 'test') {
-            console.log(command.name);
             tryCommand(client, message, command, args, distube);
             return;
         }

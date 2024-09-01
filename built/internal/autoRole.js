@@ -46,7 +46,7 @@ function autoRoleListener(client) {
             MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
         };
         //#endregion
-        console.log('autoRoleListener');
+        console.log('AutoRoleListener Started');
         //#region This event handel adding a role to a user when the react to the add role message
         client.on(Events.MessageReactionAdd, (event) => __awaiter(this, void 0, void 0, function* () {
             console.log('addReact');
