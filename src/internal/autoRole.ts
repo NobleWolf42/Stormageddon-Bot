@@ -4,6 +4,7 @@ import { Client, DMChannel, Events, Message, MessageReaction, PartialGroupDMChan
 
 //#region Modules
 import { MongooseServerConfig } from '../models/serverConfig.js';
+import { MongooseAutoRoleList } from '../models/autoRoleList.js';
 //#endregion
 
 //#region Function that generates embed fields
@@ -31,12 +32,13 @@ async function generateEmbedFields(serverID: string) {
  * @param client - Discord.js Client Object
  */
 async function autoRoleListener(client: Client) {
-    //#region Readable constants
-    // This makes the events used a bit more readable
-    const events = {
-        MESSAGE_REACTION_ADD: 'messageReactionAdd',
-        MESSAGE_REACTION_REMOVE: 'messageReactionRemove',
-    };
+    //#region Loads Messages to Listen to
+    let botConfig = await MongooseAutoRoleList.find({}).exec();
+    for (let key in botConfig) {
+        for (let i in botConfig[key].channelIDs) {
+            await client.channels.fetch(botConfig[key].channelIDs[i]);
+        }
+    }
     //#endregion
     console.log('AutoRoleListener Started');
 
