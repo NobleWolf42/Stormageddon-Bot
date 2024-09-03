@@ -174,7 +174,7 @@ function musicHandler(client, distube) {
             }
             else {
                 const queue = distube.queues.get(oldState.guild.id);
-                if (!queue || !oldState.channel.) {
+                if (!queue) {
                     return;
                 }
                 else {
