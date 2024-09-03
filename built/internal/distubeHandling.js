@@ -14,6 +14,7 @@ import { Client as GeniusLyrics } from 'genius-lyrics';
 import { embedCustom } from '../helpers/embedSlashMessages.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { autoplay, loop, noLoop, pause, repeat, shuffle, skip, stop, volumeDown, volumeUp } from '../helpers/musicButtons.js';
+import { LogType } from '../models/loggingModel.js';
 const Genius = new GeniusLyrics();
 //#endregion
 //#region IsVoiceEmpty TODO: Fix this so it uses this function from Distube (isVoiceChannelEmpty)
@@ -224,7 +225,7 @@ function musicHandler(client, distube) {
         //#endregion
         //#region Error handling
         distube.on(Events.ERROR, (e, queue) => __awaiter(this, void 0, void 0, function* () {
-            addToLog('fatal error', 'Distube', 'Distube', queue.textChannel.guild.name, queue.textChannel.name, e.message.slice(0, 2000), client);
+            addToLog(LogType.FatalError, 'Distube', 'Distube', queue.textChannel.guild.name, queue.textChannel.name, e.message.slice(0, 2000), client);
             var embMsg = new EmbedBuilder()
                 .setTitle(`Error Encountered`)
                 .setColor('#FF0000')
