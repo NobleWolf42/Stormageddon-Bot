@@ -35,12 +35,10 @@ async function autoRoleListener(client: Client) {
     let botConfig = await MongooseAutoRoleList.find({}).exec();
     for (let i in botConfig) {
         for (let j of botConfig[i].channelIDs) {
-            console.log(j);
             const channel = await client.channels.fetch(j[0]);
             if (channel && !channel.isDMBased() && channel.isTextBased()) {
                 for (let k in j) {
                     if (j[k] != j[0]) {
-                        console.log(j[k]);
                         await channel.messages.fetch(j[k]);
                     }
                 }
