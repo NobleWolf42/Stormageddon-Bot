@@ -10,10 +10,9 @@
     "repository": "github:NobleWolf42/Stormageddon-Bot.git",
     "bugs": "https://github.com/NobleWolf42/Stormageddon-Bot/issues",
     "engines": {
-        "node": ">=22.0.0"
+        "node": ">=20.17.0"
     },
     "dependencies": {
-        "@discordjs/opus": "^0.9.0",
         "@discordjs/voice": "^0.17.0",
         "@distube/soundcloud": "^2.0.2",
         "@distube/spotify": "^2.0.2",

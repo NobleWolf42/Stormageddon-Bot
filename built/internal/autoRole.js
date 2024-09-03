@@ -44,7 +44,12 @@ function autoRoleListener(client) {
         let botConfig = yield MongooseAutoRoleList.find({}).exec();
         for (let key in botConfig) {
             for (let i in botConfig[key].channelIDs) {
-                yield client.channels.fetch(botConfig[key].channelIDs[i]);
+                yield client.channels.fetch(i);
+                for (let j in botConfig[key].channelIDs[i]) {
+                    if (!client.channels.cache.get(i).isDMBased() && client.channels.cache.get(i).isTextBased() && !client.channels.cache.get(i)) {
+                        yield client.channels.cache.get(i).messages.fetch(botConfig[key].channelIDs[i][j]);
+                    }
+                }
             }
         }
         //#endregion

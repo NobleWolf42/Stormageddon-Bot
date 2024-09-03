@@ -1,5 +1,5 @@
 //#region Imports
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, Client, ComponentType, Events as DiscordEvents, EmbedBuilder, VoiceState } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, Client, ComponentType, Events as DiscordEvents, EmbedBuilder } from 'discord.js';
 import { DisTube, Events, isVoiceChannelEmpty } from 'distube';
 import { Client as GeniusLyrics } from 'genius-lyrics';
 import { embedCustom } from '../helpers/embedSlashMessages.js';

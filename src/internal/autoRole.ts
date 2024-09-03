@@ -1,5 +1,5 @@
 //#region Dependencies
-import { Client, DMChannel, Events, Message, MessageReaction, PartialGroupDMChannel } from 'discord.js';
+import { Channel, ChannelType, Client, Events } from 'discord.js';
 //#endregion
 
 //#region Modules
@@ -36,7 +36,12 @@ async function autoRoleListener(client: Client) {
     let botConfig = await MongooseAutoRoleList.find({}).exec();
     for (let key in botConfig) {
         for (let i in botConfig[key].channelIDs) {
-            await client.channels.fetch(botConfig[key].channelIDs[i]);
+            await client.channels.fetch(i);
+            for (let j in botConfig[key].channelIDs[i]) {
+                if (!client.channels.cache.get(i).isDMBased() && client.channels.cache.get(i).isTextBased() && !client.channels.cache.get(i)) {
+                    await client.channels.cache.get(i).messages.fetch(botConfig[key].channelIDs[i][j]);
+                }
+            }
         }
     }
     //#endregion
