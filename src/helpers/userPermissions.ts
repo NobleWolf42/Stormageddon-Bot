@@ -6,24 +6,20 @@ import { GuildMemberRoleManager, Message, PermissionFlagsBits, RoleManager } fro
 import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 
-//Sets up global vars for following functions This is horrible, fix this later, why are these global I hate past me it consume so much more cache read/writes
-let adminRoleIDs = [];
-let djRoleIDs = [];
-let modRoleIDs = [];
-
 //#region Function that calls the server roles and saves the roles that match the adminRoleIDs, modRoleIDs, and djRoleIDs in serverConfig to their own arrays
 /**
  * This function calls the server roles and saves the roles that match the adminRoleIDs, modRoleIDs, and djRoleIDs in serverConfig to their own arrays (global).
  * @param sRole - Array of the roles in a server
  * @param serverID - The server ID
+ * @returns An Array of roleID arrays [adminRoleIDs, modRoleIDs, djRoleIDs]
  */
 async function serverRoleUpdate(sRole: RoleManager, serverID: string) {
     //Gets serverConfig from database
     var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
-    adminRoleIDs = [];
-    djRoleIDs = [];
-    modRoleIDs = [];
+    let adminRoleIDs = [];
+    let modRoleIDs = [];
+    let djRoleIDs = [];
 
     //Sets Local Variables
     var basicServerRoles = {};
@@ -57,6 +53,8 @@ async function serverRoleUpdate(sRole: RoleManager, serverID: string) {
             djRoleIDs.push(basicServerRoles[serverConfig.music.djRoles[key]]);
         }
     }
+
+    return [adminRoleIDs, modRoleIDs, djRoleIDs];
 }
 //#endregion
 
@@ -85,12 +83,12 @@ async function adminCheck(message: Message) {
     }
 
     //Calls a function that updates the server role information
-    serverRoleUpdate(serverRolesArray, serverID);
+    const permArrays = serverRoleUpdate(serverRolesArray, serverID);
 
     //Checks to see if any of the user role ids match any of the admin role ids
     for (let key in userRolesArray) {
-        for (let a in adminRoleIDs) {
-            if (userRolesArray[key] == adminRoleIDs[a]) {
+        for (let a in permArrays[0]) {
+            if (userRolesArray[key] == permArrays[0][a]) {
                 return true;
             }
         }
@@ -124,12 +122,12 @@ function modCheck(message: Message) {
     }
 
     //Calls a function that updates the server role information
-    serverRoleUpdate(serverRolesArray, serverID);
+    const permArrays = serverRoleUpdate(serverRolesArray, serverID);
 
     //Checks to see if user role ids match any of the mod role ids
     for (let key in userRolesArray) {
-        for (let a in modRoleIDs) {
-            if (userRolesArray[key] == modRoleIDs[a]) {
+        for (let a in permArrays[1]) {
+            if (userRolesArray[key] == permArrays[1][a]) {
                 return true;
             }
         }
@@ -162,12 +160,12 @@ function djCheck(message: Message) {
         return true;
     }
 
-    serverRoleUpdate(serverRolesArray, serverID);
+    const permArrays = serverRoleUpdate(serverRolesArray, serverID);
 
-    if (djRoleIDs.length != 0) {
+    if (permArrays[2].length != 0) {
         for (let key in userRolesArray) {
-            for (let a in djRoleIDs) {
-                if (userRolesArray[key] == djRoleIDs[a]) {
+            for (let a in permArrays[2]) {
+                if (userRolesArray[key] == permArrays[2][a]) {
                     return true;
                 }
             }
