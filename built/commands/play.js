@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
-import { MongooseServerConfig } from '../models/serverConfig.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 //#region This exports the play command with the information about it
 const playCommand = {

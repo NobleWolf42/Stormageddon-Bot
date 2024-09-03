@@ -2,8 +2,8 @@
 import { errorNoAdmin, warnCustom, embedCustom } from '../helpers/embedMessages.js';
 import { adminCheck } from '../helpers/userPermissions.js';
 import { buildConfigFile } from '../internal/settingsFunctions.js';
-import { Command } from '../models/command.js';
-import { MongooseServerConfig } from '../models/serverConfig.js';
+import { Command } from '../models/commandModel.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 
 //Regex that should eliminate anything that is not ~!$%^&*()_+-={}[]|:";'<>?,.

@@ -9,12 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //#region Imports
 import { ActionRowBuilder, ComponentType, Events as DiscordEvents, EmbedBuilder } from 'discord.js';
-import { Events, isVoiceChannelEmpty } from 'distube';
+import { Events } from 'distube';
 import { Client as GeniusLyrics } from 'genius-lyrics';
 import { embedCustom } from '../helpers/embedSlashMessages.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { autoplay, loop, noLoop, pause, repeat, shuffle, skip, stop, volumeDown, volumeUp } from '../helpers/musicButtons.js';
 const Genius = new GeniusLyrics();
+//#endregion
+//#region IsVoiceEmpty TODO: Fix this so it uses this function from Distube (isVoiceChannelEmpty)
+export function isVoiceEmpty(voiceState) {
+    var _a, _b, _c;
+    const guild = voiceState.guild;
+    const clientId = (_a = voiceState.client.user) === null || _a === void 0 ? void 0 : _a.id;
+    if (!guild || !clientId)
+        return false;
+    const voiceChannel = (_c = (_b = guild.members.me) === null || _b === void 0 ? void 0 : _b.voice) === null || _c === void 0 ? void 0 : _c.channel;
+    if (!voiceChannel)
+        return false;
+    const members = voiceChannel.members.filter((m) => !m.user.bot);
+    return !members.size;
+}
 //#endregion
 //#region music handler, controls the persistent functions of the music feature
 /**
@@ -153,7 +167,7 @@ function musicHandler(client, distube) {
             queue.textChannel.send({ embeds: [embMsg] });
         }));
         //#endregion
-        //#region Handles whe the vc is empty for some time (FIX remove any once the bugfix mentioned here https://github.com/discordjs/discord.js/issues/10358 gets pushed into a built release)
+        //#region Handles whe the vc is empty for some time
         client.on(DiscordEvents.VoiceStateUpdate, (oldState) => {
             if (!(oldState === null || oldState === void 0 ? void 0 : oldState.channel)) {
                 return;
@@ -164,7 +178,7 @@ function musicHandler(client, distube) {
                     return;
                 }
                 else {
-                    if (isVoiceChannelEmpty(oldState)) {
+                    if (isVoiceEmpty(oldState)) {
                         var embMsg = new EmbedBuilder().setTitle(`Empty Voice Channel`).setColor('#0000FF').setDescription(`${queue.voiceChannel} is empty! Leaving the voice channel.`).setTimestamp();
                         queue.textChannel.send({ embeds: [embMsg] });
                         queue.voice.leave();

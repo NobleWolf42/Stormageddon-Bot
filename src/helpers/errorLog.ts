@@ -1,15 +1,13 @@
-//#region Dependencies
+//#region Imports
 import { Client, EmbedBuilder } from 'discord.js';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { capitalize } from './stringHelpers.js';
+import { Log, LogType } from '../models/loggingModel.js';
 //#endregion
 
-//#region Data Files
+//#region Error Logs
 var errorLogFile = JSON.parse(readFileSync('./data/errorLog.json').toString());
 var logFile = JSON.parse(readFileSync('./data/log.json').toString());
-//#endregion
-
-//#region Helpers
-import { capitalize } from './stringHelpers.js';
 //#endregion
 
 //#region Function that adds an item to the log file and sends any fatal errors to the bot developers
@@ -23,20 +21,16 @@ import { capitalize } from './stringHelpers.js';
  * @param error - String containing error
  * @param client - Discord.js Client Object
  */
-function addToLog(logType: 'success' | 'warning' | 'alert' | 'fatal error', command: string, user: string, server: string, channel: string, error?: string, client?: Client) {
+function addToLog(logType: LogType, command: string, user: string, server: string, channel: string, error?: string, client?: Client) {
     try {
         reloadLog();
         var d = new Date();
         var i = logFile.logging.length;
         var j = errorLogFile.logging.length;
 
-        var logAdd = {
-            Log: '',
-            Date: d.toTimeString(),
-            Code: logType,
-        };
+        var logAdd = new Log(logType);
 
-        if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
+        if (logType === LogType.Success || logType === LogType.Warning) {
             logAdd.Log = `${capitalize(logType)} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel}`;
         } else {
             logAdd.Log = `${capitalize(logType)} - Command: ${capitalize(command)} Attempted By: ${user} in "${server}"#${channel} --- Error: ${error}`;
@@ -45,7 +39,7 @@ function addToLog(logType: 'success' | 'warning' | 'alert' | 'fatal error', comm
         console.log(logAdd.Log);
         console.log('');
 
-        if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
+        if (logType === LogType.Success || logType === LogType.Warning) {
             logFile.logging[i] = logAdd;
         } else {
             errorLogFile.logging[j] = logAdd;
@@ -53,12 +47,12 @@ function addToLog(logType: 'success' | 'warning' | 'alert' | 'fatal error', comm
 
         addInput(logType);
 
-        if (logType.toLowerCase() === 'fatal error' || logType.toLowerCase() === 'alert') {
+        if (logType === LogType.FatalError || logType === LogType.Alert) {
             var devList = process.env.devIDs.split(',');
             for (var key in devList) {
                 const embMsg = new EmbedBuilder().setDescription(`${logAdd.Log}`).setTimestamp();
 
-                if (logType.toLowerCase() === 'fatal error') {
+                if (logType === LogType.FatalError) {
                     embMsg.setTitle('Fatal Errors Detected!');
                     embMsg.setColor('#FF0084');
                 } else {
@@ -89,8 +83,8 @@ function addToLog(logType: 'success' | 'warning' | 'alert' | 'fatal error', comm
  * This function saves the current state of the logFile buffer to ./data/errorLog.json.
  * @param logType - Type of log "success", "warning", "alert", or "fatal error"
  */
-function addInput(logType: 'success' | 'warning' | 'alert' | 'fatal error') {
-    if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
+function addInput(logType: LogType) {
+    if (logType === LogType.Success || logType === LogType.Warning) {
         writeFileSync('./data/log.json', JSON.stringify(logFile, null, 2));
     } else {
         writeFileSync('./data/errorLog.json', JSON.stringify(errorLogFile, null, 2));
@@ -110,10 +104,10 @@ function addInput(logType: 'success' | 'warning' | 'alert' | 'fatal error') {
  * This function resets the log file to empty (intended to keep the file from getting too large).
  * @param logType - Type of log "success", "warning", "alert", or "fatal error"
  */
-function resetLog(logType: 'success' | 'warning' | 'alert' | 'fatal error') {
+function resetLog(logType: LogType) {
     var didDelete = false;
 
-    if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
+    if (logType === LogType.Success || logType === LogType.Warning) {
         if (existsSync('./data/log.json')) {
             buildLog(logType);
             didDelete = true;
@@ -158,19 +152,13 @@ function reloadLog() {
  * This function builds An empty log file with the date and time of build logged at the top.
  * @param logType - Type of log "success", "warning", "alert", or "fatal error"
  */
-function buildLog(logType: 'success' | 'warning' | 'alert' | 'fatal error') {
+function buildLog(logType: LogType) {
     var d = new Date();
     var f = {
-        logging: [
-            {
-                Log: 'Rebuilt Log File',
-                Date: d.toTimeString(),
-                Code: 'None',
-            },
-        ],
+        logging: [new Log(LogType.None, 'Rebuilt Log File')],
     };
 
-    if (logType.toLowerCase() === 'success' || logType.toLowerCase() === 'warning') {
+    if (logType === LogType.Success || logType === LogType.Warning) {
         writeFileSync('./data/log.json', JSON.stringify(f, null, 2));
     } else {
         writeFileSync('./data/errorLog.json', JSON.stringify(f, null, 2));

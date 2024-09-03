@@ -1,7 +1,7 @@
 //#region Imports
 import { Collection } from 'discord.js';
-import { Command } from './command.js';
-import { SlashCommand } from './slashCommand.js';
+import { Command } from './commandModel.js';
+import { SlashCommand } from './slashCommandModel.js';
 //#endregion
 
 //#region Extra Collections

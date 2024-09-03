@@ -1,5 +1,5 @@
-import { Command } from '../models/command.js';
-import { MongooseServerConfig, ServerConfig } from '../models/serverConfig.js';
+import { Command } from '../models/commandModel.js';
+import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
 
 //#region This exports the test command with the information about it
 const testCommand: Command = {

@@ -13,7 +13,8 @@ import { activeCommands } from '../commands/activeCommands.js';
 import { getRandomDoggo } from '../helpers/doggoLinks.js';
 import { embedCustom, errorCustom, warnCustom } from '../helpers/embedMessages.js';
 import { addToLog } from '../helpers/errorLog.js';
-import { MongooseServerConfig } from '../models/serverConfig.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
+import { LogType } from '../models/loggingModel.js';
 //#endregion
 //Regex that tests for str (prefix)
 const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -29,18 +30,18 @@ function tryCommand(client, message, command, args, distube) {
     try {
         command.execute(message, args, client, distube);
         if (message.channel.isDMBased()) {
-            addToLog('success', command.name, message.author.tag, 'DM', 'DM');
+            addToLog(LogType.Success, command.name, message.author.tag, 'DM', 'DM');
         }
         else {
-            addToLog('success', command.name, message.author.tag, message.guild.name, message.channel.name);
+            addToLog(LogType.Success, command.name, message.author.tag, message.guild.name, message.channel.name);
         }
     }
     catch (error) {
         if (message.channel.isDMBased()) {
-            addToLog('success', command.name, message.author.tag, 'DM', 'DM');
+            addToLog(LogType.Success, command.name, message.author.tag, 'DM', 'DM');
         }
         else {
-            addToLog('fatal error', command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+            addToLog(LogType.FatalError, command.name, message.author.tag, message.guild.name, message.channel.name, error, client);
         }
         errorCustom(message, `There was an error executing the ${command.name} command.`, command.name, client);
         console.log(error);
@@ -216,10 +217,10 @@ function PMHandling(client, distube, collections) {
         //#endregion
         try {
             command.execute(message, args, client, distube);
-            addToLog('success', command.name, message.author.tag, 'DM', 'Private Message');
+            addToLog(LogType.Success, command.name, message.author.tag, 'DM', 'Private Message');
         }
         catch (error) {
-            addToLog('fatal error', command.name, message.author.tag, 'DM', 'Private Message', error, client);
+            addToLog(LogType.FatalError, command.name, message.author.tag, 'DM', 'Private Message', error, client);
             errorCustom(message, 'There was an error executing that command.', command.name, client);
             console.log(error);
         }

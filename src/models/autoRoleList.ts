@@ -4,7 +4,7 @@ import { Schema, model } from 'mongoose';
 interface AutoRoleList {
     _id: string;
     guildID: string;
-    channelIDs: string[];
+    channelIDs: string[][];
 }
 //#endregion
 
@@ -12,7 +12,7 @@ interface AutoRoleList {
 const autoRoleListSchema = new Schema<AutoRoleList>({
     _id: { type: String, required: true },
     guildID: { type: String, required: true },
-    channelIDs: { type: Array<String>, required: true },
+    channelIDs: [{ type: Array<String>, required: true }],
 });
 
 const MongooseAutoRoleList = model('Auto-Role-List', autoRoleListSchema);

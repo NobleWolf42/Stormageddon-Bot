@@ -2,6 +2,7 @@
 import { SoundCloudPlugin } from '@distube/soundcloud';
 import { SpotifyPlugin } from '@distube/spotify';
 import { YouTubePlugin } from '@distube/youtube';
+import { DeezerPlugin } from '@distube/deezer';
 import { YtDlpPlugin } from '@distube/yt-dlp';
 import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
 import { DisTube } from 'distube';
@@ -14,8 +15,8 @@ import { serverJoin } from './internal/serverJoin.js';
 import { addServerConfig, removeServerConfig } from './internal/settingsFunctions.js';
 import { registerGlobalSlashCommands, registerGuildSlashCommands, slashCommandHandling } from './internal/slashCommandHandling.js';
 import { joinToCreateHandling } from './internal/voiceHandling.js';
-import { ExtraCollections } from './models/extraCollections.js';
-import { MongooseServerConfig } from './models/serverConfig.js';
+import { ExtraCollections } from './models/extraCollectionsModel.js';
+import { MongooseServerConfig } from './models/serverConfigModel.js';
 //#endregion
 
 createJSONfiles();
@@ -51,6 +52,7 @@ const client = new Client({
 mongoose.connect(process.env.mongoDBURI).then(() => {
     console.log('MongoDB Connected!');
 });
+mongoose.set('debug', true);
 //#endregion
 
 //#region Initialize ExtraCollections
@@ -63,10 +65,10 @@ try {
         emitNewSongOnly: false,
         savePreviousSongs: true,
         plugins: [
-            // Spotify Plugin with optimizations
             new SpotifyPlugin(),
-            new SoundCloudPlugin(), // SoundCloud Plugin remains the same
+            new SoundCloudPlugin(),
             new YouTubePlugin(),
+            new DeezerPlugin(),
             // YouTube DL Plugin with optimizations
             new YtDlpPlugin({
                 update: true, // Update youtube-dl automatically
@@ -117,7 +119,14 @@ try {
     console.log(err);
 }
 
-//Logs Errors
+//#region Error Handling
 client.on(Events.Warn, (info) => console.log(info));
 client.on(Events.Error, console.error);
+process.on('unhandledRejection', (err) => {
+    console.error('Unhandled Rejection', err);
+});
+process.on('uncaughtException', (err) => {
+    console.error('Uncaught Exception', err);
+});
+//#endregion
 //#endregion

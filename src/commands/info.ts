@@ -1,6 +1,6 @@
 //#region Imports
 import { embedCustom } from '../helpers/embedMessages.js';
-import { Command } from '../models/command.js';
+import { Command } from '../models/commandModel.js';
 //#endregion
 
 //#region This exports the info command with the information about it

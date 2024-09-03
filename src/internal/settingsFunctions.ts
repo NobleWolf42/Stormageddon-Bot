@@ -1,7 +1,7 @@
 //#region Imports
 import { ButtonBuilder, ButtonStyle, EmbedBuilder, Message } from 'discord.js';
 import { embedCustom } from '../helpers/embedMessages.js';
-import { MongooseServerConfig, ServerConfig } from '../models/serverConfig.js';
+import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 
 //Defining a filter for the setup commands to ignore bot messages
@@ -807,7 +807,11 @@ async function buildConfigFile(config: ServerConfig, serverID: string) {
         await MongooseServerConfig.findByIdAndUpdate(serverID, update, {
             new: true,
             upsert: true,
-        }).exec();
+        })
+            .exec()
+            .then(() => {
+                console.log(`Updated ServerConfig for ${serverID}`);
+            });
     } catch (err) {
         console.log(err);
     }

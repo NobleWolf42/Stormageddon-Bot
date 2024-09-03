@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { MongooseServerConfig } from '../models/serverConfig.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#region This exports the test command with the information about it
 const testCommand = {
     name: 'test',

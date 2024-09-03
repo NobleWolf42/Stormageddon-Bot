@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //#region Imports
 import { Collection, ChannelType, PermissionFlagsBits, Events } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
-import { MongooseServerConfig } from '../models/serverConfig.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 //#region Function that starts the listener that handles Join to Create Channels
 /**

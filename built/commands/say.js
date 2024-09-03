@@ -1,9 +1,17 @@
-//#region Helpers
-const { adminCheck } = require('../helpers/userPermissions.js');
-const { errorNoAdmin, errorCustom } = require('../helpers/embedMessages.js');
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { adminCheck } from '../helpers/userPermissions.js';
+import { errorNoAdmin, errorCustom } from '../helpers/embedMessages.js';
 //#endregion
 //#region This exports the say command with the information about it
-module.exports = {
+const sayCommand = {
     name: 'say',
     type: ['Guild'],
     aliases: [],
@@ -12,21 +20,29 @@ module.exports = {
     usage: 'say ***MESSAGE-CONTENT***',
     description: 'Sends a message as the bot.',
     execute(message, args, client, distube) {
-        if (adminCheck(message)) {
-            var argsString = args.join(' ');
-            if (argsString != '') {
-                message.channel.send(argsString);
+        return __awaiter(this, void 0, void 0, function* () {
+            const channel = message.channel;
+            if (channel.isDMBased()) {
+                return;
+            }
+            if (adminCheck(message)) {
+                var argsString = args.join(' ');
+                if (argsString != '') {
+                    channel.send(argsString);
+                }
+                else {
+                    return errorCustom(message, 'Cannot send an empty message!', module.name, client);
+                }
+                message.delete();
+                message.deleted = true;
             }
             else {
-                return errorCustom(message, 'Cannot send an empty message!', module.name, client);
+                return errorNoAdmin(message, module.name);
             }
-            message.delete();
-            message.deleted = true;
-        }
-        else {
-            return errorNoAdmin(message, module.name);
-        }
+        });
     },
 };
-export {};
+//#endregion
+//#region Exports
+export default sayCommand;
 //#endregion

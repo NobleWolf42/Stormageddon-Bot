@@ -2,7 +2,7 @@
 import { CommandInteraction, DefaultUserAgent, SlashCommandBuilder } from 'discord.js';
 import { XMLHttpRequest } from 'xmlhttprequest';
 import { embedCustom, errorCustom, warnCustom } from '../../helpers/embedSlashMessages.js';
-import { SlashCommand } from '../../models/slashCommand.js';
+import { SlashCommand } from '../../models/slashCommandModel.js';
 //#endregion
 
 //#region This exports the agify command with the information about it

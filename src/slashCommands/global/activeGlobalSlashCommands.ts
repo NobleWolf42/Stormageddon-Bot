@@ -1,5 +1,5 @@
 //#region Imports
-import { SlashCommand } from '../../models/slashCommand.js';
+import { SlashCommand } from '../../models/slashCommandModel.js';
 import agifySlashCommand from './agify.js';
 //#endregion
 

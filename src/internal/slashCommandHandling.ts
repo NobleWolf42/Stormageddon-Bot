@@ -3,7 +3,7 @@ import { ApplicationCommand, Client, Collection, REST, Routes } from 'discord.js
 import { DisTube } from 'distube';
 import { addToLog } from '../helpers/errorLog.js';
 import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCommands/activeSlashCommands.js';
-import { ExtraCollections } from '../models/extraCollections.js';
+import { ExtraCollections } from '../models/extraCollectionsModel.js';
 //#endregion
 
 //#region Slash Command Handler

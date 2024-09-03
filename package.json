@@ -10,18 +10,20 @@
     "repository": "github:NobleWolf42/Stormageddon-Bot.git",
     "bugs": "https://github.com/NobleWolf42/Stormageddon-Bot/issues",
     "engines": {
-        "node": ">=22.0.0"
+        "node": ">=20.17.0"
     },
     "dependencies": {
         "@discordjs/opus": "^0.9.0",
         "@discordjs/voice": "^0.17.0",
+        "@distube/deezer": "^2.0.1",
         "@distube/soundcloud": "^2.0.2",
         "@distube/spotify": "^2.0.2",
         "@distube/youtube": "^1.0.2",
         "@distube/yt-dlp": "^2.0.1",
         "@distube/ytsr": "^2.0.0",
+        "@types/node": "^22.5.2",
         "discord-oauth2": "^2.12.1",
-        "discord.js": "^14.15.3",
+        "discord.js": "^14.16.1",
         "distube": "^5.0.2",
         "genius-lyrics": "^4.4.7",
         "mongodb": "^6.8.0",

@@ -1,11 +1,23 @@
 //#region Imports
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, Client, ComponentType, Events as DiscordEvents, EmbedBuilder, VoiceState } from 'discord.js';
-import { DisTube, Events, isVoiceChannelEmpty } from 'distube';
+import { DisTube, Events } from 'distube';
 import { Client as GeniusLyrics } from 'genius-lyrics';
 import { embedCustom } from '../helpers/embedSlashMessages.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { autoplay, loop, noLoop, pause, repeat, shuffle, skip, stop, volumeDown, volumeUp } from '../helpers/musicButtons.js';
 const Genius = new GeniusLyrics();
+//#endregion
+
+//#region IsVoiceEmpty TODO: Fix this so it uses this function from Distube (isVoiceChannelEmpty)
+export function isVoiceEmpty(voiceState: VoiceState): boolean {
+    const guild = voiceState.guild;
+    const clientId = voiceState.client.user?.id;
+    if (!guild || !clientId) return false;
+    const voiceChannel = guild.members.me?.voice?.channel;
+    if (!voiceChannel) return false;
+    const members = voiceChannel.members.filter((m) => !m.user.bot);
+    return !members.size;
+}
 //#endregion
 
 //#region music handler, controls the persistent functions of the music feature
@@ -275,7 +287,7 @@ async function musicHandler(client: Client, distube: DisTube) {
     });
     //#endregion
 
-    //#region Handles whe the vc is empty for some time (FIX remove any once the bugfix mentioned here https://github.com/discordjs/discord.js/issues/10358 gets pushed into a built release)
+    //#region Handles whe the vc is empty for some time
     client.on(DiscordEvents.VoiceStateUpdate, (oldState) => {
         if (!oldState?.channel) {
             return;
@@ -284,7 +296,7 @@ async function musicHandler(client: Client, distube: DisTube) {
             if (!queue) {
                 return;
             } else {
-                if (isVoiceChannelEmpty(oldState)) {
+                if (isVoiceEmpty(oldState)) {
                     var embMsg = new EmbedBuilder().setTitle(`Empty Voice Channel`).setColor('#0000FF').setDescription(`${queue.voiceChannel} is empty! Leaving the voice channel.`).setTimestamp();
 
                     queue.textChannel.send({ embeds: [embMsg] });

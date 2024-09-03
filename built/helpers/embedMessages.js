@@ -7,10 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Dependencies
-import { EmbedBuilder } from 'discord.js';
-//#endregion
-//#region Helpers
+//#region Imports
+import { EmbedBuilder, PartialGroupDMChannel } from 'discord.js';
 import { addToLog } from './errorLog.js';
 //#endregion
 //#region Function that takes several inputs and creates an embedded message and sends it in the channel that is attached to the Message Object
@@ -30,13 +28,17 @@ import { addToLog } from './errorLog.js';
 function embedCustom(message_1, title_1, color_1, text_1, footer_1) {
     return __awaiter(this, arguments, void 0, function* (message, title, color, text, footer, img = null, fields = [], url = null, thumbnail = null) {
         const embMsg = new EmbedBuilder().setTitle(title).setColor(color).setDescription(text).setFooter(footer).setImage(img).addFields(fields).setURL(url).setThumbnail(thumbnail).setTimestamp();
-        if (!message.channel.isDMBased()) {
+        const channel = message.channel;
+        if (!channel.isDMBased()) {
             if (!message.deleted) {
                 message.delete();
                 message.deleted = true;
             }
         }
-        return yield message.channel.send({ embeds: [embMsg] });
+        if (channel instanceof PartialGroupDMChannel) {
+            return;
+        }
+        return yield channel.send({ embeds: [embMsg] });
     });
 }
 //#endregion
@@ -47,9 +49,9 @@ function embedCustom(message_1, title_1, color_1, text_1, footer_1) {
  * @param title - String for the Title/Header of the message
  * @param color - String Hex Code for the color of the border
  * @param text - String for the body of the embedded message
- * @param img - URL to an Image to include (optional)
+ * @param img - URL to an Image to include (default = null)
  */
-function embedCustomDM(message, title, color, text, img) {
+function embedCustomDM(message, title, color, text, img = null) {
     const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor(color)

@@ -1,8 +1,8 @@
 //#region Imports
 import { Collection, ChannelType, PermissionFlagsBits, Client, Events } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
-import { MongooseServerConfig } from '../models/serverConfig.js';
-import { ExtraCollections } from '../models/extraCollections.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
+import { ExtraCollections } from '../models/extraCollectionsModel.js';
 //#endregion
 
 //#region Function that starts the listener that handles Join to Create Channels

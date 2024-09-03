@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //#region Imports
 import { ButtonBuilder, ButtonStyle, EmbedBuilder } from 'discord.js';
 import { embedCustom } from '../helpers/embedMessages.js';
-import { MongooseServerConfig } from '../models/serverConfig.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 //Defining a filter for the setup commands to ignore bot messages
 const msgFilter = (m) => !m.author.bot;
@@ -735,7 +735,11 @@ function buildConfigFile(config, serverID) {
             yield MongooseServerConfig.findByIdAndUpdate(serverID, update, {
                 new: true,
                 upsert: true,
-            }).exec();
+            })
+                .exec()
+                .then(() => {
+                console.log(`Updated ServerConfig for ${serverID}`);
+            });
         }
         catch (err) {
             console.log(err);

@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { errorNoAdmin, warnCustom, embedCustom } from '../helpers/embedMessages.js';
 import { adminCheck } from '../helpers/userPermissions.js';
 import { buildConfigFile } from '../internal/settingsFunctions.js';
-import { MongooseServerConfig } from '../models/serverConfig.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 //Regex that should eliminate anything that is not ~!$%^&*()_+-={}[]|:";'<>?,.
 const isSymbol = /[~!$%^&*()_+\-={}[\]\|:";'<>?,.]/;

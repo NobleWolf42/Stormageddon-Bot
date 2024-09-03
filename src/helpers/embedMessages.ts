@@ -1,13 +1,7 @@
-//#region Dependencies
-import { APIEmbedField, Client, ColorResolvable, EmbedBuilder, Message } from 'discord.js';
-//#endregion
-
-//#region Helpers
+//#region Imports
+import { APIEmbedField, Client, ColorResolvable, EmbedBuilder, Message, PartialGroupDMChannel } from 'discord.js';
 import { addToLog } from './errorLog.js';
-//#endregion
-
-//#region Types
-type MessageWithDeleted = Message & { deleted?: boolean };
+import { MessageWithDeleted } from '../models/messages.js';
 //#endregion
 
 //#region Function that takes several inputs and creates an embedded message and sends it in the channel that is attached to the Message Object
@@ -36,15 +30,19 @@ async function embedCustom(
     thumbnail: string = null
 ) {
     const embMsg = new EmbedBuilder().setTitle(title).setColor(color).setDescription(text).setFooter(footer).setImage(img).addFields(fields).setURL(url).setThumbnail(thumbnail).setTimestamp();
+    const channel = message.channel;
 
-    if (!message.channel.isDMBased()) {
+    if (!channel.isDMBased()) {
         if (!message.deleted) {
             message.delete();
             message.deleted = true;
         }
     }
+    if (channel instanceof PartialGroupDMChannel) {
+        return;
+    }
 
-    return await message.channel.send({ embeds: [embMsg] });
+    return await channel.send({ embeds: [embMsg] });
 }
 //#endregion
 
@@ -55,9 +53,9 @@ async function embedCustom(
  * @param title - String for the Title/Header of the message
  * @param color - String Hex Code for the color of the border
  * @param text - String for the body of the embedded message
- * @param img - URL to an Image to include (optional)
+ * @param img - URL to an Image to include (default = null)
  */
-function embedCustomDM(message: MessageWithDeleted, title: string, color: ColorResolvable, text: string, img: string) {
+function embedCustomDM(message: MessageWithDeleted, title: string, color: ColorResolvable, text: string, img: string = null) {
     const embMsg = new EmbedBuilder()
         .setTitle(title)
         .setColor(color)

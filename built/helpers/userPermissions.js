@@ -11,7 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { PermissionFlagsBits } from 'discord.js';
 //#endregion
 //#region Modules
-import { MongooseServerConfig } from '../models/serverConfig.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 //Sets up global vars for following functions This is horrible, fix this later, why are these global I hate past me it consume so much more cache read/writes
 let adminRoleIDs = [];
