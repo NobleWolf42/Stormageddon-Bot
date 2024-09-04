@@ -7,15 +7,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Data Files
-const quotedata = require('../data/quotes.json').data;
-//#endregion
-//#region Helpers
-const { getRandomInt } = require('../helpers/math.js');
-const { embedCustom } = require('../helpers/embedMessages.js');
+//#region Imports
+import quoteData from '../data/quotes.js';
+import { getRandomInt } from '../helpers/math.js';
+import { embedCustom } from '../helpers/embedMessages.js';
 //endregion
-//#region This exports the quote command with the information about it
-module.exports = {
+//#region This creates the quote command with the information about it
+const quoteCommand = {
     name: 'quote',
     type: ['DM', 'Guild'],
     aliases: [],
@@ -23,12 +21,14 @@ module.exports = {
     class: 'fun',
     usage: 'quote',
     description: 'Display a random quote, picked by the developers of Stormageddon. (Works in Direct Messages too.)',
-    execute(message, args, client, distube) {
+    execute(message, args, client) {
         return __awaiter(this, void 0, void 0, function* () {
-            var quote = quotedata[getRandomInt(quotedata.length)];
+            var quote = quoteData.data[getRandomInt(quoteData.data.length)];
             embedCustom(message, 'Quote', '#000000', `"${quote.text}"\n Cited from ${quote.author}.\n Picked by ${yield client.users.fetch(quote.submitter)}.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
         });
     },
 };
-export {};
+//#endregion
+//#region Exports
+export default quoteCommand;
 //#endregion

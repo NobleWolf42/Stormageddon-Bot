@@ -7,16 +7,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Helpers
-const { PermissionFlagsBits } = require('discord.js');
-const { updateConfigFile } = require('../helpers/currentSettings.js');
-const { errorNoServerAdmin, errorCustom, } = require('../helpers/embedMessages.js');
-//#endregion
-//#region Internals
-const { setup } = require('../internal/settingsFunctions.js');
+//#region Import
+import { PermissionFlagsBits } from 'discord.js';
+import { errorNoServerAdmin, errorCustom } from '../helpers/embedMessages.js';
+import { setup } from '../internal/settingsFunctions.js';
 //#endregion
 //#region This exports the setup command with the information about it
-module.exports = {
+const setupCommand = {
     name: 'setup',
     type: ['Guild'],
     aliases: [''],
@@ -24,24 +21,19 @@ module.exports = {
     class: 'admin',
     usage: 'setup',
     description: 'Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.',
-    execute(message, args, client, distube) {
+    execute(message, args, client, distube, collection, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
-            //Loads current server config settings
-            var serverConfig = updateConfigFile();
-            if (serverConfig[message.guild.id].setupNeeded) {
-                if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
-                    yield setup(message);
-                }
-                else {
-                    errorNoServerAdmin(message, module.name);
-                }
+            if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                errorNoServerAdmin(message, this.name);
             }
-            else {
-                errorCustom(message, 'Server Setup has already been completed.', module.name, client);
+            if (!serverConfig.setupNeeded) {
+                errorCustom(message, 'Server Setup has already been completed.', this.name, client);
             }
-            return;
+            yield setup(message);
         });
     },
 };
-export {};
+//#endregion
+//#region Exports
+export default setupCommand;
 //#endregion

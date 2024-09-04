@@ -19,6 +19,17 @@ import lyricsCommand from './lyrics.js';
 import modMailCommand from './modMail.js';
 import pauseCommand from './pause.js';
 import playCommand from './play.js';
+import playNextCommand from './playNext.js';
+import quoteCommand from './quote.js';
+import removeCommand from './remove.js';
+import removeModCommand from './removeMod.js';
+import resumeCommand from './resume.js';
+import sayCommand from './say.js';
+import setCommand from './set.js';
+import setupCommand from './setup.js';
+import showQueueCommand from './showqueue.js';
+import shuffleCommand from './shuffle.js';
+import skipCommand from './skip.js';
 
 const activeCommands: Command[] = [
     addModCommand,
@@ -41,6 +52,17 @@ const activeCommands: Command[] = [
     modMailCommand,
     pauseCommand,
     playCommand,
+    playNextCommand,
+    quoteCommand,
+    removeCommand,
+    removeModCommand,
+    resumeCommand,
+    sayCommand,
+    setCommand,
+    setupCommand,
+    showQueueCommand,
+    shuffleCommand,
+    skipCommand,
 ];
 
 export { activeCommands };

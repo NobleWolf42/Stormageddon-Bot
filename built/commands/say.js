@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 import { adminCheck } from '../helpers/userPermissions.js';
 import { errorNoAdmin, errorCustom } from '../helpers/embedMessages.js';
 //#endregion
@@ -19,27 +10,23 @@ const sayCommand = {
     class: 'admin',
     usage: 'say ***MESSAGE-CONTENT***',
     description: 'Sends a message as the bot.',
-    execute(message, args, client, distube) {
-        return __awaiter(this, void 0, void 0, function* () {
-            const channel = message.channel;
-            if (channel.isDMBased()) {
-                return;
-            }
-            if (adminCheck(message)) {
-                var argsString = args.join(' ');
-                if (argsString != '') {
-                    channel.send(argsString);
-                }
-                else {
-                    return errorCustom(message, 'Cannot send an empty message!', module.name, client);
-                }
-                message.delete();
-                message.deleted = true;
-            }
-            else {
-                return errorNoAdmin(message, module.name);
-            }
-        });
+    execute(message, args, client, distube, collections, serverConfig) {
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
+        if (!adminCheck(message, serverConfig)) {
+            errorNoAdmin(message, this.name);
+            return;
+        }
+        const argsString = args.join(' ');
+        if (argsString == '') {
+            errorCustom(message, 'Cannot send an empty message!', this.name, client);
+            return;
+        }
+        channel.send(argsString);
+        message.delete();
+        message.deleted = true;
     },
 };
 //#endregion

@@ -13,26 +13,28 @@ const sayCommand: Command = {
     class: 'admin',
     usage: 'say ***MESSAGE-CONTENT***',
     description: 'Sends a message as the bot.',
-    async execute(message, args, client, distube) {
+    execute(message, args, client, distube, collections, serverConfig) {
         const channel = message.channel;
 
         if (channel.isDMBased()) {
             return;
         }
 
-        if (adminCheck(message)) {
-            var argsString = args.join(' ');
-
-            if (argsString != '') {
-                channel.send(argsString);
-            } else {
-                return errorCustom(message, 'Cannot send an empty message!', module.name, client);
-            }
-            message.delete();
-            message.deleted = true;
-        } else {
-            return errorNoAdmin(message, module.name);
+        if (!adminCheck(message, serverConfig)) {
+            errorNoAdmin(message, this.name);
+            return;
         }
+
+        const argsString = args.join(' ');
+
+        if (argsString == '') {
+            errorCustom(message, 'Cannot send an empty message!', this.name, client);
+            return;
+        }
+
+        channel.send(argsString);
+        message.delete();
+        message.deleted = true;
     },
 };
 //#endregion

@@ -7,15 +7,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Helpers
-const { updateConfigFile } = require('../helpers/currentSettings.js');
-const { errorNoServerAdmin, errorCustom, embedCustom, } = require('../helpers/embedMessages.js');
-//#endregion
-//#region Internals
-const { buildConfigFile } = require('../internal/settingsFunctions.js');
+//#region Imports
+import { PermissionFlagsBits } from 'discord.js';
+import { errorNoServerAdmin, embedCustom, warnCustom } from '../helpers/embedMessages.js';
+import { buildConfigFile } from '../internal/settingsFunctions.js';
 //#endregion
 //#region This exports the removemod command with the information about it
-module.exports = {
+const removeModCommand = {
     name: 'removemod',
     type: ['Guild'],
     aliases: [''],
@@ -23,50 +21,46 @@ module.exports = {
     class: 'admin',
     usage: 'removemod ***MENTION-USERS***',
     description: 'Removes users from the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.',
-    execute(message, args, client, distube) {
-        if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
-            if (message.channel.guild.id in serverConfig) {
-                if (message.mentions.members.size == 0) {
-                    return warnCustom(message, 'No user input detected, Did you make sure to @ them?', module.name);
+    execute(message, args, client, distube, collections, serverConfig) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const channel = message.channel;
+            //#region Escape Conditionals
+            if (channel.isDMBased()) {
+                return;
+            }
+            if (message.mentions.members.size == 0) {
+                return warnCustom(message, 'No user input detected, Did you make sure to @ them?', this.name);
+            }
+            if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return errorNoServerAdmin(message, this.name);
+            }
+            //#endregion
+            //#region Main Logic
+            for (let [_, user] of message.mentions.members) {
+                const serverID = channel.guild.id;
+                const userFound = serverConfig.modMail.modList.find((test) => test == user.id);
+                if (!userFound) {
+                    return warnCustom(message, `User ${user.user} is not a Mod!`, this.name);
                 }
-                message.mentions.members.forEach((user) => __awaiter(this, void 0, void 0, function* () {
-                    var serverID = message.channel.guild.id;
-                    var array = serverConfig[serverID].modMail.modList;
-                    var userFound = false;
-                    array.forEach((item) => {
-                        if (item == user) {
-                            userFound = true;
-                        }
-                    });
-                    if (userFound) {
-                        array = array.filter(function (value) {
-                            return value != user.id;
-                        });
-                    }
-                    else {
-                        return warnCustom(message, `User ${user.tag} is not a Mod!`, module.name);
-                    }
-                    var modMail = {};
-                    modMail.modList = array;
-                    modMail.enable = true;
-                    serverConfig[serverID].modMail = modMail;
-                    yield buildConfigFile(serverConfig);
-                    embedCustom(message, 'Mods Removed', '#5D3FD3', `Mods have been successfully removed!`, {
-                        text: `Requested by ${message.author.tag}`,
-                        iconURL: null,
-                    }, null, [], null, null);
-                    serverConfig = updateConfigFile();
-                }));
+                const modList = serverConfig.modMail.modList.filter(function (value) {
+                    return value != user.id;
+                });
+                const modMail = {
+                    enable: true,
+                    modList: modList,
+                };
+                serverConfig.modMail = modMail;
+                yield buildConfigFile(serverConfig, serverID);
+                embedCustom(message, 'Mods Removed', '#5D3FD3', `Mods have been successfully removed!`, {
+                    text: `Requested by ${message.author.tag}`,
+                    iconURL: null,
+                }, null, [], null, null);
             }
-            else {
-                return (errorCustom(message, 'Server is not set up with the bot yet!', module.name),
-                    client);
-            }
-        }
-        else {
-            return errorNoServerAdmin(message, module.name);
-        }
+            //#endregion
+        });
     },
 };
-export {};
+//#endregion
+//#region Exports
+export default removeModCommand;
 //#endregion

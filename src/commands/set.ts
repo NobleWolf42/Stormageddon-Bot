@@ -2,9 +2,11 @@
 import { PermissionFlagsBits } from 'discord.js';
 import { errorNoServerAdmin, errorCustom } from '../helpers/embedMessages.js';
 import { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame } from '../internal/settingsFunctions.js';
+import { Command } from '../models/commandModel.js';
 //#endregion
+
 //#region This creates the set command with the information about it
-const setCommand = {
+const setCommand: Command = {
     name: 'set',
     type: ['Guild'],
     aliases: [''],
@@ -17,28 +19,36 @@ const setCommand = {
         if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
             errorNoServerAdmin(message, this.name);
         }
+
         switch (args[0]) {
             case 'autorole':
                 setAutoRole(message);
                 break;
+
             case 'joinrole':
                 setJoinRole(message);
                 break;
+
             case 'general':
                 setGeneral(message);
                 break;
+
             case 'music':
                 setMusic(message);
                 break;
+
             case 'modmail':
                 setModMail(message);
                 break;
+
             case 'jointocreatevc':
                 setJoinToCreateVC(message);
                 break;
+
             case 'blame':
                 setBlame(message);
                 break;
+
             default:
                 errorCustom(message, 'Not a valid settings category!', this.name, client);
                 break;
@@ -46,6 +56,7 @@ const setCommand = {
     },
 };
 //#endregion
+
 //#region Exports
 export default setCommand;
 //#endregion

@@ -36,9 +36,13 @@
         "dev": "tsc -w -P . & nodemon --env-file=.env ./built/storm.js"
     },
     "devDependencies": {
+        "@eslint/js": "^9.9.1",
         "@types/xmlhttprequest": "^1.8.2",
+        "eslint": "^9.9.1",
+        "globals": "^15.9.0",
         "nodemon": "^3.1.4",
         "prettier": "3.3.3",
-        "typescript": "^5.5.4"
+        "typescript": "^5.5.4",
+        "typescript-eslint": "^8.4.0"
     }
 }

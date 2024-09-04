@@ -15,7 +15,7 @@ interface Command {
     class: string;
     usage: string;
     description: string;
-    execute(message: MessageWithDeleted, args: string[], client: Client, distube?: DisTube, collections?: ExtraCollections, serverConfig?: ServerConfig): Promise<void>;
+    execute(message: MessageWithDeleted, args: string[], client: Client, distube?: DisTube, collections?: ExtraCollections, serverConfig?: ServerConfig): void | Promise<void>;
 }
 //#endregion
 

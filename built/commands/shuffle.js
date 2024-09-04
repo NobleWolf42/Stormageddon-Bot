@@ -7,15 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Helpers
-const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } = require('../helpers/embedMessages.js');
-const { djCheck } = require('../helpers/userPermissions.js');
-//#endregion
-//#region Modules
-import { MongooseServerConfig } from '../models/serverConfig';
+//#region Import
+import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } from '../helpers/embedMessages.js';
+import { djCheck } from '../helpers/userPermissions.js';
 //#endregion
 //#region This exports the shuffle command with the information about it
-module.exports = {
+const shuffleCommand = {
     name: 'shuffle',
     type: ['Guild'],
     coolDown: 10,
@@ -23,38 +20,48 @@ module.exports = {
     class: 'music',
     usage: 'shuffle',
     description: 'Shuffles the currently queued music.',
-    execute(message, args, client, distube) {
+    execute(message, args, client, distube, collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
-            //Gets serverConfig from database
-            var serverConfig = (yield MongooseServerConfig.findById(message.guild.id).exec()).toObject();
+            const channel = message.channel;
+            if (channel.isDMBased()) {
+                return;
+            }
             //Checks to see if the music feature is enabled in this server
             if (!serverConfig.music.enable) {
-                return warnDisabled(message, 'music', module.name);
+                warnDisabled(message, 'music', this.name);
+                return;
             }
             //Checks to see if the user has DJ access
-            if (!djCheck(message)) {
-                return errorNoDJ(message, module.name);
+            if (!djCheck(message, serverConfig)) {
+                errorNoDJ(message, this.name);
+                return;
             }
             //Checks to see if the message was sent in the correct channel
-            if (serverConfig.music.textChannel != message.channel.name) {
-                return warnWrongChannel(message, serverConfig.music.textChannel, module.name);
+            if (serverConfig.music.textChannel != channel.name) {
+                warnWrongChannel(message, serverConfig.music.textChannel, this.name);
+                return;
             }
-            var voiceChannel = message.member.voice.channel;
-            var queue = distube.getQueue(message);
+            const queue = distube.getQueue(message.guildId);
             if (!queue) {
-                return warnCustom(message, 'Nothing is playing right now.', module.name);
+                warnCustom(message, 'Nothing is playing right now.', this.name);
+                return;
             }
-            else if (voiceChannel != queue.voiceChannel) {
-                return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
+            const voiceChannel = message.member.voice.channel;
+            // TODO Check to see if vc ids are unique, or if server id is need as well
+            if (voiceChannel.id != queue.voiceChannel.id) {
+                warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
+                return;
             }
-            else if (queue.songs.length == 1) {
-                return warnCustom(message, 'There is not another song in the queue.', module.name);
+            if (queue.songs.length == 1) {
+                warnCustom(message, 'There is not another song in the queue.', this.name);
+                return;
             }
-            else {
-                queue.shuffle();
-                embedCustom(message, 'Shuffled', '#0000FF', `Queue successfully shuffled.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
-            }
+            queue.shuffle();
+            embedCustom(message, 'Shuffled', '#0000FF', `Queue successfully shuffled.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
         });
     },
 };
+//#endregion
+//#region Exports
+export default shuffleCommand;
 //#endregion
