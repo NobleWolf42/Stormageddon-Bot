@@ -11,11 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { errorNoAdmin, warnCustom, embedCustom } from '../helpers/embedMessages.js';
 import { adminCheck } from '../helpers/userPermissions.js';
 import { buildConfigFile } from '../internal/settingsFunctions.js';
-import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
-//Regex that should eliminate anything that is not ~!$%^&*()_+-={}[]|:";'<>?,.
-const isSymbol = /[~!$%^&*()_+\-={}[\]\|:";'<>?,.]/;
-//#region This exports the changeprefix command with the information about it
+//#region This creates the changeprefix command with the information about it
 const changePrefixCommand = {
     name: 'changeprefix',
     type: ['Guild'],
@@ -24,10 +21,11 @@ const changePrefixCommand = {
     class: 'admin',
     usage: 'changeprefix ***INSERT-SYMBOL***',
     description: 'Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-=[];\',.{}|:"<>?```',
-    execute(message, args, client, distube) {
+    execute(message, args, client, distube, collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             var serverID = message.guild.id;
-            var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
+            //Regex that should eliminate anything that is not ~!$%^&*()_+-={}[]|:";'<>?,.
+            const isSymbol = /[~!$%^&*()_+\-={}[\]\|:";'<>?,.]/;
             if (adminCheck(message)) {
                 if (args[0] != undefined) {
                     if (args[0].length == 1 && isSymbol.test(args[0])) {

@@ -20,10 +20,8 @@ import { LogType } from '../models/loggingModel.js';
  * @param serverID - Server ID for the server the command is run in
  * @returns A map of the emoji-role pairs
  */
-function generateEmbedFields(serverID) {
+function generateEmbedFields(serverConfig) {
     return __awaiter(this, void 0, void 0, function* () {
-        //Gets serverConfig from database
-        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
         return serverConfig.autoRole.roles.map((r, e) => {
             return {
                 emoji: serverConfig.autoRole.reactions[e],
@@ -67,6 +65,10 @@ function autoRoleListener(client) {
             const member = message.guild.members.cache.get(user.id);
             //Gets serverConfig from database
             let serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
+            //Stops if the feature is not enabled
+            if (!serverConfig.autoRole.enable) {
+                return;
+            }
             const emojiKey = reaction.emoji.id ? reaction.emoji.id : reaction.emoji.name; //`${reaction.emoji.name}:${reaction.emoji.id}`
             let react = message.reactions.cache.get(emojiKey);
             if (!react) {
@@ -133,9 +135,9 @@ function autoRoleListener(client) {
         //#region Listens for a autoRole message to be deleted
         client.on(Events.MessageDelete, (event) => __awaiter(this, void 0, void 0, function* () {
             //This escapes if the deleted message was in a vc or dm, or not authored by this bot
-            // if (event.channel.isDMBased() || !event.author || event.author == undefined || event.author.id != process.env.clientID) {
-            //     return;
-            // }
+            if (event.channel.isDMBased() || !event.author || event.author == undefined || event.author.id != process.env.clientID) {
+                return;
+            }
             //Pulls message listening info from db
             let botConfig = yield MongooseAutoRoleList.findById(event.guildId).exec();
             let needsUpdate = false;

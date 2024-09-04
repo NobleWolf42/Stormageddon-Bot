@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
-import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 //#region This exports the play command with the information about it
 const playCommand = {
@@ -20,10 +19,8 @@ const playCommand = {
     class: 'music',
     usage: 'play ***SEARCH-TERM/YOUTUBE-LINK/YOUTUBE-PLAYLIST/SPOTIFY-LINK/SPOTIFY-PLAYLIST***',
     description: 'Plays the selected music in the voice channel you are in.',
-    execute(message, args, client, distube) {
+    execute(message, args, client, distube, collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
-            //Calls config from database
-            var serverConfig = (yield MongooseServerConfig.findById(message.guild.id).exec()).toObject();
             //Checks to see if the music feature is enabled in this server
             if (!serverConfig.music.enable) {
                 return warnDisabled(message, 'music', this.name);
@@ -32,7 +29,7 @@ const playCommand = {
                 return;
             }
             //Checks to see if the user has DJ access
-            if (!djCheck(message)) {
+            if (!djCheck(message, serverConfig)) {
                 return errorNoDJ(message, this.name);
             }
             //Checks to see if the message was sent in the correct channel
@@ -47,6 +44,7 @@ const playCommand = {
                 return warnCustom(message, 'You must join a voice channel to use this command!', this.name);
             }
             else if (queue) {
+                //FIX this error in the future, distube and discordjs hate each other apparently
                 if (voiceChannel != queue.voiceChannel) {
                     return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
                 }
@@ -56,6 +54,7 @@ const playCommand = {
                 return warnCustom(message, 'No song input detected, please try again.', this.name);
             }
             else {
+                //FIX this error in the future, distube and discordjs hate each other apparently
                 distube.play(voiceChannel, song, {
                     member: message.member,
                     message: message,

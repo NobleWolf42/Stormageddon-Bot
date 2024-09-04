@@ -2,6 +2,8 @@
 import { Client } from 'discord.js';
 import { DisTube } from 'distube';
 import { MessageWithDeleted } from './messages.js';
+import { ServerConfig } from './serverConfigModel.js';
+import { ExtraCollections } from './extraCollectionsModel.js';
 //#endregion
 
 //#region Command interface
@@ -13,7 +15,7 @@ interface Command {
     class: string;
     usage: string;
     description: string;
-    execute(message: MessageWithDeleted, args: string[], client: Client, distube: DisTube): Promise<void>;
+    execute(message: MessageWithDeleted, args: string[], client: Client, distube?: DisTube, collections?: ExtraCollections, serverConfig?: ServerConfig): Promise<void>;
 }
 //#endregion
 

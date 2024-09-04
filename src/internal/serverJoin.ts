@@ -1,8 +1,5 @@
-//#region Helpers
-import { Client, GuildMember } from 'discord.js';
-//#endregion
-
-//#region Modules
+//#region Imports
+import { Client } from 'discord.js';
 import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 
@@ -12,7 +9,7 @@ import { MongooseServerConfig } from '../models/serverConfigModel.js';
  * @param client - Discord.js Client Object
  */
 function serverJoin(client: Client) {
-    client.on('guildMemberAdd', async (guildMember: GuildMember) => {
+    client.on('guildMemberAdd', async (guildMember) => {
         //Gets serverConfig from database
         var serverConfig = (await MongooseServerConfig.findById(guildMember.guild.id).exec()).toObject();
 

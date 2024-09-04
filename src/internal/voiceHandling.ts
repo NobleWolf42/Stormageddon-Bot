@@ -1,8 +1,9 @@
 //#region Imports
 import { Collection, ChannelType, PermissionFlagsBits, Client, Events } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
-import { MongooseServerConfig } from '../models/serverConfigModel.js';
+import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
 import { ExtraCollections } from '../models/extraCollectionsModel.js';
+import { LogType } from '../models/loggingModel.js';
 //#endregion
 
 //#region Function that starts the listener that handles Join to Create Channels
@@ -21,14 +22,46 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
         const oldChannel = oldState.channel;
         const newChannel = newState.channel;
 
+        if (oldChannel == newChannel) {
+            return;
+        }
+
+        //#region Handles someone leaving a voice channel
+        try {
+            if (oldChannel == null) {
+                return;
+            }
+            if (collections.voiceGenerator.get(oldChannel.id) && oldChannel.members.size == 0) {
+                //This deletes a channel if it was created byt the bot and is empty
+                oldChannel.delete();
+                collections.voiceGenerator.delete(collections.voiceGenerator.get(oldChannel.id));
+                collections.voiceGenerator.delete(oldChannel.id);
+            } else if (collections.voiceGenerator.get(oldChannel.id) && member.id == collections.voiceGenerator.get(oldChannel.id)) {
+                //This should restore default permissions to the channel when the owner leaves, and remove owner
+                await oldChannel.permissionOverwrites.set(
+                    oldChannel.parent.permissionOverwrites.cache.map((p) => {
+                        return {
+                            id: p.id,
+                            allow: p.allow.toArray(),
+                            deny: p.deny.toArray(),
+                        };
+                    })
+                );
+            }
+        } catch (err) {
+            addToLog(LogType.FatalError, 'JTCVC Handler', member.user.tag, guild.name, oldChannel.name, err, client);
+        }
+        //#endregion
+
         //Calls serverConfig from database
-        var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
+        const serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
         if (serverConfig.setupNeeded) {
             return;
         }
 
-        if (serverConfig.JTCVC.enable && oldChannel !== newChannel && newChannel && newChannel.id === serverConfig.JTCVC.voiceChannel) {
+        //#region Handles someone joining the JTC VC
+        if (serverConfig.JTCVC.enable && newChannel && newChannel.id === serverConfig.JTCVC.voiceChannel) {
             //Creates new voice channel
             const voiceChannel = await guild.channels.create({
                 name: `${member.user.tag}'s Channel`,
@@ -57,32 +90,7 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
 
             return member.voice.setChannel(voiceChannel);
         }
-
-        //Handles someone leaving a voice channel
-        try {
-            if (oldChannel == null) {
-                return;
-            }
-            if (oldChannel != null && collections.voiceGenerator.get(oldChannel.id) && oldChannel.members.size == 0) {
-                //This deletes a channel if it was created byt the bot and is empty
-                oldChannel.delete();
-                collections.voiceGenerator.delete(collections.voiceGenerator.get(oldChannel.id));
-                collections.voiceGenerator.delete(oldChannel.id);
-            } else if (collections.voiceGenerator.get(oldChannel.id) && member.id == collections.voiceGenerator.get(oldChannel.id)) {
-                //This should restore default permissions to the channel when the owner leaves, and remove owner
-                await oldChannel.permissionOverwrites.set(
-                    oldChannel.parent.permissionOverwrites.cache.map((p) => {
-                        return {
-                            id: p.id,
-                            allow: p.allow.toArray(),
-                            deny: p.deny.toArray(),
-                        };
-                    })
-                );
-            }
-        } catch (err) {
-            addToLog('fatal error', 'JTCVC Handler', member.user.tag, guild.name, oldChannel.name, err, client);
-        }
+        //#endregion
     });
 }
 //#endregion

@@ -1,9 +1,18 @@
-//#region Helpers
-const { errorCustom, embedCustom, warnCustom, errorNoMod } = require('../helpers/embedMessages.js');
-const { modCheck } = require('../helpers/userPermissions.js');
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+//#region Import
+import { errorCustom, embedCustom, warnCustom, errorNoMod } from '../helpers/embedMessages.js';
+import { modCheck } from '../helpers/userPermissions.js';
 //#endregion
-//#region This exports the clear command with the information about it
-module.exports = {
+//#region This creates the clear command with the information about it
+const clearCommand = {
     name: 'clear',
     type: ['Guild'],
     aliases: ['clr', 'delete', 'clean'],
@@ -11,38 +20,46 @@ module.exports = {
     class: 'admin',
     usage: 'clear ***NUMBER(2-99)***',
     description: 'Bulk deletes the previous messages in a chat based on user input, up to 99 previous messages.',
-    execute(message, args, client, distube) {
-        var amount = parseInt(args[0]);
-        if (!modCheck(message)) {
-            return errorNoMod(message, module.name);
-        }
-        if (isNaN(amount)) {
-            return warnCustom(message, `That is not a valid number for the \`${serverConfig.prefix}clear\` command!`, module.name);
-        }
-        else if (amount < 2 || amount > 99) {
-            return warnCustom(message, `${args[0]} is an invalid number! __**Number must be between 1 and 100!**__`, module.name);
-        }
-        else if (amount >= 2 && amount <= 99) {
-            message.delete();
-            message.deleted = true;
-            message.channel
-                .bulkDelete(amount)
-                .then(() => {
-                return embedCustom(message, 'Success!', '#008000', `Successfully deleted ${amount} messages!`, {
-                    text: `Requested by ${message.author.tag}`,
-                    iconURL: null,
-                }, null, [], null, null);
-            })
-                .catch((err) => {
-                if (err.message == 'You can only bulk delete messages that are under 14 days old.') {
-                    return warnCustom(message, `You can only bulk delete messages that are under 14 days old.`, module.name);
-                }
-                else {
-                    return errorCustom(message, `An error occurred while attempting to delete! ${err.message}`, module.name, client);
-                }
-            });
-        }
+    execute(message, args, client, distube, collections, serverConfig) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const channel = message.channel;
+            var amount = parseInt(args[0]);
+            if (channel.isDMBased()) {
+                return;
+            }
+            if (!modCheck(message)) {
+                return errorNoMod(message, this.name);
+            }
+            if (isNaN(amount)) {
+                return warnCustom(message, `That is not a valid number for the \`${serverConfig.prefix}clear\` command!`, this.name);
+            }
+            else if (amount < 2 || amount > 99) {
+                return warnCustom(message, `${args[0]} is an invalid number! __**Number must be between 1 and 100!**__`, this.name);
+            }
+            else if (amount >= 2 && amount <= 99) {
+                message.delete();
+                message.deleted = true;
+                channel
+                    .bulkDelete(amount)
+                    .then(() => {
+                    return embedCustom(message, 'Success!', '#008000', `Successfully deleted ${amount} messages!`, {
+                        text: `Requested by ${message.author.tag}`,
+                        iconURL: null,
+                    }, null, [], null, null);
+                })
+                    .catch((err) => {
+                    if (err.message == 'You can only bulk delete messages that are under 14 days old.') {
+                        return warnCustom(message, `You can only bulk delete messages that are under 14 days old.`, this.name);
+                    }
+                    else {
+                        return errorCustom(message, `An error occurred while attempting to delete! ${err.message}`, this.name, client);
+                    }
+                });
+            }
+        });
     },
 };
-export {};
+//#endregion
+//#region Exports
+export default clearCommand;
 //#endregion

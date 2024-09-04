@@ -7,8 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#endregion
-//#region Modules
 import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 //#region Function that listens for someone to join a server and then gives them a role if this feature is enabled

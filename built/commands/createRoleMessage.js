@@ -13,11 +13,10 @@ import { warnDisabled, errorCustom, embedCustomDM } from '../helpers/embedMessag
 import { generateEmbedFields } from '../internal/autoRole.js';
 import { errorNoAdmin } from '../helpers/embedMessages.js';
 import { adminCheck } from '../helpers/userPermissions.js';
-import { MongooseServerConfig } from '../models/serverConfigModel.js';
 import { MongooseAutoRoleList } from '../models/autoRoleList.js';
 //#endregion
-//#region This exports the createrolemessage command with the information about it
-const createAutoRoleCommand = {
+//#region This creates the createrolemessage command with the information about it
+const createRoleMessageCommand = {
     name: 'createrolemessage',
     type: ['Guild'],
     aliases: ['creatermsg'],
@@ -25,7 +24,7 @@ const createAutoRoleCommand = {
     class: 'admin',
     usage: 'createrolemessage',
     description: 'Create the reactions message for auto role assignment.',
-    execute(message, args, client, distube) {
+    execute(message, args, client, distube, collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
             //This is the max number of reactions on a message allowed by discord, if discord ever changes that number change this and the code should work again!!!
@@ -35,8 +34,6 @@ const createAutoRoleCommand = {
             if (channel.isDMBased()) {
                 return;
             }
-            //Calls config from database
-            var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
             //Checks to make sure your roles and reactions match up
             if (serverConfig.autoRole.roles.length !== serverConfig.autoRole.reactions.length) {
                 return errorCustom(message, `Roles list and reactions list are not the same length! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
@@ -61,7 +58,7 @@ const createAutoRoleCommand = {
                 return warnDisabled(message, 'autoRole', this.name);
             }
             // Checks that the user is an admin
-            if (!adminCheck(message)) {
+            if (!adminCheck(message, serverConfig)) {
                 return errorNoAdmin(message, this.name);
             }
             //Pulls message listening info from db
@@ -92,7 +89,7 @@ const createAutoRoleCommand = {
             else if (serverConfig.autoRole.embedThumbnail && message.guild.icon) {
                 thumbnail = message.guild.iconURL();
             }
-            const fields = yield generateEmbedFields(serverID);
+            const fields = yield generateEmbedFields(serverConfig);
             for (let { emoji, role } of fields) {
                 if (!message.guild.roles.cache.find((r) => r.name === role)) {
                     return errorCustom(message, `The role '${role}' does not exist!! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
@@ -160,5 +157,5 @@ const createAutoRoleCommand = {
 };
 //#endregion
 //#region Exports
-export default createAutoRoleCommand;
+export default createRoleMessageCommand;
 //#endregion

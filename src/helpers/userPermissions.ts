@@ -1,9 +1,7 @@
 //#region Dependencies
-import { GuildMemberRoleManager, Message, PermissionFlagsBits, RoleManager } from 'discord.js';
-//#endregion
-
-//#region Modules
-import { MongooseServerConfig } from '../models/serverConfigModel.js';
+import { GuildMemberRoleManager, PermissionFlagsBits, RoleManager } from 'discord.js';
+import { ServerConfig } from '../models/serverConfigModel.js';
+import { MessageWithDeleted } from '../models/messages.js';
 //#endregion
 
 //#region Function that calls the server roles and saves the roles that match the adminRoleIDs, modRoleIDs, and djRoleIDs in serverConfig to their own arrays
@@ -13,10 +11,8 @@ import { MongooseServerConfig } from '../models/serverConfigModel.js';
  * @param serverID - The server ID
  * @returns An Array of roleID arrays [adminRoleIDs, modRoleIDs, djRoleIDs]
  */
-async function serverRoleUpdate(sRole: RoleManager, serverID: string) {
+async function serverRoleUpdate(sRole: RoleManager, serverConfig: ServerConfig) {
     //Gets serverConfig from database
-    var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
-
     let adminRoleIDs = [];
     let modRoleIDs = [];
     let djRoleIDs = [];
@@ -64,15 +60,13 @@ async function serverRoleUpdate(sRole: RoleManager, serverID: string) {
  * @param message - Discord.js Message Object
  * @returns True if the user in the message object is a bot admin
  */
-async function adminCheck(message: Message) {
+async function adminCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
     var userRolesArray: GuildMemberRoleManager;
     var serverRolesArray: RoleManager;
-    var serverID = '';
 
     if (message.member != null) {
         userRolesArray = message.member.roles;
         serverRolesArray = message.guild.roles;
-        serverID = message.guild.id;
     } else {
         return false;
     }
@@ -83,7 +77,7 @@ async function adminCheck(message: Message) {
     }
 
     //Calls a function that updates the server role information
-    const permArrays = serverRoleUpdate(serverRolesArray, serverID);
+    const permArrays = serverRoleUpdate(serverRolesArray, serverConfig);
 
     //Checks to see if any of the user role ids match any of the admin role ids
     for (let key in userRolesArray) {
@@ -103,26 +97,24 @@ async function adminCheck(message: Message) {
  * @param message - Discord.js Message Object
  * @returns True if the user in the message object is a bot moderator
  */
-function modCheck(message: Message) {
+function modCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
     var userRolesArray: GuildMemberRoleManager;
     var serverRolesArray: RoleManager;
-    var serverID = '';
 
     if (message.member != null) {
         userRolesArray = message.member.roles;
         serverRolesArray = message.guild.roles;
-        serverID = message.guild.id;
     } else {
         return false;
     }
 
     //Checks to see if user is admin
-    if (adminCheck(message)) {
+    if (adminCheck(message, serverConfig)) {
         return true;
     }
 
     //Calls a function that updates the server role information
-    const permArrays = serverRoleUpdate(serverRolesArray, serverID);
+    const permArrays = serverRoleUpdate(serverRolesArray, serverConfig);
 
     //Checks to see if user role ids match any of the mod role ids
     for (let key in userRolesArray) {
@@ -143,24 +135,22 @@ function modCheck(message: Message) {
  * @param message - Discord.js Message Object
  * @returns True if the user in the message object is a bot DJ
  */
-function djCheck(message: Message) {
+function djCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
     var userRolesArray: GuildMemberRoleManager;
     var serverRolesArray: RoleManager;
-    var serverID = '';
 
     if (message.member != null) {
         userRolesArray = message.member.roles;
         serverRolesArray = message.guild.roles;
-        serverID = message.guild.id;
     } else {
         return false;
     }
 
-    if (modCheck(message)) {
+    if (modCheck(message, serverConfig)) {
         return true;
     }
 
-    const permArrays = serverRoleUpdate(serverRolesArray, serverID);
+    const permArrays = serverRoleUpdate(serverRolesArray, serverConfig);
 
     if (permArrays[2].length != 0) {
         for (let key in userRolesArray) {

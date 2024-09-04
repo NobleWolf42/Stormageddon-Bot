@@ -1,19 +1,17 @@
-//#region Dependencies
-const GeniusLyrics = require('genius-lyrics');
-const Genius = new GeniusLyrics.Client();
+//#region Imports
+import { Client as GeniusClient } from 'genius-lyrics';
+import { addToLog } from '../helpers/errorLog.js';
+import { embedCustom, warnCustom, warnDisabled, warnWrongChannel } from '../helpers/embedMessages.js';
+import { Command } from '../models/commandModel.js';
+import { LogType } from '../models/loggingModel.js';
 //#endregion
 
-//#region Helpers
-const { addToLog } = require('../helpers/errorLog.js');
-const { embedCustom, warnCustom, warnDisabled, warnWrongChannel } = require('../helpers/embedMessages.js');
-//#endregion
-
-//#region Modules
-import { MongooseServerConfig } from '../models/serverConfig';
+//#region Initialization
+const Genius = new GeniusClient();
 //#endregion
 
 //#region This exports the lyrics command with the information about it
-module.exports = {
+const lyricsCommand: Command = {
     name: 'lyrics',
     type: ['Guild'],
     aliases: ['ly'],
@@ -21,19 +19,22 @@ module.exports = {
     class: 'music',
     usage: 'lyrics',
     description: 'Gets the lyrics for the currently playing song.',
-    async execute(message, args, client, distube) {
-        //Calls config from database
-        var serverConfig = (await MongooseServerConfig.findById(message.guild.id).exec()).toObject();
+    async execute(message, args, client, distube, collections, serverConfig) {
+        const channel = message.channel;
 
-        if (!serverConfig.music.enable) {
-            warnDisabled(message, 'music', module.name);
+        if (channel.isDMBased()) {
             return;
         }
 
-        if (serverConfig.music.textChannel == message.channel.name) {
-            var queue = distube.getQueue(message);
+        if (!serverConfig.music.enable) {
+            warnDisabled(message, 'music', this.name);
+            return;
+        }
+
+        if (serverConfig.music.textChannel == channel.name) {
+            var queue = distube.getQueue(message.guildId);
             if (!queue) {
-                return warnCustom(message, 'There is nothing playing.', module.name);
+                return warnCustom(message, 'There is nothing playing.', this.name);
             }
 
             var lyrics = null;
@@ -46,11 +47,11 @@ module.exports = {
                     lyrics = `No lyrics found for ${queue.songs[0].name}.`;
                 }
             } catch (error) {
-                addToLog('fatal error', module.name, message.author.tag, message.guild.name, message.channel.name, error, client);
+                addToLog(LogType.FatalError, this.name, message.author.tag, message.guild.name, channel.name, error, client);
                 lyrics = `No lyrics found for ${queue.songs[0].name}.`;
             }
 
-            slicedLyrics = [];
+            let slicedLyrics: string[] = [];
             while (lyrics.length >= 2048) {
                 slicedLyrics.push(`${lyrics.substring(0, 2045)}...`);
                 lyrics = lyrics.slice(2045);
@@ -74,8 +75,12 @@ module.exports = {
                 );
             });
         } else {
-            warnWrongChannel(message, serverConfig.music.textChannel, module.name);
+            warnWrongChannel(message, serverConfig.music.textChannel, this.name);
         }
     },
 };
+//#endregion
+
+//#region Exports
+export default lyricsCommand;
 //#endregion

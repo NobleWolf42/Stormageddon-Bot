@@ -65,6 +65,7 @@ const extraColl = new ExtraCollections();
 //#endregion
 try {
     //#region Initialize Distube(music) Functionality
+    //FIX this error in the future, distube and discordjs hate each other apparently
     const distube = new DisTube(client, {
         emitNewSongOnly: false,
         savePreviousSongs: true,

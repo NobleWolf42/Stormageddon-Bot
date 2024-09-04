@@ -1,13 +1,12 @@
-//#region Dependencies
-const { XMLHttpRequest } = require('xmlhttprequest');
+//#region Imports
+import { Command } from '../models/commandModel.js';
+import { embedCustom, warnCustom, errorCustom } from '../helpers/embedMessages.js';
+import { MessageWithDeleted } from '../models/messages.js';
+import { Client } from 'discord.js';
 //#endregion
 
-//#region Helpers
-const { embedCustom, warnCustom, errorCustom } = require('../helpers/embedMessages.js');
-//#endregion
-
-//#region This exports the destiny2 command with the information about it
-module.exports = {
+//#region This creates the destiny2 command with the information about it
+const destiny2Command: Command = {
     name: 'destiny2',
     type: ['DM', 'Guild'],
     aliases: ['d2'],
@@ -15,11 +14,11 @@ module.exports = {
     class: 'gaming',
     usage: 'destiny2 clan ***INSERT-CLAN-NAME***',
     description: "Displays Destiny 2 clan's bio, avatar, motto, and founder. (Works in Direct Messages too.)",
-    execute(message, args, client, distube) {
+    async execute(message, args, client, distube, collections, serverConfig) {
         if (args[0] == 'clan') {
             var clanName = '';
 
-            for (i = 1; i < args.length; i++) {
+            for (let i = 1; i < args.length; i++) {
                 if (i != args.length - 1) {
                     clanName += `${args[i]} `;
                 } else {
@@ -27,16 +26,16 @@ module.exports = {
                 }
             }
 
-            getClan(message, clanName);
+            getClan(message, clanName, this.name, client);
         } else {
-            return warnCustom(message, `You did not use the command correctly, please try again (${serverConfig.prefix}destiny2 clan ***INSERT-CLAN-NAME***).`, module.name);
+            return warnCustom(message, `You did not use the command correctly, please try again (${serverConfig.prefix}destiny2 clan ***INSERT-CLAN-NAME***).`, this.name);
         }
     },
 };
 //#endregion
 
 //#region Gets the information of the destiny 2 clan by name
-function getClan(message, clan_name) {
+function getClan(message: MessageWithDeleted, clan_name: string, name: string, client: Client) {
     // Request initialized and created
     var request = new XMLHttpRequest();
     request.open('GET', 'https://www.bungie.net/Platform/GroupV2/Name/' + clan_name + '/1', true);
@@ -66,15 +65,19 @@ function getClan(message, clan_name) {
                     null
                 );
             } else {
-                return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
+                return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, name);
             }
         } else if (error.ErrorStatus == 'ClanNotFound') {
-            return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
+            return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, name);
         } else {
-            return errorCustom(message, 'The Destiny API was unable to be reached at this time.\n Try again later.', module.name, client);
+            return errorCustom(message, 'The Destiny API was unable to be reached at this time.\n Try again later.', name, client);
         }
     };
 
     request.send();
 }
+//#endregion
+
+//#region Exports
+export default destiny2Command;
 //#endregion

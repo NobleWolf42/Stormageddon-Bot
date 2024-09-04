@@ -5,12 +5,11 @@ import { generateEmbedFields } from '../internal/autoRole.js';
 import { errorNoAdmin } from '../helpers/embedMessages.js';
 import { adminCheck } from '../helpers/userPermissions.js';
 import { Command } from '../models/commandModel.js';
-import { MongooseServerConfig } from '../models/serverConfigModel.js';
 import { MongooseAutoRoleList } from '../models/autoRoleList.js';
 //#endregion
 
-//#region This exports the createrolemessage command with the information about it
-const createAutoRoleCommand: Command = {
+//#region This creates the createrolemessage command with the information about it
+const createRoleMessageCommand: Command = {
     name: 'createrolemessage',
     type: ['Guild'],
     aliases: ['creatermsg'],
@@ -18,7 +17,7 @@ const createAutoRoleCommand: Command = {
     class: 'admin',
     usage: 'createrolemessage',
     description: 'Create the reactions message for auto role assignment.',
-    async execute(message, args, client, distube) {
+    async execute(message, args, client, distube, collections, serverConfig) {
         //This is the max number of reactions on a message allowed by discord, if discord ever changes that number change this and the code should work again!!!
         var maxReactions = 20;
 
@@ -28,9 +27,6 @@ const createAutoRoleCommand: Command = {
         if (channel.isDMBased()) {
             return;
         }
-
-        //Calls config from database
-        var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
         //Checks to make sure your roles and reactions match up
         if (serverConfig.autoRole.roles.length !== serverConfig.autoRole.reactions.length) {
@@ -61,7 +57,7 @@ const createAutoRoleCommand: Command = {
         }
 
         // Checks that the user is an admin
-        if (!adminCheck(message)) {
+        if (!adminCheck(message, serverConfig)) {
             return errorNoAdmin(message, this.name);
         }
 
@@ -97,7 +93,7 @@ const createAutoRoleCommand: Command = {
             thumbnail = message.guild.iconURL();
         }
 
-        const fields = await generateEmbedFields(serverID);
+        const fields = await generateEmbedFields(serverConfig);
 
         for (let { emoji, role } of fields) {
             if (!message.guild.roles.cache.find((r) => r.name === role)) {
@@ -171,5 +167,5 @@ const createAutoRoleCommand: Command = {
 //#endregion
 
 //#region Exports
-export default createAutoRoleCommand;
+export default createRoleMessageCommand;
 //#endregion

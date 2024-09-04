@@ -7,18 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Helpers
-const { embedCustom, warnDisabled, errorCustom, warnCustom, errorNoAdmin } = require('../helpers/embedMessages.js');
-const { adminCheck } = require('../helpers/userPermissions.js');
+import { embedCustom, warnDisabled, errorCustom, warnCustom, errorNoAdmin } from '../helpers/embedMessages.js';
+import { adminCheck } from '../helpers/userPermissions.js';
+import { addRemoveBlame, changeBlameOffset } from '../internal/settingsFunctions.js';
 //#endregion
-//#region Internals
-const { addRemoveBlame, changeBlameOffset } = require('../internal/settingsFunctions.js');
-//#endregion
-//#region Modules
-import { MongooseServerConfig } from '../models/serverConfig';
-//#endregion
-//#region This exports the blame command with the information about it
-module.exports = {
+//#region This creates the blame command with the information about it
+const blameCommand = {
     name: 'blame',
     type: ['Guild'],
     aliases: [],
@@ -26,10 +20,9 @@ module.exports = {
     class: 'fun',
     usage: 'blame ""/add/remove/addperm/removeperm/list/fix ***FOR-ADD/REMOVE/ADDPERM/REMOVEPERM-ONLY-TYPE-NAME-HERE***/***FIX-ONLY-NUMBER-IN-LIST-OF-PERSON***',
     description: 'Blames someone based on a weekly rotation. Can also add someone to a permanent blame list. Add/Remove/AddPerm/RemovePerm/List are Admin ONLY Commands.',
-    execute(message, args, client, distube) {
+    execute(message, args, client, distube, collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             var serverID = message.guild.id;
-            var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
             var erroredOut = false;
             var adminTF = adminCheck(message);
             var oldSubCommand = ` ${args[0]}`;
@@ -39,7 +32,7 @@ module.exports = {
                     //Adds a person to the blame rotation
                     case 'add':
                         if (!adminTF) {
-                            errorNoAdmin(message, module.name + oldSubCommand);
+                            errorNoAdmin(message, this.name + oldSubCommand);
                         }
                         args = args.splice(1);
                         var argsString = args.join(' ');
@@ -63,7 +56,7 @@ module.exports = {
                     //Adds a person to the permanent blame list
                     case 'addperm':
                         if (!adminTF) {
-                            errorNoAdmin(message, module.name + oldSubCommand);
+                            errorNoAdmin(message, this.name + oldSubCommand);
                         }
                         args = args.splice(1);
                         var argsString = args.join(' ');
@@ -87,7 +80,7 @@ module.exports = {
                     //Removes a person from the blame rotation
                     case 'remove':
                         if (!adminTF) {
-                            errorNoAdmin(message, module.name + oldSubCommand);
+                            errorNoAdmin(message, this.name + oldSubCommand);
                         }
                         args = args.splice(1);
                         var argsString = args.join(' ');
@@ -111,7 +104,7 @@ module.exports = {
                     //Removes a person from the permanent blame list
                     case 'removeperm':
                         if (!adminTF) {
-                            errorNoAdmin(message, module.name + oldSubCommand);
+                            errorNoAdmin(message, this.name + oldSubCommand);
                         }
                         args = args.splice(1);
                         var argsString = args.join(' ');
@@ -137,22 +130,30 @@ module.exports = {
                         var rBlameString = '';
                         var pBlameString = '';
                         if (!adminTF) {
-                            errorNoAdmin(message, module.name + oldSubCommand);
+                            errorNoAdmin(message, this.name + oldSubCommand);
                         }
-                        for (key in serverConfig.blame.permList) {
-                            if (key == serverConfig.blame.permList.length - 1) {
-                                pBlameString += `${serverConfig.blame.permList[key]}`;
+                        for (let key in serverConfig.blame.permList) {
+                            let blameUser = client.users.cache.get(serverConfig.blame.permList[key]);
+                            if (blameUser == undefined) {
+                                blameUser = yield client.users.fetch(serverConfig.blame.permList[key]);
+                            }
+                            if (key == (serverConfig.blame.permList.length - 1).toString()) {
+                                pBlameString += `${blameUser}`;
                             }
                             else {
-                                pBlameString += `${serverConfig.blame.permList[key]}, `;
+                                pBlameString += `${blameUser}, `;
                             }
                         }
-                        for (key in serverConfig.blame.rotateList) {
-                            if (key == serverConfig.blame.rotateList.length - 1) {
-                                rBlameString += `${serverConfig.blame.rotateList[key]}`;
+                        for (let key in serverConfig.blame.rotateList) {
+                            let blameUser = client.users.cache.get(serverConfig.blame.rotateList[key]);
+                            if (blameUser == undefined) {
+                                blameUser = yield client.users.fetch(serverConfig.blame.rotateList[key]);
+                            }
+                            if (key == (serverConfig.blame.rotateList.length - 1).toString()) {
+                                rBlameString += `${blameUser}`;
                             }
                             else {
-                                rBlameString += `${serverConfig.blame.rotateList[key]}, `;
+                                rBlameString += `${blameUser}, `;
                             }
                         }
                         embedCustom(message, 'Blame List:', '#B54A65', `Rotating Blame List: ${rBlameString}\nPermanent Blame List: ${pBlameString}`, {
@@ -164,10 +165,11 @@ module.exports = {
                     case 'fix':
                         var currentVal = Math.floor((Date.now() - 493200000) / 604800000) -
                             Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) * serverConfig.blame.rotateList.length;
-                        if (args[1] == undefined || args[1] < 1 || args[1] > serverConfig.blame.rotateList) {
-                            return warnCustom(message, `You must put a number between 1 and ${serverConfig.blame.rotateList.length}`, module.name);
+                        const value = Number(args[1]);
+                        if (value == undefined || value < 1 || value > serverConfig.blame.rotateList.length) {
+                            return warnCustom(message, `You must put a number between 1 and ${serverConfig.blame.rotateList.length}`, this.name);
                         }
-                        var wantedVal = args[1] - 1;
+                        var wantedVal = value - 1;
                         if (currentVal != wantedVal) {
                             var offset = currentVal - wantedVal;
                             serverConfig = yield changeBlameOffset(serverID, offset).catch((err) => {
@@ -183,14 +185,18 @@ module.exports = {
                             }
                         }
                         else {
-                            warnCustom(message, "It is already that user's week!", module.name);
+                            warnCustom(message, "It is already that user's week!", this.name);
                         }
                         break;
                     //Blames a person
                     default:
                         var blameList = [];
-                        for (key in serverConfig.blame.permList) {
-                            blameList.push(serverConfig.blame.permList[key]);
+                        for (let key in serverConfig.blame.permList) {
+                            var blameUser = client.users.cache.get(serverConfig.blame.permList[key]);
+                            if (blameUser == undefined) {
+                                blameUser = yield client.users.fetch(serverConfig.blame.permList[key]);
+                            }
+                            blameList.push(blameUser);
                         }
                         var blameString = '';
                         if (serverConfig.blame.rotateList.length > 0) {
@@ -203,10 +209,14 @@ module.exports = {
                             else if (rotateIndex < 0) {
                                 rotateIndex += serverConfig.blame.rotateList.length;
                             }
-                            blameList.push(serverConfig.blame.rotateList[rotateIndex]);
+                            var blameUser = client.users.cache.get(serverConfig.blame.rotateList[rotateIndex]);
+                            if (blameUser == undefined) {
+                                blameUser = yield client.users.fetch(serverConfig.blame.rotateList[rotateIndex]);
+                            }
+                            blameList.push(blameUser);
                         }
                         else if (blameList.length < 1) {
-                            return warnCustom(message, 'The blame list is empty!', module.name);
+                            return warnCustom(message, 'The blame list is empty!', this.name);
                         }
                         if (blameList.length == 1) {
                             if (serverConfig.blame.cursing) {
@@ -223,9 +233,9 @@ module.exports = {
                             }
                         }
                         else {
-                            for (key in blameList) {
+                            for (let key in blameList) {
                                 if (blameList.length > 2) {
-                                    if (key == blameList.length - 1) {
+                                    if (key == (blameList.length - 1).toString()) {
                                         blameString += `and ${blameList[key]}'s`;
                                     }
                                     else {
@@ -233,7 +243,7 @@ module.exports = {
                                     }
                                 }
                                 else {
-                                    if (key == blameList.length - 1) {
+                                    if (key == (blameList.length - 1).toString()) {
                                         blameString += `and ${blameList[key]}'s`;
                                     }
                                     else {
@@ -258,9 +268,12 @@ module.exports = {
                 }
             }
             else {
-                warnDisabled(message, 'blame', module.name);
+                warnDisabled(message, 'blame', this.name);
             }
         });
     },
 };
+//#endregion
+//#region
+export default blameCommand;
 //#endregion

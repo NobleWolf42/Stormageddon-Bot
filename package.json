@@ -36,6 +36,7 @@
         "dev": "tsc -w -P . & nodemon --env-file=.env ./built/storm.js"
     },
     "devDependencies": {
+        "@types/xmlhttprequest": "^1.8.2",
         "nodemon": "^3.1.4",
         "prettier": "3.3.3",
         "typescript": "^5.5.4"

@@ -1,29 +1,26 @@
-//#region Dependencies
-const { EmbedBuilder } = require('discord.js');
+//#region Import
+import { EmbedBuilder } from 'discord.js';
+import { embedCustom } from '../helpers/embedMessages.js';
+import { Command } from '../models/commandModel.js';
 //#endregion
 
-//#region Helpers
-const { embedCustom } = require('../helpers/embedMessages.js');
-//#endregion
-
-//#region This exports the bugreport command with the information about it
-module.exports = {
+//#region This creates the bugreport command with the information about it
+const bugReportCommand: Command = {
     name: 'bugreport',
     type: ['DM'],
     aliases: [],
     coolDown: 60,
     class: 'direct',
     usage: '!bugreport ***MESSAGE***',
-    description:
-        'Whisper via Stormageddon to report a bug to the developers of Stormageddon. (Only works in Direct Message.)',
-    async execute(message, args, client, distube) {
+    description: 'Whisper via Stormageddon to report a bug to the developers of Stormageddon. (Only works in Direct Message.)',
+    async execute(message, args, client) {
         var argsString = args.join(' ');
-        var arguments = argsString.split(', ');
-        var content = arguments[0];
+        var newArgs = argsString.split(', ');
+        var content = newArgs[0];
 
-        var devList = process.env.devIDs;
+        var devList = process.env.devIDs.split(',');
 
-        for (key in devList) {
+        for (let key in devList) {
             var dev = await client.users.fetch(devList[key]);
             const embMsg = new EmbedBuilder()
                 .setTitle('Bug Report')
@@ -38,7 +35,7 @@ module.exports = {
             await dev.send({ embeds: [embMsg] });
         }
 
-        return embedCustom(
+        embedCustom(
             message,
             'Bug Report Sent.',
             '#0B6E29',
@@ -51,4 +48,8 @@ module.exports = {
         );
     },
 };
+//#endregion
+
+//#region Exports
+export default bugReportCommand;
 //#endregion

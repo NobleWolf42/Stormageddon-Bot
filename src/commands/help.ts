@@ -1,15 +1,13 @@
-//#region Helpers
-const {
-    embedHelp,
-    warnCustom,
-    errorNoAdmin,
-} = require('../helpers/embedMessages.js');
-const { adminCheck } = require('../helpers/userPermissions.js');
-const { capitalize } = require('../helpers/stringHelpers.js');
+//#region Import
+import { Command } from '../models/commandModel.js';
+import { embedHelp, warnCustom, errorNoAdmin } from '../helpers/embedMessages.js';
+import { adminCheck } from '../helpers/userPermissions.js';
+import { capitalize } from '../helpers/stringHelpers.js';
+import { MessageWithDeleted } from '../models/messages.js';
 //#endregion
 
-//#region This exports the help command with the information about it
-module.exports = {
+//#region This creates the help command with the information about it
+const helpCommand: Command = {
     name: 'help',
     type: ['DM', 'Guild'],
     coolDown: 0,
@@ -18,12 +16,12 @@ module.exports = {
     usage: 'help ***PAGE***',
     description:
         'Displays Help Message, specifying a page will show that help info, including a listing of all help pages. Using the **"All"** page will display all commands, the **"DM"** page will display all commands that can be Direct Messaged to the bot, and the **"Server"** page will display all commands that can be used in a discord server. (Works in Direct Messages too.)',
-    execute(message, args, client, distube) {
+    async execute(message, args, client, distube, collections) {
         var args = args.map((v) => v.toLowerCase());
-        const adminTF = adminCheck(message);
-        const commands = message.client.commands;
-        let commandClasses = [];
-        let helpMessageCommands = [];
+        const adminTF = await adminCheck(message);
+        const commands = collections.commands;
+        let commandClasses: string[] = [];
+        let helpMessageCommands: Command[] = [];
 
         //Checks to see if your an admin and only adds the admin page to the commandClasses array if you are
         if (process.env.devIDs.includes(message.author.id)) {
@@ -34,20 +32,13 @@ module.exports = {
             });
         } else if (adminTF) {
             commands.forEach((cmd) => {
-                if (
-                    !commandClasses.includes(capitalize(cmd.class)) &&
-                    capitalize(cmd.class) != 'Developer'
-                ) {
+                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Developer') {
                     commandClasses.push(capitalize(cmd.class));
                 }
             });
         } else {
             commands.forEach((cmd) => {
-                if (
-                    !commandClasses.includes(capitalize(cmd.class)) &&
-                    capitalize(cmd.class) != 'Developer' &&
-                    capitalize(cmd.class) != 'Admin'
-                ) {
+                if (!commandClasses.includes(capitalize(cmd.class)) && capitalize(cmd.class) != 'Developer' && capitalize(cmd.class) != 'Admin') {
                     commandClasses.push(capitalize(cmd.class));
                 }
             });
@@ -63,19 +54,8 @@ module.exports = {
                     helpMessageCommands.push(cmd);
                 }
             });
-            return makeHelpMsg(
-                message,
-                'Help',
-                helpMessageCommands,
-                commandClasses,
-                adminTF
-            );
-        } else if (
-            commandClasses.includes(capitalize(args[0])) ||
-            args[0] == 'all' ||
-            args[0] == 'dm' ||
-            args[0] == 'server'
-        ) {
+            return makeHelpMsg(message, 'Help', helpMessageCommands, commandClasses, adminTF);
+        } else if (commandClasses.includes(capitalize(args[0])) || args[0] == 'all' || args[0] == 'dm' || args[0] == 'server') {
             //Switch case to output help page based on requested page
             switch (args[0]) {
                 //Outputs admin page if user is admin in the server its run in, otherwise sends an error message
@@ -86,16 +66,10 @@ module.exports = {
                                 helpMessageCommands.push(cmd);
                             }
                         });
-                        title = `${capitalize(args[0])} Help`;
-                        makeHelpMsg(
-                            message,
-                            title,
-                            helpMessageCommands,
-                            commandClasses,
-                            adminTF
-                        );
+                        let title = `${capitalize(args[0])} Help`;
+                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
                     } else {
-                        errorNoAdmin(message, module.name);
+                        errorNoAdmin(message, this.name);
                     }
 
                     break;
@@ -108,36 +82,25 @@ module.exports = {
                                 helpMessageCommands.push(cmd);
                             }
                         });
-                        title = `${capitalize(args[0])} Help`;
-                        makeHelpMsg(
-                            message,
-                            title,
-                            helpMessageCommands,
-                            commandClasses,
-                            adminTF
-                        );
+                        let title = `${capitalize(args[0])} Help`;
+                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
                     } else {
-                        return warnCustom(
-                            message,
-                            `The **${args[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``,
-                            module.name
-                        );
+                        return warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, this.name);
                     }
 
                     break;
 
                 //Outputs all command pages that the user has access to
                 case 'all':
-                    for (c = 0; c < commandClasses.length; c++) {
+                    for (let c = 0; c < commandClasses.length; c++) {
                         helpMessageCommands = [];
                         commands.forEach((cmd) => {
-                            if (
-                                cmd.class == commandClasses[c].toLowerCase() &&
-                                cmd.name != 'devsend'
-                            ) {
+                            if (cmd.class == commandClasses[c].toLowerCase() && cmd.name != 'devsend') {
                                 helpMessageCommands.push(cmd);
                             }
                         });
+
+                        let title: string;
 
                         if (commandClasses[c].toLowerCase() != 'help') {
                             title = `${capitalize(commandClasses[c])} Help`;
@@ -145,34 +108,24 @@ module.exports = {
                             title = 'Help';
                         }
 
-                        makeHelpMsg(
-                            message,
-                            title,
-                            helpMessageCommands,
-                            commandClasses,
-                            adminTF
-                        );
+                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
                     }
 
                     break;
 
                 //Outputs all commands that can be run in DMs
                 case 'dm':
-                    commandClasses = commandClasses.filter(
-                        (i) => i.toLowerCase() != 'music'
-                    );
+                    commandClasses = commandClasses.filter((i) => i.toLowerCase() != 'music');
 
-                    for (c = 0; c < commandClasses.length; c++) {
+                    for (let c = 0; c < commandClasses.length; c++) {
                         helpMessageCommands = [];
                         commands.forEach((cmd) => {
-                            if (
-                                cmd.class == commandClasses[c].toLowerCase() &&
-                                cmd.type.includes('DM') &&
-                                cmd.name != 'devsend'
-                            ) {
+                            if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('DM') && cmd.name != 'devsend') {
                                 helpMessageCommands.push(cmd);
                             }
                         });
+
+                        let title: string;
 
                         if (commandClasses[c].toLowerCase() != 'help') {
                             title = `${capitalize(commandClasses[c])} Help`;
@@ -180,30 +133,22 @@ module.exports = {
                             title = 'Help';
                         }
 
-                        makeHelpMsg(
-                            message,
-                            title,
-                            helpMessageCommands,
-                            commandClasses,
-                            adminTF
-                        );
+                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
                     }
 
                     break;
 
                 //Outputs all commands that can be run in a server
                 case 'server':
-                    for (c = 0; c < commandClasses.length; c++) {
+                    for (let c = 0; c < commandClasses.length; c++) {
                         helpMessageCommands = [];
                         commands.forEach((cmd) => {
-                            if (
-                                cmd.class == commandClasses[c].toLowerCase() &&
-                                cmd.type.includes('Guild') &&
-                                cmd.name != 'devsend'
-                            ) {
+                            if (cmd.class == commandClasses[c].toLowerCase() && cmd.type.includes('Guild') && cmd.name != 'devsend') {
                                 helpMessageCommands.push(cmd);
                             }
                         });
+
+                        let title: string;
 
                         if (commandClasses[c].toLowerCase() != 'help') {
                             title = `${capitalize(commandClasses[c])} Help`;
@@ -211,13 +156,7 @@ module.exports = {
                             title = 'Help';
                         }
 
-                        makeHelpMsg(
-                            message,
-                            title,
-                            helpMessageCommands,
-                            commandClasses,
-                            adminTF
-                        );
+                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
                     }
 
                     break;
@@ -229,24 +168,15 @@ module.exports = {
                             helpMessageCommands.push(cmd);
                         }
                     });
-                    title = `${capitalize(args[0])} Help`;
 
-                    makeHelpMsg(
-                        message,
-                        title,
-                        helpMessageCommands,
-                        commandClasses,
-                        adminTF
-                    );
+                    let title = `${capitalize(args[0])} Help`;
+
+                    makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
 
                     break;
             }
         } else {
-            return warnCustom(
-                message,
-                `The **${args[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``,
-                module.name
-            );
+            return warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, this.name);
         }
     },
 };
@@ -255,23 +185,17 @@ module.exports = {
 //#region Function to create help message
 /**
  *
- * @param {Message} message - Discord.js Message object
- * @param {String} title - String for the title of the embed
- * @param {Array} helpMessageCommands - Array of the commands and their descriptions
- * @param {Array} commandClasses - Array of the different command classes
- * @param {Boolean} adminTF - Is the user an admin in the server y/n
+ * @param message - Discord.js Message object
+ * @param title - String for the title of the embed
+ * @param helpMessageCommands - Array of the commands and their descriptions
+ * @param commandClasses - Array of the different command classes
+ * @param adminTF - Is the user an admin in the server y/n
  */
-function makeHelpMsg(
-    message,
-    title,
-    helpMessageCommands,
-    commandClasses,
-    adminTF
-) {
+function makeHelpMsg(message: MessageWithDeleted, title: string, helpMessageCommands: Command[], commandClasses: string[], adminTF: boolean) {
     var helpMsg = '';
     commandClasses.sort();
 
-    for (i = 0; i < helpMessageCommands.length; i++) {
+    for (let i = 0; i < helpMessageCommands.length; i++) {
         let key = helpMessageCommands[i];
         let aliasesLength = key.aliases.length;
 
@@ -281,7 +205,7 @@ function makeHelpMsg(
             helpMsg += `${key.usage} - Aliases: ${key.aliases[0]} - ${key.description}`;
         } else {
             let aliasList = '';
-            for (a = 0; a < aliasesLength; a++) {
+            for (let a = 0; a < aliasesLength; a++) {
                 if (a != aliasesLength - 1) {
                     aliasList += `${key.aliases[a]}, `;
                 } else {
@@ -299,11 +223,7 @@ function makeHelpMsg(
     var pageList = makeCommandPageList(commandClasses);
 
     if (adminTF) {
-        embedHelp(
-            message,
-            title,
-            `\`Help Pages: ${pageList}\`\n**NOTE: !help Admin can only be run in a server!!!\n\n**${helpMsg}`
-        );
+        embedHelp(message, title, `\`Help Pages: ${pageList}\`\n**NOTE: !help Admin can only be run in a server!!!\n\n**${helpMsg}`);
     } else {
         embedHelp(message, title, `\`Help Pages: ${pageList}\`\n\n${helpMsg}`);
     }
@@ -313,13 +233,13 @@ function makeHelpMsg(
 //#region Function to make list of command pages based off of their classes
 /**
  * Command that makes the command page list from the commandClasses array.
- * @param {Array} commandClasses - Array of all the command classes
- * @returns {String} String of all the command classes + DM, Server, and All.
+ * @param commandClasses - Array of all the command classes
+ * @returns String of all the command classes + DM, Server, and All.
  */
-function makeCommandPageList(commandClasses) {
+function makeCommandPageList(commandClasses: string[]) {
     var pageList = '';
 
-    for (i = 0; i < commandClasses.length; i++) {
+    for (let i = 0; i < commandClasses.length; i++) {
         pageList += `${commandClasses[i]}, `;
     }
 
@@ -327,4 +247,8 @@ function makeCommandPageList(commandClasses) {
 
     return pageList;
 }
+//#endregion
+
+//#region Exports
+export default helpCommand;
 //#endregion

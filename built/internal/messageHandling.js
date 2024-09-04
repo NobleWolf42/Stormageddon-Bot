@@ -26,9 +26,9 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
  * @param command - String of command keyword
  * @param args - Array of the words after the command keyword
  */
-function tryCommand(client, message, command, args, distube) {
+function tryCommand(client, message, command, args, distube, serverConfig, collections) {
     try {
-        command.execute(message, args, client, distube);
+        command.execute(message, args, client, distube, collections, serverConfig);
         if (message.channel.isDMBased()) {
             addToLog(LogType.Success, command.name, message.author.tag, 'DM', 'DM');
         }
@@ -73,10 +73,10 @@ function messageHandling(client, distube, collections) {
             return;
         //#endregion
         //#region Sets prefix/defaultPrefix
-        var serverID = message.guild.id;
+        const serverID = message.guild.id;
         //Gets serverConfig from database
-        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
-        var prefix = serverConfig.prefix;
+        const serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
+        const prefix = serverConfig.prefix;
         //#endregion
         //#region Handles all @ Commands
         if (message.mentions.users.first() !== undefined) {
@@ -139,14 +139,14 @@ function messageHandling(client, distube, collections) {
         //#endregion
         //#region Checks to see if server is set up
         if (command.name == 'setup' || command.name == 'test') {
-            tryCommand(client, message, command, args, distube);
+            tryCommand(client, message, command, args, distube, serverConfig, collections);
             return;
         }
         else if (serverConfig.setupNeeded) {
             return warnCustom(message, `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in an Admin Only chat.`, command.name);
         }
         //#endregion
-        tryCommand(client, message, command, args, distube);
+        tryCommand(client, message, command, args, distube, serverConfig, collections);
         //#endregion
     }));
 }
@@ -158,7 +158,7 @@ function messageHandling(client, distube, collections) {
  * @param distube - DisTube Client Object
  */
 function PMHandling(client, distube, collections) {
-    client.on('messageCreate', (message) => {
+    client.on('messageCreate', (message) => __awaiter(this, void 0, void 0, function* () {
         var prefix = '!';
         const coolDowns = new Collection();
         //#region Check permissions
@@ -216,7 +216,7 @@ function PMHandling(client, distube, collections) {
         setTimeout(() => timestamps.delete(message.author.id), coolDownAmount);
         //#endregion
         try {
-            command.execute(message, args, client, distube);
+            command.execute(message, args, client, distube, collections);
             addToLog(LogType.Success, command.name, message.author.tag, 'DM', 'Private Message');
         }
         catch (error) {
@@ -225,7 +225,7 @@ function PMHandling(client, distube, collections) {
             console.log(error);
         }
         //#endregion
-    });
+    }));
 }
 //#endregion
 //#region exports

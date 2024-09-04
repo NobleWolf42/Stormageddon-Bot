@@ -6,7 +6,7 @@ import { getRandomDoggo } from '../helpers/doggoLinks.js';
 import { embedCustom, errorCustom, warnCustom } from '../helpers/embedMessages.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { Command } from '../models/commandModel.js';
-import { MongooseServerConfig } from '../models/serverConfigModel.js';
+import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
 import { ExtraCollections } from '../models/extraCollectionsModel.js';
 import { LogType } from '../models/loggingModel.js';
 //#endregion
@@ -22,9 +22,9 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
  * @param command - String of command keyword
  * @param args - Array of the words after the command keyword
  */
-function tryCommand(client: Client, message: Message, command: Command, args: string[], distube: DisTube) {
+function tryCommand(client: Client, message: Message, command: Command, args: string[], distube: DisTube, serverConfig: ServerConfig, collections: ExtraCollections) {
     try {
-        command.execute(message, args, client, distube);
+        command.execute(message, args, client, distube, collections, serverConfig);
         if (message.channel.isDMBased()) {
             addToLog(LogType.Success, command.name, message.author.tag, 'DM', 'DM');
         } else {
@@ -69,11 +69,11 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
         //#endregion
 
         //#region Sets prefix/defaultPrefix
-        var serverID = message.guild.id;
+        const serverID = message.guild.id;
 
         //Gets serverConfig from database
-        var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
-        var prefix = serverConfig.prefix;
+        const serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
+        const prefix = serverConfig.prefix;
 
         //#endregion
 
@@ -165,7 +165,7 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
 
         //#region Checks to see if server is set up
         if (command.name == 'setup' || command.name == 'test') {
-            tryCommand(client, message, command, args, distube);
+            tryCommand(client, message, command, args, distube, serverConfig, collections);
             return;
         } else if (serverConfig.setupNeeded) {
             return warnCustom(
@@ -176,7 +176,7 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
         }
         //#endregion
 
-        tryCommand(client, message, command, args, distube);
+        tryCommand(client, message, command, args, distube, serverConfig, collections);
         //#endregion
     });
 }
@@ -189,7 +189,7 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
  * @param distube - DisTube Client Object
  */
 function PMHandling(client: Client, distube: DisTube, collections: ExtraCollections) {
-    client.on('messageCreate', (message) => {
+    client.on('messageCreate', async (message) => {
         var prefix = '!';
         const coolDowns: Collection<string, Collection<string, number>> = new Collection();
         //#region Check permissions
@@ -261,7 +261,7 @@ function PMHandling(client: Client, distube: DisTube, collections: ExtraCollecti
         //#endregion
 
         try {
-            command.execute(message, args, client, distube);
+            command.execute(message, args, client, distube, collections);
             addToLog(LogType.Success, command.name, message.author.tag, 'DM', 'Private Message');
         } catch (error) {
             addToLog(LogType.FatalError, command.name, message.author.tag, 'DM', 'Private Message', error, client);

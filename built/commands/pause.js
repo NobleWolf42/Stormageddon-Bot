@@ -8,14 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Helpers
-const { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } = require('../helpers/embedMessages.js');
-const { djCheck } = require('../helpers/userPermissions.js');
-//#endregion
-//#region Modules
-import { MongooseServerConfig } from '../models/serverConfig';
+import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } from '../helpers/embedMessages.js';
+import { djCheck } from '../helpers/userPermissions.js';
 //#endregion
 //#region This exports the pause command with the information about it
-module.exports = {
+const pauseCommand = {
     name: 'pause',
     type: ['Guild'],
     aliases: [],
@@ -23,32 +20,35 @@ module.exports = {
     class: 'music',
     usage: 'pause',
     description: 'Pauses the currently playing music.',
-    execute(message, args, client, distube) {
+    execute(message, args, client, distube, collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
-            //Calls config from database
-            var serverConfig = (yield MongooseServerConfig.findById(message.guild.id).exec()).toObject();
+            const channel = message.channel;
+            if (channel.isDMBased()) {
+                return;
+            }
             //Checks to see if the music feature is enabled in this server
             if (!serverConfig.music.enable) {
-                return warnDisabled(message, 'music', module.name);
+                return warnDisabled(message, 'music', this.name);
             }
             //Checks to see if the user has DJ access
-            if (!djCheck(message)) {
-                return errorNoDJ(message, module.name);
+            if (!djCheck(message, serverConfig)) {
+                return errorNoDJ(message, this.name);
             }
             //Checks to see if the message was sent in the correct channel
-            if (serverConfig.music.textChannel != message.channel.name) {
-                return warnWrongChannel(message, serverConfig.music.textChannel, module.name);
+            if (serverConfig.music.textChannel != channel.name) {
+                return warnWrongChannel(message, serverConfig.music.textChannel, this.name);
             }
             var voiceChannel = message.member.voice.channel;
-            var queue = distube.getQueue(message);
+            var queue = distube.getQueue(message.guildId);
             if (!queue) {
-                return warnCustom(message, 'Nothing is playing right now.', module.name);
+                return warnCustom(message, 'Nothing is playing right now.', this.name);
+                //FIX this error in the future, distube and discordjs hate each other apparently
             }
             else if (voiceChannel != queue.voiceChannel) {
-                return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
+                return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
             }
             else if (queue.paused) {
-                return warnCustom(message, 'Music is already paused.', module.name);
+                return warnCustom(message, 'Music is already paused.', this.name);
             }
             else {
                 queue.pause();
@@ -57,4 +57,7 @@ module.exports = {
         });
     },
 };
+//#endregion
+//#region Exports
+export default pauseCommand;
 //#endregion

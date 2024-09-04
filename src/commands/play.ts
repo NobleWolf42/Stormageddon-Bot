@@ -4,7 +4,6 @@ import { VoiceBasedChannel } from 'discord.js';
 import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
 import { Command } from '../models/commandModel.js';
-import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 
 //#region This exports the play command with the information about it
@@ -16,10 +15,7 @@ const playCommand: Command = {
     class: 'music',
     usage: 'play ***SEARCH-TERM/YOUTUBE-LINK/YOUTUBE-PLAYLIST/SPOTIFY-LINK/SPOTIFY-PLAYLIST***',
     description: 'Plays the selected music in the voice channel you are in.',
-    async execute(message, args, client, distube) {
-        //Calls config from database
-        var serverConfig = (await MongooseServerConfig.findById(message.guild.id).exec()).toObject();
-
+    async execute(message, args, client, distube, collections, serverConfig) {
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig.music.enable) {
             return warnDisabled(message, 'music', this.name);
@@ -28,7 +24,7 @@ const playCommand: Command = {
         }
 
         //Checks to see if the user has DJ access
-        if (!djCheck(message)) {
+        if (!djCheck(message, serverConfig)) {
             return errorNoDJ(message, this.name);
         }
 
@@ -45,6 +41,7 @@ const playCommand: Command = {
         if (!voiceChannel && !queue) {
             return warnCustom(message, 'You must join a voice channel to use this command!', this.name);
         } else if (queue) {
+            //FIX this error in the future, distube and discordjs hate each other apparently
             if (voiceChannel != queue.voiceChannel) {
                 return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
             }
@@ -53,6 +50,7 @@ const playCommand: Command = {
         if (!song) {
             return warnCustom(message, 'No song input detected, please try again.', this.name);
         } else {
+            //FIX this error in the future, distube and discordjs hate each other apparently
             distube.play(voiceChannel, song, {
                 member: message.member,
                 message: message,

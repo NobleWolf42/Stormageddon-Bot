@@ -3,7 +3,7 @@ import { embedCustom } from '../helpers/embedMessages.js';
 import { Command } from '../models/commandModel.js';
 //#endregion
 
-//#region This exports the info command with the information about it
+//#region This creates the info command with the information about it
 const infoCommand: Command = {
     name: 'info',
     type: ['DM', 'Guild'],
@@ -12,7 +12,7 @@ const infoCommand: Command = {
     class: 'help',
     usage: 'info',
     description: "Displays information about the bot, it's creators, and where you can go if you would like to contribute to it. (Works in Direct Messages too.)",
-    async execute(message, args, client, distube) {
+    async execute(message, args, client) {
         embedCustom(
             message,
             'Information',
@@ -28,4 +28,6 @@ const infoCommand: Command = {
 };
 //#endregion
 
+//#region Exports
 export default infoCommand;
+//#endregion

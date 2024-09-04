@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //#region Imports
 import { SlashCommandBuilder } from 'discord.js';
-import { XMLHttpRequest } from 'xmlhttprequest';
 import { embedCustom, errorCustom, warnCustom } from '../../helpers/embedSlashMessages.js';
 //#endregion
 //#region This exports the agify command with the information about it

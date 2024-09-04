@@ -1,11 +1,16 @@
-//#region Dependencies
-const { XMLHttpRequest } = require('xmlhttprequest');
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+import { embedCustom, warnCustom, errorCustom } from '../helpers/embedMessages.js';
 //#endregion
-//#region Helpers
-const { embedCustom, warnCustom, errorCustom } = require('../helpers/embedMessages.js');
-//#endregion
-//#region This exports the destiny2 command with the information about it
-module.exports = {
+//#region This creates the destiny2 command with the information about it
+const destiny2Command = {
     name: 'destiny2',
     type: ['DM', 'Guild'],
     aliases: ['d2'],
@@ -13,27 +18,29 @@ module.exports = {
     class: 'gaming',
     usage: 'destiny2 clan ***INSERT-CLAN-NAME***',
     description: "Displays Destiny 2 clan's bio, avatar, motto, and founder. (Works in Direct Messages too.)",
-    execute(message, args, client, distube) {
-        if (args[0] == 'clan') {
-            var clanName = '';
-            for (i = 1; i < args.length; i++) {
-                if (i != args.length - 1) {
-                    clanName += `${args[i]} `;
+    execute(message, args, client, distube, collections, serverConfig) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (args[0] == 'clan') {
+                var clanName = '';
+                for (let i = 1; i < args.length; i++) {
+                    if (i != args.length - 1) {
+                        clanName += `${args[i]} `;
+                    }
+                    else {
+                        clanName += `${args[i]}`;
+                    }
                 }
-                else {
-                    clanName += `${args[i]}`;
-                }
+                getClan(message, clanName, this.name, client);
             }
-            getClan(message, clanName);
-        }
-        else {
-            return warnCustom(message, `You did not use the command correctly, please try again (${serverConfig.prefix}destiny2 clan ***INSERT-CLAN-NAME***).`, module.name);
-        }
+            else {
+                return warnCustom(message, `You did not use the command correctly, please try again (${serverConfig.prefix}destiny2 clan ***INSERT-CLAN-NAME***).`, this.name);
+            }
+        });
     },
 };
 //#endregion
 //#region Gets the information of the destiny 2 clan by name
-function getClan(message, clan_name) {
+function getClan(message, clan_name, name, client) {
     // Request initialized and created
     var request = new XMLHttpRequest();
     request.open('GET', 'https://www.bungie.net/Platform/GroupV2/Name/' + clan_name + '/1', true);
@@ -52,17 +59,19 @@ function getClan(message, clan_name) {
                 }, attachment, [], null, null);
             }
             else {
-                return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
+                return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, name);
             }
         }
         else if (error.ErrorStatus == 'ClanNotFound') {
-            return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, module.name);
+            return warnCustom(message, `The Search for \`${clan_name}\` returned no results.\n Try something else.`, name);
         }
         else {
-            return errorCustom(message, 'The Destiny API was unable to be reached at this time.\n Try again later.', module.name, client);
+            return errorCustom(message, 'The Destiny API was unable to be reached at this time.\n Try again later.', name, client);
         }
     };
     request.send();
 }
-export {};
+//#endregion
+//#region Exports
+export default destiny2Command;
 //#endregion

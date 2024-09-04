@@ -1,34 +1,24 @@
-//#region Dependencies
-const { EmbedBuilder } = require('discord.js');
-//#endregion
-
-//#regions Helpers
-const { updateConfigFile } = require('../helpers/currentSettings.js');
-const {
-    errorCustom,
-    warnCustom,
-    warnDisabled,
-} = require('../helpers/embedMessages.js');
+//#region Import
+import { EmbedBuilder } from 'discord.js';
+import { errorCustom, warnCustom, warnDisabled } from '../helpers/embedMessages.js';
+import { Command } from '../models/commandModel.js';
 //#endregion
 
 //#region This exports the modmail command with the information about it
-module.exports = {
+const modMailCommand: Command = {
     name: 'modmail',
     type: ['DM'],
     aliases: [],
     coolDown: 15,
     class: 'direct',
     usage: '!modmail ***SERVER-NAME***, ***MESSAGE*** ',
-    description:
-        'Whisper via Stormageddon to all moderators for the specified server.',
-    async execute(message, args, client, distube) {
-        //Gets current config file
-        var serverConfig = updateConfigFile();
+    description: 'Whisper via Stormageddon to all moderators for the specified server.',
+    async execute(message, args, client, distube, collections, serverConfig) {
         var argsString = args.join(' ');
-        var arguments = argsString.split(', ');
-        var serverID = 0;
-        var servername = arguments[0];
-        var content = arguments[1];
+        var newArgs = argsString.split(', ');
+        var serverID = null;
+        var servername = newArgs[0];
+        var content = newArgs[1];
 
         client.guilds.cache.forEach(function (key) {
             if (key.name == servername) {
@@ -40,7 +30,7 @@ module.exports = {
             if (serverConfig[serverID].modMail.enable) {
                 var modList = serverConfig[serverID].modMail.modList;
 
-                for (key in modList) {
+                for (let key in modList) {
                     var mod = await client.users.fetch(modList[key]);
                     const embMsg = new EmbedBuilder()
                         .setTitle(`Mod Mail from: ${servername}`)
@@ -55,22 +45,17 @@ module.exports = {
                     mod.send({ embeds: [embMsg] });
                 }
             } else {
-                return warnDisabled(message, 'modMail', module.name);
+                return warnDisabled(message, 'modMail', this.name);
             }
         } else if (serverConfig[serverID] == undefined) {
-            return errorCustom(
-                message,
-                `The \`!setup\` command has not been run on \`${servername}\` yet.`,
-                module.name,
-                client
-            );
+            return errorCustom(message, `The \`!setup\` command has not been run on \`${servername}\` yet.`, this.name, client);
         } else {
-            return warnCustom(
-                message,
-                'The server you specified does not have this bot, or you failed to specify a server.',
-                module.name
-            );
+            return warnCustom(message, 'The server you specified does not have this bot, or you failed to specify a server.', this.name);
         }
     },
 };
+//#endregion
+
+//#region Exports
+export default modMailCommand;
 //#endregion
