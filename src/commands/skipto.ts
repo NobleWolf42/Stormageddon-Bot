@@ -1,19 +1,19 @@
-//#region Import
+//#region Imports
 import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
 import { Command } from '../models/commandModel.js';
 //#endregion
 
-//#region This exports the skip command with the information about it
-const skipCommand: Command = {
-    name: 'skip',
+//#region This exports the skipto command with the information about it
+const skipToCommand: Command = {
+    name: 'skipto',
     type: ['Guild'],
-    aliases: ['s'],
+    aliases: ['st'],
     coolDown: 0,
     class: 'music',
-    usage: 'skip',
-    description: 'Skips the currently playing song.',
-    async execute(message, _args, _client, distube, _collections, serverConfig) {
+    usage: 'skipto ***QUEUE-NUMBER***',
+    description: 'Skips to the selected queue number.',
+    async execute(message, args, _client, distube, _collections, serverConfig) {
         const channel = message.channel;
 
         if (channel.isDMBased()) {
@@ -47,17 +47,23 @@ const skipCommand: Command = {
             return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
         }
 
-        if (queue.songs.length == 1) {
-            return warnCustom(message, 'There is not another song in the queue.', this.name);
+        const argsNumber = Number(args[0]);
+
+        if (argsNumber < 2 || argsNumber > queue.songs.length) {
+            return warnCustom(message, `Number must be between 2 and ${queue.songs.length}`, this.name);
         }
 
-        const song = queue.songs[0];
-        queue.skip().then(() => {
+        if (!args[0]) {
+            return warnCustom(message, 'No song information was included in the command.', this.name);
+        }
+
+        queue.songs = queue.songs.splice(argsNumber - 2);
+        queue.skip().then((s) => {
             embedCustom(
                 message,
                 'Skipped',
                 '#0000FF',
-                `[\`${song.name}\`](${song.url}) successfully skipped.`,
+                `Skipped to [\`${s.name}\`](${s.url}).`,
                 {
                     text: `Requested by ${message.author.tag}`,
                     iconURL: null,
@@ -73,5 +79,5 @@ const skipCommand: Command = {
 //#endregion
 
 //#region Exports
-export default skipCommand;
+export default skipToCommand;
 //#endregion

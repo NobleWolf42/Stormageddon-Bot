@@ -20,7 +20,7 @@ const pauseCommand = {
     class: 'music',
     usage: 'pause',
     description: 'Pauses the currently playing music.',
-    execute(message, args, client, distube, collections, serverConfig) {
+    execute(message, _args, _client, distube, _collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             const channel = message.channel;
             if (channel.isDMBased()) {
@@ -38,13 +38,12 @@ const pauseCommand = {
             if (serverConfig.music.textChannel != channel.name) {
                 return warnWrongChannel(message, serverConfig.music.textChannel, this.name);
             }
-            var voiceChannel = message.member.voice.channel;
-            var queue = distube.getQueue(message.guildId);
+            const voiceChannel = message.member.voice.channel;
+            const queue = distube.getQueue(message.guildId);
             if (!queue) {
                 return warnCustom(message, 'Nothing is playing right now.', this.name);
-                //FIX this error in the future, distube and discordjs hate each other apparently
             }
-            else if (voiceChannel != queue.voiceChannel) {
+            else if (voiceChannel.id != queue.voiceChannel.id) {
                 return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
             }
             else if (queue.paused) {

@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //#region Import
 import { EmbedBuilder } from 'discord.js';
 import { errorCustom, warnCustom, warnDisabled } from '../helpers/embedMessages.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 //#region This exports the modmail command with the information about it
 const modMailCommand = {
@@ -20,23 +21,22 @@ const modMailCommand = {
     class: 'direct',
     usage: '!modmail ***SERVER-NAME***, ***MESSAGE*** ',
     description: 'Whisper via Stormageddon to all moderators for the specified server.',
-    execute(message, args, client, distube, collections, serverConfig) {
+    execute(message, args, client) {
         return __awaiter(this, void 0, void 0, function* () {
-            var argsString = args.join(' ');
-            var newArgs = argsString.split(', ');
-            var serverID = null;
-            var servername = newArgs[0];
-            var content = newArgs[1];
+            const newArgs = args.join(' ').split(', ');
+            let serverID = null;
+            const servername = newArgs[0];
+            const content = newArgs[1];
             client.guilds.cache.forEach(function (key) {
                 if (key.name == servername) {
                     serverID = key.id;
                 }
             });
-            if (serverID != 0 && serverConfig[serverID] != undefined) {
+            const serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
+            if (serverID != 0 && serverConfig != undefined) {
                 if (serverConfig[serverID].modMail.enable) {
-                    var modList = serverConfig[serverID].modMail.modList;
-                    for (let key in modList) {
-                        var mod = yield client.users.fetch(modList[key]);
+                    for (const key of serverConfig.modMail.modList) {
+                        const mod = yield client.users.fetch(key);
                         const embMsg = new EmbedBuilder()
                             .setTitle(`Mod Mail from: ${servername}`)
                             .setColor('#0B6E29')

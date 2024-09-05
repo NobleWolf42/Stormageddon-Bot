@@ -13,7 +13,7 @@ const removeCommand: Command = {
     class: 'music',
     usage: 'remove ***QUEUE-NUMBER***',
     description: 'Removes selected song from the queue.',
-    async execute(message, args, client, distube, collections, serverConfig) {
+    async execute(message, args, client, distube, _collections, serverConfig) {
         const channel = message.channel;
         const argNumber = Number(args[0]);
 
@@ -36,18 +36,18 @@ const removeCommand: Command = {
             return warnWrongChannel(message, serverConfig.music.textChannel, this.name);
         }
 
-        var voiceChannel = message.member.voice.channel;
-        var queue = distube.getQueue(message.guildId);
+        const voiceChannel = message.member.voice.channel;
+        const queue = distube.getQueue(message.guildId);
 
         if (!queue) {
             return warnCustom(message, 'Nothing is playing right now.', this.name);
             //FIX this error in the future, distube and discordjs hate each other apparently
-        } else if (voiceChannel != queue.voiceChannel) {
+        } else if (voiceChannel.id != queue.voiceChannel.id) {
             return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
         } else if (argNumber < 1 || argNumber > queue.songs.length) {
             return warnCustom(message, `Number must be between 1 and ${queue.songs.length}`, this.name);
         } else if (argNumber == 1) {
-            var song = queue.songs[0];
+            const song = queue.songs[0];
             queue.skip().then(() => {
                 embedCustom(
                     message,
@@ -67,7 +67,7 @@ const removeCommand: Command = {
         } else if (!args[0]) {
             return warnCustom(message, 'No song information was included in the command.', this.name);
         } else {
-            var removeMe = queue.songs.splice(argNumber - 1, 1)[0];
+            const removeMe = queue.songs.splice(argNumber - 1, 1)[0];
 
             if (!removeMe) {
                 return errorCustom(message, 'Failed to remove the track from the queue.', this.name, client);

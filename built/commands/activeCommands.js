@@ -29,6 +29,10 @@ import setupCommand from './setup.js';
 import showQueueCommand from './showqueue.js';
 import shuffleCommand from './shuffle.js';
 import skipCommand from './skip.js';
+import skipToCommand from './skipto.js';
+import stopCommand from './stop.js';
+import testCommand from './test.js';
+import volumeCommand from './volume.js';
 const activeCommands = [
     addModCommand,
     agifyCommand,
@@ -61,5 +65,9 @@ const activeCommands = [
     showQueueCommand,
     shuffleCommand,
     skipCommand,
+    skipToCommand,
+    stopCommand,
+    testCommand,
+    volumeCommand,
 ];
 export { activeCommands };

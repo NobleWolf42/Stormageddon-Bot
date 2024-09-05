@@ -532,13 +532,13 @@ function setBlame(message) {
  * @param person - Name of the person
  * @returns Server Config JSON
  */
-function addRemoveBlame(serverID, addTF, permTF, person) {
+function addRemoveBlame(serverID, addTF, permTF, user, serverConfig) {
     return __awaiter(this, void 0, void 0, function* () {
         //Pulls the current blame lists
         //Gets serverConfig from database
-        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
-        var blame = serverConfig.blame;
-        var personFound = false;
+        const blame = serverConfig.blame;
+        let personFound = false;
+        const person = user.id;
         if (permTF) {
             blame.permList.forEach((item) => {
                 if (item == person) {
@@ -557,7 +557,7 @@ function addRemoveBlame(serverID, addTF, permTF, person) {
                 else {
                     throw {
                         name: 'PersonExists',
-                        message: `${person} is already in the permanent blame list!`,
+                        message: `${user} is already in the permanent blame list!`,
                     };
                 }
             }
@@ -575,7 +575,7 @@ function addRemoveBlame(serverID, addTF, permTF, person) {
                 else {
                     throw {
                         name: 'PersonNotExists',
-                        message: `${person} is not in the permanent blame list!`,
+                        message: `${user} is not in the permanent blame list!`,
                     };
                 }
             }
@@ -598,7 +598,7 @@ function addRemoveBlame(serverID, addTF, permTF, person) {
                 else {
                     throw {
                         name: 'PersonExists',
-                        message: `${person} is already in the rotating blame list!`,
+                        message: `${user} is already in the rotating blame list!`,
                     };
                 }
             }
@@ -616,13 +616,12 @@ function addRemoveBlame(serverID, addTF, permTF, person) {
                 else {
                     throw {
                         name: 'PersonNotExists',
-                        message: `${person} is not in the rotating blame list!`,
+                        message: `${user} is not in the rotating blame list!`,
                     };
                 }
             }
         }
         serverConfig.blame = blame;
-        yield buildConfigFile(serverConfig, serverID);
         return serverConfig;
     });
 }

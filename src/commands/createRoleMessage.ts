@@ -1,5 +1,5 @@
 //#region Imports
-import { PermissionsBitField, EmbedBuilder, RestOrArray, APIEmbedField, Message } from 'discord.js';
+import { PermissionsBitField, EmbedBuilder, RestOrArray, APIEmbedField } from 'discord.js';
 import { warnDisabled, errorCustom, embedCustomDM } from '../helpers/embedMessages.js';
 import { generateEmbedFields } from '../internal/autoRole.js';
 import { errorNoAdmin } from '../helpers/embedMessages.js';
@@ -17,75 +17,77 @@ const createRoleMessageCommand: Command = {
     class: 'admin',
     usage: 'createrolemessage',
     description: 'Create the reactions message for auto role assignment.',
-    async execute(message, args, client, distube, collections, serverConfig) {
+    async execute(message, _args, client, _distube, _collections, serverConfig) {
         //This is the max number of reactions on a message allowed by discord, if discord ever changes that number change this and the code should work again!!!
-        var maxReactions = 20;
-
-        var serverID = message.guild.id;
+        const maxReactions = 20;
         const channel = message.channel;
 
+        //#region Escape Logic
+        //Checks to see if message was sent in a guild
         if (channel.isDMBased()) {
             return;
         }
 
         //Checks to make sure your roles and reactions match up
         if (serverConfig.autoRole.roles.length !== serverConfig.autoRole.reactions.length) {
-            return errorCustom(message, `Roles list and reactions list are not the same length! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
+            errorCustom(message, `Roles list and reactions list are not the same length! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
+            return;
         }
 
-        // We don't want the bot to do anything further if it can't send messages in the channel
+        //Checks to see if the bot can send messages in the channel
         if (message.guild && !message.guild.members.me.permissionsIn(message.channel.id).missing(PermissionsBitField.Flags.SendMessages)) {
-            return embedCustomDM(message, 'Error', '#FF0000', "I don't have access to send messages in that channel, please give me permissions.");
+            embedCustomDM(message, 'Error', '#FF0000', "I don't have access to send messages in that channel, please give me permissions.");
+            return;
         }
-
-        const missing = message.guild.members.me.permissionsIn(message.channel.id).missing(PermissionsBitField.Flags.ManageMessages);
 
         // Here we check if the bot can actually add reactions in the channel the command is being ran in
-        if (missing.includes('AddReactions')) {
-            return errorCustom(message, `I need permission to add reactions to messages in this channel! Please assign the 'Add Reactions' permission to me in this channel!`, this.name, client);
+        if (message.guild.members.me.permissionsIn(message.channel.id).missing(PermissionsBitField.Flags.ManageMessages).includes('AddReactions')) {
+            errorCustom(message, `I need permission to add reactions to messages in this channel! Please assign the 'Add Reactions' permission to me in this channel!`, this.name, client);
+            return;
         }
 
+        //Checks to see is the message content is set in the config
         if (!serverConfig.autoRole.embedMessage || serverConfig.autoRole.embedMessage === '') {
-            return errorCustom(message, `The 'embedMessage' property is not set! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
-        } else if (!serverConfig.autoRole.embedFooter || serverConfig.autoRole.embedFooter === '') {
-            return errorCustom(message, `The 'embedFooter' property is not set! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
+            errorCustom(message, `The 'embedMessage' property is not set! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
+            return;
+        }
+
+        //Checks to see if the message footer is set in the config
+        if (!serverConfig.autoRole.embedFooter || serverConfig.autoRole.embedFooter === '') {
+            errorCustom(message, `The 'embedFooter' property is not set! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
+            return;
         }
 
         // Checks to see if the module is enabled
         if (!serverConfig.autoRole.enable) {
-            return warnDisabled(message, 'autoRole', this.name);
+            warnDisabled(message, 'autoRole', this.name);
+            return;
         }
 
         // Checks that the user is an admin
         if (!adminCheck(message, serverConfig)) {
-            return errorNoAdmin(message, this.name);
+            errorNoAdmin(message, this.name);
+            return;
         }
+        //#endregion
 
         //Pulls message listening info from db
-        let botConfig = await MongooseAutoRoleList.findById(serverID).exec();
+        let botConfig = await MongooseAutoRoleList.findById(message.guildId).exec();
         if (botConfig == null) {
             botConfig = new MongooseAutoRoleList();
-            botConfig._id = serverID;
-            botConfig.guildID = serverID;
-            botConfig.channelIDs.push([channel.id]);
+            botConfig._id = message.guildId;
+            botConfig.guildID = message.guildId;
+            botConfig.roleChannels.push({
+                id: channel.id,
+                messageIDs: [],
+            });
             botConfig.markModified('_id');
             botConfig.markModified('guildID');
             botConfig.markModified('channelIDs');
         }
 
-        let arrayKey: string = null;
-        for (let i in botConfig.channelIDs) {
-            if (botConfig.channelIDs[i][0] == channel.id) {
-                arrayKey = i;
-            }
-        }
-
-        if (typeof botConfig.channelIDs == null || arrayKey == null) {
-            arrayKey = (botConfig.channelIDs.push([channel.id]) - 1).toString();
-        }
-
-        var thumbnail: string = null;
-        var fieldsOut: RestOrArray<APIEmbedField> = [];
+        let thumbnail: string = null;
+        const fieldsOut: RestOrArray<APIEmbedField> = [];
 
         if (serverConfig.autoRole.embedThumbnail !== '') {
             thumbnail = serverConfig.autoRole.embedThumbnail;
@@ -95,9 +97,10 @@ const createRoleMessageCommand: Command = {
 
         const fields = await generateEmbedFields(serverConfig);
 
-        for (let { emoji, role } of fields) {
+        for (const { emoji, role } of fields) {
             if (!message.guild.roles.cache.find((r) => r.name === role)) {
-                return errorCustom(message, `The role '${role}' does not exist!! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
+                errorCustom(message, `The role '${role}' does not exist!! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
+                return;
             }
 
             const customEmote = client.emojis.cache.find((e) => e.name === emoji)?.id;
@@ -113,9 +116,10 @@ const createRoleMessageCommand: Command = {
             }
         }
 
-        var count = 0;
-        for (var i = 0; i < Math.ceil(fieldsOut.length / maxReactions); i++) {
-            var embMsg = new EmbedBuilder()
+        let count = 0;
+        const roleChan = botConfig.roleChannels.findIndex((test) => test.id == channel.id);
+        for (let i = 0; i < Math.ceil(fieldsOut.length / maxReactions); i++) {
+            const embMsg = new EmbedBuilder()
                 .setColor('#dd9323')
                 .setDescription(serverConfig.autoRole.embedMessage)
                 .setThumbnail(thumbnail)
@@ -128,14 +132,14 @@ const createRoleMessageCommand: Command = {
                 .setTimestamp();
 
             await channel.send({ embeds: [embMsg] }).then(async (m) => {
-                var maxEmoji = 0;
+                let maxEmoji = 0;
                 if ((count + 1) * maxReactions < serverConfig.autoRole.reactions.length) {
                     maxEmoji = (count + 1) * maxReactions;
                 } else {
                     maxEmoji = serverConfig.autoRole.reactions.length;
                 }
 
-                for (var r = count * maxReactions; r < maxEmoji; r++) {
+                for (let r = count * maxReactions; r < maxEmoji; r++) {
                     if (r == count * maxReactions) {
                         count++;
                     }
@@ -149,9 +153,9 @@ const createRoleMessageCommand: Command = {
                         await m.react(customCheck.id);
                     }
                 }
-                console.log(arrayKey);
-                if (botConfig.channelIDs[arrayKey].find((test) => test == m.id) == undefined) {
-                    botConfig.channelIDs[arrayKey].push(m.id);
+
+                if (botConfig.roleChannels[roleChan].messageIDs.find((test) => test == m.id) == undefined) {
+                    botConfig.roleChannels[roleChan].messageIDs.push(m.id);
                     botConfig.markModified('channelIDs');
                 }
             });
@@ -160,7 +164,7 @@ const createRoleMessageCommand: Command = {
         message.delete();
         message.deleted = true;
         await botConfig.save().then(() => {
-            console.log(`Updated AutoRoleListeningDB for ${serverID}`);
+            console.log(`Updated AutoRoleListeningDB for ${message.guildId}`);
         });
     },
 };

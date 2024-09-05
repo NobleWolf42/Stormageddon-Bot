@@ -21,7 +21,7 @@ const removeModCommand = {
     class: 'admin',
     usage: 'removemod ***MENTION-USERS***',
     description: 'Removes users from the list of people that get the PM when someone whispers the bot with the !modmail command. MUST HAVE SERVER ADMINISTRATOR STATUS.',
-    execute(message, args, client, distube, collections, serverConfig) {
+    execute(message, _args, _client, _distube, _collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             const channel = message.channel;
             //#region Escape Conditionals
@@ -36,7 +36,7 @@ const removeModCommand = {
             }
             //#endregion
             //#region Main Logic
-            for (let [_, user] of message.mentions.members) {
+            for (const [_, user] of message.mentions.members) {
                 const serverID = channel.guild.id;
                 const userFound = serverConfig.modMail.modList.find((test) => test == user.id);
                 if (!userFound) {

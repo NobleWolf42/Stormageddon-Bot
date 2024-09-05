@@ -14,18 +14,15 @@ const bugReportCommand: Command = {
     usage: '!bugreport ***MESSAGE***',
     description: 'Whisper via Stormageddon to report a bug to the developers of Stormageddon. (Only works in Direct Message.)',
     async execute(message, args, client) {
-        var argsString = args.join(' ');
-        var newArgs = argsString.split(', ');
-        var content = newArgs[0];
+        const newArgs = args.join(' ').split(', ');
+        const devList = process.env.devIDs.split(',');
 
-        var devList = process.env.devIDs.split(',');
-
-        for (let key in devList) {
-            var dev = await client.users.fetch(devList[key]);
+        for (const key of devList) {
+            const dev = await client.users.fetch(devList[key]);
             const embMsg = new EmbedBuilder()
                 .setTitle('Bug Report')
                 .setColor('#F8AA2A')
-                .setDescription(content)
+                .setDescription(newArgs[0])
                 .setFooter({
                     text: `From - ${message.author.tag}.`,
                     iconURL: null,
@@ -39,7 +36,7 @@ const bugReportCommand: Command = {
             message,
             'Bug Report Sent.',
             '#0B6E29',
-            `**Bug Report:** \`${content}\` \n**Sent To:** \`🐺 The Developers 🐺\``,
+            `**Bug Report:** \`${newArgs[0]}\` \n**Sent To:** \`🐺 The Developers 🐺\``,
             { text: `Requested by ${message.author.tag}`, iconURL: null },
             null,
             [],

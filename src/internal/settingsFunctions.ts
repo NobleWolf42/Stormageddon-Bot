@@ -1,11 +1,11 @@
 //#region Imports
-import { ButtonBuilder, ButtonStyle, EmbedBuilder, Message } from 'discord.js';
+import { ButtonBuilder, ButtonStyle, EmbedBuilder, Message, User } from 'discord.js';
 import { embedCustom } from '../helpers/embedMessages.js';
 import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 
 //Defining a filter for the setup commands to ignore bot messages
-const msgFilter = (m) => !m.author.bot;
+const msgFilter = (m: Message) => !m.author.bot;
 
 //Defining some buttons used in all the setup functions
 const enable = new ButtonBuilder().setCustomId('enable').setLabel('Enable').setStyle(ButtonStyle.Primary);
@@ -591,13 +591,12 @@ async function setBlame(message: Message) {
  * @param person - Name of the person
  * @returns Server Config JSON
  */
-async function addRemoveBlame(serverID: string, addTF: boolean, permTF: boolean, person: string) {
+async function addRemoveBlame(serverID: string, addTF: boolean, permTF: boolean, user: User, serverConfig: ServerConfig) {
     //Pulls the current blame lists
     //Gets serverConfig from database
-    var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
-
-    var blame = serverConfig.blame;
-    var personFound = false;
+    const blame = serverConfig.blame;
+    let personFound = false;
+    const person = user.id;
 
     if (permTF) {
         blame.permList.forEach((item) => {
@@ -617,7 +616,7 @@ async function addRemoveBlame(serverID: string, addTF: boolean, permTF: boolean,
             } else {
                 throw {
                     name: 'PersonExists',
-                    message: `${person} is already in the permanent blame list!`,
+                    message: `${user} is already in the permanent blame list!`,
                 };
             }
         } else {
@@ -633,7 +632,7 @@ async function addRemoveBlame(serverID: string, addTF: boolean, permTF: boolean,
             } else {
                 throw {
                     name: 'PersonNotExists',
-                    message: `${person} is not in the permanent blame list!`,
+                    message: `${user} is not in the permanent blame list!`,
                 };
             }
         }
@@ -655,7 +654,7 @@ async function addRemoveBlame(serverID: string, addTF: boolean, permTF: boolean,
             } else {
                 throw {
                     name: 'PersonExists',
-                    message: `${person} is already in the rotating blame list!`,
+                    message: `${user} is already in the rotating blame list!`,
                 };
             }
         } else {
@@ -671,15 +670,13 @@ async function addRemoveBlame(serverID: string, addTF: boolean, permTF: boolean,
             } else {
                 throw {
                     name: 'PersonNotExists',
-                    message: `${person} is not in the rotating blame list!`,
+                    message: `${user} is not in the rotating blame list!`,
                 };
             }
         }
     }
 
     serverConfig.blame = blame;
-
-    await buildConfigFile(serverConfig, serverID);
 
     return serverConfig;
 }

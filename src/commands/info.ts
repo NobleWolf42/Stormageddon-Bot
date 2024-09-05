@@ -12,7 +12,8 @@ const infoCommand: Command = {
     class: 'help',
     usage: 'info',
     description: "Displays information about the bot, it's creators, and where you can go if you would like to contribute to it. (Works in Direct Messages too.)",
-    async execute(message, args, client) {
+    async execute(message, _args, client) {
+        //Sends the info message in the channel it was requested in
         embedCustom(
             message,
             'Information',

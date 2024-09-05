@@ -16,9 +16,9 @@ const helpCommand: Command = {
     usage: 'help ***PAGE***',
     description:
         'Displays Help Message, specifying a page will show that help info, including a listing of all help pages. Using the **"All"** page will display all commands, the **"DM"** page will display all commands that can be Direct Messaged to the bot, and the **"Server"** page will display all commands that can be used in a discord server. (Works in Direct Messages too.)',
-    async execute(message, args, client, distube, collections) {
-        var args = args.map((v) => v.toLowerCase());
-        const adminTF = await adminCheck(message);
+    async execute(message, args, _client, _distube, collections, serverConfig) {
+        const lowerArgs = args.map((v) => v.toLowerCase());
+        const adminTF = await adminCheck(message, serverConfig);
         const commands = collections.commands;
         let commandClasses: string[] = [];
         let helpMessageCommands: Command[] = [];
@@ -48,26 +48,26 @@ const helpCommand: Command = {
         commandClasses.sort();
 
         //Outputs the default help page if no page or help page is detected, otherwise handles it in the switch statement
-        if (args[0] == undefined || args[0] == 'help') {
+        if (lowerArgs[0] == undefined || lowerArgs[0] == 'help') {
             commands.forEach((cmd) => {
                 if (cmd.class == 'help') {
                     helpMessageCommands.push(cmd);
                 }
             });
             return makeHelpMsg(message, 'Help', helpMessageCommands, commandClasses, adminTF);
-        } else if (commandClasses.includes(capitalize(args[0])) || args[0] == 'all' || args[0] == 'dm' || args[0] == 'server') {
+        } else if (commandClasses.includes(capitalize(lowerArgs[0])) || lowerArgs[0] == 'all' || lowerArgs[0] == 'dm' || lowerArgs[0] == 'server') {
             //Switch case to output help page based on requested page
-            switch (args[0]) {
+            switch (lowerArgs[0]) {
                 //Outputs admin page if user is admin in the server its run in, otherwise sends an error message
                 case 'admin':
                     if (adminTF) {
                         commands.forEach((cmd) => {
-                            if (cmd.class == args[0]) {
+                            if (cmd.class == lowerArgs[0]) {
                                 helpMessageCommands.push(cmd);
                             }
                         });
-                        let title = `${capitalize(args[0])} Help`;
-                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+
+                        makeHelpMsg(message, `${capitalize(lowerArgs[0])} Help`, helpMessageCommands, commandClasses, adminTF);
                     } else {
                         errorNoAdmin(message, this.name);
                     }
@@ -78,14 +78,14 @@ const helpCommand: Command = {
                 case 'developer':
                     if (process.env.devIDs.includes(message.author.id)) {
                         commands.forEach((cmd) => {
-                            if (cmd.class == args[0]) {
+                            if (cmd.class == lowerArgs[0]) {
                                 helpMessageCommands.push(cmd);
                             }
                         });
-                        let title = `${capitalize(args[0])} Help`;
-                        makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+
+                        makeHelpMsg(message, `${capitalize(lowerArgs[0])} Help`, helpMessageCommands, commandClasses, adminTF);
                     } else {
-                        return warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, this.name);
+                        return warnCustom(message, `The **${lowerArgs[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, this.name);
                     }
 
                     break;
@@ -162,21 +162,20 @@ const helpCommand: Command = {
                     break;
 
                 //Outputs the commands for the chosen page
-                default:
+                default: {
                     commands.forEach((cmd) => {
-                        if (cmd.class == args[0] && cmd.name != 'devsend') {
+                        if (cmd.class == lowerArgs[0] && cmd.name != 'devsend') {
                             helpMessageCommands.push(cmd);
                         }
                     });
 
-                    let title = `${capitalize(args[0])} Help`;
-
-                    makeHelpMsg(message, title, helpMessageCommands, commandClasses, adminTF);
+                    makeHelpMsg(message, `${capitalize(lowerArgs[0])} Help`, helpMessageCommands, commandClasses, adminTF);
 
                     break;
+                }
             }
         } else {
-            return warnCustom(message, `The **${args[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, this.name);
+            return warnCustom(message, `The **${lowerArgs[0]}** page you requested does not exit. Please select from these pages: \`${makeCommandPageList(commandClasses)}\``, this.name);
         }
     },
 };
@@ -192,12 +191,12 @@ const helpCommand: Command = {
  * @param adminTF - Is the user an admin in the server y/n
  */
 function makeHelpMsg(message: MessageWithDeleted, title: string, helpMessageCommands: Command[], commandClasses: string[], adminTF: boolean) {
-    var helpMsg = '';
+    let helpMsg = '';
     commandClasses.sort();
 
     for (let i = 0; i < helpMessageCommands.length; i++) {
-        let key = helpMessageCommands[i];
-        let aliasesLength = key.aliases.length;
+        const key = helpMessageCommands[i];
+        const aliasesLength = key.aliases.length;
 
         if (aliasesLength == 0) {
             helpMsg += `${key.usage} - Aliases: None - ${key.description}`;
@@ -220,7 +219,7 @@ function makeHelpMsg(message: MessageWithDeleted, title: string, helpMessageComm
         }
     }
 
-    var pageList = makeCommandPageList(commandClasses);
+    const pageList = makeCommandPageList(commandClasses);
 
     if (adminTF) {
         embedHelp(message, title, `\`Help Pages: ${pageList}\`\n**NOTE: !help Admin can only be run in a server!!!\n\n**${helpMsg}`);
@@ -237,7 +236,7 @@ function makeHelpMsg(message: MessageWithDeleted, title: string, helpMessageComm
  * @returns String of all the command classes + DM, Server, and All.
  */
 function makeCommandPageList(commandClasses: string[]) {
-    var pageList = '';
+    let pageList = '';
 
     for (let i = 0; i < commandClasses.length; i++) {
         pageList += `${commandClasses[i]}, `;

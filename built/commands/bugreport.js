@@ -22,16 +22,14 @@ const bugReportCommand = {
     description: 'Whisper via Stormageddon to report a bug to the developers of Stormageddon. (Only works in Direct Message.)',
     execute(message, args, client) {
         return __awaiter(this, void 0, void 0, function* () {
-            var argsString = args.join(' ');
-            var newArgs = argsString.split(', ');
-            var content = newArgs[0];
-            var devList = process.env.devIDs.split(',');
-            for (let key in devList) {
-                var dev = yield client.users.fetch(devList[key]);
+            const newArgs = args.join(' ').split(', ');
+            const devList = process.env.devIDs.split(',');
+            for (const key of devList) {
+                const dev = yield client.users.fetch(devList[key]);
                 const embMsg = new EmbedBuilder()
                     .setTitle('Bug Report')
                     .setColor('#F8AA2A')
-                    .setDescription(content)
+                    .setDescription(newArgs[0])
                     .setFooter({
                     text: `From - ${message.author.tag}.`,
                     iconURL: null,
@@ -39,7 +37,7 @@ const bugReportCommand = {
                     .setTimestamp();
                 yield dev.send({ embeds: [embMsg] });
             }
-            embedCustom(message, 'Bug Report Sent.', '#0B6E29', `**Bug Report:** \`${content}\` \n**Sent To:** \`🐺 The Developers 🐺\``, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+            embedCustom(message, 'Bug Report Sent.', '#0B6E29', `**Bug Report:** \`${newArgs[0]}\` \n**Sent To:** \`🐺 The Developers 🐺\``, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
         });
     },
 };

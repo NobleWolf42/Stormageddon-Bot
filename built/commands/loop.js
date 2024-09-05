@@ -9,7 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //#region Imports
 import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } from '../helpers/embedMessages.js';
+import { capitalize } from '../helpers/stringHelpers.js';
 import { djCheck } from '../helpers/userPermissions.js';
+import { LoopType } from '../models/music.js';
 //#endregion
 //#region This exports the loop command with the information about it
 const loopCommand = {
@@ -20,9 +22,10 @@ const loopCommand = {
     class: 'music',
     usage: 'loop ***SONG/QUEUE/OFF***',
     description: 'Toggle music loop for song/queue/off.',
-    execute(message, args, client, distube, collections, serverConfig) {
+    execute(message, args, _client, distube, _collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             const channel = message.channel;
+            //#region Escape Conditionals
             if (channel.isDMBased()) {
                 return;
             }
@@ -38,43 +41,48 @@ const loopCommand = {
             if (serverConfig.music.textChannel != channel.name) {
                 return warnWrongChannel(message, serverConfig.music.textChannel, this.name);
             }
-            var voiceChannel = message.member.voice.channel;
-            var queue = distube.getQueue(message.guildId);
-            var loopMode = args[0];
-            var mods = ['song', 'queue', 'off'];
+            const queue = distube.getQueue(message.guildId);
             if (!queue) {
                 return warnCustom(message, 'Nothing is playing right now.', this.name);
-                //FIX this error in the future, distube and discordjs hate each other apparently
             }
-            else if (voiceChannel != queue.voiceChannel) {
+            const voiceChannel = message.member.voice.channel;
+            if (voiceChannel.id != queue.voiceChannel.id) {
                 return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
             }
-            else if (!mods.includes(loopMode)) {
-                return warnCustom(message, `You must use one of the following options: ${mods.join(', ')}`, this.name);
-            }
-            else {
-                if (loopMode == 'song') {
+            //#endregion
+            //#region Main Logic - Handles changing the Loop Type between Queue, Song, and Off
+            const loopMode = capitalize(args[0].toLowerCase());
+            switch (loopMode) {
+                case LoopType.Song: {
                     queue.setRepeatMode(1);
                     embedCustom(message, `Loop On`, '#0E4CB0', 'Music set to loop song.', {
                         text: `Requested by ${message.author.tag}`,
                         iconURL: null,
                     }, null, [], null, null);
+                    break;
                 }
-                else if (loopMode == 'queue') {
+                case LoopType.Queue: {
                     queue.setRepeatMode(2);
                     embedCustom(message, `Loop On`, '#0E4CB0', 'Music set to loop queue.', {
                         text: `Requested by ${message.author.tag}`,
                         iconURL: null,
                     }, null, [], null, null);
+                    break;
                 }
-                else {
+                case LoopType.Off: {
                     queue.setRepeatMode(0);
                     embedCustom(message, `Loop Off`, '#0E4CB0', 'Music has returned to normal playback.', {
                         text: `Requested by ${message.author.tag}`,
                         iconURL: null,
                     }, null, [], null, null);
+                    break;
+                }
+                default: {
+                    warnCustom(message, `You must use one of the following options: ${LoopType.Off}, ${LoopType.Queue}, and ${LoopType.Song} `, this.name);
+                    break;
                 }
             }
+            //#endregion
         });
     },
 };

@@ -142,7 +142,7 @@ function messageHandling(client, distube, collections) {
             tryCommand(client, message, command, args, distube, serverConfig, collections);
             return;
         }
-        else if (serverConfig.setupNeeded) {
+        if (serverConfig.setupNeeded) {
             return warnCustom(message, `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in an Admin Only chat.`, command.name);
         }
         //#endregion
@@ -159,7 +159,7 @@ function messageHandling(client, distube, collections) {
  */
 function PMHandling(client, distube, collections) {
     client.on('messageCreate', (message) => __awaiter(this, void 0, void 0, function* () {
-        var prefix = '!';
+        const prefix = '!';
         const coolDowns = new Collection();
         //#region Check permissions
         // Make sure the command can only be run in a PM

@@ -1,5 +1,4 @@
 //#region Imports
-import { Message } from 'discord.js';
 import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
 import { Command } from '../models/commandModel.js';
@@ -14,44 +13,54 @@ const autoPlayCommand: Command = {
     class: 'music',
     usage: 'autoplay',
     description: 'Toggles wether or not the bot will automatically pick a new song when the queue is done.',
-    async execute(message, args, client, distube, collections, serverConfig) {
+    async execute(message, _args, _client, distube, _collections, serverConfig) {
         const channel = message.channel;
 
-        //Escapes command if run in dm
+        //#region Escape Logic
+        //Checks to see if command was run in a guild
         if (channel.isDMBased()) {
             return;
         }
 
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig.music.enable) {
-            return warnDisabled(message, 'music', this.name);
+            warnDisabled(message, 'music', this.name);
+            return;
         }
 
         //Checks to see if the user has DJ access
-        if (!djCheck(message)) {
-            return errorNoDJ(message, this.name);
+        if (!djCheck(message, serverConfig)) {
+            errorNoDJ(message, this.name);
+            return;
         }
 
         //Checks to see if the message was sent in the correct channel
         if (serverConfig.music.textChannel != channel.name) {
-            return warnWrongChannel(message, serverConfig.music.textChannel, this.name);
+            warnWrongChannel(message, serverConfig.music.textChannel, this.name);
+            return;
         }
 
-        var voiceChannel = message.member.voice.channel;
-        var queue = distube.getQueue(message.guildId);
+        const queue = distube.getQueue(message.guildId);
 
-        //Checks to see if user is in a voice channel
-        if (!voiceChannel && !queue) {
-            return warnCustom(message, 'You must join a voice channel to use this command!', this.name);
-        } else if (queue) {
-            //FIX this error in the future, distube and discordjs hate each other apparently
-            if (voiceChannel != queue.voiceChannel) {
-                return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
-            }
+        //Checks to see if there is anything currently playing in that guid
+        if (!queue) {
+            warnCustom(message, 'Nothing is playing right now.', this.name);
+            return;
         }
 
-        var autoPlay = queue.toggleAutoplay();
+        const voiceChannel = message.member.voice.channel;
+
+        //Checks to see if the user is in the same vc as the bot
+        if (voiceChannel.id != queue.voiceChannel.id) {
+            warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
+            return;
+        }
+        //#endregion
+
+        //#region Main Logic - This toggles the autoplay feature off and on
+        const autoPlay = queue.toggleAutoplay();
         embedCustom(message, 'Autoplay Toggled', '#0000FF', `Autoplay is now ${autoPlay ? 'On' : 'Off'}.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+        //#endregion
     },
 };
 //#endregion

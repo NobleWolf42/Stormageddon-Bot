@@ -1,21 +1,22 @@
-//#region Import
-import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } from '../helpers/embedMessages.js';
+//#region Imports
+import { warnCustom, warnDisabled, warnWrongChannel, embedCustom, errorNoDJ } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
 import { Command } from '../models/commandModel.js';
 //#endregion
 
-//#region This exports the skip command with the information about it
-const skipCommand: Command = {
-    name: 'skip',
+//#region This exports the volume command with the information about it
+const volumeCommand: Command = {
+    name: 'volume',
     type: ['Guild'],
-    aliases: ['s'],
+    aliases: ['v'],
     coolDown: 0,
     class: 'music',
-    usage: 'skip',
-    description: 'Skips the currently playing song.',
-    async execute(message, _args, _client, distube, _collections, serverConfig) {
+    usage: 'volume ***NUMBER(1-100)***',
+    description: 'Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered.',
+    async execute(message, args, _client, distube, _collections, serverConfig) {
         const channel = message.channel;
 
+        //#region Escape Conditionals
         if (channel.isDMBased()) {
             return;
         }
@@ -47,31 +48,21 @@ const skipCommand: Command = {
             return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
         }
 
-        if (queue.songs.length == 1) {
-            return warnCustom(message, 'There is not another song in the queue.', this.name);
-        }
+        const volume = Number(args[0]);
 
-        const song = queue.songs[0];
-        queue.skip().then(() => {
-            embedCustom(
-                message,
-                'Skipped',
-                '#0000FF',
-                `[\`${song.name}\`](${song.url}) successfully skipped.`,
-                {
-                    text: `Requested by ${message.author.tag}`,
-                    iconURL: null,
-                },
-                null,
-                [],
-                null,
-                null
-            );
-        });
+        if (!volume) {
+            embedCustom(message, 'Volume', '#0000FF', `Volume is currently ${queue.volume}%.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+        }
+        //#endregion
+
+        //#region Main Logic - set the volume for the music player in that server_
+        queue.setVolume(volume);
+        embedCustom(message, 'Volume', '#0000FF', `Volume changed to ${queue.volume}%.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+        //#endregion
     },
 };
 //#endregion
 
 //#region Exports
-export default skipCommand;
+export default volumeCommand;
 //#endregion

@@ -13,7 +13,7 @@ const shuffleCommand: Command = {
     class: 'music',
     usage: 'shuffle',
     description: 'Shuffles the currently queued music.',
-    async execute(message, args, client, distube, collections, serverConfig) {
+    async execute(message, _args, _client, distube, _collections, serverConfig) {
         const channel = message.channel;
 
         if (channel.isDMBased()) {

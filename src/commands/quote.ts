@@ -14,8 +14,8 @@ const quoteCommand: Command = {
     class: 'fun',
     usage: 'quote',
     description: 'Display a random quote, picked by the developers of Stormageddon. (Works in Direct Messages too.)',
-    async execute(message, args, client) {
-        var quote = quoteData.data[getRandomInt(quoteData.data.length)];
+    async execute(message, _args, client) {
+        const quote = quoteData.data[getRandomInt(quoteData.data.length)];
 
         embedCustom(
             message,

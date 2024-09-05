@@ -14,7 +14,7 @@ const setupCommand: Command = {
     class: 'admin',
     usage: 'setup',
     description: 'Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.',
-    async execute(message, args, client, distube, collection, serverConfig) {
+    async execute(message, _args, client, _distube, _collection, serverConfig) {
         if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
             errorNoServerAdmin(message, this.name);
         }

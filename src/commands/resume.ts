@@ -13,7 +13,7 @@ const resumeCommand: Command = {
     class: 'music',
     usage: 'resume',
     description: 'Resumes the currently paused music.',
-    async execute(message, args, client, distube, collections, serverConfig) {
+    async execute(message, _args, _client, distube, _collections, serverConfig) {
         const channel = message.channel;
 
         if (channel.isDMBased()) {
@@ -43,8 +43,7 @@ const resumeCommand: Command = {
 
         if (!queue) {
             return warnCustom(message, 'Nothing is playing right now.', this.name);
-            //FIX this error in the future, distube and discordjs hate each other apparently
-        } else if (voiceChannel != queue.voiceChannel) {
+        } else if (voiceChannel.id != queue.voiceChannel.id) {
             return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
         } else if (!queue.paused) {
             return warnCustom(message, 'Music is not paused.', this.name);

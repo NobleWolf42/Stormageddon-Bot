@@ -19,7 +19,7 @@ const playCommand = {
     class: 'music',
     usage: 'play ***SEARCH-TERM/YOUTUBE-LINK/YOUTUBE-PLAYLIST/SPOTIFY-LINK/SPOTIFY-PLAYLIST***',
     description: 'Plays the selected music in the voice channel you are in.',
-    execute(message, args, client, distube, collections, serverConfig) {
+    execute(message, args, _client, distube, _collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             //Checks to see if the music feature is enabled in this server
             if (!serverConfig.music.enable) {
@@ -36,16 +36,15 @@ const playCommand = {
             if (serverConfig.music.textChannel != message.channel.name) {
                 return warnWrongChannel(message, serverConfig.music.textChannel, this.name);
             }
-            var song = args.join(' ');
-            var voiceChannel = message.member.voice.channel;
-            var queue = distube.getQueue(message.guild.id);
+            const song = args.join(' ');
+            const voiceChannel = message.member.voice.channel;
+            const queue = distube.getQueue(message.guild.id);
             //Checks to see if user is in a voice channel
             if (!voiceChannel && !queue) {
                 return warnCustom(message, 'You must join a voice channel to use this command!', this.name);
             }
             else if (queue) {
-                //FIX this error in the future, distube and discordjs hate each other apparently
-                if (voiceChannel != queue.voiceChannel) {
+                if (voiceChannel.id != queue.voiceChannel.id) {
                     return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
                 }
             }

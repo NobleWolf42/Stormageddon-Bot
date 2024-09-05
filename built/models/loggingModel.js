@@ -8,6 +8,13 @@ var LogType;
     LogType["None"] = "None";
 })(LogType || (LogType = {}));
 //#endregion
+//#region ErrorType Enum
+var ErrorType;
+(function (ErrorType) {
+    ErrorType["PersonExists"] = "PersonExists";
+    ErrorType["PersonNotExists"] = "PersonNotExists";
+})(ErrorType || (ErrorType = {}));
+//#endregion
 //#region Log interface
 class Log {
     constructor(code, log = '', date = new Date().toTimeString()) {
@@ -17,5 +24,5 @@ class Log {
     }
 }
 //#region Exports
-export { LogType, Log };
+export { LogType, Log, ErrorType };
 //#endregion

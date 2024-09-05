@@ -10,7 +10,7 @@ const sayCommand = {
     class: 'admin',
     usage: 'say ***MESSAGE-CONTENT***',
     description: 'Sends a message as the bot.',
-    execute(message, args, client, distube, collections, serverConfig) {
+    execute(message, args, client, _distube, _collections, serverConfig) {
         const channel = message.channel;
         if (channel.isDMBased()) {
             return;

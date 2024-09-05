@@ -19,7 +19,7 @@ const playNextCommand = {
     class: 'music',
     usage: 'playnext ***QUEUE-NUMBER/SEARCH-TERM/YOUTUBE-LINK/SPOTIFY-LINK/SOUNDCLOUD-LINK***',
     description: 'Plays the selected song next. (NOTE: Bot Moderator Command ONLY)',
-    execute(message, args, client, distube, collections, serverConfig) {
+    execute(message, args, client, distube, _collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             const ogMessage = message;
             const channel = message.channel;
@@ -43,17 +43,17 @@ const playNextCommand = {
             if (!modCheck(message, serverConfig)) {
                 return errorNoMod(message, this.name);
             }
-            var voiceChannel = message.member.voice.channel;
-            var queue = distube.getQueue(message.guildId);
+            const voiceChannel = message.member.voice.channel;
+            const queue = distube.getQueue(message.guildId);
             if (!queue) {
                 return warnCustom(message, 'Nothing is playing right now.', this.name);
                 //FIX this error in the future, distube and discordjs hate each other apparently
             }
-            else if (voiceChannel != queue.voiceChannel) {
+            else if (voiceChannel.id != queue.voiceChannel.id) {
                 return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
             }
             else if (argsNumber > 0 && argsNumber <= queue.songs.length) {
-                var playNext = queue.songs.splice(argsNumber - 1, 1)[0];
+                const playNext = queue.songs.splice(argsNumber - 1, 1)[0];
                 if (!playNext) {
                     return errorCustom(message, 'Failed to find the track in the queue.', this.name, client);
                 }
@@ -71,7 +71,7 @@ const playNextCommand = {
                 return warnCustom(message, 'No song information was included in the command.', this.name);
             }
             else {
-                var song = args.join(' ');
+                const song = args.join(' ');
                 //FIX this error in the future, distube and discordjs hate each other apparently
                 distube.play(voiceChannel, song, {
                     member: message.member,

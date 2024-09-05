@@ -14,17 +14,9 @@ const destiny2Command: Command = {
     class: 'gaming',
     usage: 'destiny2 clan ***INSERT-CLAN-NAME***',
     description: "Displays Destiny 2 clan's bio, avatar, motto, and founder. (Works in Direct Messages too.)",
-    async execute(message, args, client, distube, collections, serverConfig) {
+    async execute(message, args, client, _distube, _collections, serverConfig) {
         if (args[0] == 'clan') {
-            var clanName = '';
-
-            for (let i = 1; i < args.length; i++) {
-                if (i != args.length - 1) {
-                    clanName += `${args[i]} `;
-                } else {
-                    clanName += `${args[i]}`;
-                }
-            }
+            const clanName = args.join(' ');
 
             getClan(message, clanName, this.name, client);
         } else {
@@ -37,19 +29,19 @@ const destiny2Command: Command = {
 //#region Gets the information of the destiny 2 clan by name
 function getClan(message: MessageWithDeleted, clan_name: string, name: string, client: Client) {
     // Request initialized and created
-    var request = new XMLHttpRequest();
+    const request = new XMLHttpRequest();
     request.open('GET', 'https://www.bungie.net/Platform/GroupV2/Name/' + clan_name + '/1', true);
     request.setRequestHeader('X-API-KEY', process.env.d2ApiKey);
     request.onload = function () {
         // After request is received, parse it.
-        var data = JSON.parse(request.responseText)['Response'];
-        var error = JSON.parse(request.responseText);
+        const data = JSON.parse(request.responseText)['Response'];
+        const error = JSON.parse(request.responseText);
 
         if (request.status >= 200 && request.status < 400) {
             if (data != null && data != undefined) {
-                var domain = 'https://www.bungie.net/';
+                const domain = 'https://www.bungie.net/';
 
-                var attachment = domain + data['founder']['bungieNetUserInfo']['iconPath'];
+                const attachment = domain + data['founder']['bungieNetUserInfo']['iconPath'];
                 return embedCustom(
                     message,
                     `${clan_name} Clan Information`,

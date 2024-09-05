@@ -8,6 +8,13 @@ enum LogType {
 }
 //#endregion
 
+//#region ErrorType Enum
+enum ErrorType {
+    PersonExists = 'PersonExists',
+    PersonNotExists = 'PersonNotExists',
+}
+//#endregion
+
 //#region Log interface
 class Log {
     Log: string;
@@ -22,5 +29,5 @@ class Log {
 }
 
 //#region Exports
-export { LogType, Log };
+export { LogType, Log, ErrorType };
 //#endregion

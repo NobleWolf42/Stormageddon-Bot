@@ -24,12 +24,12 @@ const devSendCommand = {
     description: 'Developer-only command for sending messages as the bot. (Only works in Direct Message.)',
     execute(message, args, client) {
         return __awaiter(this, void 0, void 0, function* () {
-            var argsString = args.join(' ');
-            var newArgs = argsString.split(', ');
-            var user = newArgs[0];
-            var content = newArgs[1];
+            const newArgs = args.join(' ').split(', ');
+            const user = newArgs[0];
+            const content = newArgs[1];
             if (content == undefined) {
-                return errorCustom(message, 'Use the , in-between the UserID and message dingus!', this.name, client);
+                errorCustom(message, 'Use the , in-between the UserID and message dingus!', this.name, client);
+                return;
             }
             if (process.env.devIDs.includes(message.author.id)) {
                 const embMsg = new EmbedBuilder()

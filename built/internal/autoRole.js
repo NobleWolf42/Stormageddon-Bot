@@ -39,16 +39,35 @@ function generateEmbedFields(serverConfig) {
 function autoRoleListener(client) {
     return __awaiter(this, void 0, void 0, function* () {
         //#region Loads Messages to Listen to
-        let botConfig = yield MongooseAutoRoleList.find({}).exec();
-        for (let i in botConfig) {
-            for (let j of botConfig[i].channelIDs) {
-                const channel = yield client.channels.fetch(j[0]);
-                if (channel && !channel.isDMBased() && channel.isTextBased()) {
-                    for (let k in j) {
-                        if (j[k] != j[0]) {
-                            yield channel.messages.fetch(j[k]);
-                        }
-                    }
+        const authRoleLists = yield MongooseAutoRoleList.find({}).exec();
+        //Does not work
+        // const roleChannels: RoleChannel[] = [];
+        //Specifically right here, this is always = [] for some reason, making it work for now fix later
+        // authRoleLists.forEach((authRoleList) => roleChannels.concat(authRoleList.roleChannels));
+        // console.log(roleChannels);
+        // const chans: { chan: Channel; messageIDs: string[] }[] = [];
+        // for (const chan of roleChannels) {
+        //     const channel = await client.channels.fetch(chan.id);
+        //     console.log(channel);
+        //     chans.push({ chan: channel, messageIDs: chan.messageIDs });
+        // }
+        // for (const chan of chans) {
+        //     if (!chan.chan || chan.chan.isDMBased() || !chan.chan.isTextBased()) {
+        //         return;
+        //     }
+        //     for (const msg of chan.messageIDs) {
+        //         await chan.chan.messages.fetch(msg).then((m) => console.log(m));
+        //     }
+        // }
+        //Yes I know its bad but it works we will fix it later
+        for (const autRoleList of authRoleLists) {
+            for (const channels of autRoleList.roleChannels) {
+                const channel = yield client.channels.fetch(channels.id);
+                if (!channel || channel.isDMBased() || !channel.isTextBased()) {
+                    return;
+                }
+                for (const msg of channels.messageIDs) {
+                    yield channel.messages.fetch(msg);
                 }
             }
         }
@@ -64,20 +83,16 @@ function autoRoleListener(client) {
             const serverID = message.channel.guild.id;
             const member = message.guild.members.cache.get(user.id);
             //Gets serverConfig from database
-            let serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
+            const serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
             //Stops if the feature is not enabled
             if (!serverConfig.autoRole.enable) {
                 return;
             }
             const emojiKey = reaction.emoji.id ? reaction.emoji.id : reaction.emoji.name; //`${reaction.emoji.name}:${reaction.emoji.id}`
-            let react = message.reactions.cache.get(emojiKey);
+            const react = message.reactions.cache.get(emojiKey);
             if (!react) {
                 //Error, Reaction not Valid
                 addToLog(LogType.Alert, `${reaction.emoji.name}:${reaction.emoji.id} - is not found`, member.user.username, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
-            }
-            let embedFooterText;
-            if (message.embeds[0] && message.embeds[0].footer != null) {
-                embedFooterText = message.embeds[0].footer.text;
             }
             if (message.author.id === client.user.id &&
                 (message.content !== serverConfig.autoRole.embedMessage || (message.embeds[0] && message.embeds[0].footer.text !== serverConfig.autoRole.embedFooter))) {
@@ -105,16 +120,12 @@ function autoRoleListener(client) {
             const serverID = message.channel.guild.id;
             const member = message.guild.members.cache.get(user.id);
             //Gets serverConfig from database
-            let serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
+            const serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
             const emojiKey = reaction.emoji.id ? reaction.emoji.id : reaction.emoji.name; //`${reaction.emoji.name}:${reaction.emoji.id}`
-            let react = message.reactions.cache.get(emojiKey);
+            const react = message.reactions.cache.get(emojiKey);
             if (!react) {
                 //Error, Reaction not Valid
                 addToLog(LogType.Alert, `${emojiKey} - is not found`, member.user.username, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
-            }
-            let embedFooterText;
-            if (message.embeds[0] && message.embeds[0].footer != null) {
-                embedFooterText = message.embeds[0].footer.text;
             }
             if (message.author.id === client.user.id &&
                 (message.content !== serverConfig.autoRole.embedMessage || (message.embeds[0] && message.embeds[0].footer.text !== serverConfig.autoRole.embedFooter))) {
@@ -135,20 +146,20 @@ function autoRoleListener(client) {
         //#region Listens for a autoRole message to be deleted
         client.on(Events.MessageDelete, (event) => __awaiter(this, void 0, void 0, function* () {
             //This escapes if the deleted message was in a vc or dm, or not authored by this bot
-            if (event.channel.isDMBased() || !event.author || event.author == undefined || event.author.id != process.env.clientID) {
-                return;
-            }
+            // if (event.channel.isDMBased() || !event.author || event.author == undefined || event.author.id != process.env.clientID) {
+            //     return;
+            // }
             //Pulls message listening info from db
-            let botConfig = yield MongooseAutoRoleList.findById(event.guildId).exec();
+            const botConfig = yield MongooseAutoRoleList.findById(event.guildId).exec();
             let needsUpdate = false;
             //Deletes listening info for message once its deleted
-            for (let i of botConfig.channelIDs) {
-                if (i[0] == event.channelId) {
-                    let j = i.indexOf(event.id);
-                    if (j > -1) {
-                        i.splice(j, 1);
-                        if (i.length < 2) {
-                            botConfig.channelIDs.splice(botConfig.channelIDs.indexOf(i), 1);
+            for (const i in botConfig.roleChannels) {
+                if (botConfig.roleChannels[i].id == event.channelId) {
+                    const msgID = botConfig.roleChannels[i].messageIDs.indexOf(event.id);
+                    if (msgID > -1) {
+                        botConfig.roleChannels[i].messageIDs.splice(msgID, 1);
+                        if (botConfig.roleChannels[i].messageIDs.length < 1) {
+                            botConfig.roleChannels.splice(Number(i), 1);
                             botConfig.markModified('channelIDs');
                             needsUpdate = true;
                         }

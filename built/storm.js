@@ -90,7 +90,7 @@ try {
     //Logs the Bot info when bot starts
     client.on(Events.ClientReady, () => __awaiter(void 0, void 0, void 0, function* () {
         console.log(`Logged in as ${client.user.tag}!`);
-        var serverConfigs = yield MongooseServerConfig.find({ guildID: { $nin: [] } }).exec();
+        const serverConfigs = yield MongooseServerConfig.find({ guildID: { $nin: [] } }).exec();
         autoRoleListener(client);
         messageHandling(client, distube, extraColl);
         PMHandling(client, distube, extraColl);
@@ -98,7 +98,7 @@ try {
         musicHandler(client, distube);
         joinToCreateHandling(client, extraColl);
         slashCommandHandling(client, distube, extraColl);
-        for (var guild in serverConfigs) {
+        for (const guild in serverConfigs) {
             registerGuildSlashCommands(serverConfigs[guild].guildID);
         }
         registerGlobalSlashCommands();

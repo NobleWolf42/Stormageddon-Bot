@@ -19,7 +19,7 @@ const lyricsCommand: Command = {
     class: 'music',
     usage: 'lyrics',
     description: 'Gets the lyrics for the currently playing song.',
-    async execute(message, args, client, distube, collections, serverConfig) {
+    async execute(message, _args, client, distube, _collections, serverConfig) {
         const channel = message.channel;
 
         if (channel.isDMBased()) {
@@ -31,27 +31,26 @@ const lyricsCommand: Command = {
             return;
         }
 
-        if (serverConfig.music.textChannel == channel.name) {
-            var queue = distube.getQueue(message.guildId);
-            if (!queue) {
-                return warnCustom(message, 'There is nothing playing.', this.name);
-            }
+        if (serverConfig.music.textChannel != channel.name) {
+            warnWrongChannel(message, serverConfig.music.textChannel, this.name);
+        }
 
-            var lyrics = null;
+        const queue = distube.getQueue(message.guildId);
+        if (!queue) {
+            return warnCustom(message, 'There is nothing playing.', this.name);
+        }
 
-            try {
-                const searches = await Genius.songs.search(queue.songs[0].name);
-                var song = searches[0];
-                lyrics = await song.lyrics();
-                if (!lyrics) {
-                    lyrics = `No lyrics found for ${queue.songs[0].name}.`;
-                }
-            } catch (error) {
-                addToLog(LogType.FatalError, this.name, message.author.tag, message.guild.name, channel.name, error, client);
+        let lyrics = null;
+
+        try {
+            const searches = await Genius.songs.search(queue.songs[0].name);
+            const song = searches[0];
+            lyrics = await song.lyrics();
+            if (!lyrics) {
                 lyrics = `No lyrics found for ${queue.songs[0].name}.`;
             }
 
-            let slicedLyrics: string[] = [];
+            const slicedLyrics: string[] = [];
             while (lyrics.length >= 2048) {
                 slicedLyrics.push(`${lyrics.substring(0, 2045)}...`);
                 lyrics = lyrics.slice(2045);
@@ -74,8 +73,9 @@ const lyricsCommand: Command = {
                     null
                 );
             });
-        } else {
-            warnWrongChannel(message, serverConfig.music.textChannel, this.name);
+        } catch (error) {
+            addToLog(LogType.FatalError, this.name, message.author.tag, message.guild.name, channel.name, error, client);
+            lyrics = `No lyrics found for ${queue.songs[0].name}.`;
         }
     },
 };

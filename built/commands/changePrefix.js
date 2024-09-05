@@ -21,32 +21,29 @@ const changePrefixCommand = {
     class: 'admin',
     usage: 'changeprefix ***INSERT-SYMBOL***',
     description: 'Changes the prefix the bot uses in your server. Available Symbols: ```~!$%^&*()_+-=[];\',.{}|:"<>?```',
-    execute(message, args, client, distube, collections, serverConfig) {
+    execute(message, args, _client, _distube, _collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
-            var serverID = message.guild.id;
-            //Regex that should eliminate anything that is not ~!$%^&*()_+-={}[]|:";'<>?,.
-            const isSymbol = /[~!$%^&*()_+\-={}[\]\|:";'<>?,.]/;
-            if (adminCheck(message)) {
-                if (args[0] != undefined) {
-                    if (args[0].length == 1 && isSymbol.test(args[0])) {
-                        serverConfig.prefix = args[0];
-                        buildConfigFile(serverConfig, serverID);
-                        embedCustom(message, 'Current Prefix:', '#008000', `Current Prefix is ${serverConfig.prefix}`, {
-                            text: `Requested by ${message.author.tag}`,
-                            iconURL: null,
-                        }, null, [], null, null);
-                    }
-                    else {
-                        warnCustom(message, 'Bot Prefix Must be ONE of the following: ```~!$%^&*()_+-={}[]|:";\'<>?,./```', this.name);
-                    }
-                }
-                else {
-                    warnCustom(message, 'You must define a bot prefix.', this.name);
-                }
-            }
-            else {
+            //#region Escape Logic
+            //Checks to see if user is bot admin
+            if (!adminCheck(message, serverConfig)) {
                 errorNoAdmin(message, this.name);
+                return;
             }
+            //Regex that should eliminate anything that is not ~!$%^&*()_+-={}[]|:";'<>?,.
+            const isSymbol = /[~!$%^&*()_+\-={}[\]|:";'<>?,.]/;
+            //Checks to see is the user input is correct
+            if (args[0] == undefined || args[0].length != 1 || !isSymbol.test(args[0])) {
+                warnCustom(message, 'You must pick ONE of the following: ```~!$%^&*()_+-={}[]|:";\'<>?,./```', this.name);
+                return;
+            }
+            //#endregion
+            //#region Main Logic - Takes user input and saves it to config as bot prefix
+            serverConfig.prefix = args[0];
+            buildConfigFile(serverConfig, message.guildId);
+            embedCustom(message, 'Current Prefix:', '#008000', `Current Prefix is ${serverConfig.prefix}`, {
+                text: `Requested by ${message.author.tag}`,
+                iconURL: null,
+            }, null, [], null, null);
         });
     },
 };

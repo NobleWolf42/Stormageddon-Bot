@@ -11,7 +11,7 @@ const showQueueCommand = {
     class: 'music',
     usage: 'showqueue',
     description: 'Shows the music queue.',
-    execute(message, args, client, distube, collections, serverConfig) {
+    execute(message, _args, _client, distube, _collections, serverConfig) {
         //Max fields for an embed per discord, change this if it ever changes
         const maxFields = 20;
         const channel = message.channel;

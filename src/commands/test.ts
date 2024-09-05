@@ -1,5 +1,4 @@
 import { Command } from '../models/commandModel.js';
-import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
 
 //#region This exports the test command with the information about it
 const testCommand: Command = {
@@ -10,28 +9,32 @@ const testCommand: Command = {
     class: 'dev',
     usage: 'test',
     description: 'Testing command',
-    async execute(message, args, client, distube) {
+    async execute(_message, _args, _client, _distube) {
         console.log('Start Test Command');
-        const typeScriptNewConfig: ServerConfig = {
-            _id: '644966355875135499',
-            guildID: '644966355875135499',
-            prefix: '*',
-            setupNeeded: false,
-            autoRole: {
-                enable: true,
-                embedMessage: 'heal',
-                embedFooter: 'If you do not receive the role try reacting again.',
-                roles: ["Sona's DJs", 'Stormageddon Bot Contributor'],
-                reactions: ['<:scareddog:818542767449702420>', '🐕'],
-            },
-            joinRole: { enable: true, role: 'Queue Bot Contributor' },
-            music: { enable: true, djRoles: ["Sona's DJs"], textChannel: 'botspam' },
-            general: { adminRoles: ['Server Admin'], modRoles: ['Server Admin', 'Some people the devs know'] },
-            modMail: { modList: ['201665936049176576'], enable: true },
-            JTCVC: { enable: true, voiceChannel: '1259031022658650132' },
-            blame: { enable: true, cursing: true, permList: [], rotateList: ['HypersonicWalrus', 'NobleWolf42', 'End3rman07', 'Chris Cugs', '--Thor--', 'spacewulf'], offset: -2 },
-            logging: { enable: true, voice: { enable: true }, loggingChannel: '649109835404673024' },
-        };
+        // client.channels.fetch('649129777399201812').then((chan) => {
+        //     console.log(chan);
+        //     chan.messages.fetch('1280423969836634144').then((msg) => console.log(msg));
+        // });
+        // const typeScriptNewConfig: ServerConfig = {
+        //     _id: '644966355875135499',
+        //     guildID: '644966355875135499',
+        //     prefix: '*',
+        //     setupNeeded: false,
+        //     autoRole: {
+        //         enable: true,
+        //         embedMessage: 'heal',
+        //         embedFooter: 'If you do not receive the role try reacting again.',
+        //         roles: ["Sona's DJs", 'Stormageddon Bot Contributor'],
+        //         reactions: ['<:scareddog:818542767449702420>', '🐕'],
+        //     },
+        //     joinRole: { enable: true, role: 'Queue Bot Contributor' },
+        //     music: { enable: true, djRoles: ["Sona's DJs"], textChannel: 'botspam' },
+        //     general: { adminRoles: ['Server Admin'], modRoles: ['Server Admin', 'Some people the devs know'] },
+        //     modMail: { modList: ['201665936049176576'], enable: true },
+        //     JTCVC: { enable: true, voiceChannel: '1259031022658650132' },
+        //     blame: { enable: true, cursing: true, permList: [], rotateList: ['HypersonicWalrus', 'NobleWolf42', 'End3rman07', 'Chris Cugs', '--Thor--', 'spacewulf'], offset: -2 },
+        //     logging: { enable: true, voice: { enable: true }, loggingChannel: '649109835404673024' },
+        // };
         //const newConfig = new MongooseServerConfig({ ...typeScriptNewConfig });
 
         //try {
@@ -44,7 +47,7 @@ const testCommand: Command = {
         //console.log(await MongooseServerConfig.findById('testIDString').exec());
         console.log('testing nodemon');
 
-        await MongooseServerConfig.findByIdAndUpdate(message.guild.id, typeScriptNewConfig).exec();
+        //await MongooseServerConfig.findByIdAndUpdate(message.guild.id, typeScriptNewConfig).exec();
         //testConfig.save();
     },
 };

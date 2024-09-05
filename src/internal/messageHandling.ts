@@ -167,7 +167,9 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
         if (command.name == 'setup' || command.name == 'test') {
             tryCommand(client, message, command, args, distube, serverConfig, collections);
             return;
-        } else if (serverConfig.setupNeeded) {
+        }
+
+        if (serverConfig.setupNeeded) {
             return warnCustom(
                 message,
                 `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in an Admin Only chat.`,
@@ -190,7 +192,7 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
  */
 function PMHandling(client: Client, distube: DisTube, collections: ExtraCollections) {
     client.on('messageCreate', async (message) => {
-        var prefix = '!';
+        const prefix = '!';
         const coolDowns: Collection<string, Collection<string, number>> = new Collection();
         //#region Check permissions
         // Make sure the command can only be run in a PM

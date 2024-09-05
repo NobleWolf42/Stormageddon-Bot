@@ -7,15 +7,12 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Helpers
-const { warnCustom, warnDisabled, warnWrongChannel, embedCustom } = require('../helpers/embedMessages.js');
-const { djCheck } = require('../helpers/userPermissions.js');
-//#endregion
-//#region Modules
-import { MongooseServerConfig } from '../models/serverConfig';
+//#region Imports
+import { warnCustom, warnDisabled, warnWrongChannel, embedCustom, errorNoDJ } from '../helpers/embedMessages.js';
+import { djCheck } from '../helpers/userPermissions.js';
 //#endregion
 //#region This exports the volume command with the information about it
-module.exports = {
+const volumeCommand = {
     name: 'volume',
     type: ['Guild'],
     aliases: ['v'],
@@ -23,39 +20,46 @@ module.exports = {
     class: 'music',
     usage: 'volume ***NUMBER(1-100)***',
     description: 'Displays volume of currently playing music if no numbers are entered. Can change volume percent if numbers are entered.',
-    execute(message, args, client, distube) {
+    execute(message, args, _client, distube, _collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
-            //Gets serverConfig from database
-            var serverConfig = (yield MongooseServerConfig.findById(message.guild.id).exec()).toObject();
+            const channel = message.channel;
+            //#region Escape Conditionals
+            if (channel.isDMBased()) {
+                return;
+            }
             //Checks to see if the music feature is enabled in this server
             if (!serverConfig.music.enable) {
-                return warnDisabled(message, 'music', module.name);
+                return warnDisabled(message, 'music', this.name);
             }
             //Checks to see if the user has DJ access
-            if (!djCheck(message)) {
-                return errorNoDJ(message, module.name);
+            if (!djCheck(message, serverConfig)) {
+                return errorNoDJ(message, this.name);
             }
             //Checks to see if the message was sent in the correct channel
-            if (serverConfig.music.textChannel != message.channel.name) {
-                return warnWrongChannel(message, serverConfig.music.textChannel, module.name);
+            if (serverConfig.music.textChannel != channel.name) {
+                return warnWrongChannel(message, serverConfig.music.textChannel, this.name);
             }
-            var voiceChannel = message.member.voice.channel;
-            var queue = distube.getQueue(message);
-            var volume = Number(args[0]);
+            const queue = distube.getQueue(message.guildId);
             if (!queue) {
-                return warnCustom(message, 'Nothing is playing right now.', module.name);
+                return warnCustom(message, 'Nothing is playing right now.', this.name);
             }
-            else if (voiceChannel != queue.voiceChannel) {
-                return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, module.name);
+            const voiceChannel = message.member.voice.channel;
+            if (voiceChannel.id != queue.voiceChannel.id) {
+                return warnCustom(message, `You must join the <#${queue.voiceChannel.id}> voice channel to use this command!`, this.name);
             }
-            else if (!volume) {
+            const volume = Number(args[0]);
+            if (!volume) {
                 embedCustom(message, 'Volume', '#0000FF', `Volume is currently ${queue.volume}%.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
             }
-            else {
-                queue.setVolume(volume);
-                embedCustom(message, 'Volume', '#0000FF', `Volume changed to ${queue.volume}%.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
-            }
+            //#endregion
+            //#region Main Logic - set the volume for the music player in that server_
+            queue.setVolume(volume);
+            embedCustom(message, 'Volume', '#0000FF', `Volume changed to ${queue.volume}%.`, { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
+            //#endregion
         });
     },
 };
+//#endregion
+//#region Exports
+export default volumeCommand;
 //#endregion

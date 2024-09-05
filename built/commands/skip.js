@@ -20,7 +20,7 @@ const skipCommand = {
     class: 'music',
     usage: 'skip',
     description: 'Skips the currently playing song.',
-    execute(message, args, client, distube, collections, serverConfig) {
+    execute(message, _args, _client, distube, _collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             const channel = message.channel;
             if (channel.isDMBased()) {

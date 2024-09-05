@@ -21,7 +21,7 @@ const setupCommand = {
     class: 'admin',
     usage: 'setup',
     description: 'Fist time set up on a server. MUST HAVE SERVER ADMINISTRATOR STATUS.',
-    execute(message, args, client, distube, collection, serverConfig) {
+    execute(message, _args, client, _distube, _collection, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
                 errorNoServerAdmin(message, this.name);
