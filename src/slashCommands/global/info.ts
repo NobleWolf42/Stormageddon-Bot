@@ -1,18 +1,20 @@
 //#region Dependencies
-const { SlashCommandBuilder } = require('discord.js');
-//#endregion
-
-//#region Helpers
-const { embedCustom } = require('../../helpers/embedSlashMessages.js');
+import { SlashCommandBuilder } from 'discord.js';
+import { embedCustom } from '../../helpers/embedSlashMessages.js';
+import { SlashCommand } from '../../models/slashCommandModel.js';
 //#endregion
 
 //#region This exports the info command with the information about it
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('info')
-        .setDescription('Displays information about the bot.'),
-    async execute(client, interaction, distube) {
-        return embedCustom(
+const infoSlashCommand: SlashCommand = {
+    data: new SlashCommandBuilder().setName('info').setDescription('Displays information about the bot.'),
+    async execute(client, interaction, _distube) {
+        //#region Escape Logic
+        if (!interaction.isChatInputCommand()) {
+            return;
+        }
+        //#endregion
+
+        embedCustom(
             interaction,
             'Information',
             '#200132',
@@ -28,4 +30,8 @@ module.exports = {
         );
     },
 };
+//#endregion
+
+//#region Exports
+export default infoSlashCommand;
 //#endregion

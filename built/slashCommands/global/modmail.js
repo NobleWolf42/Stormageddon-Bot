@@ -12,21 +12,15 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 //#endregion
 //#regions Helpers
 const { updateConfigFile } = require('../../helpers/currentSettings.js');
-const { errorCustom, warnCustom, warnDisabled, } = require('../../helpers/embedSlashMessages.js');
+const { errorCustom, warnCustom, warnDisabled } = require('../../helpers/embedSlashMessages.js');
 //#endregion
 //#region This exports the modmail command with the information about it
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('modmail')
         .setDescription('Whisper via Stormageddon to all moderators for the specified server.')
-        .addStringOption((option) => option
-        .setName('servername')
-        .setDescription('Name of the Server you want to message the mods in.')
-        .setRequired(true))
-        .addStringOption((option) => option
-        .setName('message')
-        .setDescription('Message to send.')
-        .setRequired(true)),
+        .addStringOption((option) => option.setName('servername').setDescription('Name of the Server you want to message the mods in.').setRequired(true))
+        .addStringOption((option) => option.setName('message').setDescription('Message to send.').setRequired(true)),
     execute(client, interaction, distube) {
         return __awaiter(this, void 0, void 0, function* () {
             //Gets current config file

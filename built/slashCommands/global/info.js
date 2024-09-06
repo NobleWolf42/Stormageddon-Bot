@@ -8,24 +8,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Dependencies
-const { SlashCommandBuilder } = require('discord.js');
-//#endregion
-//#region Helpers
-const { embedCustom } = require('../../helpers/embedSlashMessages.js');
+import { SlashCommandBuilder } from 'discord.js';
+import { embedCustom } from '../../helpers/embedSlashMessages.js';
 //#endregion
 //#region This exports the info command with the information about it
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('info')
-        .setDescription('Displays information about the bot.'),
-    execute(client, interaction, distube) {
+const infoSlashCommand = {
+    data: new SlashCommandBuilder().setName('info').setDescription('Displays information about the bot.'),
+    execute(client, interaction, _distube) {
         return __awaiter(this, void 0, void 0, function* () {
-            return embedCustom(interaction, 'Information', '#200132', `**Bot Name:** ${client.user}\n\n**Description:** All purpose bot, named after the worlds best Doggo, **${yield client.users.fetch('211865015592943616')}'s** Stormageddon.\n\n**Designed and Built by:** *${yield client.users.fetch('201665936049176576')}, ${yield client.users.fetch('134900859560656896')}, ${yield client.users.fetch('199716053729804288')}, and ${yield client.users.fetch('207305619168952320')}*\n\n**How To Help:** If you would like to assist with the bot, you can find us on [\`Discord\`](https://discord.gg/tgJtK7f) , and on [\`GitHub\`](https://github.com/NobleWolf42/Stormageddon-Bot/).`, {
+            //#region Escape Logic
+            if (!interaction.isChatInputCommand()) {
+                return;
+            }
+            //#endregion
+            embedCustom(interaction, 'Information', '#200132', `**Bot Name:** ${client.user}\n\n**Description:** All purpose bot, named after the worlds best Doggo, **${yield client.users.fetch('211865015592943616')}'s** Stormageddon.\n\n**Designed and Built by:** *${yield client.users.fetch('201665936049176576')}, ${yield client.users.fetch('134900859560656896')}, ${yield client.users.fetch('199716053729804288')}, and ${yield client.users.fetch('207305619168952320')}*\n\n**How To Help:** If you would like to assist with the bot, you can find us on [\`Discord\`](https://discord.gg/tgJtK7f) , and on [\`GitHub\`](https://github.com/NobleWolf42/Stormageddon-Bot/).`, {
                 text: `Requested by ${interaction.user.username}`,
                 iconURL: null,
             }, null, [], null, null);
         });
     },
 };
-export {};
+//#endregion
+//#region Exports
+export default infoSlashCommand;
 //#endregion

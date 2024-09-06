@@ -1,9 +1,10 @@
-import { Client, Interaction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder } from 'discord.js';
+import { Client, Interaction, SlashCommandBuilder, SlashCommandOptionsOnlyBuilder, SlashCommandSubcommandsOnlyBuilder } from 'discord.js';
 import { DisTube } from 'distube';
+import { ExtraCollections } from './extraCollectionsModel.js';
 
 interface SlashCommand {
-    data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder;
-    execute(client: Client, interaction: Interaction, distube: DisTube): Promise<void>;
+    data: SlashCommandBuilder | SlashCommandOptionsOnlyBuilder | SlashCommandSubcommandsOnlyBuilder;
+    execute(client: Client, interaction: Interaction, distube?: DisTube, collections?: ExtraCollections): Promise<void> | void;
 }
 
 export { SlashCommand };

@@ -1,14 +1,8 @@
-//#region Dependencies
-import { APIEmbedField, AutocompleteInteraction, Client, ColorResolvable, EmbedBuilder, Interaction } from 'discord.js';
-//#endregion
-
-//#region Helpers
+//#region Imports
+import { APIEmbedField, Client, ColorResolvable, EmbedBuilder } from 'discord.js';
 import { addToLog } from './errorLog.js';
 import { LogType } from '../models/loggingModel.js';
-//#endregion
-
-//#region Types
-type InteractionWithChanges = Exclude<Interaction, AutocompleteInteraction>;
+import { InteractionWithChanges } from '../models/interactionModel.js';
 //#endregion
 
 //#region Function that takes several inputs and creates an embedded interaction and sends it in the channel that is attached to the Interaction Object

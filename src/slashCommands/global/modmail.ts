@@ -4,34 +4,16 @@ const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 
 //#regions Helpers
 const { updateConfigFile } = require('../../helpers/currentSettings.js');
-const {
-    errorCustom,
-    warnCustom,
-    warnDisabled,
-} = require('../../helpers/embedSlashMessages.js');
+const { errorCustom, warnCustom, warnDisabled } = require('../../helpers/embedSlashMessages.js');
 //#endregion
 
 //#region This exports the modmail command with the information about it
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('modmail')
-        .setDescription(
-            'Whisper via Stormageddon to all moderators for the specified server.'
-        )
-        .addStringOption((option) =>
-            option
-                .setName('servername')
-                .setDescription(
-                    'Name of the Server you want to message the mods in.'
-                )
-                .setRequired(true)
-        )
-        .addStringOption((option) =>
-            option
-                .setName('message')
-                .setDescription('Message to send.')
-                .setRequired(true)
-        ),
+        .setDescription('Whisper via Stormageddon to all moderators for the specified server.')
+        .addStringOption((option) => option.setName('servername').setDescription('Name of the Server you want to message the mods in.').setRequired(true))
+        .addStringOption((option) => option.setName('message').setDescription('Message to send.').setRequired(true)),
     async execute(client, interaction, distube) {
         //Gets current config file
         var serverConfig = updateConfigFile();
@@ -79,27 +61,12 @@ module.exports = {
                     null
                 );
             } else {
-                return warnDisabled(
-                    interaction,
-                    'modMail',
-                    module.name,
-                    client
-                );
+                return warnDisabled(interaction, 'modMail', module.name, client);
             }
         } else if (serverConfig[serverID] == undefined) {
-            return errorCustom(
-                interaction,
-                `The \`!setup\` command has not been run on \`${servername}\` yet.`,
-                module.name,
-                client
-            );
+            return errorCustom(interaction, `The \`!setup\` command has not been run on \`${servername}\` yet.`, module.name, client);
         } else {
-            return warnCustom(
-                interaction,
-                'The server you specified does not have this bot, or you failed to specify a server.',
-                module.name,
-                client
-            );
+            return warnCustom(interaction, 'The server you specified does not have this bot, or you failed to specify a server.', module.name, client);
         }
     },
 };

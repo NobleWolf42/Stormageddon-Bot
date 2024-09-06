@@ -7,10 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Dependencies
+//#region Imports
 import { EmbedBuilder } from 'discord.js';
-//#endregion
-//#region Helpers
 import { addToLog } from './errorLog.js';
 import { LogType } from '../models/loggingModel.js';
 //#endregion

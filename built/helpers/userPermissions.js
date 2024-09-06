@@ -1,12 +1,3 @@
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 //#region Dependencies
 import { PermissionFlagsBits } from 'discord.js';
 //#endregion
@@ -59,31 +50,29 @@ function serverRoleUpdate(sRole, serverConfig) {
  * @returns True if the user in the message object is a bot admin
  */
 function adminCheck(message, serverConfig) {
-    return __awaiter(this, void 0, void 0, function* () {
-        //#region Escape Logic
-        //Checks that a member exists on the message
-        if (!message.member) {
-            return false;
-        }
-        //Checks to see if user is server admin
-        if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
-            return true;
-        }
-        //#endregion
-        //#region Main Logic - Runs the check and returns true if user is bot admin
-        //Calls a function that updates the server role information
-        const permArrays = serverRoleUpdate(message.guild.roles, serverConfig);
-        //Checks to see if any of the user role ids match any of the admin role ids
-        for (const role in message.member.roles) {
-            for (const permRole of permArrays[0]) {
-                if (message.member.roles[role] == permRole) {
-                    return true;
-                }
+    //#region Escape Logic
+    //Checks that a member exists on the message
+    if (!message.member) {
+        return false;
+    }
+    //Checks to see if user is server admin
+    if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
+        return true;
+    }
+    //#endregion
+    //#region Main Logic - Runs the check and returns true if user is bot admin
+    //Calls a function that updates the server role information
+    const permArrays = serverRoleUpdate(message.guild.roles, serverConfig);
+    //Checks to see if any of the user role ids match any of the admin role ids
+    for (const role in message.member.roles) {
+        for (const permRole of permArrays[0]) {
+            if (message.member.roles[role] == permRole) {
+                return true;
             }
         }
-        return false;
-        //#endregion
-    });
+    }
+    return false;
+    //#endregion
 }
 //#endregion
 //#region Function that returns boolean for if the user who sent the message is a bot Moderator (based off serverConfig.connection.modRoles)

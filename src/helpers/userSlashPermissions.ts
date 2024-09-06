@@ -1,7 +1,6 @@
 //#region Dependencies
-import { PermissionFlagsBits, RoleManager } from 'discord.js';
+import { Interaction, PermissionFlagsBits, RoleManager } from 'discord.js';
 import { ServerConfig } from '../models/serverConfigModel.js';
-import { MessageWithDeleted } from '../models/messagesModel.js';
 //#endregion
 
 //#region Function that calls the server roles and saves the roles that match the adminRoleIDs, modRoleIDs, and djRoleIDs in serverConfig to their own arrays
@@ -59,7 +58,7 @@ function serverRoleUpdate(sRole: RoleManager, serverConfig: ServerConfig) {
  * @param message - Discord.js Message Object
  * @returns True if the user in the message object is a bot admin
  */
-function adminCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
+function adminCheck(message: Interaction, serverConfig: ServerConfig) {
     //#region Escape Logic
     //Checks that a member exists on the message
     if (!message.member) {
@@ -67,7 +66,7 @@ function adminCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
     }
 
     //Checks to see if user is server admin
-    if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
+    if (message.memberPermissions.has(PermissionFlagsBits.Administrator)) {
         return true;
     }
     //#endregion
@@ -96,7 +95,7 @@ function adminCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
  * @param message - Discord.js Message Object
  * @returns True if the user in the message object is a bot moderator
  */
-function modCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
+function modCheck(message: Interaction, serverConfig: ServerConfig) {
     //#region Escape Logic
     //Checks that a member exists on the message
     if (!message.member) {
@@ -133,7 +132,7 @@ function modCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
  * @param message - Discord.js Message Object
  * @returns True if the user in the message object is a bot DJ
  */
-function djCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
+function djCheck(message: Interaction, serverConfig: ServerConfig) {
     //#region Escape Logic
     //Checks that a member exists on the message
     if (message.member != null) {
