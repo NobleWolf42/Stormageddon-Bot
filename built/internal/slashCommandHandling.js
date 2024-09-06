@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //#region Imports
 import { Collection, REST, Routes } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
+import { LogType } from '../models/loggingModel.js';
 import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCommands/activeSlashCommands.js';
 //#endregion
 //#region Slash Command Handler
@@ -49,12 +50,11 @@ function slashCommandHandling(client, distube, collections) {
             }
             catch (error) {
                 console.error(error);
-                var channel = yield client.channels.fetch(interaction.channelId);
-                if (channel.isDMBased()) {
-                    addToLog('fatal error', command.data.name, interaction.user.username, 'DM', 'DM', error, client);
+                if (interaction.channel.isDMBased()) {
+                    addToLog(LogType.FatalError, command.data.name, interaction.user.username, 'DM', 'DM', error, client);
                 }
                 else {
-                    addToLog('fatal error', command.data.name, interaction.user.username, interaction.guild.name, channel.name, error, client);
+                    addToLog(LogType.FatalError, command.data.name, interaction.user.username, interaction.guild.name, interaction.channel.name, error, client);
                 }
                 if (interaction.replied || interaction.deferred) {
                     yield interaction.followUp({
@@ -76,7 +76,7 @@ function slashCommandHandling(client, distube, collections) {
 //#region Registers Guild Slash Commands with discord
 function registerGuildSlashCommands(guildId) {
     return __awaiter(this, void 0, void 0, function* () {
-        let commands = [];
+        const commands = [];
         //This Loops through the active command array and adds them to the collection
         for (let i = 0; i < activeGuildSlashCommands.length; i++) {
             const command = activeGuildSlashCommands[i];
@@ -108,7 +108,7 @@ function registerGuildSlashCommands(guildId) {
 //#region Registers Global Slash Commands with discord
 function registerGlobalSlashCommands() {
     return __awaiter(this, void 0, void 0, function* () {
-        let commands = [];
+        const commands = [];
         //This Loops through the active command array and adds them to the collection
         for (let i = 0; i < activeGlobalSlashCommands.length; i++) {
             const command = activeGlobalSlashCommands[i];

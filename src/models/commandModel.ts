@@ -1,7 +1,7 @@
 //#region Dependencies
 import { Client } from 'discord.js';
 import { DisTube } from 'distube';
-import { MessageWithDeleted } from './messages.js';
+import { MessageWithDeleted } from './messagesModel.js';
 import { ServerConfig } from './serverConfigModel.js';
 import { ExtraCollections } from './extraCollectionsModel.js';
 //#endregion

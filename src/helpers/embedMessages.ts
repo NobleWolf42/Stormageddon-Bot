@@ -1,7 +1,8 @@
 //#region Imports
-import { APIEmbedField, Client, ColorResolvable, EmbedBuilder, Message, PartialGroupDMChannel } from 'discord.js';
+import { APIEmbedField, Client, ColorResolvable, EmbedBuilder } from 'discord.js';
 import { addToLog } from './errorLog.js';
-import { MessageWithDeleted } from '../models/messages.js';
+import { MessageWithDeleted } from '../models/messagesModel.js';
+import { LogType } from '../models/loggingModel.js';
 //#endregion
 
 //#region Function that takes several inputs and creates an embedded message and sends it in the channel that is attached to the Message Object
@@ -29,20 +30,20 @@ async function embedCustom(
     url: string = null,
     thumbnail: string = null
 ) {
-    const embMsg = new EmbedBuilder().setTitle(title).setColor(color).setDescription(text).setFooter(footer).setImage(img).addFields(fields).setURL(url).setThumbnail(thumbnail).setTimestamp();
     const channel = message.channel;
 
-    if (!channel.isDMBased()) {
-        if (!message.deleted) {
-            message.delete();
-            message.deleted = true;
-        }
-    }
-    if (channel instanceof PartialGroupDMChannel) {
+    if (channel.isDMBased()) {
         return;
     }
 
-    return await channel.send({ embeds: [embMsg] });
+    const embMsg = new EmbedBuilder().setTitle(title).setColor(color).setDescription(text).setFooter(footer).setImage(img).addFields(fields).setURL(url).setThumbnail(thumbnail).setTimestamp();
+
+    channel.send({ embeds: [embMsg] });
+
+    if (!message.deleted) {
+        message.delete();
+        message.deleted = true;
+    }
 }
 //#endregion
 
@@ -65,13 +66,16 @@ function embedCustomDM(message: MessageWithDeleted, title: string, color: ColorR
             iconURL: null,
         })
         .setImage(img);
+
     message.author.send({ embeds: [embMsg] });
 
-    if (!message.channel.isDMBased()) {
-        if (!message.deleted) {
-            message.delete();
-            message.deleted = true;
-        }
+    if (message.channel.isDMBased()) {
+        return;
+    }
+
+    if (!message.deleted) {
+        message.delete();
+        message.deleted = true;
     }
 }
 //#endregion
@@ -92,13 +96,16 @@ function embedHelp(message: MessageWithDeleted, title: string, text: string) {
             text: `Requested by ${message.author.tag}`,
             iconURL: null,
         });
+
     message.author.send({ embeds: [embMsg] });
 
-    if (!message.channel.isDMBased()) {
-        if (!message.deleted) {
-            message.delete();
-            message.deleted = true;
-        }
+    if (message.channel.isDMBased()) {
+        return;
+    }
+
+    if (!message.deleted) {
+        message.delete();
+        message.deleted = true;
     }
 }
 //#endregion
@@ -120,18 +127,22 @@ function warnCustom(message: MessageWithDeleted, text: string, commandName: stri
             iconURL: null,
         });
 
-    if (!message.channel.isDMBased()) {
-        message.channel.send({ embeds: [embMsg] }).then((msg) => {
-            setTimeout(() => msg.delete(), 15000);
+    const channel = message.channel;
+
+    if (channel.isDMBased()) {
+        message.author.send({ embeds: [embMsg] });
+        addToLog(LogType.Warning, commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
+    } else {
+        channel.send({ embeds: [embMsg] }).then((msg) => {
+            setTimeout(() => msg.delete(), 30000);
         });
-        addToLog('warning', commandName, message.author.tag, message.guild.name, message.channel.name, text);
+
+        addToLog(LogType.Warning, commandName, message.author.tag, message.guild.name, channel.name, text);
+
         if (!message.deleted) {
             message.delete();
             message.deleted = true;
         }
-    } else {
-        message.channel.send({ embeds: [embMsg] });
-        addToLog('warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
     }
 }
 //#endregion
@@ -151,18 +162,21 @@ function errorNoAdmin(message: MessageWithDeleted, commandName: string) {
             text: `Requested by ${message.author.tag}`,
             iconURL: null,
         });
-    if (!message.channel.isDMBased()) {
+
+    if (message.channel.isDMBased()) {
+        message.author.send({ embeds: [embMsg] });
+        addToLog(LogType.Warning, commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Not Bot Admin!');
+    } else {
         message.channel.send({ embeds: [embMsg] }).then((msg) => {
             setTimeout(() => msg.delete(), 15000);
         });
-        addToLog('warning', commandName, message.author.tag, message.guild.name, message.channel.name, 'Not Bot Admin!');
+
+        addToLog(LogType.Warning, commandName, message.author.tag, message.guild.name, message.channel.name, 'Not Bot Admin!');
+
         if (!message.deleted) {
             message.delete();
             message.deleted = true;
         }
-    } else {
-        message.channel.send({ embeds: [embMsg] });
-        addToLog('warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Not Bot Admin!');
     }
 }
 //#endregion
@@ -182,18 +196,21 @@ function errorNoMod(message: MessageWithDeleted, commandName: string) {
             text: `Requested by ${message.author.tag}`,
             iconURL: null,
         });
-    if (!message.channel.isDMBased()) {
+
+    if (message.channel.isDMBased()) {
+        message.author.send({ embeds: [embMsg] });
+        addToLog(LogType.Warning, commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Not Bot Moderator!');
+    } else {
         message.channel.send({ embeds: [embMsg] }).then((msg) => {
             setTimeout(() => msg.delete(), 15000);
         });
-        addToLog('warning', commandName, message.author.tag, message.guild.name, message.channel.name, 'Not Bot Moderator!');
+
+        addToLog(LogType.Warning, commandName, message.author.tag, message.guild.name, message.channel.name, 'Not Bot Moderator!');
+
         if (!message.deleted) {
             message.delete();
             message.deleted = true;
         }
-    } else {
-        message.channel.send({ embeds: [embMsg] });
-        addToLog('warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Not Bot Moderator!');
     }
 }
 //#endregion
@@ -213,18 +230,21 @@ function errorNoDJ(message: MessageWithDeleted, commandName: string) {
             text: `Requested by ${message.author.tag}`,
             iconURL: null,
         });
-    if (!message.channel.isDMBased()) {
+
+    if (message.channel.isDMBased()) {
+        message.author.send({ embeds: [embMsg] });
+        addToLog(LogType.Warning, commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Not DJ!');
+    } else {
         message.channel.send({ embeds: [embMsg] }).then((msg) => {
             setTimeout(() => msg.delete(), 15000);
         });
-        addToLog('warning', commandName, message.author.tag, message.guild.name, message.channel.name, 'Not a DJ!');
+
+        addToLog(LogType.Warning, commandName, message.author.tag, message.guild.name, message.channel.name, 'Not a DJ!');
+
         if (!message.deleted) {
             message.delete();
             message.deleted = true;
         }
-    } else {
-        message.channel.send({ embeds: [embMsg] });
-        addToLog('warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Not DJ!');
     }
 }
 //#endregion
@@ -244,18 +264,21 @@ function errorNoServerAdmin(message: MessageWithDeleted, commandName: string) {
             text: `Requested by ${message.author.tag}`,
             iconURL: null,
         });
-    if (!message.channel.isDMBased()) {
+
+    if (message.channel.isDMBased()) {
+        message.author.send({ embeds: [embMsg] });
+        addToLog(LogType.Warning, commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Not Server Admin!');
+    } else {
         message.channel.send({ embeds: [embMsg] }).then((msg) => {
             setTimeout(() => msg.delete(), 15000);
         });
-        addToLog('warning', commandName, message.author.tag, message.guild.name, message.channel.name, 'Not Server Admin!');
+
+        addToLog(LogType.Warning, commandName, message.author.tag, message.guild.name, message.channel.name, 'Not Server Admin!');
+
         if (!message.deleted) {
             message.delete();
             message.deleted = true;
         }
-    } else {
-        message.channel.send({ embeds: [embMsg] });
-        addToLog('warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Not Server Admin!');
     }
 }
 //#endregion
@@ -277,18 +300,21 @@ async function errorCustom(message: MessageWithDeleted, text: string, commandNam
             text: `Requested by ${message.author.tag}`,
             iconURL: null,
         });
-    if (!message.channel.isDMBased()) {
+
+    if (message.channel.isDMBased()) {
+        message.author.send({ embeds: [embMsg] });
+        addToLog(LogType.FatalError, commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
+    } else {
         message.channel.send({ embeds: [embMsg] }).then((msg) => {
             setTimeout(() => msg.delete(), 15000);
         });
-        addToLog('fatal error', commandName, message.author.tag, message.guild.name, message.channel.name, text, client);
+
+        addToLog(LogType.FatalError, commandName, message.author.tag, message.guild.name, message.channel.name, text, client);
+
         if (!message.deleted) {
             message.delete();
             message.deleted = true;
         }
-    } else {
-        message.channel.send({ embeds: [embMsg] });
-        addToLog('fatal error', commandName, message.author.tag, 'Direct Message', 'Direct Message', text);
     }
 }
 //#endregion
@@ -309,15 +335,18 @@ function warnWrongChannel(message: MessageWithDeleted, correctChannel: string, c
             text: `Requested by ${message.author.tag}`,
             iconURL: null,
         });
+
     message.author.send({ embeds: [embMsg] });
-    if (!message.channel.isDMBased()) {
-        addToLog('warning', commandName, message.author.tag, message.guild.name, message.channel.name, 'Wrong Text Channel');
+
+    if (message.channel.isDMBased()) {
+        addToLog(LogType.Warning, commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Wrong Text Channel');
+    } else {
+        addToLog(LogType.Warning, commandName, message.author.tag, message.guild.name, message.channel.name, 'Wrong Text Channel');
+
         if (!message.deleted) {
             message.delete();
             message.deleted = true;
         }
-    } else {
-        addToLog('warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Wrong Text Channel');
     }
 }
 //#endregion
@@ -338,15 +367,17 @@ function warnDisabled(message: MessageWithDeleted, feature: string, commandName:
             text: `Requested by ${message.author.tag}`,
             iconURL: null,
         });
+
     message.author.send({ embeds: [embMsg] });
-    if (!message.channel.isDMBased()) {
-        addToLog('warning', commandName, message.author.tag, message.guild.name, message.channel.name, 'Feature Disabled');
+
+    if (message.channel.isDMBased()) {
+        addToLog(LogType.Warning, commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Feature Disabled');
+    } else {
+        addToLog(LogType.Warning, commandName, message.author.tag, message.guild.name, message.channel.name, 'Feature Disabled');
         if (!message.deleted) {
             message.delete();
             message.deleted = true;
         }
-    } else {
-        addToLog('warning', commandName, message.author.tag, 'Direct Message', 'Direct Message', 'Feature Disabled');
     }
 }
 //#endregion

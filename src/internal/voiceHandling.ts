@@ -1,7 +1,7 @@
 //#region Imports
 import { Collection, ChannelType, PermissionFlagsBits, Client, Events } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
-import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
 import { ExtraCollections } from '../models/extraCollectionsModel.js';
 import { LogType } from '../models/loggingModel.js';
 //#endregion

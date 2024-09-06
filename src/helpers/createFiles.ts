@@ -7,8 +7,8 @@ import { existsSync, writeFileSync } from 'fs';
  * This function creates the JSON files the bot requires to function if they do not already exist.
  */
 function createJSONfiles() {
-    var d = new Date();
-    var emptyLog = {
+    const d = new Date();
+    const emptyLog = {
         logging: [
             {
                 Log: 'Rebuilt Log File',
@@ -19,8 +19,7 @@ function createJSONfiles() {
     };
 
     //#region botConfigExample
-    var botConfigExample =
-        'authToken = "YOUR-AUTH-TOKEN"\nclientID = "YOUR_CLIENT_ID"\nd2ApiKey = "671b3211756445cbb83b5d82f6682ebd"\ndevIDs = ["201665936049176576"]\nmongoDBURI = "mongodb+srv://stormyAdmin:KkIO3kH7DCXLvRco@stormageddon-bot.mtf5p.mongodb.net/?retryWrites=true&w=majority&appName=Stormageddon-Bot"';
+    const botConfigExample = 'authToken = "YOUR-AUTH-TOKEN"\nclientID = "YOUR_CLIENT_ID"\nd2ApiKey = "YOUR_D2_API_KEY"\ndevIDs = ["YOUR_DEV_IDS"]\nmongoDBURI = "YOUR_MONGO_DB_URI"';
     //#endregion
 
     if (!existsSync('./data/errorLog.json')) {

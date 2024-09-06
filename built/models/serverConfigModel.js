@@ -10,8 +10,8 @@ const serverConfigSchema = new Schema({
         enable: { type: Boolean, required: true },
         embedMessage: { type: String, required: true },
         embedFooter: { type: String, required: true },
-        roles: { type: (Array), required: true },
-        reactions: { type: (Array), required: true },
+        roles: { type: [String], required: true },
+        reactions: { type: [String], required: true },
         embedThumbnail: { type: String, required: true },
     },
     joinRole: {
@@ -20,16 +20,16 @@ const serverConfigSchema = new Schema({
     },
     music: {
         enable: { type: Boolean, required: true },
-        djRoles: { type: (Array), required: true },
+        djRoles: { type: [String], required: true },
         textChannel: { type: String, required: true },
     },
     general: {
-        adminRoles: { type: (Array), required: true },
-        modRoles: { type: (Array), required: true },
+        adminRoles: { type: [String], required: true },
+        modRoles: { type: [String], required: true },
     },
     modMail: {
         enable: { type: Boolean, required: true },
-        modList: { type: (Array), required: true },
+        modList: { type: [String], required: true },
     },
     JTCVC: {
         enable: { type: Boolean, required: true },
@@ -39,8 +39,8 @@ const serverConfigSchema = new Schema({
         enable: { type: Boolean, required: true },
         cursing: { type: Boolean, required: true },
         offset: { type: Number, required: true },
-        permList: { type: (Array), required: true },
-        rotateList: { type: (Array), required: true },
+        permList: { type: [String], required: true },
+        rotateList: { type: [String], required: true },
     },
     logging: {
         enable: { type: Boolean, required: true },

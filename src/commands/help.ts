@@ -3,7 +3,7 @@ import { Command } from '../models/commandModel.js';
 import { embedHelp, warnCustom, errorNoAdmin } from '../helpers/embedMessages.js';
 import { adminCheck } from '../helpers/userPermissions.js';
 import { capitalize } from '../helpers/stringHelpers.js';
-import { MessageWithDeleted } from '../models/messages.js';
+import { MessageWithDeleted } from '../models/messagesModel.js';
 //#endregion
 
 //#region This creates the help command with the information about it

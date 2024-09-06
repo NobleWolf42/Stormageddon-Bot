@@ -1,9 +1,10 @@
 //#region Imports
-import { ApplicationCommand, Client, Collection, REST, Routes } from 'discord.js';
+import { ApplicationCommand, Client, Collection, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from 'discord.js';
 import { DisTube } from 'distube';
 import { addToLog } from '../helpers/errorLog.js';
-import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCommands/activeSlashCommands.js';
 import { ExtraCollections } from '../models/extraCollectionsModel.js';
+import { LogType } from '../models/loggingModel.js';
+import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCommands/activeSlashCommands.js';
 //#endregion
 
 //#region Slash Command Handler
@@ -45,11 +46,10 @@ async function slashCommandHandling(client: Client, distube: DisTube, collection
             await command.execute(client, interaction, distube);
         } catch (error) {
             console.error(error);
-            var channel = await client.channels.fetch(interaction.channelId);
-            if (channel.isDMBased()) {
-                addToLog('fatal error', command.data.name, interaction.user.username, 'DM', 'DM', error, client);
+            if (interaction.channel.isDMBased()) {
+                addToLog(LogType.FatalError, command.data.name, interaction.user.username, 'DM', 'DM', error, client);
             } else {
-                addToLog('fatal error', command.data.name, interaction.user.username, interaction.guild.name, channel.name, error, client);
+                addToLog(LogType.FatalError, command.data.name, interaction.user.username, interaction.guild.name, interaction.channel.name, error, client);
             }
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp({
@@ -69,7 +69,7 @@ async function slashCommandHandling(client: Client, distube: DisTube, collection
 
 //#region Registers Guild Slash Commands with discord
 async function registerGuildSlashCommands(guildId: string) {
-    let commands = [];
+    const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
     //This Loops through the active command array and adds them to the collection
     for (let i = 0; i < activeGuildSlashCommands.length; i++) {
         const command = activeGuildSlashCommands[i];
@@ -102,7 +102,7 @@ async function registerGuildSlashCommands(guildId: string) {
 
 //#region Registers Global Slash Commands with discord
 async function registerGlobalSlashCommands() {
-    let commands = [];
+    const commands: RESTPostAPIChatInputApplicationCommandsJSONBody[] = [];
     //This Loops through the active command array and adds them to the collection
     for (let i = 0; i < activeGlobalSlashCommands.length; i++) {
         const command = activeGlobalSlashCommands[i];

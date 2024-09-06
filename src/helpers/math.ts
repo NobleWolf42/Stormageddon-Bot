@@ -9,17 +9,6 @@ function getRandomInt(max: number) {
 }
 //#endregion
 
-//#region Function that checks passed value to see if it is an integer
-/**
- * This function checks passed value to see if it is an integer
- * @param value - A value of some kind
- * @returns True if input was a number, otherwise returns false
- */
-function isInteger(value: any) {
-    return /^\d+$/.test(value);
-}
-//#endregion
-
 //#region Exports
-export { getRandomInt, isInteger };
+export { getRandomInt };
 //#endregion

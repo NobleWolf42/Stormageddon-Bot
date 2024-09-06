@@ -1,7 +1,7 @@
 //#region Imports
 import { Command } from '../models/commandModel.js';
 import { embedCustom, warnCustom, errorCustom } from '../helpers/embedMessages.js';
-import { MessageWithDeleted } from '../models/messages.js';
+import { MessageWithDeleted } from '../models/messagesModel.js';
 import { Client } from 'discord.js';
 //#endregion
 

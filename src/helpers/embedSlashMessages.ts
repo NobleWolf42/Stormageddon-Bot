@@ -4,6 +4,7 @@ import { APIEmbedField, AutocompleteInteraction, Client, ColorResolvable, EmbedB
 
 //#region Helpers
 import { addToLog } from './errorLog.js';
+import { LogType } from '../models/loggingModel.js';
 //#endregion
 
 //#region Types
@@ -37,7 +38,7 @@ async function embedCustom(
 ) {
     const embMsg = new EmbedBuilder().setTitle(title).setColor(color).setDescription(text).setFooter(footer).setImage(img).addFields(fields).setURL(url).setThumbnail(thumbnail).setTimestamp();
 
-    return await interaction.reply({ embeds: [embMsg] });
+    interaction.reply({ embeds: [embMsg] });
 }
 //#endregion
 
@@ -62,8 +63,10 @@ async function embedCustomDM(interaction: InteractionWithChanges, title: string,
         })
         .setImage(img);
 
-    var user = await client.users.fetch(interaction.member.user.id);
+    const user = await client.users.fetch(interaction.member.user.id);
+
     user.send({ embeds: [embMsg] });
+
     interaction.reply({
         content: 'Sent',
         ephemeral: true,
@@ -100,7 +103,7 @@ async function embedHelp(interaction: InteractionWithChanges, title: string, tex
  * @param commandName - String of the name of the command
  * @param client - A Discord.js Client Object
  */
-async function warnCustom(interaction: InteractionWithChanges, text: string, commandName: string, client: Client) {
+async function warnCustom(interaction: InteractionWithChanges, text: string, commandName: string) {
     const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
@@ -110,13 +113,12 @@ async function warnCustom(interaction: InteractionWithChanges, text: string, com
             iconURL: null,
         });
 
-    var channel = await client.channels.fetch(interaction.channelId);
     interaction.reply({ embeds: [embMsg], ephemeral: true });
 
-    if (!channel.isDMBased()) {
-        addToLog('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, text);
+    if (interaction.channel.isDMBased()) {
+        addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
     } else {
-        addToLog('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
+        addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, text);
     }
 }
 //#endregion
@@ -128,7 +130,7 @@ async function warnCustom(interaction: InteractionWithChanges, text: string, com
  * @param commandName - String of the name of the command
  * @param client - A Discord.js Client Object
  */
-async function errorNoAdmin(interaction: InteractionWithChanges, commandName: string, client: Client) {
+async function errorNoAdmin(interaction: InteractionWithChanges, commandName: string) {
     const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
@@ -138,13 +140,12 @@ async function errorNoAdmin(interaction: InteractionWithChanges, commandName: st
             iconURL: null,
         });
 
-    var channel = await client.channels.fetch(interaction.channelId);
     interaction.reply({ embeds: [embMsg], ephemeral: true });
 
-    if (!channel.isDMBased()) {
-        addToLog('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Not Bot Admin!');
+    if (interaction.channel.isDMBased()) {
+        addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Bot Admin!');
     } else {
-        addToLog('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Bot Admin!');
+        addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Not Bot Admin!');
     }
 }
 //#endregion
@@ -156,7 +157,7 @@ async function errorNoAdmin(interaction: InteractionWithChanges, commandName: st
  * @param commandName - String of the name of the command
  * @param client - A Discord.js Client Object
  */
-async function errorNoMod(interaction: InteractionWithChanges, commandName: string, client: Client) {
+async function errorNoMod(interaction: InteractionWithChanges, commandName: string) {
     const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
@@ -166,13 +167,12 @@ async function errorNoMod(interaction: InteractionWithChanges, commandName: stri
             iconURL: null,
         });
 
-    var channel = await client.channels.fetch(interaction.channelId);
     interaction.reply({ embeds: [embMsg], ephemeral: true });
 
-    if (!channel.isDMBased()) {
-        addToLog('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Not Bot Moderator!');
+    if (interaction.channel.isDMBased()) {
+        addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Bot Moderator!');
     } else {
-        addToLog('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Bot Moderator!');
+        addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Not Bot Moderator!');
     }
 }
 //#endregion
@@ -184,7 +184,7 @@ async function errorNoMod(interaction: InteractionWithChanges, commandName: stri
  * @param commandName - String of the name of the command
  * @param client - A Discord.js Client Object
  */
-async function errorNoDJ(interaction: InteractionWithChanges, commandName: string, client: Client) {
+async function errorNoDJ(interaction: InteractionWithChanges, commandName: string) {
     const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
@@ -194,13 +194,12 @@ async function errorNoDJ(interaction: InteractionWithChanges, commandName: strin
             iconURL: null,
         });
 
-    var channel = await client.channels.fetch(interaction.channelId);
     interaction.reply({ embeds: [embMsg], ephemeral: true });
 
-    if (!channel.isDMBased()) {
-        addToLog('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Not a DJ!');
+    if (interaction.channel.isDMBased()) {
+        addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not DJ!');
     } else {
-        addToLog('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not DJ!');
+        addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Not a DJ!');
     }
 }
 //#endregion
@@ -212,7 +211,7 @@ async function errorNoDJ(interaction: InteractionWithChanges, commandName: strin
  * @param commandName - String of the name of the command
  * @param client - A Discord.js Client Object
  */
-async function errorNoServerAdmin(interaction: InteractionWithChanges, commandName: string, client: Client) {
+async function errorNoServerAdmin(interaction: InteractionWithChanges, commandName: string) {
     const embMsg = new EmbedBuilder()
         .setTitle('Error!')
         .setColor('#FF0000')
@@ -222,13 +221,12 @@ async function errorNoServerAdmin(interaction: InteractionWithChanges, commandNa
             iconURL: null,
         });
 
-    var channel = await client.channels.fetch(interaction.channelId);
     interaction.reply({ embeds: [embMsg], ephemeral: true });
 
-    if (!channel.isDMBased()) {
-        addToLog('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Not Server Admin!');
+    if (interaction.channel.isDMBased()) {
+        addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Server Admin!');
     } else {
-        addToLog('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Server Admin!');
+        addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Not Server Admin!');
     }
 }
 //#endregion
@@ -251,13 +249,12 @@ async function errorCustom(interaction: InteractionWithChanges, text: string, co
             iconURL: null,
         });
 
-    var channel = await client.channels.fetch(interaction.channelId);
     interaction.reply({ embeds: [embMsg], ephemeral: true });
 
-    if (!channel.isDMBased()) {
-        addToLog('fatal error', commandName, interaction.user.username, interaction.guild.name, channel.name, text, client);
+    if (interaction.channel.isDMBased()) {
+        addToLog(LogType.FatalError, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
     } else {
-        addToLog('fatal error', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
+        addToLog(LogType.FatalError, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, text, client);
     }
 }
 //#endregion
@@ -270,7 +267,7 @@ async function errorCustom(interaction: InteractionWithChanges, text: string, co
  * @param commandName - String of the name of the command
  * @param client - A Discord.js Client Object
  */
-async function warnWrongChannel(interaction: InteractionWithChanges, correctChannel: string, commandName: string, client: Client) {
+async function warnWrongChannel(interaction: InteractionWithChanges, correctChannel: string, commandName: string) {
     const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
@@ -280,13 +277,12 @@ async function warnWrongChannel(interaction: InteractionWithChanges, correctChan
             iconURL: null,
         });
 
-    var channel = await client.channels.fetch(interaction.channelId);
     interaction.reply({ embeds: [embMsg], ephemeral: true });
 
-    if (!channel.isDMBased()) {
-        addToLog('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Wrong Text Channel');
+    if (interaction.channel.isDMBased()) {
+        addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Wrong Text Channel');
     } else {
-        addToLog('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Wrong Text Channel');
+        addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Wrong Text Channel');
     }
 }
 //#endregion
@@ -299,7 +295,7 @@ async function warnWrongChannel(interaction: InteractionWithChanges, correctChan
  * @param commandName - String of the name of the command
  * @param client - A Discord.js Client Object
  */
-async function warnDisabled(interaction: InteractionWithChanges, feature: string, commandName: string, client: Client) {
+async function warnDisabled(interaction: InteractionWithChanges, feature: string, commandName: string) {
     const embMsg = new EmbedBuilder()
         .setTitle('Warning!')
         .setColor('#F8AA2A')
@@ -309,13 +305,12 @@ async function warnDisabled(interaction: InteractionWithChanges, feature: string
             iconURL: null,
         });
 
-    var channel = await client.channels.fetch(interaction.channelId);
     interaction.reply({ embeds: [embMsg], ephemeral: true });
 
-    if (!channel.isDMBased()) {
-        addToLog('warning', commandName, interaction.user.username, interaction.guild.name, channel.name, 'Feature Disabled');
+    if (interaction.channel.isDMBased()) {
+        addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Feature Disabled');
     } else {
-        addToLog('warning', commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Feature Disabled');
+        addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Feature Disabled');
     }
 }
 //#endregion

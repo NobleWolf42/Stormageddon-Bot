@@ -3,7 +3,7 @@ import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ, embedCustom } fr
 import { capitalize } from '../helpers/stringHelpers.js';
 import { djCheck } from '../helpers/userPermissions.js';
 import { Command } from '../models/commandModel.js';
-import { LoopType } from '../models/music.js';
+import { LoopType } from '../models/musicModel.js';
 //#endregion
 
 //#region This exports the loop command with the information about it
