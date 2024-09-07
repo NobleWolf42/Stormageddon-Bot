@@ -73,14 +73,14 @@ function musicHandler(client, distube) {
                         if (queue.paused) {
                             queue.resume();
                             embedCustom(interaction, 'Music Resumed', '#0000FF', `Playing [\`${queue.songs[0].name}\`](${queue.songs[0].url}).`, {
-                                text: `Requested by ${interaction.user.username}`,
+                                text: `Requested by ${interaction.user.tag}`,
                                 iconURL: null,
                             }, null, [], null, null);
                         }
                         else {
                             queue.pause();
                             embedCustom(interaction, 'Pause', '#0000FF', `Music Paused.`, {
-                                text: `Requested by ${interaction.user.username}`,
+                                text: `Requested by ${interaction.user.tag}`,
                                 iconURL: null,
                             }, null, [], null, null);
                         }
@@ -88,7 +88,7 @@ function musicHandler(client, distube) {
                     case 'skip':
                         queue.skip().then(() => {
                             embedCustom(interaction, 'Skipped', '#0000FF', `[\`${song.name}\`](${song.url}) successfully skipped.`, {
-                                text: `Requested by ${interaction.user.username}`,
+                                text: `Requested by ${interaction.user.tag}`,
                                 iconURL: null,
                             }, null, [], null, null);
                             nowPlayingMessage[queue.id].edit({ components: [] });
@@ -98,7 +98,7 @@ function musicHandler(client, distube) {
                         queue.stop().then(() => {
                             queue.voice.leave();
                             embedCustom(interaction, 'Stop', '#0000FF', `Music Stopped.`, {
-                                text: `Requested by ${interaction.user.username}`,
+                                text: `Requested by ${interaction.user.tag}`,
                                 iconURL: null,
                             }, null, [], null, null);
                             nowPlayingMessage[queue.id].edit({ components: [] });
@@ -107,49 +107,49 @@ function musicHandler(client, distube) {
                     case 'volUp':
                         queue.setVolume(queue.volume + 5);
                         embedCustom(interaction, 'Volume', '#0000FF', `Volume changed to ${queue.volume}%.`, {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         }, null, [], null, null);
                         break;
                     case 'volDown':
                         queue.setVolume(queue.volume - 5);
                         embedCustom(interaction, 'Volume', '#0000FF', `Volume changed to ${queue.volume}%.`, {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         }, null, [], null, null);
                         break;
                     case 'repeat':
                         queue.setRepeatMode(1);
                         embedCustom(interaction, `Loop On`, '#0E4CB0', 'Music set to loop song.', {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         }, null, [], null, null);
                         break;
                     case 'loop':
                         queue.setRepeatMode(2);
                         embedCustom(interaction, `Loop On`, '#0E4CB0', 'Music set to loop queue.', {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         }, null, [], null, null);
                         break;
                     case 'noLoop':
                         queue.setRepeatMode(0);
                         embedCustom(interaction, `Loop Off`, '#0E4CB0', 'Music has returned to normal playback.', {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         }, null, [], null, null);
                         break;
                     case 'shuffle':
                         queue.shuffle();
                         embedCustom(interaction, 'Shuffled', '#0000FF', `Queue successfully shuffled.`, {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         }, null, [], null, null);
                         break;
                     case 'autoplay': {
                         const autoPlay = queue.toggleAutoplay();
                         embedCustom(interaction, 'Autoplay Toggled', '#0000FF', `Autoplay is now ${autoPlay ? 'On' : 'Off'}.`, {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         }, null, [], null, null);
                         break;

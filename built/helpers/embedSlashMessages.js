@@ -19,7 +19,7 @@ import { LogType } from '../models/loggingModel.js';
  * @param title - String for the Title/Header of the interaction
  * @param color - String Hex Code for the color of the border
  * @param text - String for the body of the embedded interaction
- * @param footer - Object for the footer of the embedded interaction - Default: { text: `Requested by ${interaction.user.username}`, iconURL: null }
+ * @param footer - Object for the footer of the embedded interaction - Default: { text: `Requested by ${interaction.user.tag}`, iconURL: null }
  * @param img - URL to an Image to include - Default: null
  * @param fields - addField arguments - Default: []
  * @param url - URL to add as the embedURL - Default: null
@@ -50,7 +50,7 @@ function embedCustomDM(interaction, title, color, text, img, client) {
             .setColor(color)
             .setDescription(text)
             .setFooter({
-            text: `Requested by ${interaction.user.username}`,
+            text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         })
             .setImage(img);
@@ -77,7 +77,7 @@ function embedHelp(interaction, title, text) {
             .setColor('#1459C7')
             .setDescription(text)
             .setFooter({
-            text: `Requested by ${interaction.user.username}`,
+            text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
         interaction.reply({ embeds: [embMsg], ephemeral: true });
@@ -99,15 +99,15 @@ function warnCustom(interaction, text, commandName) {
             .setColor('#F8AA2A')
             .setDescription(text)
             .setFooter({
-            text: `Requested by ${interaction.user.username}`,
+            text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
         interaction.reply({ embeds: [embMsg], ephemeral: true });
         if (interaction.channel.isDMBased()) {
-            addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
+            addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', text);
         }
         else {
-            addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, text);
+            addToLog(LogType.Warning, commandName, interaction.user.tag, interaction.guild.name, interaction.channel.name, text);
         }
     });
 }
@@ -126,15 +126,15 @@ function errorNoAdmin(interaction, commandName) {
             .setColor('#FF0000')
             .setDescription('You do not have permission to use this command. This command requires *BOT ADMIN* access to use!')
             .setFooter({
-            text: `Requested by ${interaction.user.username}`,
+            text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
         interaction.reply({ embeds: [embMsg], ephemeral: true });
         if (interaction.channel.isDMBased()) {
-            addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Bot Admin!');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not Bot Admin!');
         }
         else {
-            addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Not Bot Admin!');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, interaction.guild.name, interaction.channel.name, 'Not Bot Admin!');
         }
     });
 }
@@ -153,15 +153,15 @@ function errorNoMod(interaction, commandName) {
             .setColor('#FF0000')
             .setDescription('You do not have permission to use this command. This command requires *BOT MOD* access to use!')
             .setFooter({
-            text: `Requested by ${interaction.user.username}`,
+            text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
         interaction.reply({ embeds: [embMsg], ephemeral: true });
         if (interaction.channel.isDMBased()) {
-            addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Bot Moderator!');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not Bot Moderator!');
         }
         else {
-            addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Not Bot Moderator!');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, interaction.guild.name, interaction.channel.name, 'Not Bot Moderator!');
         }
     });
 }
@@ -180,15 +180,15 @@ function errorNoDJ(interaction, commandName) {
             .setColor('#FF0000')
             .setDescription('You do not have permission to use this command. This command requires *DJ* access to use!')
             .setFooter({
-            text: `Requested by ${interaction.user.username}`,
+            text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
         interaction.reply({ embeds: [embMsg], ephemeral: true });
         if (interaction.channel.isDMBased()) {
-            addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not DJ!');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not DJ!');
         }
         else {
-            addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Not a DJ!');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, interaction.guild.name, interaction.channel.name, 'Not a DJ!');
         }
     });
 }
@@ -207,15 +207,15 @@ function errorNoServerAdmin(interaction, commandName) {
             .setColor('#FF0000')
             .setDescription('You do not have permission to use this command. This command requires *SERVER ADMIN* access to use!')
             .setFooter({
-            text: `Requested by ${interaction.user.username}`,
+            text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
         interaction.reply({ embeds: [embMsg], ephemeral: true });
         if (interaction.channel.isDMBased()) {
-            addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Not Server Admin!');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not Server Admin!');
         }
         else {
-            addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Not Server Admin!');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, interaction.guild.name, interaction.channel.name, 'Not Server Admin!');
         }
     });
 }
@@ -235,15 +235,15 @@ function errorCustom(interaction, text, commandName, client) {
             .setColor('#FF0000')
             .setDescription(text)
             .setFooter({
-            text: `Requested by ${interaction.user.username}`,
+            text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
         interaction.reply({ embeds: [embMsg], ephemeral: true });
         if (interaction.channel.isDMBased()) {
-            addToLog(LogType.FatalError, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', text);
+            addToLog(LogType.FatalError, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', text);
         }
         else {
-            addToLog(LogType.FatalError, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, text, client);
+            addToLog(LogType.FatalError, commandName, interaction.user.tag, interaction.guild.name, interaction.channel.name, text, client);
         }
     });
 }
@@ -263,15 +263,15 @@ function warnWrongChannel(interaction, correctChannel, commandName) {
             .setColor('#F8AA2A')
             .setDescription(`That was not the correct channel for that command. The correct channel for this command is #${correctChannel}`)
             .setFooter({
-            text: `Requested by ${interaction.user.username}`,
+            text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
         interaction.reply({ embeds: [embMsg], ephemeral: true });
         if (interaction.channel.isDMBased()) {
-            addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Wrong Text Channel');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Wrong Text Channel');
         }
         else {
-            addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Wrong Text Channel');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, interaction.guild.name, interaction.channel.name, 'Wrong Text Channel');
         }
     });
 }
@@ -291,15 +291,15 @@ function warnDisabled(interaction, feature, commandName) {
             .setColor('#F8AA2A')
             .setDescription(`This feature is currently disabled. To enable it, please run the !set ${feature}. NOTE: This command is only available to a server admin.`)
             .setFooter({
-            text: `Requested by ${interaction.user.username}`,
+            text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
         interaction.reply({ embeds: [embMsg], ephemeral: true });
         if (interaction.channel.isDMBased()) {
-            addToLog(LogType.Warning, commandName, interaction.user.username, 'Direct Interaction', 'Direct Interaction', 'Feature Disabled');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Feature Disabled');
         }
         else {
-            addToLog(LogType.Warning, commandName, interaction.user.username, interaction.guild.name, interaction.channel.name, 'Feature Disabled');
+            addToLog(LogType.Warning, commandName, interaction.user.tag, interaction.guild.name, interaction.channel.name, 'Feature Disabled');
         }
     });
 }

@@ -54,7 +54,7 @@ function getClan(interaction, clan_name, client) {
         const domain = 'https://www.bungie.net/';
         const attachment = domain + data['founder']['bungieNetUserInfo']['iconPath'];
         embedCustom(interaction, `${clan_name} Clan Information`, '#F5F5F5', `The clan was created on ${data['detail']['creationDate']}.\n The founder is ${data['founder']['bungieNetUserInfo']['displayName']}.\n\n ${data['detail']['about']}`, {
-            text: `Requested by ${interaction.user.username}`,
+            text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         }, attachment, [], null, null);
     };

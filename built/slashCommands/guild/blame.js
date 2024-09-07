@@ -7,102 +7,105 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Dependencies
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-//#endregion
-//#region Helpers
-const { embedCustom, warnDisabled, warnCustom, } = require('../../helpers/embedSlashMessages.js');
-const { updateConfigFile } = require('../../helpers/currentSettings.js');
+//#region Imports
+import { SlashCommandBuilder } from 'discord.js';
+import { embedCustom, warnDisabled, warnCustom } from '../../helpers/embedSlashMessages.js';
+import { MongooseServerConfig } from '../../models/serverConfigModel.js';
 //#endregion
 //#region This exports the blame command with the information about it
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('blame')
-        .setDescription('Blames someone based on a weekly rotation/permanent blame list.'),
-    execute(client, interaction, distube) {
+const blameSlashCommand = {
+    data: new SlashCommandBuilder().setName('blame').setDescription('Blames someone based on a weekly rotation/permanent blame list.'),
+    execute(client, interaction) {
         return __awaiter(this, void 0, void 0, function* () {
-            var serverID = interaction.guildId;
-            //Gets current config file
-            var serverConfig = updateConfigFile();
-            if (serverConfig[serverID].blame.enable) {
-                //Blames a person
-                var blameList = [];
-                for (key in serverConfig[serverID].blame.permList) {
-                    blameList.push(serverConfig[serverID].blame.permList[key]);
+            //#region Escape Logic
+            if (!interaction.isChatInputCommand()) {
+                return;
+            }
+            const serverConfig = (yield MongooseServerConfig.findById(interaction.guildId).exec()).toObject();
+            if (!serverConfig.blame.enable) {
+                warnDisabled(interaction, 'blame', blameSlashCommand.data.name);
+            }
+            //#endregion
+            //Blames a person
+            const blameList = [];
+            for (const key of serverConfig.blame.permList) {
+                blameList.push(key);
+            }
+            let blameString = '';
+            if (serverConfig.blame.rotateList.length > 0) {
+                let rotateIndex = Math.floor((Date.now() - 493200000) / 604800000) -
+                    Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) * serverConfig.blame.rotateList.length -
+                    serverConfig.blame.offset;
+                if (rotateIndex >= serverConfig.blame.rotateList.length) {
+                    rotateIndex -= serverConfig.blame.rotateList.length;
                 }
-                var blameString = '';
-                if (serverConfig[serverID].blame.rotateList.length > 0) {
-                    var rotateIndex = Math.floor((Date.now() - 493200000) / 604800000) -
-                        Math.floor(Math.floor((Date.now() - 493200000) / 604800000) /
-                            serverConfig[serverID].blame.rotateList.length) *
-                            serverConfig[serverID].blame.rotateList.length -
-                        serverConfig[serverID].blame.offset;
-                    if (rotateIndex >=
-                        serverConfig[serverID].blame.rotateList.length) {
-                        rotateIndex -=
-                            serverConfig[serverID].blame.rotateList.length;
-                    }
-                    else if (rotateIndex < 0) {
-                        rotateIndex +=
-                            serverConfig[serverID].blame.rotateList.length;
-                    }
-                    blameList.push(serverConfig[serverID].blame.rotateList[rotateIndex]);
+                else if (rotateIndex < 0) {
+                    rotateIndex += serverConfig.blame.rotateList.length;
                 }
-                else if (blameList.length < 1) {
-                    return warnCustom(interaction, 'The blame list is empty!', module.name, client);
+                blameList.push(serverConfig.blame.rotateList[rotateIndex]);
+            }
+            if (blameList.length < 1) {
+                warnCustom(interaction, 'The blame list is empty!', blameSlashCommand.data.name);
+                return;
+            }
+            const blameUserList = [];
+            for (const key of blameList) {
+                let blameUser = client.users.cache.get(key);
+                if (blameUser == undefined) {
+                    blameUser = yield client.users.fetch(key);
                 }
-                if (blameList.length == 1) {
-                    if (serverConfig[serverID].blame.cursing) {
-                        embedCustom(interaction, 'Blame', '#B54A65', `It's ${blameList[0]}'s fault fuck that guy in particular!`, {
-                            text: `Requested by ${interaction.user.username}`,
-                            iconURL: null,
-                        }, null, [], null, null);
-                    }
-                    else {
-                        embedCustom(interaction, 'Blame', '#B54A65', `It's ${blameList[0]}'s fault screw that guy in particular!`, {
-                            text: `Requested by ${interaction.user.username}`,
-                            iconURL: null,
-                        }, null, [], null, null);
-                    }
+                blameUserList.push(blameUser);
+            }
+            if (blameList.length == 1) {
+                if (serverConfig.blame.cursing) {
+                    embedCustom(interaction, 'Blame', '#B54A65', `It's ${blameUserList[0]}'s fault fuck that guy in particular!`, {
+                        text: `Requested by ${interaction.user.tag}`,
+                        iconURL: null,
+                    }, null, [], null, null);
                 }
                 else {
-                    for (key in blameList) {
-                        if (blameList.length > 2) {
-                            if (key == blameList.length - 1) {
-                                blameString += `and ${blameList[key]}'s`;
-                            }
-                            else {
-                                blameString += `${blameList[key]}, `;
-                            }
-                        }
-                        else {
-                            if (key == blameList.length - 1) {
-                                blameString += `and ${blameList[key]}'s`;
-                            }
-                            else {
-                                blameString += `${blameList[key]} `;
-                            }
-                        }
-                    }
-                    if (serverConfig[serverID].blame.cursing) {
-                        embedCustom(interaction, 'Blame', '#B54A65', `It's ${blameString} fault fuck those guys in particular!`, {
-                            text: `Requested by ${interaction.user.username}`,
-                            iconURL: null,
-                        }, null, [], null, null);
-                    }
-                    else {
-                        embedCustom(interaction, 'Blame', '#B54A65', `It's ${blameString} fault screw those guys in particular!`, {
-                            text: `Requested by ${interaction.user.username}`,
-                            iconURL: null,
-                        }, null, [], null, null);
-                    }
+                    embedCustom(interaction, 'Blame', '#B54A65', `It's ${blameUserList[0]}'s fault screw that guy in particular!`, {
+                        text: `Requested by ${interaction.user.tag}`,
+                        iconURL: null,
+                    }, null, [], null, null);
                 }
             }
             else {
-                warnDisabled(interaction, 'blame', module.name, client);
+                for (const key in blameUserList) {
+                    if (blameUserList.length > 2) {
+                        if (key == (blameUserList.length - 1).toString()) {
+                            blameString += `and ${blameUserList[key]}'s`;
+                        }
+                        else {
+                            blameString += `${blameUserList[key]}, `;
+                        }
+                    }
+                    else {
+                        if (key == (blameUserList.length - 1).toString()) {
+                            blameString += `and ${blameUserList[key]}'s`;
+                        }
+                        else {
+                            blameString += `${blameUserList[key]} `;
+                        }
+                    }
+                }
+                if (serverConfig.blame.cursing) {
+                    embedCustom(interaction, 'Blame', '#B54A65', `It's ${blameString} fault fuck those guys in particular!`, {
+                        text: `Requested by ${interaction.user.tag}`,
+                        iconURL: null,
+                    }, null, [], null, null);
+                }
+                else {
+                    embedCustom(interaction, 'Blame', '#B54A65', `It's ${blameString} fault screw those guys in particular!`, {
+                        text: `Requested by ${interaction.user.tag}`,
+                        iconURL: null,
+                    }, null, [], null, null);
+                }
             }
         });
     },
 };
-export {};
+//#endregion
+//#region Exports
+export default blameSlashCommand;
 //#endregion

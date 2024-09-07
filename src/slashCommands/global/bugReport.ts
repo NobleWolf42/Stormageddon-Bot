@@ -27,7 +27,7 @@ const bugReportSlashCommand: SlashCommand = {
                 .setColor('#F8AA2A')
                 .setDescription(content)
                 .setFooter({
-                    text: `From - ${interaction.user.username}.`,
+                    text: `From - ${interaction.user.tag}.`,
                     iconURL: null,
                 })
                 .setTimestamp();
@@ -41,7 +41,7 @@ const bugReportSlashCommand: SlashCommand = {
             '#0B6E29',
             `**Bug Report:** \`${content}\` \n**Sent To:** \`🐺 The Developers 🐺\``,
             {
-                text: `Requested by ${interaction.user.username}`,
+                text: `Requested by ${interaction.user.tag}`,
                 iconURL: null,
             },
             null,

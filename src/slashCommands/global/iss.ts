@@ -40,7 +40,7 @@ const issSlashCommand: SlashCommand = {
                 '#000000',
                 response,
                 {
-                    text: `Requested by ${interaction.user.username}`,
+                    text: `Requested by ${interaction.user.tag}`,
                     iconURL: null,
                 },
                 null,

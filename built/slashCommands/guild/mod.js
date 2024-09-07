@@ -7,98 +7,85 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Dependencies
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-//#endregion
-//#region Helpers
-const { updateConfigFile } = require('../../helpers/currentSettings.js');
-const { errorNoServerAdmin, errorCustom, warnCustom, embedCustom, } = require('../../helpers/embedSlashMessages.js');
-//##endregion
-//#region Internals
-const { buildConfigFile } = require('../../internal/settingsFunctions.js');
+//#region Imports
+import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
+import { embedCustom, errorCustom, warnCustom } from '../../helpers/embedSlashMessages.js';
+import { buildConfigFile } from '../../internal/settingsFunctions.js';
+import { MongooseServerConfig } from '../../models/serverConfigModel.js';
 //#endregion
 //#region This exports the mod command with the information about it
-module.exports = {
+const modSlashCommand = {
     data: new SlashCommandBuilder()
         .setName('mod')
         .setDescription('Modify the modmail mod list. MUST HAVE SERVER ADMINISTRATOR STATUS.')
         .addSubcommand((subcommand) => subcommand
         .setName('add')
         .setDescription('Adds user to the list.')
-        .addUserOption((option) => option
-        .setName('moderator')
-        .setDescription('The member to add to modlist')
-        .setRequired(true)))
+        .addUserOption((option) => option.setName('moderator').setDescription('The member to add to modlist').setRequired(true)))
         .addSubcommand((subcommand) => subcommand
         .setName('remove')
         .setDescription('Removes user from list')
-        .addUserOption((option) => option
-        .setName('moderator')
-        .setDescription('The member to add to modlist')
-        .setRequired(true)))
+        .addUserOption((option) => option.setName('moderator').setDescription('The member to add to modlist').setRequired(true)))
         .setDefaultMemberPermissions(PermissionFlagsBits.Administrator),
-    execute(client, interaction, distube) {
+    execute(client, interaction) {
         return __awaiter(this, void 0, void 0, function* () {
-            //Gets current config file
-            var serverConfig = updateConfigFile();
-            if (interaction.guild.id in serverConfig) {
-                if (interaction.options.size == 0) {
-                    return warnCustom(interaction, 'No user input detected!', module.name, client);
-                }
-                var user = interaction.options.getUser('moderator');
-                var serverID = interaction.guildId;
-                var array = serverConfig[serverID].modMail.modList;
-                var userFound = false;
-                var modMail = {};
-                array.forEach((item) => {
-                    if (item == user) {
-                        userFound = true;
-                    }
-                });
-                switch (interaction.options.getSubcommand()) {
-                    case 'add':
-                        if (!userFound) {
-                            array.push(user.id);
-                        }
-                        else {
-                            return warnCustom(interaction, `User ${user.tag} is already a Mod!`, module.name, client);
-                        }
-                        modMail.modList = array;
-                        modMail.enable = true;
-                        serverConfig[serverID].modMail = modMail;
-                        yield buildConfigFile(serverConfig);
-                        embedCustom(interaction, 'Mod Added', '#5D3FD3', `Mod has been successfully added!`, {
-                            text: `Requested by ${interaction.user.username}`,
-                            iconURL: null,
-                        }, null, [], null, null);
-                        serverConfig = updateConfigFile();
-                        break;
-                    case 'remove':
-                        if (userFound) {
-                            array = array.filter(function (value) {
-                                return value != user.id;
-                            });
-                        }
-                        else {
-                            return warnCustom(interaction, `User ${user.tag} is not a Mod!`, module.name, client);
-                        }
-                        modMail.modList = array;
-                        modMail.enable = true;
-                        serverConfig[serverID].modMail = modMail;
-                        yield buildConfigFile(serverConfig);
-                        embedCustom(interaction, 'Mod Removed', '#5D3FD3', `Mod has been successfully removed!`, {
-                            text: `Requested by ${interaction.user.username}`,
-                            iconURL: null,
-                        }, null, [], null, null);
-                        serverConfig = updateConfigFile();
-                        break;
-                }
+            //#region Escape Logic
+            if (!interaction.isChatInputCommand()) {
+                return;
             }
-            else {
-                return errorCustom(interaction, 'Server is not set up with the bot yet!', module.name, client);
+            const serverConfig = (yield MongooseServerConfig.findById(interaction.guildId).exec()).toObject();
+            if (interaction.options.data.length == 0) {
+                return warnCustom(interaction, 'No user input detected!', modSlashCommand.data.name);
+            }
+            if (!serverConfig) {
+                return errorCustom(interaction, 'Server is not set up with the bot yet!', modSlashCommand.data.name, client);
+            }
+            //#endregion
+            const serverID = interaction.guild.id;
+            const userFound = serverConfig.modMail.modList.find((test) => test == interaction.options.getUser('moderator').id);
+            switch (interaction.options.getSubcommand()) {
+                case 'add': {
+                    if (userFound) {
+                        warnCustom(interaction, `User ${interaction.options.getUser('moderator')} is already a Mod!`, modSlashCommand.data.name);
+                        return;
+                    }
+                    const modMail = {
+                        enable: true,
+                        modList: serverConfig.modMail.modList,
+                    };
+                    modMail.modList.push(interaction.options.getUser('moderator').id);
+                    serverConfig.modMail = modMail;
+                    yield buildConfigFile(serverConfig, serverID);
+                    embedCustom(interaction, 'Mods Added', '#5D3FD3', `Mod ${interaction.options.getUser('moderator')} has been successfully added!`, {
+                        text: `Requested by ${interaction.user.tag}`,
+                        iconURL: null,
+                    }, null, [], null, null);
+                    break;
+                }
+                case 'remove': {
+                    if (!userFound) {
+                        return warnCustom(interaction, `User ${interaction.options.getUser('moderator')} is not a Mod!`, modSlashCommand.data.name);
+                    }
+                    const modList = serverConfig.modMail.modList.filter(function (value) {
+                        return value != interaction.options.getUser('moderator').id;
+                    });
+                    const modMail = {
+                        enable: true,
+                        modList: modList,
+                    };
+                    serverConfig.modMail = modMail;
+                    yield buildConfigFile(serverConfig, serverID);
+                    embedCustom(interaction, 'Mods Removed', '#5D3FD3', `Mods have been successfully removed!`, {
+                        text: `Requested by ${interaction.user.tag}`,
+                        iconURL: null,
+                    }, null, [], null, null);
+                    break;
+                }
             }
         });
     },
 };
-export {};
+//#endregion
+//#region Exports
+export default modSlashCommand;
 //#endregion

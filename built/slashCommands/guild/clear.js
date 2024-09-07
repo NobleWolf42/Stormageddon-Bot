@@ -7,55 +7,59 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Dependencies
-const { SlashCommandBuilder, PermissionFlagsBits } = require('discord.js');
-//#endregion
-//#region Helpers
-const { errorCustom, embedCustom, warnCustom, } = require('../../helpers/embedSlashMessages.js');
+//#region Imports
+import { SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
+import { errorCustom, embedCustom, warnCustom } from '../../helpers/embedSlashMessages.js';
 //#endregion
 //#region This exports the clear command with the information about it
-module.exports = {
+const clearSlashCommand = {
     data: new SlashCommandBuilder()
         .setName('clear')
         .setDescription('Bulk deletes the previous messages in a chat, up to 99 previous messages.')
-        .addNumberOption((option) => option
-        .setName('amount')
-        .setDescription('The number of messages to delete (1-100).')
-        .setRequired(true)
-        .setMinValue(1)
-        .setMaxValue(100))
+        .addNumberOption((option) => option.setName('amount').setDescription('The number of messages to delete (1-100).').setRequired(true).setMinValue(1).setMaxValue(100))
         .setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages),
-    execute(client, interaction, distube) {
+    execute(client, interaction) {
         return __awaiter(this, void 0, void 0, function* () {
-            var channel = yield client.channels.fetch(interaction.channelId);
-            var amount = parseInt(interaction.options.getInteger('amount'));
+            //#region Escape Logic
+            if (!interaction.isChatInputCommand()) {
+                return;
+            }
+            const amount = Number(interaction.options.getInteger('amount'));
             if (isNaN(amount)) {
-                return warnCustom(interaction, `That is not a valid number for the clear command!`, module.name, client);
+                warnCustom(interaction, `That is not a valid number for the clear command!`, clearSlashCommand.data.name);
+                return;
             }
-            else if (amount < 1 || amount > 100) {
-                return warnCustom(interaction, `${args[0]} is an invalid number! __**Number must be between 1 and 100!**__`, module.name, client);
+            if (amount < 1 || amount > 100) {
+                warnCustom(interaction, `${amount} is an invalid number! __**Number must be between 1 and 100!**__`, clearSlashCommand.data.name);
+                return;
             }
-            else if (amount >= 1 && amount <= 100) {
-                channel
-                    .bulkDelete(amount, true)
-                    .then(() => {
-                    return embedCustom(interaction, 'Success!', '#008000', `Successfully deleted ${amount} messages!`, {
-                        text: `Requested by ${interaction.user.username}`,
-                        iconURL: null,
-                    }, null, [], null, null);
-                })
-                    .catch((err) => {
-                    if (err.message ==
-                        'You can only bulk delete messages that are under 14 days old.') {
-                        return warnCustom(interaction, `You can only bulk delete messages that are under 14 days old.`, module.name, client);
-                    }
-                    else {
-                        return errorCustom(interaction, `An error occurred while attempting to delete! ${err.message}`, module.name, client);
-                    }
-                });
+            const channel = yield client.channels.fetch(interaction.channelId);
+            if (!channel.isTextBased() || channel.isDMBased()) {
+                return;
             }
+            //#endregion
+            channel
+                .bulkDelete(amount, true)
+                .then(() => {
+                embedCustom(interaction, 'Success!', '#008000', `Successfully deleted ${amount} messages!`, {
+                    text: `Requested by ${interaction.user.tag}`,
+                    iconURL: null,
+                }, null, [], null, null);
+            })
+                .catch((err) => {
+                if (err.message == 'You can only bulk delete messages that are under 14 days old.') {
+                    warnCustom(interaction, `You can only bulk delete messages that are under 14 days old.`, clearSlashCommand.data.name);
+                    return;
+                }
+                else {
+                    errorCustom(interaction, `An error occurred while attempting to delete! ${err.message}`, clearSlashCommand.data.name, client);
+                    return;
+                }
+            });
         });
     },
 };
-export {};
+//#endregion
+//#region Exports
+export default clearSlashCommand;
 //#endregion

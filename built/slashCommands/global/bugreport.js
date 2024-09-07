@@ -33,14 +33,14 @@ const bugReportSlashCommand = {
                     .setColor('#F8AA2A')
                     .setDescription(content)
                     .setFooter({
-                    text: `From - ${interaction.user.username}.`,
+                    text: `From - ${interaction.user.tag}.`,
                     iconURL: null,
                 })
                     .setTimestamp();
                 yield dev.send({ embeds: [embMsg] });
             }
             embedCustom(interaction, 'Bug Report Sent.', '#0B6E29', `**Bug Report:** \`${content}\` \n**Sent To:** \`🐺 The Developers 🐺\``, {
-                text: `Requested by ${interaction.user.username}`,
+                text: `Requested by ${interaction.user.tag}`,
                 iconURL: null,
             }, null, [], null, null);
         });

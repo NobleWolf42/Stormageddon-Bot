@@ -94,15 +94,7 @@ async function autoRoleListener(client: Client) {
 
         if (!react) {
             //Error, Reaction not Valid
-            addToLog(
-                LogType.Alert,
-                `${reaction.emoji.name}:${reaction.emoji.id} - is not found`,
-                member.user.username,
-                message.guild.name,
-                message.channel.name,
-                'Issue with ReactEmoji Event',
-                client
-            );
+            addToLog(LogType.Alert, `${reaction.emoji.name}:${reaction.emoji.id} - is not found`, member.user.tag, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
         }
 
         if (
@@ -145,7 +137,7 @@ async function autoRoleListener(client: Client) {
 
         if (!react) {
             //Error, Reaction not Valid
-            addToLog(LogType.Alert, `${emojiKey} - is not found`, member.user.username, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
+            addToLog(LogType.Alert, `${emojiKey} - is not found`, member.user.tag, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
         }
 
         if (

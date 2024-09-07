@@ -45,7 +45,7 @@ const agifySlashCommand: SlashCommand = {
                 '#5D3FD3',
                 '\n The age of ' + capitalizedName + ' is estimated at ' + data.age + '.',
                 {
-                    text: `Requested by ${interaction.user.username}`,
+                    text: `Requested by ${interaction.user.tag}`,
                     iconURL: null,
                 },
                 null,

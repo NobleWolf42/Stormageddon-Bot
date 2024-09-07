@@ -47,9 +47,9 @@ async function slashCommandHandling(client: Client, distube: DisTube, collection
         } catch (error) {
             console.error(error);
             if (interaction.channel.isDMBased()) {
-                addToLog(LogType.FatalError, command.data.name, interaction.user.username, 'DM', 'DM', error, client);
+                addToLog(LogType.FatalError, command.data.name, interaction.user.tag, 'DM', 'DM', error, client);
             } else {
-                addToLog(LogType.FatalError, command.data.name, interaction.user.username, interaction.guild.name, interaction.channel.name, error, client);
+                addToLog(LogType.FatalError, command.data.name, interaction.user.tag, interaction.guild.name, interaction.channel.name, error, client);
             }
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp({

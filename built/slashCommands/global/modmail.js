@@ -7,65 +7,64 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Dependencies
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
-//#endregion
-//#regions Helpers
-const { updateConfigFile } = require('../../helpers/currentSettings.js');
-const { errorCustom, warnCustom, warnDisabled } = require('../../helpers/embedSlashMessages.js');
+//#region Imports
+import { EmbedBuilder, SlashCommandBuilder } from 'discord.js';
+import { embedCustom, errorCustom, warnCustom, warnDisabled } from '../../helpers/embedSlashMessages.js';
+import { MongooseServerConfig } from '../../models/serverConfigModel.js';
 //#endregion
 //#region This exports the modmail command with the information about it
-module.exports = {
+const modMailSlashCommand = {
     data: new SlashCommandBuilder()
         .setName('modmail')
         .setDescription('Whisper via Stormageddon to all moderators for the specified server.')
         .addStringOption((option) => option.setName('servername').setDescription('Name of the Server you want to message the mods in.').setRequired(true))
         .addStringOption((option) => option.setName('message').setDescription('Message to send.').setRequired(true)),
-    execute(client, interaction, distube) {
+    execute(client, interaction) {
         return __awaiter(this, void 0, void 0, function* () {
-            //Gets current config file
-            var serverConfig = updateConfigFile();
-            var serverID = 0;
-            var servername = interaction.options.getString('servername');
-            var content = interaction.options.getString('message');
+            //#region Escape Logic
+            if (!interaction.isChatInputCommand()) {
+                return;
+            }
+            let serverID = null;
             client.guilds.cache.forEach(function (key) {
-                if (key.name == servername) {
+                if (key.name == interaction.options.getString('servername')) {
                     serverID = key.id;
                 }
             });
-            if (serverID != 0 && serverConfig[serverID] != undefined) {
-                if (serverConfig[serverID].modMail.enable) {
-                    var modList = serverConfig[serverID].modMail.modList;
-                    for (key in modList) {
-                        var mod = yield client.users.fetch(modList[key]);
-                        const embMsg = new EmbedBuilder()
-                            .setTitle(`Mod Mail from: ${servername}`)
-                            .setColor('#0B6E29')
-                            .setDescription(content)
-                            .setFooter({
-                            text: `Requested by ${interaction.user.username}`,
-                            iconURL: null,
-                        })
-                            .setTimestamp();
-                        mod.send({ embeds: [embMsg] });
-                    }
-                    return embedCustom(interaction, 'Mod Mail Sent.', '#0B6E29', `**Message:** \`${content}\` \n**Sent To:** \`The Mods at ${servername}\``, {
-                        text: `Requested by ${interaction.user.username}`,
-                        iconURL: null,
-                    }, null, [], null, null);
-                }
-                else {
-                    return warnDisabled(interaction, 'modMail', module.name, client);
-                }
+            if (!serverID) {
+                warnCustom(interaction, 'The server you specified does not have this bot, or you failed to specify a server.', modMailSlashCommand.data.name);
+                return;
             }
-            else if (serverConfig[serverID] == undefined) {
-                return errorCustom(interaction, `The \`!setup\` command has not been run on \`${servername}\` yet.`, module.name, client);
+            const serverConfig = (yield MongooseServerConfig.findById(interaction.guildId).exec()).toObject();
+            if (!serverConfig) {
+                errorCustom(interaction, `The \`!setup\` command has not been run on \`${interaction.options.getString('servername')}\` yet.`, modMailSlashCommand.data.name, client);
+                return;
             }
-            else {
-                return warnCustom(interaction, 'The server you specified does not have this bot, or you failed to specify a server.', module.name, client);
+            if (serverConfig.modMail.enable) {
+                return warnDisabled(interaction, 'modMail', modMailSlashCommand.data.name);
             }
+            //#endregion
+            for (const key of serverConfig.modMail.modList) {
+                const mod = yield client.users.fetch(key);
+                const embMsg = new EmbedBuilder()
+                    .setTitle(`Mod Mail from: ${interaction.options.getString('servername')}`)
+                    .setColor('#0B6E29')
+                    .setDescription(interaction.options.getString('message'))
+                    .setFooter({
+                    text: `Requested by ${interaction.user.tag}`,
+                    iconURL: null,
+                })
+                    .setTimestamp();
+                mod.send({ embeds: [embMsg] });
+            }
+            embedCustom(interaction, 'Mod Mail Sent.', '#0B6E29', `**Message:** \`${interaction.options.getString('message')}\` \n**Sent To:** \`The Mods at ${interaction.options.getString('servername')}\``, {
+                text: `Requested by ${interaction.user.tag}`,
+                iconURL: null,
+            }, null, [], null, null);
         });
     },
 };
-export {};
+//#endregion
+//#region Exports
+export default modMailSlashCommand;
 //#endregion

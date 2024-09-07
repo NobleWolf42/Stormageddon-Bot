@@ -1,9 +1,11 @@
 //#region Dependencies
 import { PermissionFlagsBits, SlashCommandBuilder } from 'discord.js';
 import { errorCustom } from '../../helpers/embedSlashMessages.js';
+import { SlashCommand } from '../../models/slashCommandModel.js';
 //#endregion
+
 //#region This exports the say command with the information about it
-const saySlashCommand = {
+const saySlashCommand: SlashCommand = {
     data: new SlashCommandBuilder()
         .setName('say')
         .setDescription('Sends message as bot.')
@@ -15,15 +17,19 @@ const saySlashCommand = {
             return;
         }
         //#endregion
+
         const argsString = interaction.options.getString('message');
+
         if (argsString == '') {
             errorCustom(interaction, 'Cannot send an empty message!', saySlashCommand.data.name, client);
             return;
         }
+
         interaction.reply(argsString);
     },
 };
 //#endregion
+
 //#region Exports
 export default saySlashCommand;
 //#endregion

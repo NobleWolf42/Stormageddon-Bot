@@ -42,15 +42,15 @@ const devSendCommand: Command = {
                 message,
                 'Message Sent.',
                 '#0B6E29',
-                `**Message:** \`${content}\` \n**Sent To:** \`${client.users.cache.get(user).username}\``,
-                { text: `Requested by ${message.author.username}`, iconURL: null },
+                `**Message:** \`${content}\` \n**Sent To:** \`${client.users.cache.get(user).tag}\``,
+                { text: `Requested by ${message.author.tag}`, iconURL: null },
                 null,
                 [],
                 null,
                 null
             );
         } else {
-            addToLog(LogType.Alert, this.name, message.author.username, 'Direct Message', 'Direct Message', 'Attempted to use dev only command!', client);
+            addToLog(LogType.Alert, this.name, message.author.tag, 'Direct Message', 'Direct Message', 'Attempted to use dev only command!', client);
             errorCustom(message, 'You do not have permission to use this command!', this.name, client);
         }
     },

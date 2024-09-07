@@ -396,8 +396,11 @@ const blameCommand: Command = {
                     }
 
                     blameList.push(blameUser);
-                } else if (blameList.length < 1) {
-                    return warnCustom(message, 'The blame list is empty!', this.name);
+                }
+
+                if (blameList.length < 1) {
+                    warnCustom(message, 'The blame list is empty!', this.name);
+                    return;
                 }
 
                 if (blameList.length == 1) {

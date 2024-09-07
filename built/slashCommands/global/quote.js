@@ -7,30 +7,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-//#region Dependencies
-const { SlashCommandBuilder } = require('discord.js');
-//#endregion
-//#region Data Files
-const quotedata = require('../../data/quotes.json').data;
-//#endregion
-//#region Helpers
-const { getRandomInt } = require('../../helpers/math.js');
-const { embedCustom } = require('../../helpers/embedSlashMessages.js');
+//#region Imports
+import { SlashCommandBuilder } from 'discord.js';
+import quotes from '../../data/quotes.js';
+import { embedCustom } from '../../helpers/embedSlashMessages.js';
+import { getRandomInt } from '../../helpers/math.js';
 //endregion
 //#region This exports the quote command with the information about it
-module.exports = {
-    data: new SlashCommandBuilder()
-        .setName('quote')
-        .setDescription('Display a random quote, picked by the developers of Stormageddon.'),
-    execute(client, interaction, distube) {
+const quoteSlashCommand = {
+    data: new SlashCommandBuilder().setName('quote').setDescription('Display a random quote, picked by the developers of Stormageddon.'),
+    execute(client, interaction) {
         return __awaiter(this, void 0, void 0, function* () {
-            var quote = quotedata[getRandomInt(quotedata.length)];
+            //#region Escape Logic
+            if (!interaction.isChatInputCommand()) {
+                return;
+            }
+            //#endregion
+            const quote = quotes.data[getRandomInt(quotes.data.length)];
             embedCustom(interaction, 'Quote', '#000000', `"${quote.text}"\n Cited from ${quote.author}.\n Picked by ${yield client.users.fetch(quote.submitter)}.`, {
-                text: `Requested by ${interaction.user.username}`,
+                text: `Requested by ${interaction.user.tag}`,
                 iconURL: null,
             }, null, [], null, null);
         });
     },
 };
-export {};
+//#endregion
+//#region Exports
+export default quoteSlashCommand;
 //#endregion

@@ -77,7 +77,7 @@ async function musicHandler(client: Client, distube: DisTube) {
                             '#0000FF',
                             `Playing [\`${queue.songs[0].name}\`](${queue.songs[0].url}).`,
                             {
-                                text: `Requested by ${interaction.user.username}`,
+                                text: `Requested by ${interaction.user.tag}`,
                                 iconURL: null,
                             },
                             null,
@@ -93,7 +93,7 @@ async function musicHandler(client: Client, distube: DisTube) {
                             '#0000FF',
                             `Music Paused.`,
                             {
-                                text: `Requested by ${interaction.user.username}`,
+                                text: `Requested by ${interaction.user.tag}`,
                                 iconURL: null,
                             },
                             null,
@@ -112,7 +112,7 @@ async function musicHandler(client: Client, distube: DisTube) {
                             '#0000FF',
                             `[\`${song.name}\`](${song.url}) successfully skipped.`,
                             {
-                                text: `Requested by ${interaction.user.username}`,
+                                text: `Requested by ${interaction.user.tag}`,
                                 iconURL: null,
                             },
                             null,
@@ -133,7 +133,7 @@ async function musicHandler(client: Client, distube: DisTube) {
                             '#0000FF',
                             `Music Stopped.`,
                             {
-                                text: `Requested by ${interaction.user.username}`,
+                                text: `Requested by ${interaction.user.tag}`,
                                 iconURL: null,
                             },
                             null,
@@ -153,7 +153,7 @@ async function musicHandler(client: Client, distube: DisTube) {
                         '#0000FF',
                         `Volume changed to ${queue.volume}%.`,
                         {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         },
                         null,
@@ -171,7 +171,7 @@ async function musicHandler(client: Client, distube: DisTube) {
                         '#0000FF',
                         `Volume changed to ${queue.volume}%.`,
                         {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         },
                         null,
@@ -189,7 +189,7 @@ async function musicHandler(client: Client, distube: DisTube) {
                         '#0E4CB0',
                         'Music set to loop song.',
                         {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         },
                         null,
@@ -207,7 +207,7 @@ async function musicHandler(client: Client, distube: DisTube) {
                         '#0E4CB0',
                         'Music set to loop queue.',
                         {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         },
                         null,
@@ -225,7 +225,7 @@ async function musicHandler(client: Client, distube: DisTube) {
                         '#0E4CB0',
                         'Music has returned to normal playback.',
                         {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         },
                         null,
@@ -243,7 +243,7 @@ async function musicHandler(client: Client, distube: DisTube) {
                         '#0000FF',
                         `Queue successfully shuffled.`,
                         {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         },
                         null,
@@ -261,7 +261,7 @@ async function musicHandler(client: Client, distube: DisTube) {
                         '#0000FF',
                         `Autoplay is now ${autoPlay ? 'On' : 'Off'}.`,
                         {
-                            text: `Requested by ${interaction.user.username}`,
+                            text: `Requested by ${interaction.user.tag}`,
                             iconURL: null,
                         },
                         null,

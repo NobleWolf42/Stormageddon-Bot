@@ -73,7 +73,7 @@ function getClan(interaction: Interaction, clan_name: string, client: Client) {
             '#F5F5F5',
             `The clan was created on ${data['detail']['creationDate']}.\n The founder is ${data['founder']['bungieNetUserInfo']['displayName']}.\n\n ${data['detail']['about']}`,
             {
-                text: `Requested by ${interaction.user.username}`,
+                text: `Requested by ${interaction.user.tag}`,
                 iconURL: null,
             },
             attachment,

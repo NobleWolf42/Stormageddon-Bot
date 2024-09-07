@@ -92,7 +92,7 @@ function autoRoleListener(client) {
             const react = message.reactions.cache.get(emojiKey);
             if (!react) {
                 //Error, Reaction not Valid
-                addToLog(LogType.Alert, `${reaction.emoji.name}:${reaction.emoji.id} - is not found`, member.user.username, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
+                addToLog(LogType.Alert, `${reaction.emoji.name}:${reaction.emoji.id} - is not found`, member.user.tag, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
             }
             if (message.author.id === client.user.id &&
                 (message.content !== serverConfig.autoRole.embedMessage || (message.embeds[0] && message.embeds[0].footer.text !== serverConfig.autoRole.embedFooter))) {
@@ -125,7 +125,7 @@ function autoRoleListener(client) {
             const react = message.reactions.cache.get(emojiKey);
             if (!react) {
                 //Error, Reaction not Valid
-                addToLog(LogType.Alert, `${emojiKey} - is not found`, member.user.username, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
+                addToLog(LogType.Alert, `${emojiKey} - is not found`, member.user.tag, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
             }
             if (message.author.id === client.user.id &&
                 (message.content !== serverConfig.autoRole.embedMessage || (message.embeds[0] && message.embeds[0].footer.text !== serverConfig.autoRole.embedFooter))) {

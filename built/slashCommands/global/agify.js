@@ -31,7 +31,7 @@ const agifySlashCommand = {
             // Capitalizing the first letter of the returned name
             const capitalizedName = userInput.charAt(0).toUpperCase() + userInput.slice(1);
             embedCustom(interaction, 'Agify', '#5D3FD3', '\n The age of ' + capitalizedName + ' is estimated at ' + data.age + '.', {
-                text: `Requested by ${interaction.user.username}`,
+                text: `Requested by ${interaction.user.tag}`,
                 iconURL: null,
             }, null, [], null, null);
         };
