@@ -40,35 +40,19 @@ function autoRoleListener(client) {
     return __awaiter(this, void 0, void 0, function* () {
         //#region Loads Messages to Listen to
         const authRoleLists = yield MongooseAutoRoleList.find({}).exec();
-        //Does not work
-        // const roleChannels: RoleChannel[] = [];
-        //Specifically right here, this is always = [] for some reason, making it work for now fix later
-        // authRoleLists.forEach((authRoleList) => roleChannels.concat(authRoleList.roleChannels));
-        // console.log(roleChannels);
-        // const chans: { chan: Channel; messageIDs: string[] }[] = [];
-        // for (const chan of roleChannels) {
-        //     const channel = await client.channels.fetch(chan.id);
-        //     console.log(channel);
-        //     chans.push({ chan: channel, messageIDs: chan.messageIDs });
-        // }
-        // for (const chan of chans) {
-        //     if (!chan.chan || chan.chan.isDMBased() || !chan.chan.isTextBased()) {
-        //         return;
-        //     }
-        //     for (const msg of chan.messageIDs) {
-        //         await chan.chan.messages.fetch(msg).then((m) => console.log(m));
-        //     }
-        // }
-        //Yes I know its bad but it works we will fix it later
+        const channelObjects = [];
         for (const autRoleList of authRoleLists) {
             for (const channels of autRoleList.roleChannels) {
-                const channel = yield client.channels.fetch(channels.id);
-                if (!channel || channel.isDMBased() || !channel.isTextBased()) {
-                    return;
-                }
-                for (const msg of channels.messageIDs) {
-                    yield channel.messages.fetch(msg);
-                }
+                channelObjects.push(channels);
+            }
+        }
+        for (const channels of channelObjects) {
+            const channel = yield client.channels.fetch(channels.id);
+            if (!channel || channel.isDMBased() || !channel.isTextBased()) {
+                return;
+            }
+            for (const msg of channels.messageIDs) {
+                yield channel.messages.fetch(msg);
             }
         }
         //#endregion

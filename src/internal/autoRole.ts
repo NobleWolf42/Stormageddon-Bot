@@ -1,7 +1,7 @@
 //#region Imports
 import { Client, Events } from 'discord.js';
 import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
-import { MongooseAutoRoleList } from '../models/autoRoleList.js';
+import { MongooseAutoRoleList, RoleChannel } from '../models/autoRoleList.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { LogType } from '../models/loggingModel.js';
 //#endregion
@@ -30,39 +30,21 @@ async function generateEmbedFields(serverConfig: ServerConfig) {
 async function autoRoleListener(client: Client) {
     //#region Loads Messages to Listen to
     const authRoleLists = await MongooseAutoRoleList.find({}).exec();
-    //Does not work
-    // const roleChannels: RoleChannel[] = [];
-    //Specifically right here, this is always = [] for some reason, making it work for now fix later
-    // authRoleLists.forEach((authRoleList) => roleChannels.concat(authRoleList.roleChannels));
+    const channelObjects: RoleChannel[] = [];
 
-    // console.log(roleChannels);
-
-    // const chans: { chan: Channel; messageIDs: string[] }[] = [];
-    // for (const chan of roleChannels) {
-    //     const channel = await client.channels.fetch(chan.id);
-    //     console.log(channel);
-    //     chans.push({ chan: channel, messageIDs: chan.messageIDs });
-    // }
-
-    // for (const chan of chans) {
-    //     if (!chan.chan || chan.chan.isDMBased() || !chan.chan.isTextBased()) {
-    //         return;
-    //     }
-    //     for (const msg of chan.messageIDs) {
-    //         await chan.chan.messages.fetch(msg).then((m) => console.log(m));
-    //     }
-    // }
-
-    //Yes I know its bad but it works we will fix it later
     for (const autRoleList of authRoleLists) {
         for (const channels of autRoleList.roleChannels) {
-            const channel = await client.channels.fetch(channels.id);
-            if (!channel || channel.isDMBased() || !channel.isTextBased()) {
-                return;
-            }
-            for (const msg of channels.messageIDs) {
-                await channel.messages.fetch(msg);
-            }
+            channelObjects.push(channels);
+        }
+    }
+
+    for (const channels of channelObjects) {
+        const channel = await client.channels.fetch(channels.id);
+        if (!channel || channel.isDMBased() || !channel.isTextBased()) {
+            return;
+        }
+        for (const msg of channels.messageIDs) {
+            await channel.messages.fetch(msg);
         }
     }
 
