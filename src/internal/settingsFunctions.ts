@@ -1,5 +1,19 @@
 //#region Imports
-import { ButtonBuilder, ButtonStyle, EmbedBuilder, Message, User } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonInteraction,
+    ButtonStyle,
+    ComponentType,
+    EmbedBuilder,
+    GuildMember,
+    Message,
+    MessageComponentType,
+    PermissionFlagsBits,
+    User,
+    UserSelectMenuBuilder,
+    UserSelectMenuInteraction,
+} from 'discord.js';
 import { embedCustom } from '../helpers/embedMessages.js';
 import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
 //#endregion
@@ -10,74 +24,99 @@ const msgFilter = (m: Message) => !m.author.bot;
 //Defining some buttons used in all the setup functions
 const enable = new ButtonBuilder().setCustomId('enable').setLabel('Enable').setStyle(ButtonStyle.Primary);
 const disable = new ButtonBuilder().setCustomId('disable').setLabel('Disable').setStyle(ButtonStyle.Primary);
+const enableDisableButtons = new ActionRowBuilder<ButtonBuilder>().addComponents(enable, disable);
 
 //#region Function that sets modMail settings
 /**
  * This function runs the setup for the ModMail feature.
  * @param message - Discord.js Message Object
- * @returns Server Config JSON
  */
 async function setModMail(message: Message) {
-    var serverID = message.guild.id;
-    var modList = [];
+    const channel = message.channel;
+
+    if (channel.isDMBased()) {
+        return;
+    }
+
+    const serverID = message.guild.id;
 
     //Gets serverConfig from database
-    var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
-    const embMsg = new EmbedBuilder().setTitle('ModMail Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+    const serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
+    const embMsg1 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
 
-    message.channel.send('Please respond with `T` if you would like to enable DMing to bot to DM mods, respond with `F` if you do not.');
+    const ModMailSetUpMessage = await channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
 
-    try {
-        var enableIn = await message.channel.awaitMessages({
-            filter: msgFilter,
-            max: 1,
-            time: 120000,
-            errors: ['time'],
-        });
-        var enableTXT = enableIn.first().content.toLowerCase();
-        var enable = undefined;
-        if (enableTXT == 't') {
-            (enable = true), message.channel.send('Please @ the people you want to receive mod mail.');
+    await ModMailSetUpMessage.awaitMessageComponent<ComponentType.Button>().then(async (interaction: ButtonInteraction) => {
+        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+            return;
+        }
 
-            try {
-                var roleIn = await message.channel.awaitMessages({
-                    filter: msgFilter,
-                    max: 1,
-                    time: 120000,
-                    errors: ['time'],
+        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+            return;
+        }
+
+        let enable: boolean = false;
+        let modList: string[] = [];
+        const modMail: {
+            enable: boolean;
+            modList: string[];
+        } = {
+            enable: false,
+            modList: [],
+        };
+
+        switch (interaction.customId) {
+            case 'enable': {
+                ModMailSetUpMessage.edit({ components: [] });
+                enable = true;
+                const embMsg2 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('Select up to 25 users to receive mod mail.').setColor('#F5820F');
+                const userMenu = new UserSelectMenuBuilder().setCustomId('modMailUsers').setMinValues(1).setMaxValues(25);
+
+                const ModMailUserMessage = await channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(userMenu)] });
+                await ModMailUserMessage.awaitMessageComponent<ComponentType.UserSelect>().then(async (interaction: UserSelectMenuInteraction) => {
+                    if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                        return;
+                    }
+
+                    if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                        return;
+                    }
+
+                    if (interaction.customId != 'modMailUsers') {
+                        return;
+                    }
+
+                    modList = interaction.values;
+
+                    modMail.enable = enable;
+                    modMail.modList = modList;
+
+                    serverConfig.modMail = modMail;
+
+                    await buildConfigFile(serverConfig, serverID);
+
+                    const embMsg3 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('ModMail Setup Complete!').setColor('#355E3B');
+
+                    channel.send({ embeds: [embMsg3] });
+
+                    ModMailUserMessage.edit({ components: [] });
                 });
-                roleIn.first().mentions.members.forEach((member) => {
-                    modList.push(member.id);
-                });
-            } catch (err) {
-                return message.channel.send('Timeout Occurred. Process Terminated.');
+                break;
+            }
+
+            case 'disable': {
+                ModMailSetUpMessage.edit({ components: [] });
+                serverConfig.modMail = modMail;
+                await buildConfigFile(serverConfig, serverID);
+
+                const embMsg2 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('ModMail Setup Complete!').setColor('#355E3B');
+                channel.send({ embeds: [embMsg2] });
+                break;
             }
         }
-    } catch (err) {
-        return message.channel.send('Timeout Occurred. Process Terminated.');
-    }
-
-    if (modList == undefined) {
-        modList = [];
-    }
-    if (enable == undefined) {
-        enable = false;
-    }
-
-    var modMail = {
-        enable: false,
-        modList: [],
-    };
-    modMail.enable = enable;
-    modMail.modList = modList;
-
-    serverConfig.modMail = modMail;
-
-    await buildConfigFile(serverConfig, serverID);
-
-    message.channel.send('Mod Mail Setup Complete!');
-
-    return serverConfig;
+    });
+    //#endregion
+    console.log('done');
 }
 //#endregion
 
