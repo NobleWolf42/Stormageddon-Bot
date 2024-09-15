@@ -29,7 +29,7 @@ const setupCommand = {
             if (!serverConfig.setupNeeded) {
                 errorCustom(message, 'Server Setup has already been completed.', this.name, client);
             }
-            yield setup(message);
+            yield setup(message, serverConfig);
         });
     },
 };

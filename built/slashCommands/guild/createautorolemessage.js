@@ -79,10 +79,10 @@ const createRoleMessageSlashCommand = {
             }
             let thumbnail = null;
             const fieldsOut = [];
-            if (serverConfig.autoRole.embedThumbnail !== '') {
-                thumbnail = serverConfig.autoRole.embedThumbnail;
+            if (serverConfig.autoRole.embedThumbnail.enable && serverConfig.autoRole.embedThumbnail.url !== '') {
+                thumbnail = serverConfig.autoRole.embedThumbnail.url;
             }
-            else if (serverConfig.autoRole.embedThumbnail && interaction.guild.icon) {
+            else if (serverConfig.autoRole.embedThumbnail.enable && interaction.guild.icon) {
                 thumbnail = interaction.guild.iconURL();
             }
             const fields = yield generateEmbedFields(serverConfig);

@@ -9,7 +9,7 @@ const testCommand: Command = {
     class: 'dev',
     usage: 'test',
     description: 'Testing command',
-    async execute(_message, _args, _client, _distube) {
+    async execute(_message, _args, _client, _distube, _collections, _serverConfig) {
         console.log('Start Test Command');
         // client.channels.fetch('649129777399201812').then((chan) => {
         //     console.log(chan);
@@ -45,7 +45,7 @@ const testCommand: Command = {
 
         //console.log(await MongooseServerConfig.findById('testIDString2').exec());
         //console.log(await MongooseServerConfig.findById('testIDString').exec());
-        console.log('testing nodemon');
+        //console.log(message.guild.roles.resolve(serverConfig.joinRole.role));
 
         //await MongooseServerConfig.findByIdAndUpdate(message.guild.id, typeScriptNewConfig).exec();
         //testConfig.save();

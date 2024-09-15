@@ -89,16 +89,17 @@ const createRoleMessageCommand: Command = {
         let thumbnail: string = null;
         const fieldsOut: RestOrArray<APIEmbedField> = [];
 
-        if (serverConfig.autoRole.embedThumbnail !== '') {
-            thumbnail = serverConfig.autoRole.embedThumbnail;
-        } else if (serverConfig.autoRole.embedThumbnail && message.guild.icon) {
+        if (serverConfig.autoRole.embedThumbnail.enable && serverConfig.autoRole.embedThumbnail.url != '') {
+            thumbnail = serverConfig.autoRole.embedThumbnail.url;
+        } else if (serverConfig.autoRole.embedThumbnail.enable && message.guild.icon) {
             thumbnail = message.guild.iconURL();
         }
 
         const fields = await generateEmbedFields(serverConfig);
 
         for (const { emoji, role } of fields) {
-            if (!message.guild.roles.cache.find((r) => r.name === role)) {
+            const roleObject = await message.guild.roles.fetch(role);
+            if (!roleObject) {
                 errorCustom(message, `The role '${role}' does not exist!! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
                 return;
             }
@@ -106,11 +107,11 @@ const createRoleMessageCommand: Command = {
             const customEmote = client.emojis.cache.find((e) => e.name === emoji)?.id;
 
             if (!customEmote) {
-                fieldsOut.push({ name: emoji, value: role, inline: true });
+                fieldsOut.push({ name: emoji, value: roleObject.name, inline: true });
             } else {
                 fieldsOut.push({
                     name: customEmote,
-                    value: role,
+                    value: roleObject.name,
                     inline: true,
                 });
             }

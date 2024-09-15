@@ -14,7 +14,7 @@ const setCommand: Command = {
     class: 'admin',
     usage: 'set autorole/general/joinrole/jointocreatevc/modmail/music',
     description: 'Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.',
-    execute(message, args, client) {
+    async execute(message, args, client, _distube, _collections, serverConfig) {
         //Checks to see if the user using the command has administrator privileges in the server where the command is being attempted
         if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
             errorNoServerAdmin(message, this.name);
@@ -22,31 +22,31 @@ const setCommand: Command = {
 
         switch (args[0]) {
             case 'autorole':
-                setAutoRole(message);
+                await setAutoRole(message, serverConfig, client);
                 break;
 
             case 'joinrole':
-                setJoinRole(message);
+                await setJoinRole(message, serverConfig);
                 break;
 
             case 'general':
-                setGeneral(message);
+                await setGeneral(message, serverConfig);
                 break;
 
             case 'music':
-                setMusic(message);
+                await setMusic(message, serverConfig);
                 break;
 
             case 'modmail':
-                setModMail(message);
+                await setModMail(message, serverConfig);
                 break;
 
             case 'jointocreatevc':
-                setJoinToCreateVC(message);
+                await setJoinToCreateVC(message, serverConfig);
                 break;
 
             case 'blame':
-                setBlame(message);
+                await setBlame(message, serverConfig);
                 break;
 
             default:

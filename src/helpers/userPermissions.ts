@@ -22,8 +22,9 @@ function serverRoleUpdate(sRole: RoleManager, serverConfig: ServerConfig) {
 
     //Saves the Server Roles to an object by name
     for (const [key, value] of sRole.cache) {
-        basicServerRoles[value.name] = key;
+        basicServerRoles[value.id] = key;
     }
+    console.log(basicServerRoles);
 
     //Loops through the Admin Role Names, pushing them to an array
     for (const key of serverConfig.general.adminRoles) {
@@ -136,7 +137,7 @@ function modCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
 function djCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
     //#region Escape Logic
     //Checks that a member exists on the message
-    if (message.member != null) {
+    if (message.member == null) {
         return false;
     }
 
@@ -146,6 +147,8 @@ function djCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
     }
 
     const permArrays = serverRoleUpdate(message.guild.roles, serverConfig);
+
+    console.log(permArrays);
 
     //Checks to see if the DJ role is set
     if (permArrays[2].length != 0) {

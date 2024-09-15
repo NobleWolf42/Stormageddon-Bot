@@ -1,3 +1,12 @@
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 //#region Imports
 import { PermissionFlagsBits } from 'discord.js';
 import { errorNoServerAdmin, errorCustom } from '../helpers/embedMessages.js';
@@ -12,37 +21,39 @@ const setCommand = {
     class: 'admin',
     usage: 'set autorole/general/joinrole/jointocreatevc/modmail/music',
     description: 'Allows you to change the settings you set during setup. MUST HAVE SERVER ADMINISTRATOR STATUS.',
-    execute(message, args, client) {
-        //Checks to see if the user using the command has administrator privileges in the server where the command is being attempted
-        if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
-            errorNoServerAdmin(message, this.name);
-        }
-        switch (args[0]) {
-            case 'autorole':
-                setAutoRole(message);
-                break;
-            case 'joinrole':
-                setJoinRole(message);
-                break;
-            case 'general':
-                setGeneral(message);
-                break;
-            case 'music':
-                setMusic(message);
-                break;
-            case 'modmail':
-                setModMail(message);
-                break;
-            case 'jointocreatevc':
-                setJoinToCreateVC(message);
-                break;
-            case 'blame':
-                setBlame(message);
-                break;
-            default:
-                errorCustom(message, 'Not a valid settings category!', this.name, client);
-                break;
-        }
+    execute(message, args, client, _distube, _collections, serverConfig) {
+        return __awaiter(this, void 0, void 0, function* () {
+            //Checks to see if the user using the command has administrator privileges in the server where the command is being attempted
+            if (!message.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                errorNoServerAdmin(message, this.name);
+            }
+            switch (args[0]) {
+                case 'autorole':
+                    yield setAutoRole(message, serverConfig, client);
+                    break;
+                case 'joinrole':
+                    yield setJoinRole(message, serverConfig);
+                    break;
+                case 'general':
+                    yield setGeneral(message, serverConfig);
+                    break;
+                case 'music':
+                    yield setMusic(message, serverConfig);
+                    break;
+                case 'modmail':
+                    yield setModMail(message, serverConfig);
+                    break;
+                case 'jointocreatevc':
+                    yield setJoinToCreateVC(message, serverConfig);
+                    break;
+                case 'blame':
+                    yield setBlame(message, serverConfig);
+                    break;
+                default:
+                    errorCustom(message, 'Not a valid settings category!', this.name, client);
+                    break;
+            }
+        });
     },
 };
 //#endregion

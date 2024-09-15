@@ -1,7 +1,7 @@
 //#region Import
 //import('discord.js', { with: { 'resolution-mode': 'import' } }).VoiceBasedChannel;
 import { VoiceBasedChannel } from 'discord.js';
-import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } from '../helpers/embedMessages.js';
+import { errorNoDJ, warnCustom, warnDisabled, warnWrongChannel } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
 import { Command } from '../models/commandModel.js';
 //#endregion
@@ -50,11 +50,15 @@ const playCommand: Command = {
             return warnCustom(message, 'No song input detected, please try again.', this.name);
         } else {
             //FIX this error in the future, distube and discordjs hate each other apparently
-            distube.play(voiceChannel, song, {
-                member: message.member,
-                message: message,
-                textChannel: message.channel,
-            });
+            distube
+                .play(voiceChannel, song, {
+                    member: message.member,
+                    message: message,
+                    textChannel: message.channel,
+                })
+                .catch((err) => {
+                    warnCustom(message, `Error Queuing Song, Please Try Again.\n\nError:\n${err.message}`, this.name);
+                });
             message.delete();
             message.deleted = true;
         }

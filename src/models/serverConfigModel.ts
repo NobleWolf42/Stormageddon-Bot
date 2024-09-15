@@ -12,7 +12,10 @@ interface ServerConfig {
         embedFooter: string;
         roles: string[];
         reactions: string[];
-        embedThumbnail: string;
+        embedThumbnail: {
+            enable: boolean;
+            url: string;
+        };
     };
     joinRole: {
         enable: boolean;
@@ -64,7 +67,10 @@ const serverConfigSchema = new Schema<ServerConfig>({
         embedFooter: { type: String, required: true },
         roles: { type: [String], required: true },
         reactions: { type: [String], required: true },
-        embedThumbnail: { type: String, required: true },
+        embedThumbnail: {
+            enable: { type: Boolean, required: true },
+            url: { type: String, required: true },
+        },
     },
     joinRole: {
         enable: { type: Boolean, required: true },

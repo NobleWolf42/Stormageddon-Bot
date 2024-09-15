@@ -8,30 +8,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Imports
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, GuildMember, PermissionFlagsBits, UserSelectMenuBuilder, } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, EmbedBuilder, GuildMember, ModalBuilder, PermissionFlagsBits, RoleSelectMenuBuilder, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, } from 'discord.js';
 import { embedCustom } from '../helpers/embedMessages.js';
 import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
+//#region Initial Setup
 //Defining a filter for the setup commands to ignore bot messages
 const msgFilter = (m) => !m.author.bot;
 //Defining some buttons used in all the setup functions
-const enable = new ButtonBuilder().setCustomId('enable').setLabel('Enable').setStyle(ButtonStyle.Primary);
-const disable = new ButtonBuilder().setCustomId('disable').setLabel('Disable').setStyle(ButtonStyle.Primary);
-const enableDisableButtons = new ActionRowBuilder().addComponents(enable, disable);
-//#region Function that sets modMail settings
+const enableButton = new ButtonBuilder().setCustomId('enable').setLabel('Enable').setStyle(ButtonStyle.Primary);
+const disableButton = new ButtonBuilder().setCustomId('disable').setLabel('Disable').setStyle(ButtonStyle.Danger);
+const enableDisableButtons = new ActionRowBuilder().addComponents(enableButton, disableButton);
+//#endregion
+//#region modMail settings
 /**
  * This function runs the setup for the ModMail feature.
  * @param message - Discord.js Message Object
+ * @param serverConfig - serverConfig from the server running the command
  */
-function setModMail(message) {
+function setModMail(message, serverConfig) {
     return __awaiter(this, void 0, void 0, function* () {
         const channel = message.channel;
         if (channel.isDMBased()) {
             return;
         }
         const serverID = message.guild.id;
-        //Gets serverConfig from database
-        const serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
         const embMsg1 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
         const ModMailSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
         yield ModMailSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
@@ -41,19 +42,36 @@ function setModMail(message) {
             if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
                 return;
             }
-            let enable = false;
-            let modList = [];
-            const modMail = {
-                enable: false,
-                modList: [],
-            };
             switch (interaction.customId) {
                 case 'enable': {
                     ModMailSetUpMessage.edit({ components: [] });
-                    enable = true;
-                    const embMsg2 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('Select up to 25 users to receive mod mail.').setColor('#F5820F');
+                    serverConfig.modMail.enable = true;
+                    const embMsg1 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('Would you like to add to existing mods, or replace current mods?').setColor('#F5820F');
+                    const addModsButton = new ButtonBuilder().setCustomId('addMods').setLabel('Add Mods').setStyle(ButtonStyle.Primary);
+                    const replaceModsButton = new ButtonBuilder().setCustomId('replaceMods').setLabel('Replace Mods').setStyle(ButtonStyle.Danger);
+                    const addReplaceModsMessage = yield channel.send({ embeds: [embMsg1], components: [new ActionRowBuilder().addComponents(addModsButton, replaceModsButton)] });
+                    yield addReplaceModsMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        switch (interaction.customId) {
+                            case 'addMods': {
+                                addReplaceModsMessage.edit({ components: [] });
+                                break;
+                            }
+                            case 'replaceMods': {
+                                addReplaceModsMessage.edit({ components: [] });
+                                serverConfig.modMail.modList = [];
+                                break;
+                            }
+                        }
+                    }));
+                    const embMsg3 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('Select up to 25 users to receive mod mail.').setColor('#F5820F');
                     const userMenu = new UserSelectMenuBuilder().setCustomId('modMailUsers').setMinValues(1).setMaxValues(25);
-                    const ModMailUserMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(userMenu)] });
+                    const ModMailUserMessage = yield channel.send({ embeds: [embMsg3], components: [new ActionRowBuilder().addComponents(userMenu)] });
                     yield ModMailUserMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
                         if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
                             return;
@@ -64,141 +82,235 @@ function setModMail(message) {
                         if (interaction.customId != 'modMailUsers') {
                             return;
                         }
-                        modList = interaction.values;
-                        modMail.enable = enable;
-                        modMail.modList = modList;
-                        serverConfig.modMail = modMail;
-                        yield buildConfigFile(serverConfig, serverID);
-                        const embMsg3 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('ModMail Setup Complete!').setColor('#355E3B');
-                        channel.send({ embeds: [embMsg3] });
                         ModMailUserMessage.edit({ components: [] });
+                        for (const id of interaction.values) {
+                            serverConfig.modMail.modList.push(id);
+                        }
                     }));
                     break;
                 }
                 case 'disable': {
                     ModMailSetUpMessage.edit({ components: [] });
-                    serverConfig.modMail = modMail;
-                    yield buildConfigFile(serverConfig, serverID);
-                    const embMsg2 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('ModMail Setup Complete!').setColor('#355E3B');
-                    channel.send({ embeds: [embMsg2] });
+                    serverConfig.modMail.enable = false;
+                    serverConfig.modMail.modList = [];
                     break;
                 }
             }
         }));
-        //#endregion
-        console.log('done');
+        yield buildConfigFile(serverConfig, serverID);
+        const embMsg4 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('ModMail Setup Complete!').setColor('#355E3B');
+        channel.send({ embeds: [embMsg4] });
     });
 }
 //#endregion
-//#region Function that sets autoRole settings
+//#region AutoRole settings
 /**
  * This function runs the setup for the AutoRole feature.
  * @param message - Discord.js Message Object
- * @returns Server Config JSON
+ * @param serverConfig - serverConfig from the server running the command
+ * @param client - Discord.js Client
  */
-function setAutoRole(message) {
+function setAutoRole(message, serverConfig, client) {
     return __awaiter(this, void 0, void 0, function* () {
-        var serverID = message.guild.id;
-        //Gets serverConfig from database
-        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
-        message.channel.send('Example Message:');
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
+        channel.send('Example Message:');
         yield embedCustom(message, 'Role Message', '#FFFF00', '**React to the messages below to receive the associated role.**', {
             text: `If you do not receive the role try reacting again.`,
             iconURL: null,
         }, null, [], null, null);
-        message.channel.send('Please respond with `T` if you would like to enable react to receive role feature, respond with `F` if you do not.');
-        try {
-            var enableIn = yield message.channel.awaitMessages({
-                filter: msgFilter,
-                max: 1,
-                time: 120000,
-                errors: ['time'],
-            });
-            var enableTXT = enableIn.first().content.toLowerCase();
-            var enable = undefined;
-            if (enableTXT == 't') {
-                enable = true;
-                message.channel.send('Please respond with the text you would like the reactRole message to contain. Replaces (`**React to the messages below to receive the associated role.**`) in the example. You have two minutes to respond to each setting.');
-                try {
-                    var embedMessageIn = yield message.channel.awaitMessages({
-                        filter: msgFilter,
-                        max: 1,
-                        time: 120000,
-                        errors: ['time'],
-                    });
-                    var embedMessage = embedMessageIn.first().content;
+        const serverID = message.guild.id;
+        const embMsg1 = new EmbedBuilder().setTitle('AutoRole Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+        const AutoRoleSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
+        yield AutoRoleSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            switch (interaction.customId) {
+                case 'enable': {
+                    AutoRoleSetUpMessage.edit({ components: [] });
+                    serverConfig.autoRole.enable = true;
+                    const autoRoleBody = new TextInputBuilder().setCustomId('autoRoleBody').setLabel('Input Role Message:').setValue(serverConfig.autoRole.embedMessage).setStyle(TextInputStyle.Paragraph);
+                    const autoRoleFooter = new TextInputBuilder()
+                        .setCustomId('autoRoleFooter')
+                        .setLabel('Input Footer for Role Message:')
+                        .setValue(serverConfig.autoRole.embedFooter)
+                        .setStyle(TextInputStyle.Short);
+                    const autoRoleBodyInput = new ActionRowBuilder().addComponents(autoRoleBody);
+                    const autoRoleFooterInput = new ActionRowBuilder().addComponents(autoRoleFooter);
+                    const autoRoleModal = new ModalBuilder().setCustomId('autoRoleModal').setTitle('AutoRole SetUp - Message Content').addComponents(autoRoleBodyInput, autoRoleFooterInput);
+                    yield interaction.showModal(autoRoleModal);
+                    yield interaction.awaitModalSubmit({ time: 300000 }).then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        if (interaction.customId != 'autoRoleModal') {
+                            return;
+                        }
+                        serverConfig.autoRole.embedMessage = interaction.fields.getField('autoRoleBody').value;
+                        serverConfig.autoRole.embedFooter = interaction.fields.getField('autoRoleFooter').value;
+                        interaction.deferReply();
+                        interaction.deleteReply();
+                        const embMsg2 = new EmbedBuilder()
+                            .setTitle('AutoRole Setup')
+                            .setDescription('Would you like to have a thumbnail in the react message? (Shown in this message.)')
+                            .setThumbnail(client.user.avatarURL())
+                            .setColor('#F5820F');
+                        const autoRoleThumbnailMessage = yield channel.send({ embeds: [embMsg2], components: [enableDisableButtons] });
+                        yield autoRoleThumbnailMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                                return;
+                            }
+                            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                                return;
+                            }
+                            autoRoleThumbnailMessage.edit({ components: [] });
+                            switch (interaction.customId) {
+                                case 'enable':
+                                    {
+                                        serverConfig.autoRole.embedThumbnail.enable = true;
+                                        const autoRoleThumbnailURL = new TextInputBuilder()
+                                            .setCustomId('autoRoleThumbnailURL')
+                                            .setLabel('Input URL below. Blank=Server Profile Image.')
+                                            .setRequired(false)
+                                            .setStyle(TextInputStyle.Short);
+                                        const thumbnailURLField = new ActionRowBuilder().addComponents(autoRoleThumbnailURL);
+                                        const thumbnailModal = new ModalBuilder().setCustomId('thumbnailModal').setTitle('AutoRole SetUp - Thumbnail').addComponents(thumbnailURLField);
+                                        yield interaction.showModal(thumbnailModal);
+                                        yield interaction.awaitModalSubmit({ time: 300000 }).then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                                            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                                                return;
+                                            }
+                                            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                                                return;
+                                            }
+                                            if (interaction.customId != 'thumbnailModal') {
+                                                return;
+                                            }
+                                            serverConfig.autoRole.embedThumbnail.url = interaction.fields.getField('autoRoleThumbnailURL').value;
+                                            interaction.deferReply();
+                                            interaction.deleteReply();
+                                        }));
+                                    }
+                                    break;
+                                case 'disable':
+                                    {
+                                        serverConfig.autoRole.embedThumbnail.enable = false;
+                                    }
+                                    break;
+                            }
+                            const embMsg3 = new EmbedBuilder().setTitle('AutoRole Setup').setDescription('Would you like to add to existing roles, or replace current roles?').setColor('#F5820F');
+                            const addRolesButton = new ButtonBuilder().setCustomId('addRoles').setLabel('Add Roles').setStyle(ButtonStyle.Primary);
+                            const replaceRolesButton = new ButtonBuilder().setCustomId('replaceRoles').setLabel('Replace Roles').setStyle(ButtonStyle.Danger);
+                            const addReplaceRolesMessage = yield channel.send({ embeds: [embMsg3], components: [new ActionRowBuilder().addComponents(addRolesButton, replaceRolesButton)] });
+                            yield addReplaceRolesMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                                if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                                    return;
+                                }
+                                if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                                    return;
+                                }
+                                switch (interaction.customId) {
+                                    case 'addRoles': {
+                                        addReplaceRolesMessage.edit({ components: [] });
+                                        break;
+                                    }
+                                    case 'replaceRoles': {
+                                        addReplaceRolesMessage.edit({ components: [] });
+                                        serverConfig.autoRole.roles = [];
+                                        break;
+                                    }
+                                }
+                            }));
+                            const autoRoleRoles = new RoleSelectMenuBuilder().setCustomId('autoRoleRoles').setMaxValues(25);
+                            const embMsg4 = new EmbedBuilder().setTitle('AutoRole Setup').setDescription('Choose the roles you would like to be managed by the bot.').setColor('#F5820F');
+                            let moreRoles = true;
+                            while (moreRoles) {
+                                const addRolesMessage = yield channel.send({ embeds: [embMsg4], components: [new ActionRowBuilder().addComponents(autoRoleRoles)] });
+                                yield addRolesMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                                    if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                                        return;
+                                    }
+                                    if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                                        return;
+                                    }
+                                    if (interaction.customId != 'autoRoleRoles') {
+                                        return;
+                                    }
+                                    addRolesMessage.edit({ components: [] });
+                                    for (const id of interaction.values) {
+                                        if (!serverConfig.autoRole.roles.includes(id)) {
+                                            serverConfig.autoRole.roles.push(id);
+                                        }
+                                    }
+                                    const embMsg5 = new EmbedBuilder().setTitle('AutoRole Setup').setDescription('Would you like to add more roles?').setColor('#F5820F');
+                                    const yesButton = new ButtonBuilder().setCustomId('yes').setLabel('Yes').setStyle(ButtonStyle.Primary);
+                                    const noButton = new ButtonBuilder().setCustomId('no').setLabel('No').setStyle(ButtonStyle.Danger);
+                                    const moreRolesMessage = yield channel.send({ embeds: [embMsg5], components: [new ActionRowBuilder().addComponents(yesButton, noButton)] });
+                                    yield moreRolesMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                                            return;
+                                        }
+                                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                                            return;
+                                        }
+                                        moreRolesMessage.edit({ components: [] });
+                                        switch (interaction.customId) {
+                                            case 'yes':
+                                                break;
+                                            case 'no':
+                                                moreRoles = false;
+                                                break;
+                                        }
+                                    }));
+                                }));
+                            }
+                            for (const id of serverConfig.autoRole.roles) {
+                                channel.send(`\`${(yield client.guilds.fetch(channel.guildId)).roles.resolve(id).name}\``);
+                            }
+                            channel.send('Please respond to this message with the list of reactions you want to be used for the roles above, matching their order. Format the list with spaces separating the reactions, like this: `🐕 🎩 👾`. (NOTE: You can use custom reactions as long as they are not animated and belong to this server)');
+                            try {
+                                const embedReactIn = yield channel.awaitMessages({
+                                    filter: msgFilter,
+                                    max: 1,
+                                    time: 300000,
+                                    errors: ['time'],
+                                });
+                                const reactions = embedReactIn.first().content.split(' ');
+                                serverConfig.autoRole.reactions = reactions;
+                            }
+                            catch (err) {
+                                console.log(err.message);
+                            }
+                        }));
+                    }));
+                    break;
                 }
-                catch (err) {
-                    console.log(err.message);
-                    return message.channel.send('Timeout Occurred. Process Terminated.');
-                }
-                var embedFooter = 'If you do not receive the role try reacting again.';
-                message.channel.send('Please @ the roles you would like users to be able to assign to themselves.');
-                try {
-                    var embedRoleIn = yield message.channel.awaitMessages({
-                        filter: msgFilter,
-                        max: 1,
-                        time: 120000,
-                        errors: ['time'],
-                    });
-                    var roles = [];
-                    embedRoleIn.first().mentions.roles.forEach((role) => roles.push(role.name));
-                }
-                catch (err) {
-                    console.log(err.message);
-                    return message.channel.send('Timeout Occurred. Process Terminated.');
-                }
-                message.channel.send('Please respond to this message with the list of reactions you want to be used for the roles above, matching their order. Format the list with spaces separating the reactions, like this: `🐕 🎩 👾`. (NOTE: You can use custom reactions as long as they are not animated and belong to this server)');
-                try {
-                    var embedReactIn = yield message.channel.awaitMessages({
-                        filter: msgFilter,
-                        max: 1,
-                        time: 120000,
-                        errors: ['time'],
-                    });
-                    var reactions = embedReactIn.first().content.split(' ');
-                }
-                catch (err) {
-                    console.log(err.message);
-                    return message.channel.send('Timeout Occurred. Process Terminated.');
+                case 'disable': {
+                    AutoRoleSetUpMessage.edit({ components: [] });
+                    serverConfig.autoRole.enable = false;
+                    serverConfig.autoRole.embedFooter = 'Not Set Up';
+                    serverConfig.autoRole.embedMessage = 'Not Set Up';
+                    serverConfig.autoRole.embedThumbnail.url = 'Not Set Up';
+                    serverConfig.autoRole.embedThumbnail.enable = false;
+                    serverConfig.autoRole.reactions = [];
+                    serverConfig.autoRole.roles = [];
+                    break;
                 }
             }
-        }
-        catch (err) {
-            console.log(err.message);
-            return message.channel.send('Timeout Occurred. Process Terminated.');
-        }
-        if (embedMessage == undefined) {
-            embedMessage = '`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`';
-        }
-        if (embedFooter == undefined) {
-            embedFooter = 'If you do not receive the role try reacting again.';
-        }
-        if (roles == undefined) {
-            roles = [];
-        }
-        if (reactions == undefined) {
-            reactions = [];
-        }
-        if (enable == undefined) {
-            enable = false;
-        }
-        var autoRole = {
-            enable: false,
-            embedMessage: '`React to the emoji that matches the role you wish to receive.\nIf you would like to remove the role, simply remove your reaction!\n`',
-            embedFooter: 'If you do not receive the role try reacting again.',
-            roles: [],
-            reactions: [],
-        };
-        autoRole.enable = enable;
-        autoRole.embedMessage = embedMessage;
-        autoRole.embedFooter = embedFooter;
-        autoRole.roles = roles;
-        autoRole.reactions = reactions;
-        serverConfig.autoRole = autoRole;
+        }));
+        console.log(serverConfig.autoRole);
         yield buildConfigFile(serverConfig, serverID);
-        message.channel.send('Auto Role Setup Complete!');
-        return serverConfig;
+        const embMsg6 = new EmbedBuilder().setTitle('AutoRole Setup').setDescription('AutoRole Setup Complete!').setColor('#355E3B');
+        channel.send({ embeds: [embMsg6] });
     });
 }
 //#endregion
@@ -206,58 +318,57 @@ function setAutoRole(message) {
 /**
  * This function runs the setup for the JoinRole feature.
  * @param message - Discord.js Message Object
- * @returns Server Config JSON
+ * @param serverConfig - serverConfig from the server running the command
  */
-function setJoinRole(message) {
+function setJoinRole(message, serverConfig) {
     return __awaiter(this, void 0, void 0, function* () {
-        var serverID = message.guild.id;
-        //Gets serverConfig from database
-        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
-        message.channel.send('Please respond with `T` if you would like to enable assign a user a role on server join, respond with `F` if you do not.');
-        try {
-            var enableIn = yield message.channel.awaitMessages({
-                filter: msgFilter,
-                max: 1,
-                time: 120000,
-                errors: ['time'],
-            });
-            var enableTXT = enableIn.first().content.toLowerCase();
-            var enable = undefined;
-            if (enableTXT == 't') {
-                (enable = true), message.channel.send('Please @ the role you would like to assign users when they join your server.');
-                try {
-                    var roleIn = yield message.channel.awaitMessages({
-                        filter: msgFilter,
-                        max: 1,
-                        time: 120000,
-                        errors: ['time'],
-                    });
-                    var role = roleIn.first().mentions.roles.first().name;
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
+        const serverID = message.guild.id;
+        const embMsg1 = new EmbedBuilder().setTitle('JoinRole Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+        const JoinRoleSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
+        yield JoinRoleSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            switch (interaction.customId) {
+                case 'enable': {
+                    JoinRoleSetUpMessage.edit({ components: [] });
+                    serverConfig.joinRole.enable = true;
+                    const embMsg2 = new EmbedBuilder().setTitle('JoinRole Setup').setDescription('Select a role to give upon joining the server..').setColor('#F5820F');
+                    const roleMenu = new RoleSelectMenuBuilder().setCustomId('joinRoleRole').setMinValues(1).setMaxValues(1);
+                    const JoinRoleRoleMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(roleMenu)] });
+                    yield JoinRoleRoleMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        if (interaction.customId != 'joinRoleRole') {
+                            return;
+                        }
+                        JoinRoleRoleMessage.edit({ components: [] });
+                        serverConfig.joinRole.role = interaction.values[0];
+                    }));
+                    break;
                 }
-                catch (err) {
-                    return message.channel.send('Timeout Occurred. Process Terminated.');
+                case 'disable': {
+                    JoinRoleSetUpMessage.edit({ components: [] });
+                    serverConfig.joinRole.enable = false;
+                    serverConfig.joinRole.role = 'Not Set Up';
+                    break;
                 }
             }
-        }
-        catch (err) {
-            return message.channel.send('Timeout Occurred. Process Terminated.');
-        }
-        if (role == undefined) {
-            role = '';
-        }
-        if (enable == undefined) {
-            enable = false;
-        }
-        var joinRole = {
-            enable: false,
-            role: '',
-        };
-        joinRole.enable = enable;
-        joinRole.role = role;
-        serverConfig.joinRole = joinRole;
+        }));
         yield buildConfigFile(serverConfig, serverID);
-        message.channel.send('Join Role Setup Complete!');
-        return serverConfig;
+        const embMsg3 = new EmbedBuilder().setTitle('JoinRole Setup').setDescription('JoinRole Setup Complete!').setColor('#355E3B');
+        channel.send({ embeds: [embMsg3] });
     });
 }
 //#endregion
@@ -265,59 +376,57 @@ function setJoinRole(message) {
 /**
  * This function runs the setup for the joinToCreateVC feature.
  * @param message - Discord.js Message Object
- * @returns Server Config JSON
+ * @param serverConfig - serverConfig from the server running the command
  */
-function setJoinToCreateVC(message) {
+function setJoinToCreateVC(message, serverConfig) {
     return __awaiter(this, void 0, void 0, function* () {
-        var serverID = message.guild.id;
-        //Gets serverConfig from database
-        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
-        message.channel.send('Please respond with `T` if you would like to enable Join to Create VC functionality, respond with `F` if you do not.');
-        try {
-            var enableIn = yield message.channel.awaitMessages({
-                filter: msgFilter,
-                max: 1,
-                time: 120000,
-                errors: ['time'],
-            });
-            var enableTXT = enableIn.first().content.toLowerCase();
-            var enable = undefined;
-            if (enableTXT == 't') {
-                enable = true;
-                message.channel.send('Please input the channel id you want to use as a Join to Create Channel. `You can get this by enabling developer mode in discord, then right clicking the cannel and clicking copy channel id.`');
-                try {
-                    var JTCVCTXTIn = yield message.channel.awaitMessages({
-                        filter: msgFilter,
-                        max: 1,
-                        time: 120000,
-                        errors: ['time'],
-                    });
-                    var voiceChannel = JTCVCTXTIn.first().content;
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
+        const serverID = message.guild.id;
+        const embMsg1 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+        const JTCVCSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
+        yield JTCVCSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            switch (interaction.customId) {
+                case 'enable': {
+                    JTCVCSetUpMessage.edit({ components: [] });
+                    serverConfig.JTCVC.enable = true;
+                    const embMsg2 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Select a role to give upon joining the server..').setColor('#F5820F');
+                    const channelMenu = new ChannelSelectMenuBuilder().setCustomId('JTVCChannel').setMinValues(1).setMaxValues(1).setChannelTypes(ChannelType.GuildVoice);
+                    const JTCVCChannelMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(channelMenu)] });
+                    yield JTCVCChannelMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        if (interaction.customId != 'JTVCChannel') {
+                            return;
+                        }
+                        JTCVCChannelMessage.edit({ components: [] });
+                        serverConfig.JTCVC.voiceChannel = interaction.values[0];
+                    }));
+                    break;
                 }
-                catch (err) {
-                    return message.channel.send('Timeout Occurred. Process Terminated.');
+                case 'disable': {
+                    JTCVCSetUpMessage.edit({ components: [] });
+                    serverConfig.JTCVC.enable = false;
+                    serverConfig.JTCVC.voiceChannel = 'Not Set Up';
+                    break;
                 }
             }
-        }
-        catch (err) {
-            return message.channel.send('Timeout Occurred. Process Terminated.');
-        }
-        if (enable == undefined) {
-            enable = false;
-        }
-        else if (voiceChannel == undefined) {
-            enable = false;
-        }
-        var JTCVC = {
-            enable: false,
-            voiceChannel: undefined,
-        };
-        JTCVC.enable = enable;
-        JTCVC.voiceChannel = voiceChannel;
-        serverConfig.JTCVC = JTCVC;
+        }));
         yield buildConfigFile(serverConfig, serverID);
-        message.channel.send('Music Setup Complete!');
-        return serverConfig;
+        const embMsg3 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Join to Create Voice Channel Setup Complete!').setColor('#355E3B');
+        channel.send({ embeds: [embMsg3] });
     });
 }
 //#endregion
@@ -325,78 +434,101 @@ function setJoinToCreateVC(message) {
 /**
  * This function runs the setup for the Music feature.
  * @param message - Discord.js Message Object
- * @returns Server Config JSON
+ * @param serverConfig - serverConfig from the server running the command
  */
-function setMusic(message) {
+function setMusic(message, serverConfig) {
     return __awaiter(this, void 0, void 0, function* () {
-        var serverID = message.guild.id;
-        //Gets serverConfig from database
-        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
-        message.channel.send('Please respond with `T` if you would like to enable music functionality, respond with `F` if you do not.');
-        try {
-            var enableIn = yield message.channel.awaitMessages({
-                filter: msgFilter,
-                max: 1,
-                time: 120000,
-                errors: ['time'],
-            });
-            var enableTXT = enableIn.first().content.toLowerCase();
-            var enable = undefined;
-            if (enableTXT == 't') {
-                enable = true;
-                message.channel.send('Please @ the role you would like to use as a DJ role.');
-                try {
-                    var djRoleIn = yield message.channel.awaitMessages({
-                        filter: msgFilter,
-                        max: 1,
-                        time: 120000,
-                        errors: ['time'],
-                    });
-                    var djRoles = [];
-                    djRoles.push(djRoleIn.first().mentions.roles.first().name);
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
+        const serverID = message.guild.id;
+        const embMsg1 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+        const MusicSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
+        yield MusicSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            switch (interaction.customId) {
+                case 'enable': {
+                    MusicSetUpMessage.edit({ components: [] });
+                    serverConfig.music.enable = true;
+                    const embMsg2 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Select a role to give upon joining the server..').setColor('#F5820F');
+                    const channelMenu = new ChannelSelectMenuBuilder().setCustomId('musicChannel').setMinValues(1).setMaxValues(1).setChannelTypes(ChannelType.GuildText);
+                    const musicChannelMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(channelMenu)] });
+                    yield musicChannelMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        if (interaction.customId != 'musicChannel') {
+                            return;
+                        }
+                        musicChannelMessage.edit({ components: [] });
+                        serverConfig.music.textChannel = interaction.values[0];
+                    }));
+                    const embMsg3 = new EmbedBuilder().setTitle('Music Setup').setDescription('Would you like to add to existing roles, or replace current roles?').setColor('#F5820F');
+                    const addRolesButton = new ButtonBuilder().setCustomId('addRoles').setLabel('Add Roles').setStyle(ButtonStyle.Primary);
+                    const replaceRolesButton = new ButtonBuilder().setCustomId('replaceRoles').setLabel('Replace Roles').setStyle(ButtonStyle.Danger);
+                    const addReplaceRolesMessage = yield channel.send({ embeds: [embMsg3], components: [new ActionRowBuilder().addComponents(addRolesButton, replaceRolesButton)] });
+                    yield addReplaceRolesMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        switch (interaction.customId) {
+                            case 'addRoles': {
+                                addReplaceRolesMessage.edit({ components: [] });
+                                break;
+                            }
+                            case 'replaceRoles': {
+                                addReplaceRolesMessage.edit({ components: [] });
+                                serverConfig.music.djRoles = [];
+                                break;
+                            }
+                        }
+                    }));
+                    const embMsg4 = new EmbedBuilder().setTitle('Music Setup').setDescription('Select djRoles.').setColor('#F5820F');
+                    const roleMenu = new RoleSelectMenuBuilder().setCustomId('musicRoles').setMinValues(1).setMaxValues(25);
+                    const JoinRoleRoleMessage = yield channel.send({ embeds: [embMsg4], components: [new ActionRowBuilder().addComponents(roleMenu)] });
+                    yield JoinRoleRoleMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        if (interaction.customId != 'musicRoles') {
+                            return;
+                        }
+                        JoinRoleRoleMessage.edit({ components: [] });
+                        for (const id of interaction.values) {
+                            if (!serverConfig.music.djRoles.includes(id)) {
+                                serverConfig.music.djRoles.push(id);
+                            }
+                        }
+                    }));
+                    break;
                 }
-                catch (err) {
-                    return message.channel.send('Timeout Occurred. Process Terminated.');
-                }
-                message.channel.send('Please link the text channel you would like the music commands to be used in. `You can do that by typing "#" followed by the channel name.`');
-                try {
-                    var musicTXTIn = yield message.channel.awaitMessages({
-                        filter: msgFilter,
-                        max: 1,
-                        time: 120000,
-                        errors: ['time'],
-                    });
-                    var textChannel = message.guild.channels.cache.get(musicTXTIn.first().content.substring(2, musicTXTIn.first().content.length - 1)).name;
-                }
-                catch (err) {
-                    return message.channel.send('Timeout Occurred. Process Terminated.');
+                case 'disable': {
+                    MusicSetUpMessage.edit({ components: [] });
+                    serverConfig.music.enable = false;
+                    serverConfig.music.djRoles = [];
+                    serverConfig.music.textChannel = 'Not Set Up';
+                    break;
                 }
             }
-        }
-        catch (err) {
-            return message.channel.send('Timeout Occurred. Process Terminated.');
-        }
-        if (djRoles == undefined) {
-            djRoles = ['DJ'];
-        }
-        if (textChannel == undefined) {
-            textChannel = 'Music';
-        }
-        if (enable == undefined) {
-            enable = false;
-        }
-        var music = {
-            enable: false,
-            djRoles: ['DJ'],
-            textChannel: 'Music',
-        };
-        music.enable = enable;
-        music.djRoles = djRoles;
-        music.textChannel = textChannel;
-        serverConfig.music = music;
+        }));
         yield buildConfigFile(serverConfig, serverID);
-        message.channel.send('Music Setup Complete!');
-        return serverConfig;
+        const embMsg5 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Join to Create Voice Channel Setup Complete!').setColor('#355E3B');
+        channel.send({ embeds: [embMsg5] });
     });
 }
 //#endregion
@@ -404,62 +536,102 @@ function setMusic(message) {
 /**
  * This function runs the setup for the general features.
  * @param message - Discord.js Message Object
- * @returns Server Config JSON
+ * @param serverConfig - serverConfig from the server running the command
  */
-function setGeneral(message) {
+function setGeneral(message, serverConfig) {
     return __awaiter(this, void 0, void 0, function* () {
-        var serverID = message.guild.id;
-        //Gets serverConfig from database
-        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
-        message.channel.send('Please @ the roles you would like to use as Bot Admins.');
-        try {
-            var adminRolesIn = yield message.channel.awaitMessages({
-                filter: msgFilter,
-                max: 1,
-                time: 120000,
-                errors: ['time'],
-            });
-            var adminRoles = [];
-            adminRolesIn.first().mentions.roles.forEach((role) => adminRoles.push(role.name));
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
         }
-        catch (err) {
-            return message.channel.send('Timeout Occurred. Process Terminated.');
-        }
-        message.channel.send('Please @ the roles you would like to use as Bot Mods. These automatically include you admin roles, if you wish to add none, simply reply `None`.');
-        try {
-            var modRolesIn = yield message.channel.awaitMessages({
-                filter: msgFilter,
-                max: 1,
-                time: 120000,
-                errors: ['time'],
-            });
-            var modRoles = adminRoles.map((x) => x);
-            if (modRolesIn.first().content.toLowerCase() == 'none') {
-                var modRoles = adminRoles.map((x) => x);
+        const serverID = message.guild.id;
+        const embMsg1 = new EmbedBuilder().setTitle('General Setup').setDescription('Would you like to add to existing roles, or replace current roles? (This is for Bot Admin Roles)').setColor('#F5820F');
+        const addRolesButton = new ButtonBuilder().setCustomId('addRoles').setLabel('Add Roles').setStyle(ButtonStyle.Primary);
+        const replaceRolesButton = new ButtonBuilder().setCustomId('replaceRoles').setLabel('Replace Roles').setStyle(ButtonStyle.Danger);
+        const addReplaceRolesMessage1 = yield channel.send({ embeds: [embMsg1], components: [new ActionRowBuilder().addComponents(addRolesButton, replaceRolesButton)] });
+        yield addReplaceRolesMessage1.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
             }
-            else {
-                modRolesIn.first().mentions.roles.forEach((role) => modRoles.push(role.name));
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
             }
-        }
-        catch (err) {
-            return message.channel.send('Timeout Occurred. Process Terminated.');
-        }
-        if (adminRoles == undefined) {
-            adminRoles = [];
-        }
-        if (modRoles == undefined) {
-            modRoles = adminRoles.map((x) => x);
-        }
-        var general = {
-            adminRoles: [],
-            modRoles: [],
-        };
-        general.adminRoles = adminRoles;
-        general.modRoles = modRoles;
-        serverConfig.general = general;
+            switch (interaction.customId) {
+                case 'addRoles': {
+                    addReplaceRolesMessage1.edit({ components: [] });
+                    break;
+                }
+                case 'replaceRoles': {
+                    addReplaceRolesMessage1.edit({ components: [] });
+                    serverConfig.general.adminRoles = [];
+                    break;
+                }
+            }
+        }));
+        const embMsg2 = new EmbedBuilder().setTitle('General Setup').setDescription('Select roles for Bot Admin.').setColor('#F5820F');
+        const roleMenu1 = new RoleSelectMenuBuilder().setCustomId('botAdminRoles').setMinValues(1).setMaxValues(25);
+        const botAdminRolesMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(roleMenu1)] });
+        yield botAdminRolesMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            if (interaction.customId != 'botAdminRoles') {
+                return;
+            }
+            botAdminRolesMessage.edit({ components: [] });
+            for (const id of interaction.values) {
+                if (!serverConfig.general.adminRoles.includes(id)) {
+                    serverConfig.general.adminRoles.push(id);
+                }
+            }
+        }));
+        const embMsg3 = new EmbedBuilder().setTitle('General Setup').setDescription('Would you like to add to existing roles, or replace current roles? (This is for Bot Mod Roles)').setColor('#F5820F');
+        const addReplaceRolesMessage2 = yield channel.send({ embeds: [embMsg3], components: [new ActionRowBuilder().addComponents(addRolesButton, replaceRolesButton)] });
+        yield addReplaceRolesMessage2.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            switch (interaction.customId) {
+                case 'addRoles': {
+                    addReplaceRolesMessage2.edit({ components: [] });
+                    break;
+                }
+                case 'replaceRoles': {
+                    addReplaceRolesMessage2.edit({ components: [] });
+                    serverConfig.general.modRoles = [];
+                    break;
+                }
+            }
+        }));
+        const embMsg4 = new EmbedBuilder().setTitle('General Setup').setDescription('Select roles for Bot Mod.').setColor('#F5820F');
+        const roleMenu2 = new RoleSelectMenuBuilder().setCustomId('botModRoles').setMinValues(1).setMaxValues(25);
+        const botModRolesMessage = yield channel.send({ embeds: [embMsg4], components: [new ActionRowBuilder().addComponents(roleMenu2)] });
+        yield botModRolesMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            if (interaction.customId != 'botModRoles') {
+                return;
+            }
+            botModRolesMessage.edit({ components: [] });
+            for (const id of interaction.values) {
+                if (!serverConfig.general.modRoles.includes(id)) {
+                    serverConfig.general.modRoles.push(id);
+                }
+            }
+        }));
         yield buildConfigFile(serverConfig, serverID);
-        message.channel.send('General Setup Complete!');
-        return serverConfig;
+        const embMsg5 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Join to Create Voice Channel Setup Complete!').setColor('#355E3B');
+        channel.send({ embeds: [embMsg5] });
     });
 }
 //#endregion
@@ -467,102 +639,118 @@ function setGeneral(message) {
 /**
  * This function runs the setup for the blame features.
  * @param message - Discord.js Message Object
- * @returns Server Config JSON
+ * @param serverConfig - serverConfig from the server running the command
  */
-function setBlame(message) {
+function setBlame(message, serverConfig) {
     return __awaiter(this, void 0, void 0, function* () {
-        var serverID = message.guild.id;
-        //Gets serverConfig from database
-        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
-        message.channel.send('Please respond with `T` if you would like to enable Blame functionality, respond with `F` if you do not.');
-        try {
-            var enableIn = yield message.channel.awaitMessages({
-                filter: msgFilter,
-                max: 1,
-                time: 120000,
-                errors: ['time'],
-            });
-            var enableTXT = enableIn.first().content.toLowerCase();
-            var enable = undefined;
-            var cursing = false;
-            if (enableTXT == 't') {
-                enable = true;
-                message.channel.send('Please respond with `T` if you would like to enable explicit language (`fuck`), respond with `F` if you do not.');
-                try {
-                    var curseTXTIn = yield message.channel.awaitMessages({
-                        filter: msgFilter,
-                        max: 1,
-                        time: 120000,
-                        errors: ['time'],
-                    });
-                    var cursingText = curseTXTIn.first().content;
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
+        const serverID = message.guild.id;
+        const embMsg1 = new EmbedBuilder().setTitle('Blame Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+        const BlameSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
+        yield BlameSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            switch (interaction.customId) {
+                case 'enable': {
+                    BlameSetUpMessage.edit({ components: [] });
+                    serverConfig.blame.enable = true;
+                    const embMsg2 = new EmbedBuilder().setTitle('Blame Setup').setDescription('Would you like to enable cursing?.').setColor('#F5820F');
+                    const BlameCursingMessage = yield channel.send({ embeds: [embMsg2], components: [enableDisableButtons] });
+                    yield BlameCursingMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        switch (interaction.customId) {
+                            case 'enable': {
+                                BlameCursingMessage.edit({ components: [] });
+                                serverConfig.blame.cursing = true;
+                                break;
+                            }
+                            case 'disable': {
+                                BlameCursingMessage.edit({ components: [] });
+                                serverConfig.blame.cursing = false;
+                                break;
+                            }
+                        }
+                    }));
+                    break;
                 }
-                catch (err) {
-                    return message.channel.send('Timeout Occurred. Process Terminated.');
+                case 'disable': {
+                    BlameSetUpMessage.edit({ components: [] });
+                    serverConfig.blame.enable = false;
+                    serverConfig.blame.cursing = false;
+                    serverConfig.blame.offset = 0;
+                    serverConfig.blame.permList = [];
+                    serverConfig.blame.rotateList = [];
+                    break;
                 }
             }
-        }
-        catch (err) {
-            return message.channel.send('Timeout Occurred. Process Terminated.');
-        }
-        if (enable == undefined) {
-            enable = false;
-        }
-        if (cursingText == 'true') {
-            cursing = true;
-        }
-        else {
-            cursing = false;
-        }
-        var blame = {
-            enable: false,
-            cursing: false,
-            offset: 0,
-            permList: [],
-            rotateList: [],
-        };
-        blame.enable = enable;
-        blame.cursing = cursing;
-        blame.offset = 0;
-        blame.permList = [];
-        blame.rotateList = [];
-        serverConfig.blame = blame;
+        }));
         yield buildConfigFile(serverConfig, serverID);
-        message.channel.send('Blame Setup Complete!');
-        return serverConfig;
+        const embMsg3 = new EmbedBuilder()
+            .setTitle('Blame Setup')
+            .setDescription(`Blame Setup Complete! You can use ${serverConfig.prefix}blame add/remove/addperm/removeperm to add people to the rotation.`)
+            .setColor('#355E3B');
+        channel.send({ embeds: [embMsg3] });
+        // var serverID = message.guild.id;
+        // //Gets serverConfig from database
+        // var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
+        // message.channel.send('Please respond with `T` if you would like to enable Blame functionality, respond with `F` if you do not.');
+        //     var enableTXT = enableIn.first().content.toLowerCase();
+        //     var enable = undefined;
+        //     var cursing = false;
+        //         message.channel.send('Please respond with `T` if you would like to enable explicit language (`fuck`), respond with `F` if you do not.');
+        //             var cursingText = curseTXTIn.first().content;
+        // if (enable == undefined) {
+        //     enable = false;
+        // }
+        // if (cursingText == 'true') {
+        //     cursing = true;
+        // } else {
+        //     cursing = false;
+        // }
     });
 }
 //#endregion
 //#region Function that adds/removes from blame lists in settings
 /**
  * This function takes several inputs and adds/removes someone from the blame command.
- * @param serverID - The id for the server this is run in
  * @param addTF - True makes it add the person, False removes them
  * @param permTF - True adds them to the permanent blame list, False adds them to the weekly rotation
  * @param person - Name of the person
- * @returns Server Config JSON
+ * @param serverConfig - serverConfig from the server running the command
+ * @return ServerConfig Object
  */
-function addRemoveBlame(serverID, addTF, permTF, user, serverConfig) {
+function addRemoveBlame(addTF, permTF, user, serverConfig) {
     return __awaiter(this, void 0, void 0, function* () {
         //Pulls the current blame lists
         //Gets serverConfig from database
-        const blame = serverConfig.blame;
         let personFound = false;
         const person = user.id;
         if (permTF) {
-            blame.permList.forEach((item) => {
+            serverConfig.blame.permList.forEach((item) => {
                 if (item == person) {
                     personFound = true;
                 }
             });
             if (addTF) {
-                blame.permList.forEach((item) => {
+                serverConfig.blame.permList.forEach((item) => {
                     if (item == person) {
                         personFound = true;
                     }
                 });
                 if (!personFound) {
-                    blame.permList.push(person);
+                    serverConfig.blame.permList.push(person);
                 }
                 else {
                     throw {
@@ -572,13 +760,13 @@ function addRemoveBlame(serverID, addTF, permTF, user, serverConfig) {
                 }
             }
             else {
-                blame.permList.forEach((item) => {
+                serverConfig.blame.permList.forEach((item) => {
                     if (item == person) {
                         personFound = true;
                     }
                 });
                 if (personFound) {
-                    blame.permList = blame.permList.filter(function (item) {
+                    serverConfig.blame.permList = serverConfig.blame.permList.filter(function (item) {
                         return item !== person;
                     });
                 }
@@ -591,19 +779,19 @@ function addRemoveBlame(serverID, addTF, permTF, user, serverConfig) {
             }
         }
         else {
-            blame.rotateList.forEach((item) => {
+            serverConfig.blame.rotateList.forEach((item) => {
                 if (item == person) {
                     personFound = true;
                 }
             });
             if (addTF) {
-                blame.rotateList.forEach((item) => {
+                serverConfig.blame.rotateList.forEach((item) => {
                     if (item == person) {
                         personFound = true;
                     }
                 });
                 if (!personFound) {
-                    blame.rotateList.push(person);
+                    serverConfig.blame.rotateList.push(person);
                 }
                 else {
                     throw {
@@ -613,13 +801,13 @@ function addRemoveBlame(serverID, addTF, permTF, user, serverConfig) {
                 }
             }
             else {
-                blame.permList.forEach((item) => {
+                serverConfig.blame.permList.forEach((item) => {
                     if (item == person) {
                         personFound = true;
                     }
                 });
                 if (personFound) {
-                    blame.rotateList = blame.rotateList.filter(function (item) {
+                    serverConfig.blame.rotateList = serverConfig.blame.rotateList.filter(function (item) {
                         return item !== person;
                     });
                 }
@@ -631,7 +819,6 @@ function addRemoveBlame(serverID, addTF, permTF, user, serverConfig) {
                 }
             }
         }
-        serverConfig.blame = blame;
         return serverConfig;
     });
 }
@@ -641,16 +828,13 @@ function addRemoveBlame(serverID, addTF, permTF, user, serverConfig) {
  * This function takes several inputs and adds/removes someone from the blame command.
  * @param serverID - The id for the server this is run in
  * @param offset - Number of places to offset the blame by
- * @returns Server Config JSON
+ * @param serverConfig - serverConfig from the server running the command
+ * @return ServerConfig Object
  */
-function changeBlameOffset(serverID, offset) {
+function changeBlameOffset(serverID, offset, serverConfig) {
     return __awaiter(this, void 0, void 0, function* () {
-        //Gets serverConfig from database
-        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
         //Pulls the current blame lists
-        var blame = serverConfig.blame;
-        blame.offset = offset;
-        serverConfig.blame = blame;
+        serverConfig.blame.offset = offset;
         yield buildConfigFile(serverConfig, serverID);
         return serverConfig;
     });
@@ -660,21 +844,20 @@ function changeBlameOffset(serverID, offset) {
 /**
  * This function runs the setup for all features.
  * @param message - Discord.js Message Object
- * @returns Void
+ * @param serverID - String of numbers for the server/guild ID
+ * @param client - Discord.js Client
  */
-function setup(message) {
+function setup(message, serverConfig, client) {
     return __awaiter(this, void 0, void 0, function* () {
-        var serverID = message.guild.id;
-        //Gets serverConfig from database
-        var serverConfig = (yield MongooseServerConfig.findById(serverID).exec()).toObject();
+        const serverID = message.guild.id;
         //Sets up all commands
-        yield setAutoRole(message);
-        yield setGeneral(message);
-        yield setJoinRole(message);
-        yield setMusic(message);
-        yield setModMail(message);
-        yield setJoinToCreateVC(message);
-        yield setBlame(message);
+        yield setAutoRole(message, serverConfig, client);
+        yield setGeneral(message, serverConfig);
+        yield setJoinRole(message, serverConfig);
+        yield setMusic(message, serverConfig);
+        yield setModMail(message, serverConfig);
+        yield setJoinToCreateVC(message, serverConfig);
+        yield setBlame(message, serverConfig);
         //Removes the Setup Needed Tag
         serverConfig.setupNeeded = false;
         yield buildConfigFile(serverConfig, serverID);
@@ -688,7 +871,6 @@ function setup(message) {
  * This function builds the serverConfig file with the provided JSON.
  * @param config - String of JSON
  * @param serverID - String of numbers for the server/guild ID
- * @returns Void
  */
 function buildConfigFile(config, serverID) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -704,6 +886,7 @@ function buildConfigFile(config, serverID) {
                     embedFooter: config.autoRole.embedFooter,
                     roles: config.autoRole.roles,
                     reactions: config.autoRole.reactions,
+                    embedThumbnail: config.autoRole.embedThumbnail,
                 },
                 joinRole: {
                     enable: config.joinRole.enable,
@@ -764,7 +947,7 @@ function buildConfigFile(config, serverID) {
  */
 function addServerConfig(serverID) {
     return __awaiter(this, void 0, void 0, function* () {
-        var defaultConfig = {
+        const defaultConfig = {
             _id: serverID,
             guildID: serverID,
             setupNeeded: true,
@@ -773,8 +956,12 @@ function addServerConfig(serverID) {
                 enable: false,
                 embedMessage: 'Not Set Up',
                 embedFooter: 'Not Set Up',
-                roles: ['Not Set Up'],
-                reactions: ['🎵'],
+                roles: [],
+                reactions: [],
+                embedThumbnail: {
+                    enable: false,
+                    url: 'Not Set Up',
+                },
             },
             joinRole: {
                 enable: false,
@@ -782,12 +969,12 @@ function addServerConfig(serverID) {
             },
             music: {
                 enable: false,
-                djRoles: ['Not Set Up'],
+                djRoles: [],
                 textChannel: 'Not Set Up',
             },
             general: {
-                adminRoles: ['Not Set Up'],
-                modRoles: ['Not Set Up'],
+                adminRoles: [],
+                modRoles: [],
             },
             modMail: {
                 enable: false,
@@ -829,5 +1016,5 @@ function removeServerConfig(serverID) {
 }
 //#endregion
 //#region exports
-export { setAutoRole, setJoinRole, setMusic, setGeneral, setup, setModMail, buildConfigFile, removeServerConfig, addServerConfig, setJoinToCreateVC, setBlame, addRemoveBlame, changeBlameOffset };
+export { addRemoveBlame, addServerConfig, buildConfigFile, changeBlameOffset, removeServerConfig, setAutoRole, setBlame, setGeneral, setJoinRole, setJoinToCreateVC, setModMail, setMusic, setup };
 //#endregion

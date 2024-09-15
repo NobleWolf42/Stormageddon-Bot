@@ -3,6 +3,7 @@ import { SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import { errorCustom } from '../../helpers/embedSlashMessages.js';
 import { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame } from '../../internal/settingsFunctions.js';
 import { SlashCommand } from '../../models/slashCommandModel.js';
+import { MongooseServerConfig } from '../../models/serverConfigModel.js';
 //#endregion
 
 //#region This exports the set command with the information about it
@@ -25,40 +26,42 @@ const setSlashCommand: SlashCommand = {
                 { name: 'Music', value: 'music' }
             )
         ),
-    execute(client, interaction) {
+    async execute(client, interaction) {
         //#region Escape Logic
         if (!interaction.isChatInputCommand()) {
             return;
         }
         //#endregion
 
+        const serverConfig = (await MongooseServerConfig.findById(interaction.guildId).exec()).toObject();
+
         switch (interaction.options.getString('setting')) {
             case 'autorole':
-                setAutoRole(interaction);
+                await setAutoRole(interaction, serverConfig);
                 break;
 
             case 'joinrole':
-                setJoinRole(interaction);
+                await setJoinRole(interaction, serverConfig);
                 break;
 
             case 'general':
-                setGeneral(interaction);
+                await setGeneral(interaction, serverConfig);
                 break;
 
             case 'music':
-                setMusic(interaction);
+                await setMusic(interaction, serverConfig);
                 break;
 
             case 'modmail':
-                setModMail(interaction);
+                await setModMail(interaction, serverConfig);
                 break;
 
             case 'jointocreatevc':
-                setJoinToCreateVC(interaction);
+                await setJoinToCreateVC(interaction, serverConfig);
                 break;
 
             case 'blame':
-                setBlame(interaction);
+                await setBlame(interaction, serverConfig);
                 break;
 
             default:

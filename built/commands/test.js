@@ -16,7 +16,7 @@ const testCommand = {
     class: 'dev',
     usage: 'test',
     description: 'Testing command',
-    execute(_message, _args, _client, _distube) {
+    execute(_message, _args, _client, _distube, _collections, _serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('Start Test Command');
             // client.channels.fetch('649129777399201812').then((chan) => {
@@ -51,7 +51,7 @@ const testCommand = {
             //}
             //console.log(await MongooseServerConfig.findById('testIDString2').exec());
             //console.log(await MongooseServerConfig.findById('testIDString').exec());
-            console.log('testing nodemon');
+            //console.log(message.guild.roles.resolve(serverConfig.joinRole.role));
             //await MongooseServerConfig.findByIdAndUpdate(message.guild.id, typeScriptNewConfig).exec();
             //testConfig.save();
         });

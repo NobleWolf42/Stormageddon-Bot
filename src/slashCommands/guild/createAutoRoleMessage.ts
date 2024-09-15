@@ -81,9 +81,9 @@ const createRoleMessageSlashCommand: SlashCommand = {
         let thumbnail: string = null;
         const fieldsOut: RestOrArray<APIEmbedField> = [];
 
-        if (serverConfig.autoRole.embedThumbnail !== '') {
-            thumbnail = serverConfig.autoRole.embedThumbnail;
-        } else if (serverConfig.autoRole.embedThumbnail && interaction.guild.icon) {
+        if (serverConfig.autoRole.embedThumbnail.enable && serverConfig.autoRole.embedThumbnail.url !== '') {
+            thumbnail = serverConfig.autoRole.embedThumbnail.url;
+        } else if (serverConfig.autoRole.embedThumbnail.enable && interaction.guild.icon) {
             thumbnail = interaction.guild.iconURL();
         }
 

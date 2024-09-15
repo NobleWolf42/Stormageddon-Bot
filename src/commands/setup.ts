@@ -23,7 +23,7 @@ const setupCommand: Command = {
             errorCustom(message, 'Server Setup has already been completed.', this.name, client);
         }
 
-        await setup(message);
+        await setup(message, serverConfig);
     },
 };
 //#endregion

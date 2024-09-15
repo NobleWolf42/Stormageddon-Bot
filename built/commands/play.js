@@ -7,7 +7,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { warnCustom, warnDisabled, warnWrongChannel, errorNoDJ } from '../helpers/embedMessages.js';
+import { errorNoDJ, warnCustom, warnDisabled, warnWrongChannel } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
 //#endregion
 //#region This exports the play command with the information about it
@@ -54,10 +54,14 @@ const playCommand = {
             }
             else {
                 //FIX this error in the future, distube and discordjs hate each other apparently
-                distube.play(voiceChannel, song, {
+                distube
+                    .play(voiceChannel, song, {
                     member: message.member,
                     message: message,
                     textChannel: message.channel,
+                })
+                    .catch((err) => {
+                    warnCustom(message, `Error Queuing Song, Please Try Again.\n\nError:\n${err.message}`, this.name);
                 });
                 message.delete();
                 message.deleted = true;
