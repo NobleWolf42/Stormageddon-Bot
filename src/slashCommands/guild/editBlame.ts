@@ -65,7 +65,7 @@ const editBlameSlashCommand: SlashCommand = {
             //Adds a person to the blame rotation
             case BlameSubCommands.Add: {
                 const argsString = interaction.options.getUser('person');
-                serverConfig = await addRemoveBlame(interaction.guildId, true, false, argsString, serverConfig).catch((err) => {
+                serverConfig = await addRemoveBlame(true, false, argsString, serverConfig).catch((err) => {
                     if (err.name == 'PersonExists' || err.name == 'PersonNotExists') {
                         warnCustom(interaction, err.message, '/editblame' + interaction.options.getSubcommand());
                     } else {
@@ -98,7 +98,7 @@ const editBlameSlashCommand: SlashCommand = {
             //Adds a person to the permanent blame list
             case BlameSubCommands.AddPerm: {
                 const argsString = interaction.options.getUser('person');
-                serverConfig = await addRemoveBlame(interaction.guildId, true, true, argsString, serverConfig).catch((err) => {
+                serverConfig = await addRemoveBlame(true, true, argsString, serverConfig).catch((err) => {
                     if (err.name == 'PersonExists' || err.name == 'PersonNotExists') {
                         warnCustom(interaction, err.message, '/editblame' + interaction.options.getSubcommand());
                     } else {
@@ -131,7 +131,7 @@ const editBlameSlashCommand: SlashCommand = {
             //Removes a person from the blame rotation
             case BlameSubCommands.Remove: {
                 const argsString = interaction.options.getUser('person');
-                serverConfig = await addRemoveBlame(interaction.guildId, false, false, argsString, serverConfig).catch((err) => {
+                serverConfig = await addRemoveBlame(false, false, argsString, serverConfig).catch((err) => {
                     if (err.name == 'PersonExists' || err.name == 'PersonNotExists') {
                         warnCustom(interaction, err.message, '/editblame' + interaction.options.getSubcommand());
                     } else {
@@ -164,7 +164,7 @@ const editBlameSlashCommand: SlashCommand = {
             //Removes a person from the permanent blame list
             case BlameSubCommands.RemovePerm: {
                 const argsString = interaction.options.getUser('person');
-                serverConfig = await addRemoveBlame(interaction.guildId, false, true, argsString, serverConfig).catch((err) => {
+                serverConfig = await addRemoveBlame(false, true, argsString, serverConfig).catch((err) => {
                     if (err.name == 'PersonExists' || err.name == 'PersonNotExists') {
                         warnCustom(interaction, err.message, '/editblame' + interaction.options.getSubcommand());
                     } else {
@@ -267,7 +267,7 @@ const editBlameSlashCommand: SlashCommand = {
                 console.log(currentVal - serverConfig.blame.offset);
                 console.log(value - 1 - (currentVal - serverConfig.blame.offset));
 
-                serverConfig = await changeBlameOffset(interaction.guildId, serverConfig.blame.offset - (value - 1 - (currentVal - serverConfig.blame.offset))).catch((err) => {
+                serverConfig = await changeBlameOffset(interaction.guildId, serverConfig.blame.offset - (value - 1 - (currentVal - serverConfig.blame.offset)), serverConfig).catch((err) => {
                     errorCustom(interaction, err.message, '/blame fix', client);
 
                     erroredOut = true;

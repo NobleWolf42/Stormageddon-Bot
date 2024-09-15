@@ -33,7 +33,7 @@ const setSlashCommand = {
             const serverConfig = (yield MongooseServerConfig.findById(interaction.guildId).exec()).toObject();
             switch (interaction.options.getString('setting')) {
                 case 'autorole':
-                    yield setAutoRole(interaction, serverConfig);
+                    yield setAutoRole(interaction, serverConfig, client);
                     break;
                 case 'joinrole':
                     yield setJoinRole(interaction, serverConfig);

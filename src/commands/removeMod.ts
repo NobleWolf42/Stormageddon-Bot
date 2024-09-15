@@ -1,6 +1,6 @@
 //#region Imports
 import { PermissionFlagsBits } from 'discord.js';
-import { errorNoServerAdmin, errorCustom, embedCustom, warnCustom } from '../helpers/embedMessages.js';
+import { embedCustom, errorNoServerAdmin, warnCustom } from '../helpers/embedMessages.js';
 import { buildConfigFile } from '../internal/settingsFunctions.js';
 import { Command } from '../models/commandModel.js';
 //#endregion

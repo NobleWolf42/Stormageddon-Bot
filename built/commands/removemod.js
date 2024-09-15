@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //#region Imports
 import { PermissionFlagsBits } from 'discord.js';
-import { errorNoServerAdmin, embedCustom, warnCustom } from '../helpers/embedMessages.js';
+import { embedCustom, errorNoServerAdmin, warnCustom } from '../helpers/embedMessages.js';
 import { buildConfigFile } from '../internal/settingsFunctions.js';
 //#endregion
 //#region This exports the removemod command with the information about it

@@ -37,7 +37,7 @@ const setSlashCommand: SlashCommand = {
 
         switch (interaction.options.getString('setting')) {
             case 'autorole':
-                await setAutoRole(interaction, serverConfig);
+                await setAutoRole(interaction, serverConfig, client);
                 break;
 
             case 'joinrole':

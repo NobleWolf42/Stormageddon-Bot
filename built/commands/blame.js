@@ -44,7 +44,7 @@ const blameCommand = {
                     }
                     const userList = [];
                     for (const [_, user] of message.mentions.members) {
-                        serverConfig = yield addRemoveBlame(message.guild.id, true, false, user.user, serverConfig).catch((err) => {
+                        serverConfig = yield addRemoveBlame(true, false, user.user, serverConfig).catch((err) => {
                             if (err.name == ErrorType.PersonExists || err.name == ErrorType.PersonNotExists) {
                                 warnCustom(message, err.message, 'blame' + oldSubCommand);
                             }
@@ -87,7 +87,7 @@ const blameCommand = {
                     }
                     const userList = [];
                     for (const [_, user] of message.mentions.members) {
-                        serverConfig = yield addRemoveBlame(message.guild.id, true, true, user.user, serverConfig).catch((err) => {
+                        serverConfig = yield addRemoveBlame(true, true, user.user, serverConfig).catch((err) => {
                             if (err.name == ErrorType.PersonExists || err.name == ErrorType.PersonNotExists) {
                                 warnCustom(message, err.message, 'blame' + oldSubCommand);
                             }
@@ -130,7 +130,7 @@ const blameCommand = {
                     }
                     const userList = [];
                     for (const [_, user] of message.mentions.members) {
-                        serverConfig = yield addRemoveBlame(message.guild.id, false, false, user.user, serverConfig).catch((err) => {
+                        serverConfig = yield addRemoveBlame(false, false, user.user, serverConfig).catch((err) => {
                             if (err.name == ErrorType.PersonExists || err.name == ErrorType.PersonNotExists) {
                                 warnCustom(message, err.message, 'blame' + oldSubCommand);
                             }
@@ -173,7 +173,7 @@ const blameCommand = {
                     }
                     const userList = [];
                     for (const [_, user] of message.mentions.members) {
-                        serverConfig = yield addRemoveBlame(message.guild.id, false, true, user.user, serverConfig).catch((err) => {
+                        serverConfig = yield addRemoveBlame(false, true, user.user, serverConfig).catch((err) => {
                             if (err.name == ErrorType.PersonExists || err.name == ErrorType.PersonNotExists) {
                                 warnCustom(message, err.message, 'blame' + oldSubCommand);
                             }
@@ -264,7 +264,7 @@ const blameCommand = {
                     console.log(currentVal);
                     console.log(currentVal - serverConfig.blame.offset);
                     console.log(value - 1 - (currentVal - serverConfig.blame.offset));
-                    serverConfig = yield changeBlameOffset(message.guild.id, serverConfig.blame.offset - (value - 1 - (currentVal - serverConfig.blame.offset))).catch((err) => {
+                    serverConfig = yield changeBlameOffset(message.guildId, serverConfig.blame.offset - (value - 1 - (currentVal - serverConfig.blame.offset)), serverConfig).catch((err) => {
                         errorCustom(message, err.message, 'blame' + oldSubCommand, client);
                         erroredOut = true;
                         return serverConfig;

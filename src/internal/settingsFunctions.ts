@@ -20,7 +20,6 @@ import {
     User,
     UserSelectMenuBuilder,
 } from 'discord.js';
-import { embedCustom } from '../helpers/embedMessages.js';
 import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 
@@ -145,7 +144,7 @@ async function setModMail(message: Message | Interaction, serverConfig: ServerCo
  * @param serverConfig - serverConfig from the server running the command
  * @param client - Discord.js Client
  */
-async function setAutoRole(message: Message, serverConfig: ServerConfig, client: Client) {
+async function setAutoRole(message: Message | Interaction, serverConfig: ServerConfig, client: Client) {
     const channel = message.channel;
 
     if (channel.isDMBased()) {
@@ -153,20 +152,12 @@ async function setAutoRole(message: Message, serverConfig: ServerConfig, client:
     }
 
     channel.send('Example Message:');
-    await embedCustom(
-        message,
-        'Role Message',
-        '#FFFF00',
-        '**React to the messages below to receive the associated role.**',
-        {
-            text: `If you do not receive the role try reacting again.`,
-            iconURL: null,
-        },
-        null,
-        [],
-        null,
-        null
-    );
+    const embMsg = new EmbedBuilder().setTitle('Role Message').setDescription('**React to the messages below to receive the associated role.**').setColor('#FFFF00').setFooter({
+        text: `If you do not receive the role try reacting again.`,
+        iconURL: null,
+    });
+
+    channel.send({ embeds: [embMsg] });
 
     const serverID = message.guild.id;
     const embMsg1 = new EmbedBuilder().setTitle('AutoRole Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
@@ -420,7 +411,7 @@ async function setAutoRole(message: Message, serverConfig: ServerConfig, client:
  * @param message - Discord.js Message Object
  * @param serverConfig - serverConfig from the server running the command
  */
-async function setJoinRole(message: Message, serverConfig: ServerConfig) {
+async function setJoinRole(message: Message | Interaction, serverConfig: ServerConfig) {
     const channel = message.channel;
 
     if (channel.isDMBased()) {
@@ -491,7 +482,7 @@ async function setJoinRole(message: Message, serverConfig: ServerConfig) {
  * @param message - Discord.js Message Object
  * @param serverConfig - serverConfig from the server running the command
  */
-async function setJoinToCreateVC(message: Message, serverConfig: ServerConfig) {
+async function setJoinToCreateVC(message: Message | Interaction, serverConfig: ServerConfig) {
     const channel = message.channel;
 
     if (channel.isDMBased()) {
@@ -562,7 +553,7 @@ async function setJoinToCreateVC(message: Message, serverConfig: ServerConfig) {
  * @param message - Discord.js Message Object
  * @param serverConfig - serverConfig from the server running the command
  */
-async function setMusic(message: Message, serverConfig: ServerConfig) {
+async function setMusic(message: Message | Interaction, serverConfig: ServerConfig) {
     const channel = message.channel;
 
     if (channel.isDMBased()) {
@@ -690,7 +681,7 @@ async function setMusic(message: Message, serverConfig: ServerConfig) {
  * @param message - Discord.js Message Object
  * @param serverConfig - serverConfig from the server running the command
  */
-async function setGeneral(message: Message, serverConfig: ServerConfig) {
+async function setGeneral(message: Message | Interaction, serverConfig: ServerConfig) {
     const channel = message.channel;
 
     if (channel.isDMBased()) {
@@ -820,7 +811,7 @@ async function setGeneral(message: Message, serverConfig: ServerConfig) {
  * @param message - Discord.js Message Object
  * @param serverConfig - serverConfig from the server running the command
  */
-async function setBlame(message: Message, serverConfig: ServerConfig) {
+async function setBlame(message: Message | Interaction, serverConfig: ServerConfig) {
     const channel = message.channel;
 
     if (channel.isDMBased()) {
@@ -893,24 +884,6 @@ async function setBlame(message: Message, serverConfig: ServerConfig) {
         .setDescription(`Blame Setup Complete! You can use ${serverConfig.prefix}blame add/remove/addperm/removeperm to add people to the rotation.`)
         .setColor('#355E3B');
     channel.send({ embeds: [embMsg3] });
-
-    // var serverID = message.guild.id;
-    // //Gets serverConfig from database
-    // var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
-    // message.channel.send('Please respond with `T` if you would like to enable Blame functionality, respond with `F` if you do not.');
-    //     var enableTXT = enableIn.first().content.toLowerCase();
-    //     var enable = undefined;
-    //     var cursing = false;
-    //         message.channel.send('Please respond with `T` if you would like to enable explicit language (`fuck`), respond with `F` if you do not.');
-    //             var cursingText = curseTXTIn.first().content;
-    // if (enable == undefined) {
-    //     enable = false;
-    // }
-    // if (cursingText == 'true') {
-    //     cursing = true;
-    // } else {
-    //     cursing = false;
-    // }
 }
 //#endregion
 
@@ -1036,8 +1009,13 @@ async function changeBlameOffset(serverID: string, offset: number, serverConfig:
  * @param serverID - String of numbers for the server/guild ID
  * @param client - Discord.js Client
  */
-async function setup(message: Message, serverConfig: ServerConfig, client: Client) {
+async function setup(message: Message | Interaction, serverConfig: ServerConfig, client: Client) {
     const serverID = message.guild.id;
+    const channel = message.channel;
+
+    if (channel.isDMBased()) {
+        return;
+    }
 
     //Sets up all commands
     await setAutoRole(message, serverConfig, client);
@@ -1051,18 +1029,13 @@ async function setup(message: Message, serverConfig: ServerConfig, client: Clien
     //Removes the Setup Needed Tag
     serverConfig.setupNeeded = false;
     await buildConfigFile(serverConfig, serverID);
-    embedCustom(
-        message,
-        'Server Setup Complete',
-        '#5D3FD3',
-        "**MAKE SURE TO PUT THE ROLE FOR THIS BOT ABOVE ROLES YOU WANT THE BOT TO MANAGE, if you don't the bot will not work properly!**",
-        { text: `Requested by ${message.author.tag}`, iconURL: null },
-        null,
-        [],
-        null,
-        null
-    );
-    return;
+    const embMsg = new EmbedBuilder()
+        .setTitle('Server Setup Complete')
+        .setDescription("**MAKE SURE TO PUT THE ROLE FOR THIS BOT ABOVE ROLES YOU WANT THE BOT TO MANAGE, if you don't the bot will not work properly!**")
+        .setColor('#5D3FD3')
+        .setFooter({ text: `Requested by ${message.member.user.username}`, iconURL: null });
+
+    channel.send({ embeds: [embMsg] });
 }
 //#endregion
 

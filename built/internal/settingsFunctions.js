@@ -9,7 +9,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //#region Imports
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, EmbedBuilder, GuildMember, ModalBuilder, PermissionFlagsBits, RoleSelectMenuBuilder, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, } from 'discord.js';
-import { embedCustom } from '../helpers/embedMessages.js';
 import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 //#region Initial Setup
@@ -117,10 +116,11 @@ function setAutoRole(message, serverConfig, client) {
             return;
         }
         channel.send('Example Message:');
-        yield embedCustom(message, 'Role Message', '#FFFF00', '**React to the messages below to receive the associated role.**', {
+        const embMsg = new EmbedBuilder().setTitle('Role Message').setDescription('**React to the messages below to receive the associated role.**').setColor('#FFFF00').setFooter({
             text: `If you do not receive the role try reacting again.`,
             iconURL: null,
-        }, null, [], null, null);
+        });
+        channel.send({ embeds: [embMsg] });
         const serverID = message.guild.id;
         const embMsg1 = new EmbedBuilder().setTitle('AutoRole Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
         const AutoRoleSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
@@ -702,23 +702,6 @@ function setBlame(message, serverConfig) {
             .setDescription(`Blame Setup Complete! You can use ${serverConfig.prefix}blame add/remove/addperm/removeperm to add people to the rotation.`)
             .setColor('#355E3B');
         channel.send({ embeds: [embMsg3] });
-        // var serverID = message.guild.id;
-        // //Gets serverConfig from database
-        // var serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
-        // message.channel.send('Please respond with `T` if you would like to enable Blame functionality, respond with `F` if you do not.');
-        //     var enableTXT = enableIn.first().content.toLowerCase();
-        //     var enable = undefined;
-        //     var cursing = false;
-        //         message.channel.send('Please respond with `T` if you would like to enable explicit language (`fuck`), respond with `F` if you do not.');
-        //             var cursingText = curseTXTIn.first().content;
-        // if (enable == undefined) {
-        //     enable = false;
-        // }
-        // if (cursingText == 'true') {
-        //     cursing = true;
-        // } else {
-        //     cursing = false;
-        // }
     });
 }
 //#endregion
@@ -850,6 +833,10 @@ function changeBlameOffset(serverID, offset, serverConfig) {
 function setup(message, serverConfig, client) {
     return __awaiter(this, void 0, void 0, function* () {
         const serverID = message.guild.id;
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
         //Sets up all commands
         yield setAutoRole(message, serverConfig, client);
         yield setGeneral(message, serverConfig);
@@ -861,8 +848,12 @@ function setup(message, serverConfig, client) {
         //Removes the Setup Needed Tag
         serverConfig.setupNeeded = false;
         yield buildConfigFile(serverConfig, serverID);
-        embedCustom(message, 'Server Setup Complete', '#5D3FD3', "**MAKE SURE TO PUT THE ROLE FOR THIS BOT ABOVE ROLES YOU WANT THE BOT TO MANAGE, if you don't the bot will not work properly!**", { text: `Requested by ${message.author.tag}`, iconURL: null }, null, [], null, null);
-        return;
+        const embMsg = new EmbedBuilder()
+            .setTitle('Server Setup Complete')
+            .setDescription("**MAKE SURE TO PUT THE ROLE FOR THIS BOT ABOVE ROLES YOU WANT THE BOT TO MANAGE, if you don't the bot will not work properly!**")
+            .setColor('#5D3FD3')
+            .setFooter({ text: `Requested by ${message.member.user.username}`, iconURL: null });
+        channel.send({ embeds: [embMsg] });
     });
 }
 //#endregion
