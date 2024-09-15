@@ -1,9 +1,11 @@
 //#region Imports
-import { Collection, ChannelType, PermissionFlagsBits, Client, Events } from 'discord.js';
+import { ChannelType, Client, Events, PermissionFlagsBits } from 'discord.js';
+import { Document } from 'mongoose';
 import { addToLog } from '../helpers/errorLog.js';
-import { MongooseServerConfig } from '../models/serverConfigModel.js';
 import { ExtraCollections } from '../models/extraCollectionsModel.js';
+import { JTCVCList, MongooseJTCVCList } from '../models/jtcvcList.js';
 import { LogType } from '../models/loggingModel.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 
 //#region Function that starts the listener that handles Join to Create Channels
@@ -13,7 +15,23 @@ import { LogType } from '../models/loggingModel.js';
  * @param collections - Class containing all the extra collections for the bot
  */
 async function joinToCreateHandling(client: Client, collections: ExtraCollections) {
-    collections.voiceGenerator = new Collection();
+    const jtcvcLists = await MongooseJTCVCList.find({}).exec();
+
+    for (const channel of jtcvcLists) {
+        const channelObj = await client.channels.fetch(channel.id).catch((err) => {
+            console.log(err.message);
+        });
+        if (!channelObj || !channelObj.isVoiceBased() || channelObj.members.size < 1) {
+            if (channelObj && channelObj.isVoiceBased() && channelObj.members.size < 1) {
+                channelObj.delete();
+            }
+            channel.deleteOne().exec();
+        } else {
+            collections.voiceGenerator.set(channel.id, channel.memberID);
+        }
+    }
+
+    console.log('JTCVC Listener Started');
 
     //This handles the event of a user joining or disconnecting from a voice channel
     client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
@@ -21,6 +39,12 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
         const serverID = guild.id;
         const oldChannel = oldState.channel;
         const newChannel = newState.channel;
+        // eslint-disable-next-line
+        let channelList: Document<unknown, {}, JTCVCList> &
+            JTCVCList &
+            Required<{
+                _id: string;
+            }> = null;
 
         if (oldChannel == newChannel) {
             return;
@@ -28,31 +52,30 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
 
         //#region Handles someone leaving a voice channel
         try {
-            if (oldChannel == null) {
-                return;
-            }
-            if (collections.voiceGenerator.get(oldChannel.id) && oldChannel.members.size == 0) {
-                //This deletes a channel if it was created byt the bot and is empty
-                oldChannel.delete();
-                collections.voiceGenerator.delete(collections.voiceGenerator.get(oldChannel.id));
-                collections.voiceGenerator.delete(oldChannel.id);
-            } else if (collections.voiceGenerator.get(oldChannel.id) && member.id == collections.voiceGenerator.get(oldChannel.id)) {
-                //This should restore default permissions to the channel when the owner leaves, and remove owner
-                await oldChannel.permissionOverwrites.set(
-                    oldChannel.parent.permissionOverwrites.cache.map((p) => {
-                        return {
-                            id: p.id,
-                            allow: p.allow.toArray(),
-                            deny: p.deny.toArray(),
-                        };
-                    })
-                );
+            if (oldChannel != null) {
+                if (collections.voiceGenerator.get(oldChannel.id) && oldChannel.members.size == 0) {
+                    //This deletes a channel if it was created byt the bot and is empty
+                    channelList = await MongooseJTCVCList.findById(oldChannel.id).exec();
+                    oldChannel.delete();
+                    channelList.deleteOne().exec();
+                    collections.voiceGenerator.delete(oldChannel.id);
+                } else if (collections.voiceGenerator.get(oldChannel.id) && member.id == collections.voiceGenerator.get(oldChannel.id)) {
+                    //This should restore default permissions to the channel when the owner leaves, and remove owner
+                    await oldChannel.permissionOverwrites.set(
+                        oldChannel.parent.permissionOverwrites.cache.map((p) => {
+                            return {
+                                id: p.id,
+                                allow: p.allow.toArray(),
+                                deny: p.deny.toArray(),
+                            };
+                        })
+                    );
+                }
             }
         } catch (err) {
             addToLog(LogType.FatalError, 'JTCVC Handler', member.user.tag, guild.name, oldChannel.name, err, client);
         }
         //#endregion
-
         //Calls serverConfig from database
         const serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
 
@@ -78,6 +101,15 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
 
             //Adds the voice channel just made to the collection
             collections.voiceGenerator.set(voiceChannel.id, member.id);
+            channelList = await MongooseJTCVCList.findById(voiceChannel.id).exec();
+            if (channelList == null) {
+                channelList = new MongooseJTCVCList();
+                channelList._id = voiceChannel.id;
+                channelList.memberID = member.id;
+                channelList.markModified('_id');
+                channelList.markModified('memberID');
+            }
+            channelList.save();
 
             //Times the user out from spamming new voice channels, currently set to 10 seconds and apparently works intermittently, probably due to the permissions when testing it
             await newChannel.permissionOverwrites.set([
@@ -90,6 +122,7 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
 
             return member.voice.setChannel(voiceChannel);
         }
+
         //#endregion
     });
 }

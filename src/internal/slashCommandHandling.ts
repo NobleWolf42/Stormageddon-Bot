@@ -1,5 +1,5 @@
 //#region Imports
-import { ApplicationCommand, Client, Collection, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from 'discord.js';
+import { ApplicationCommand, Client, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from 'discord.js';
 import { DisTube } from 'distube';
 import { addToLog } from '../helpers/errorLog.js';
 import { ExtraCollections } from '../models/extraCollectionsModel.js';
@@ -9,8 +9,6 @@ import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCom
 
 //#region Slash Command Handler
 async function slashCommandHandling(client: Client, distube: DisTube, collections: ExtraCollections) {
-    collections.slashCommands = new Collection();
-
     //This Loops through the active command array and adds them to the collection
     for (let i = 0; i < activeGlobalSlashCommands.length; i++) {
         const command = activeGlobalSlashCommands[i];
@@ -43,7 +41,7 @@ async function slashCommandHandling(client: Client, distube: DisTube, collection
         }
 
         try {
-            await command.execute(client, interaction, distube);
+            await command.execute(client, interaction, distube, collections);
         } catch (error) {
             console.error(error);
             if (interaction.channel.isDMBased()) {

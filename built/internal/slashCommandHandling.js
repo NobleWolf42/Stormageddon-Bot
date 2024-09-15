@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Imports
-import { Collection, REST, Routes } from 'discord.js';
+import { REST, Routes } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { LogType } from '../models/loggingModel.js';
 import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCommands/activeSlashCommands.js';
@@ -16,7 +16,6 @@ import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCom
 //#region Slash Command Handler
 function slashCommandHandling(client, distube, collections) {
     return __awaiter(this, void 0, void 0, function* () {
-        collections.slashCommands = new Collection();
         //This Loops through the active command array and adds them to the collection
         for (let i = 0; i < activeGlobalSlashCommands.length; i++) {
             const command = activeGlobalSlashCommands[i];
@@ -46,7 +45,7 @@ function slashCommandHandling(client, distube, collections) {
                 return;
             }
             try {
-                yield command.execute(client, interaction, distube);
+                yield command.execute(client, interaction, distube, collections);
             }
             catch (error) {
                 console.error(error);

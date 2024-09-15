@@ -40,11 +40,24 @@ const jtcCommand = {
                             newName += `${args[i]}`;
                         }
                     }
+                    if (collections.voiceChanges.get(voiceChannel.id) > 1) {
+                        warnCustom(message, 'You may only change the name twice every ten minutes due to discord API rate limits.', this.name);
+                        return;
+                    }
                     if (newName.length > 22 || newName.length < 1) {
                         warnCustom(message, 'Not a valid name length, Length must be between 1-22 characters long!', this.name);
                         return;
                     }
                     voiceChannel.edit({ name: newName });
+                    let changes = 0;
+                    if (!isNaN(collections.voiceChanges.get(voiceChannel.id))) {
+                        changes = collections.voiceChanges.get(voiceChannel.id);
+                    }
+                    collections.voiceChanges.set(voiceChannel.id, changes + 1);
+                    setTimeout(() => {
+                        collections.voiceChanges.set(voiceChannel.id, collections.voiceChanges.get(voiceChannel.id) - 1);
+                    }, 600000);
+                    console.log(collections.voiceChanges.get(voiceChannel.id));
                     embedCustomDM(message, 'Success:', '#355E3B', 'Channel name changed successfully!');
                     break;
                 }

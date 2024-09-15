@@ -32,8 +32,8 @@ async function autoRoleListener(client: Client) {
     const authRoleLists = await MongooseAutoRoleList.find({}).exec();
     const channelObjects: RoleChannel[] = [];
 
-    for (const autRoleList of authRoleLists) {
-        for (const channels of autRoleList.roleChannels) {
+    for (const guild of authRoleLists) {
+        for (const channels of guild.roleChannels) {
             channelObjects.push(channels);
         }
     }

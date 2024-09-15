@@ -9,15 +9,18 @@ class ExtraCollections {
     commands: Collection<string, Command>;
     slashCommands: Collection<string, SlashCommand>;
     voiceGenerator: Collection<string, string>;
+    voiceChanges: Collection<string, number>;
 
     constructor(
         commands: Collection<string, Command> = new Collection(),
         slashCommands: Collection<string, SlashCommand> = new Collection(),
-        voiceGenerator: Collection<string, string> = new Collection()
+        voiceGenerator: Collection<string, string> = new Collection(),
+        voiceChanges: Collection<string, number> = new Collection()
     ) {
         this.commands = commands;
         this.slashCommands = slashCommands;
         this.voiceGenerator = voiceGenerator;
+        this.voiceChanges = voiceChanges;
     }
 }
 //#endregion

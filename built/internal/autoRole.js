@@ -41,8 +41,8 @@ function autoRoleListener(client) {
         //#region Loads Messages to Listen to
         const authRoleLists = yield MongooseAutoRoleList.find({}).exec();
         const channelObjects = [];
-        for (const autRoleList of authRoleLists) {
-            for (const channels of autRoleList.roleChannels) {
+        for (const guild of authRoleLists) {
+            for (const channels of guild.roleChannels) {
                 channelObjects.push(channels);
             }
         }
