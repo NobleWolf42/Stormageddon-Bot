@@ -8,47 +8,55 @@ const testCommand: Command = {
     coolDown: 0,
     class: 'dev',
     usage: 'test',
-    description: 'Testing command',
-    async execute(_message, _args, _client, _distube, _collections, _serverConfig) {
+    description: 'Testing command - @ someone',
+    async execute(message, _args, client, distube, collections, serverConfig) {
         console.log('Start Test Command');
-        // client.channels.fetch('649129777399201812').then((chan) => {
-        //     console.log(chan);
-        //     chan.messages.fetch('1280423969836634144').then((msg) => console.log(msg));
-        // });
-        // const typeScriptNewConfig: ServerConfig = {
-        //     _id: '644966355875135499',
-        //     guildID: '644966355875135499',
-        //     prefix: '*',
-        //     setupNeeded: false,
-        //     autoRole: {
-        //         enable: true,
-        //         embedMessage: 'heal',
-        //         embedFooter: 'If you do not receive the role try reacting again.',
-        //         roles: ["Sona's DJs", 'Stormageddon Bot Contributor'],
-        //         reactions: ['<:scareddog:818542767449702420>', '🐕'],
-        //     },
-        //     joinRole: { enable: true, role: 'Queue Bot Contributor' },
-        //     music: { enable: true, djRoles: ["Sona's DJs"], textChannel: 'botspam' },
-        //     general: { adminRoles: ['Server Admin'], modRoles: ['Server Admin', 'Some people the devs know'] },
-        //     modMail: { modList: ['201665936049176576'], enable: true },
-        //     JTCVC: { enable: true, voiceChannel: '1259031022658650132' },
-        //     blame: { enable: true, cursing: true, permList: [], rotateList: ['HypersonicWalrus', 'NobleWolf42', 'End3rman07', 'Chris Cugs', '--Thor--', 'spacewulf'], offset: -2 },
-        //     logging: { enable: true, voice: { enable: true }, loggingChannel: '649109835404673024' },
-        // };
-        //const newConfig = new MongooseServerConfig({ ...typeScriptNewConfig });
+        //#region Commands with no arguments
+        await collections.commands.get('creatermsg').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('info').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('iss').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('logs').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('quote').execute(message, [], client, distube, collections, serverConfig);
+        //#endregion
 
-        //try {
-        //    await newConfig.save();
-        //} catch (err) {
-        //    console.log(err);
-        //}
+        //#region Music commands
+        await collections.commands.get('remove').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('resume').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('autoplay').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('showqueue').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('shuffle').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('skip').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('skipto').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('stop').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('volume').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('loop').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('lyrics').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('pause').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('play').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('playnext').execute(message, [], client, distube, collections, serverConfig);
+        //#endregion
 
-        //console.log(await MongooseServerConfig.findById('testIDString2').exec());
-        //console.log(await MongooseServerConfig.findById('testIDString').exec());
-        //console.log(message.guild.roles.resolve(serverConfig.joinRole.role));
+        //#region Simple Commands
+        await collections.commands.get('agify').execute(message, ['John'], client, distube, collections, serverConfig);
+        await collections.commands.get('bugreport').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('modmail').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('clear').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('devSend').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('say').execute(message, [], client, distube, collections, serverConfig);
+        //#endregion
 
-        //await MongooseServerConfig.findByIdAndUpdate(message.guild.id, typeScriptNewConfig).exec();
-        //testConfig.save();
+        //#region Complicated Commands
+        await collections.commands.get('changeprefix').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('addmod').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('removemod').execute(message, [], client, distube, collections, serverConfig);
+        //#endregion
+
+        //#region Commands with Subcommands
+        await collections.commands.get('blame').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('destiny2').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('help').execute(message, [], client, distube, collections, serverConfig);
+        await collections.commands.get('jtc').execute(message, [], client, distube, collections, serverConfig);
+        //#endregion
     },
 };
 //#endregion
