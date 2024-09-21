@@ -27,8 +27,6 @@ const agifyCommand: Command = {
 
         //#region Main Logic - Reaches out to the agify api and handles the response
         axios.get('https://api.agify.io/?name=' + args[0]).then((response) => {
-            console.log(response.data);
-
             //Escape Logic in case api fails to respond with data
             if (response.status < 200 && response.status >= 400) {
                 errorCustom(message, 'The Agify API was unable to be reached at this time. \n Try again later.', agifyCommand.name, client);

@@ -19,6 +19,8 @@ import { ExtraCollections } from './models/extraCollectionsModel.js';
 import { MongooseServerConfig } from './models/serverConfigModel.js';
 //#endregion
 
+console.log('Starting Bot...');
+
 createJSONfiles();
 
 //#region Initialize Discord Bot
@@ -49,9 +51,18 @@ const client = new Client({
 //#endregion
 
 //#region Initialize mongoDB/mongoose client
-mongoose.connect(process.env.mongoDBURI).then(() => {
-    console.log('MongoDB Connected!');
-});
+mongoose
+    .connect(process.env.mongoDBURI)
+    .then(() => {
+        console.log('Connecting to MongoDB');
+        console.log('... OK');
+    })
+    .catch((err) => {
+        console.log('Connecting to MongoDB');
+        console.log('... Failed');
+        console.log(err);
+        console.log('');
+    });
 mongoose.set('debug', true);
 //#endregion
 
@@ -62,9 +73,10 @@ const extraColl = new ExtraCollections();
 try {
     //#region Initialize Distube(music) Functionality
     //FIX this error in the future, distube and discordjs hate each other apparently
+    console.log('Starting Distube');
     const distube = new DisTube(client, {
         emitNewSongOnly: false,
-        savePreviousSongs: true,
+        savePreviousSongs: false,
         plugins: [
             new SpotifyPlugin(),
             new SoundCloudPlugin(),
@@ -76,6 +88,7 @@ try {
             }),
         ],
     });
+    console.log('... OK');
     //#endregion
 
     //Throws Error if bot's token is not set.
@@ -88,26 +101,37 @@ try {
 
     //Logs the Bot info when bot starts
     client.on(Events.ClientReady, async () => {
-        console.log(`Logged in as ${client.user.tag}!`);
+        console.log('Logging into Discord');
+        console.log('...OK');
         const serverConfigs = await MongooseServerConfig.find({ guildID: { $nin: [] } }).exec();
-        autoRoleListener(client);
+        console.log('Starting AutoRole Listener');
+        await autoRoleListener(client);
+        console.log('Starting Guild Message Listener');
         messageHandling(client, distube, extraColl);
+        console.log('Starting Private Message Listener');
         PMHandling(client, distube, extraColl);
+        console.log('Starting ServerJoin Listener');
         serverJoin(client);
-        musicHandler(client, distube);
-        joinToCreateHandling(client, extraColl);
-        slashCommandHandling(client, distube, extraColl);
-        for (const guild in serverConfigs) {
-            registerGuildSlashCommands(serverConfigs[guild].guildID);
-        }
-        registerGlobalSlashCommands();
+        console.log('Starting Music Listener');
+        await musicHandler(client, distube);
+        console.log('Starting Join To Create Channel Listener');
+        await joinToCreateHandling(client, extraColl);
+        console.log('Starting Slash Command Listener');
+        await slashCommandHandling(client, distube, extraColl);
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
+        console.log('Bot Startup Complete!');
+        console.log(`Logged in as ${client.user.tag}!`);
+        console.log('');
+        registerGlobalSlashCommands();
+        for (const guild in serverConfigs) {
+            registerGuildSlashCommands(serverConfigs[guild].guildID, client);
+        }
     });
 
     //Adds New Servers to Config
     client.on(Events.GuildCreate, (newGuild) => {
         addServerConfig(newGuild.id);
-        registerGuildSlashCommands(newGuild.id);
+        registerGuildSlashCommands(newGuild.id, client);
         console.log(`Joined New Server: ${newGuild.name}#${newGuild.id}`);
     });
 

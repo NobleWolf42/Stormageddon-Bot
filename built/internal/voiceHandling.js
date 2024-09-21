@@ -37,7 +37,6 @@ function joinToCreateHandling(client, collections) {
                 collections.voiceGenerator.set(channel.id, channel.memberID);
             }
         }
-        console.log('JTCVC Listener Started');
         //This handles the event of a user joining or disconnecting from a voice channel
         client.on(Events.VoiceStateUpdate, (oldState, newState) => __awaiter(this, void 0, void 0, function* () {
             const { member, guild } = newState;
@@ -118,6 +117,7 @@ function joinToCreateHandling(client, collections) {
             }
             //#endregion
         }));
+        console.log('... OK');
     });
 }
 //#endregion

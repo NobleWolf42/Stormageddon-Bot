@@ -51,7 +51,7 @@ const loopCommand = {
             }
             //#endregion
             //#region Main Logic - Handles changing the Loop Type between Queue, Song, and Off
-            const loopMode = capitalize(args[0].toLowerCase());
+            const loopMode = capitalize(args[0]);
             switch (loopMode) {
                 case LoopType.Song: {
                     queue.setRepeatMode(1);

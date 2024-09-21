@@ -79,8 +79,10 @@ const playNextCommand: Command = {
                 textChannel: channel,
                 position: 1,
             });
-            message.delete();
-            message.deleted = true;
+            if (!message.deleted) {
+                message.delete();
+                message.deleted = true;
+            }
         }
     },
 };

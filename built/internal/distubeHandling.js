@@ -235,6 +235,7 @@ function musicHandler(client, distube) {
             queue.textChannel.send({ embeds: [embMsg] });
         }));
         //#endregion
+        console.log('... OK');
     });
 }
 //#endregion

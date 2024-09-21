@@ -49,7 +49,6 @@ async function autoRoleListener(client: Client) {
     }
 
     //#endregion
-    console.log('AutoRoleListener Started');
 
     //#region This event handel adding a role to a user when the react to the add role message
     client.on(Events.MessageReactionAdd, async (reaction, user) => {
@@ -178,6 +177,7 @@ async function autoRoleListener(client: Client) {
         }
     });
     //#endregion
+    console.log('... OK');
 }
 //#endregion
 

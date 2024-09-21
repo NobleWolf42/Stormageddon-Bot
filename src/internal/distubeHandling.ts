@@ -362,6 +362,7 @@ async function musicHandler(client: Client, distube: DisTube) {
         queue.textChannel.send({ embeds: [embMsg] });
     });
     //#endregion
+    console.log('... OK');
 }
 //#endregion
 

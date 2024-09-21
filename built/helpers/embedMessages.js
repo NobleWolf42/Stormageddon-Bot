@@ -29,10 +29,11 @@ import { LogType } from '../models/loggingModel.js';
 function embedCustom(message_1, title_1, color_1, text_1, footer_1) {
     return __awaiter(this, arguments, void 0, function* (message, title, color, text, footer, img = null, fields = [], url = null, thumbnail = null) {
         const channel = message.channel;
+        const embMsg = new EmbedBuilder().setTitle(title).setColor(color).setDescription(text).setFooter(footer).setImage(img).addFields(fields).setURL(url).setThumbnail(thumbnail).setTimestamp();
         if (channel.isDMBased()) {
+            message.author.send({ embeds: [embMsg] });
             return;
         }
-        const embMsg = new EmbedBuilder().setTitle(title).setColor(color).setDescription(text).setFooter(footer).setImage(img).addFields(fields).setURL(url).setThumbnail(thumbnail).setTimestamp();
         channel.send({ embeds: [embMsg] });
         if (!message.deleted) {
             message.delete();

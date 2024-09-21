@@ -31,8 +31,6 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
         }
     }
 
-    console.log('JTCVC Listener Started');
-
     //This handles the event of a user joining or disconnecting from a voice channel
     client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
         const { member, guild } = newState;
@@ -125,6 +123,7 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
 
         //#endregion
     });
+    console.log('... OK');
 }
 //#endregion
 

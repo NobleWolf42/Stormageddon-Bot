@@ -69,13 +69,15 @@ function slashCommandHandling(client, distube, collections) {
                 }
             }
         }));
+        console.log('... OK');
     });
 }
 //#endregion
 //#region Registers Guild Slash Commands with discord
-function registerGuildSlashCommands(guildId) {
+function registerGuildSlashCommands(guildId, client) {
     return __awaiter(this, void 0, void 0, function* () {
         const commands = [];
+        const guild = yield client.guilds.fetch(guildId);
         //This Loops through the active command array and adds them to the collection
         for (let i = 0; i < activeGuildSlashCommands.length; i++) {
             const command = activeGuildSlashCommands[i];
@@ -91,14 +93,16 @@ function registerGuildSlashCommands(guildId) {
         // and deploy your commands!
         (() => __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(`Started refreshing ${commands.length} guild (/) commands.`);
+                console.log(`Started refreshing ${commands.length} guild (/) commands for ${guild.name}.`);
                 // The put method is used to fully refresh all commands in the guild with the current set
                 const data = yield rest.put(Routes.applicationGuildCommands(process.env.clientID, guildId), { body: commands });
-                console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+                console.log(`Successfully reloaded ${data.length} guild (/) commands for ${guild.name}.`);
+                console.log('');
             }
             catch (error) {
                 // And of course, make sure you catch and log any errors!
                 console.error(error);
+                console.log('');
             }
         }))();
     });
@@ -123,14 +127,16 @@ function registerGlobalSlashCommands() {
         // and deploy your commands!
         (() => __awaiter(this, void 0, void 0, function* () {
             try {
-                console.log(`Started refreshing ${commands.length} application (/) commands.`);
+                console.log(`Started refreshing ${commands.length} global (/) commands.`);
                 // The put method is used to fully refresh all commands in the guild with the current set
                 const data = yield rest.put(Routes.applicationCommands(process.env.clientID), { body: commands });
-                console.log(`Successfully reloaded ${data.length} application (/) commands.`);
+                console.log(`Successfully reloaded ${data.length} global (/) commands.`);
+                console.log('');
             }
             catch (error) {
                 // And of course, make sure you catch and log any errors!
                 console.error(error);
+                console.log('');
             }
         }))();
     });

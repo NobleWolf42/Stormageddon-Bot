@@ -181,6 +181,7 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
         tryCommand(client, message, command, args, distube, serverConfig, collections);
         //#endregion
     });
+    console.log('... OK');
 }
 //#endregion
 
@@ -272,6 +273,7 @@ function PMHandling(client: Client, distube: DisTube, collections: ExtraCollecti
         }
         //#endregion
     });
+    console.log('... OK');
 }
 //#endregion
 

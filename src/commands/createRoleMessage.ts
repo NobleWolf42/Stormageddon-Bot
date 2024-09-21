@@ -155,7 +155,9 @@ const createRoleMessageCommand: Command = {
                     }
                 }
 
-                if (botConfig.roleChannels[roleChan].messageIDs.find((test) => test == m.id) == undefined) {
+                if (roleChan < 0) {
+                    botConfig.roleChannels.push({ id: channel.id, messageIDs: [] });
+                } else if (botConfig.roleChannels[roleChan].messageIDs.find((test) => test == m.id) == undefined) {
                     botConfig.roleChannels[roleChan].messageIDs.push(m.id);
                     botConfig.markModified('channelIDs');
                 }

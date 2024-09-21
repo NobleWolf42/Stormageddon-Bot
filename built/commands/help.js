@@ -23,7 +23,7 @@ const helpCommand = {
     execute(message, args, _client, _distube, collections, serverConfig) {
         return __awaiter(this, void 0, void 0, function* () {
             const lowerArgs = args.map((v) => v.toLowerCase());
-            const adminTF = yield adminCheck(message, serverConfig);
+            const adminTF = adminCheck(message, serverConfig);
             const commands = collections.commands;
             let commandClasses = [];
             let helpMessageCommands = [];

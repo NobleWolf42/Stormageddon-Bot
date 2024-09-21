@@ -25,8 +25,10 @@ const sayCommand = {
             return;
         }
         channel.send(argsString);
-        message.delete();
-        message.deleted = true;
+        if (!message.deleted) {
+            message.delete();
+            message.deleted = true;
+        }
     },
 };
 //#endregion

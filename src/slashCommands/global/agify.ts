@@ -2,6 +2,7 @@
 import { SlashCommandBuilder } from 'discord.js';
 import { embedCustom, errorCustom, warnCustom } from '../../helpers/embedSlashMessages.js';
 import { SlashCommand } from '../../models/slashCommandModel.js';
+import axios from 'axios';
 //#endregion
 
 //#region This exports the agify command with the information about it
@@ -24,15 +25,10 @@ const agifySlashCommand: SlashCommand = {
         }
         //#endregion
 
-        //#region Main Logic - Retrieves age from agify.io's api based on user input
-        const request = new XMLHttpRequest();
-
-        request.open('GET', 'https://api.agify.io/?name=' + userInput, true);
-        request.onload = function () {
-            // Begin accessing JSON data here
-            const data = JSON.parse(request.responseText);
-
-            if (request.status < 200 && request.status >= 400) {
+        //#region Main Logic - Reaches out to the agify api and handles the response
+        axios.get('https://api.agify.io/?name=' + userInput).then((response) => {
+            //Escape Logic in case api fails to respond with data
+            if (response.status < 200 && response.status >= 400) {
                 errorCustom(interaction, 'The Agify API was unable to be reached at this time. \n Try again later.', agifySlashCommand.data.name, client);
             }
 
@@ -43,7 +39,7 @@ const agifySlashCommand: SlashCommand = {
                 interaction,
                 'Agify',
                 '#5D3FD3',
-                '\n The age of ' + capitalizedName + ' is estimated at ' + data.age + '.',
+                '\n The age of ' + capitalizedName + ' is estimated at ' + response.data.age + '.',
                 {
                     text: `Requested by ${interaction.user.tag}`,
                     iconURL: null,
@@ -53,9 +49,8 @@ const agifySlashCommand: SlashCommand = {
                 null,
                 null
             );
-        };
-
-        request.send();
+        });
+        //#endregion
     },
 };
 //#endregion

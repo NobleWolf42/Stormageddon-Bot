@@ -22,6 +22,7 @@ function serverJoin(client) {
             guildMember.roles.add(guildMember.guild.roles.resolve(serverConfig.joinRole.role));
         }
     }));
+    console.log('... OK');
 }
 //#endregion
 //#region exports

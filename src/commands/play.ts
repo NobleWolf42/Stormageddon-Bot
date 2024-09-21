@@ -59,8 +59,10 @@ const playCommand: Command = {
                 .catch((err) => {
                     warnCustom(message, `Error Queuing Song, Please Try Again.\n\nError:\n${err.message}`, this.name);
                 });
-            message.delete();
-            message.deleted = true;
+            if (!message.deleted) {
+                message.delete();
+                message.deleted = true;
+            }
         }
     },
 };

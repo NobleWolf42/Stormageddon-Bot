@@ -149,6 +149,7 @@ function messageHandling(client, distube, collections) {
         tryCommand(client, message, command, args, distube, serverConfig, collections);
         //#endregion
     }));
+    console.log('... OK');
 }
 //#endregion
 //#region Function that starts the listener that handles executing all commands in DMs
@@ -226,6 +227,7 @@ function PMHandling(client, distube, collections) {
         }
         //#endregion
     }));
+    console.log('... OK');
 }
 //#endregion
 //#region exports
