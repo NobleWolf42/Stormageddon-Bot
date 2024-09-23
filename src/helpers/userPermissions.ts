@@ -1,7 +1,6 @@
 //#region Dependencies
-import { PermissionFlagsBits, RoleManager } from 'discord.js';
+import { GuildMember, PermissionFlagsBits, RoleManager } from 'discord.js';
 import { ServerConfig } from '../models/serverConfigModel.js';
-import { MessageWithDeleted } from '../models/messagesModel.js';
 //#endregion
 
 //#region Function that calls the server roles and saves the roles that match the adminRoleIDs, modRoleIDs, and djRoleIDs in serverConfig to their own arrays
@@ -60,27 +59,27 @@ function serverRoleUpdate(sRole: RoleManager, serverConfig: ServerConfig) {
  * @param message - Discord.js Message Object
  * @returns True if the user in the message object is a bot admin
  */
-function adminCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
+function adminCheck(member: GuildMember, serverConfig: ServerConfig) {
     //#region Escape Logic
     //Checks that a member exists on the message
-    if (!message.member) {
+    if (!member) {
         return false;
     }
 
     //Checks to see if user is server admin
-    if (message.member.permissions.has(PermissionFlagsBits.Administrator)) {
+    if (member.permissions.has(PermissionFlagsBits.Administrator)) {
         return true;
     }
     //#endregion
 
     //#region Main Logic - Runs the check and returns true if user is bot admin
     //Calls a function that updates the server role information
-    const permArrays = serverRoleUpdate(message.guild.roles, serverConfig);
+    const permArrays = serverRoleUpdate(member.guild.roles, serverConfig);
 
     //Checks to see if any of the user role ids match any of the admin role ids
-    for (const role in message.member.roles) {
+    for (const role in member.roles) {
         for (const permRole of permArrays[0]) {
-            if (message.member.roles[role] == permRole) {
+            if (member.roles[role] == permRole) {
                 return true;
             }
         }
@@ -97,27 +96,27 @@ function adminCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
  * @param message - Discord.js Message Object
  * @returns True if the user in the message object is a bot moderator
  */
-function modCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
+function modCheck(member: GuildMember, serverConfig: ServerConfig) {
     //#region Escape Logic
     //Checks that a member exists on the message
-    if (!message.member) {
+    if (!member) {
         return false;
     }
 
     //Checks to see if user is bot admin
-    if (adminCheck(message, serverConfig)) {
+    if (adminCheck(member, serverConfig)) {
         return true;
     }
     //#endregion
 
     //#region Main Logic - Runs the check and returns true if user is bot mod
     //Calls a function that updates the server role information
-    const permArrays = serverRoleUpdate(message.guild.roles, serverConfig);
+    const permArrays = serverRoleUpdate(member.guild.roles, serverConfig);
 
     //Checks to see if user role ids match any of the mod role ids
-    for (const role in message.member.roles) {
+    for (const role in member.roles) {
         for (const permRole of permArrays[1]) {
-            if (message.member.roles[role] == permRole) {
+            if (member.roles[role] == permRole) {
                 return true;
             }
         }
@@ -134,19 +133,19 @@ function modCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
  * @param message - Discord.js Message Object
  * @returns True if the user in the message object is a bot DJ
  */
-function djCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
+function djCheck(member: GuildMember, serverConfig: ServerConfig) {
     //#region Escape Logic
     //Checks that a member exists on the message
-    if (message.member == null) {
+    if (member == null) {
         return false;
     }
 
     //Checks to see if user is a bot mod
-    if (modCheck(message, serverConfig)) {
+    if (modCheck(member, serverConfig)) {
         return true;
     }
 
-    const permArrays = serverRoleUpdate(message.guild.roles, serverConfig);
+    const permArrays = serverRoleUpdate(member.guild.roles, serverConfig);
 
     console.log(permArrays);
 
@@ -157,9 +156,9 @@ function djCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
     //#endregion
 
     //#region Main Logic - Runs the check and returns true if user is a DJ
-    for (const role in message.member.roles) {
+    for (const role in member.roles) {
         for (const permRole of permArrays[2]) {
-            if (message.member.roles[role] == permRole) {
+            if (member.roles[role] == permRole) {
                 return true;
             }
         }
@@ -171,5 +170,5 @@ function djCheck(message: MessageWithDeleted, serverConfig: ServerConfig) {
 //#endregion
 
 //#region exports
-export { adminCheck, modCheck, djCheck };
+export { adminCheck, djCheck, modCheck };
 //#endregion

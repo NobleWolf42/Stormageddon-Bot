@@ -69,8 +69,8 @@ function setModMail(message, serverConfig) {
                         }
                     }));
                     const embMsg3 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('Select up to 25 users to receive mod mail.').setColor('#F5820F');
-                    const kickUserMenu = new UserSelectMenuBuilder().setCustomId('modMailUsers').setMinValues(1).setMaxValues(25);
-                    const ModMailUserMessage = yield channel.send({ embeds: [embMsg3], components: [new ActionRowBuilder().addComponents(kickUserMenu)] });
+                    const userMenu = new UserSelectMenuBuilder().setCustomId('modMailUsers').setMinValues(1).setMaxValues(25);
+                    const ModMailUserMessage = yield channel.send({ embeds: [embMsg3], components: [new ActionRowBuilder().addComponents(userMenu)] });
                     yield ModMailUserMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
                         if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
                             return;

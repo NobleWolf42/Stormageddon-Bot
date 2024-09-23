@@ -21,6 +21,8 @@ var ModalAction;
 var SelectAction;
 (function (SelectAction) {
     SelectAction["VCKickUser"] = "vChannelKickSelect";
+    SelectAction["VCBanUser"] = "vChannelBanSelect";
+    SelectAction["VCNewOwnerAction"] = "vChannelOwnerChange";
 })(SelectAction || (SelectAction = {}));
 export { ButtonAction, TextAction, ModalAction, SelectAction };
 //hi

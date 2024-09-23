@@ -12,18 +12,20 @@ import {
     Message,
     ModalBuilder,
     PermissionFlagsBits,
+    SelectMenuComponentOptionData,
+    StringSelectMenuBuilder,
     TextInputBuilder,
     TextInputStyle,
-    UserSelectMenuBuilder,
     VoiceChannel,
 } from 'discord.js';
 import { Document } from 'mongoose';
 import { addToLog } from '../helpers/errorLog.js';
+import { modCheck } from '../helpers/userPermissions.js';
 import { ExtraCollections } from '../models/extraCollectionsModel.js';
+import { ButtonAction, ModalAction, SelectAction, TextAction } from '../models/inputEnum.js';
 import { JTCVCList, MongooseJTCVCList } from '../models/jtcvcList.js';
 import { LogType } from '../models/loggingModel.js';
-import { MongooseServerConfig } from '../models/serverConfigModel.js';
-import { ButtonAction, ModalAction, SelectAction, TextAction } from '../models/inputEnum.js';
+import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 
 //#region Function that starts the listener that handles Join to Create Channels
@@ -75,17 +77,6 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
                     oldChannel.delete();
                     channelList.deleteOne().exec();
                     collections.voiceGenerator.delete(oldChannel.id);
-                } else if (collections.voiceGenerator.get(oldChannel.id) && member.id == collections.voiceGenerator.get(oldChannel.id)) {
-                    //This should restore default permissions to the channel when the owner leaves, and remove owner
-                    await oldChannel.permissionOverwrites.set(
-                        oldChannel.parent.permissionOverwrites.cache.map((p) => {
-                            return {
-                                id: p.id,
-                                allow: p.allow.toArray(),
-                                deny: p.deny.toArray(),
-                            };
-                        })
-                    );
                 }
             }
         } catch (err) {
@@ -115,7 +106,7 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
                 }),
             });
 
-            panelCreation(voiceChannel, collections);
+            panelCreation(voiceChannel, collections, serverConfig);
 
             //Adds the voice channel just made to the collection
             collections.voiceGenerator.set(voiceChannel.id, member.id);
@@ -148,10 +139,14 @@ async function joinToCreateHandling(client: Client, collections: ExtraCollection
 }
 //#endregion
 
-//#region panel
-
-async function panelCreation(channel: VoiceChannel, collections: ExtraCollections) {
-    //#region buttons
+//#region Panel Creation
+/**
+ * This function starts the listener that handles that handles Join to Create Channels.
+ * @param channel - Current Discord.js VoiceChannel Object
+ * @param collections - Current ExtraCollections Object
+ * @param serverConfig - Current Server Config File
+ */
+async function panelCreation(channel: VoiceChannel, collections: ExtraCollections, serverConfig: ServerConfig) {
     const embMsg = new EmbedBuilder()
         .setTitle('Voice Channel Controls')
         .setColor('#00A0FF')
@@ -163,32 +158,38 @@ async function panelCreation(channel: VoiceChannel, collections: ExtraCollection
     const vChannelPublic = new ButtonBuilder().setCustomId(ButtonAction.VCPublic).setLabel('🌐 Set Public').setStyle(ButtonStyle.Secondary);
     const vChannelHide = new ButtonBuilder().setCustomId(ButtonAction.VCHide).setLabel('🙈 Hide Channel').setStyle(ButtonStyle.Secondary);
     const vChannelShow = new ButtonBuilder().setCustomId(ButtonAction.VCShow).setLabel('🐵 Show Channel').setStyle(ButtonStyle.Secondary);
-    //#endregion buttons row1
-    //region buttons row2
+    //#endregion
+    //#region buttons row2
     const vChannelEdit = new ButtonBuilder().setCustomId(ButtonAction.VCEdit).setLabel('✏️ Edit Channel Name').setStyle(ButtonStyle.Secondary);
     const vChannelKick = new ButtonBuilder().setCustomId(ButtonAction.VCKick).setLabel('👟 Kick User').setStyle(ButtonStyle.Secondary);
     const vChannelBan = new ButtonBuilder().setCustomId(ButtonAction.VCBan).setLabel('⛔ Ban User').setStyle(ButtonStyle.Secondary);
-    //#endregion buttons row2
+    //#endregion
     //#region buttons row3
     const vChannelChangeOwner = new ButtonBuilder().setCustomId(ButtonAction.VCNewOwner).setLabel('👑 Change Owner').setStyle(ButtonStyle.Secondary);
     const vChannelClaimChannel = new ButtonBuilder().setCustomId(ButtonAction.VCClaim).setLabel('🌌 Claim Channel').setStyle(ButtonStyle.Secondary);
-    //#endregion buttons row3
-    //#endregion button creation
+    //#endregion
     const buttons1 = new ActionRowBuilder<ButtonBuilder>().addComponents(vChannelPrivate, vChannelPublic, vChannelHide, vChannelShow);
     const buttons2 = new ActionRowBuilder<ButtonBuilder>().addComponents(vChannelEdit, vChannelKick, vChannelBan);
     const buttons3 = new ActionRowBuilder<ButtonBuilder>().addComponents(vChannelChangeOwner, vChannelClaimChannel);
+    //#endregion
 
     const panelMessage = await channel.send({
         embeds: [embMsg],
         components: [buttons1, buttons2, buttons3],
     });
 
-    panelCollector(panelMessage, collections);
-
-    //#endregion buttons
+    panelCollector(panelMessage, collections, serverConfig);
 }
+//#endregion
 
-function panelCollector(message: Message, collections: ExtraCollections) {
+//#region Panel Creation
+/**
+ * This function starts the listener that handles that handles Join to Create Channels.
+ * @param message - The Discord.JS Message Object for the Panel Message
+ * @param collections - Current ExtraCollections Object
+ * @param serverConfig - Current Server Config File
+ */
+function panelCollector(message: Message, collections: ExtraCollections, serverConfig: ServerConfig) {
     const collector = message.createMessageComponentCollector({
         componentType: ComponentType.Button,
     });
@@ -280,25 +281,123 @@ function panelCollector(message: Message, collections: ExtraCollections) {
                 break;
             //#endregion on buttonpress - edit
             //#region on buttonpress - Kick
-
-            /*case ButtonAction.VCKick: {
+            case ButtonAction.VCKick: {
+                const stringSelect: SelectMenuComponentOptionData[] = [];
+                let numberOfOptions = 0;
+                for (const [id, member] of channel.members) {
+                    stringSelect.push({ label: member.user.tag, value: id });
+                    if (numberOfOptions < 10) {
+                        numberOfOptions++;
+                    }
+                }
                 const embMsgKick = new EmbedBuilder().setTitle('Kick users').setDescription('Select up to 10 users to kick them from the voice chat.').setColor('#00A0FF');
-                const VCKickUserMenu = new UserSelectMenuBuilder(channel.members).setCustomId(SelectAction.VCKickUser).setMinValues(1).setMaxValues(10);
-                const VCSelect = await interaction.reply({ embeds: [embMsgKick], components: [new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(VCKickUserMenu)], ephemeral: true });
+                const VCKickUserMenu = new StringSelectMenuBuilder().setCustomId(SelectAction.VCKickUser).setMinValues(1).setMaxValues(numberOfOptions).addOptions(stringSelect);
+                const VCSelect = await channel.send({ embeds: [embMsgKick], components: [new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(VCKickUserMenu)] });
+                interaction.deferReply({ ephemeral: true });
 
-                await VCSelect.awaitMessageComponent<ComponentType.UserSelect>().then(async (VCKickInteraction) => {
+                await VCSelect.awaitMessageComponent<ComponentType.StringSelect>().then(async (VCKickInteraction) => {
+                    const modList: string[] = [];
+                    const userList: string[] = [];
                     for (const id of VCKickInteraction.values) {
-                        if () {
-
+                        if (modCheck(channel.members.get(id), serverConfig)) {
+                            modList.push(channel.members.get(id).user.tag);
+                        } else if (channel.members.has(id)) {
+                            channel.members.get(id).voice.disconnect();
+                            userList.push(channel.members.get(id).user.tag);
                         }
                     }
+                    if (modList.length < 1) {
+                        embMsg.setTitle(`Kicked users`).setDescription(`${userList} were kicked sucessfully.`);
+                    } else {
+                        embMsg.setTitle(`Kicked user`).setDescription(`${userList} were kicked sucessfully.\n${modList} were unable to be kicked because they are a mod or higher in the server.`);
+                    }
+                    interaction.editReply({ embeds: [embMsg] });
+                    VCSelect.edit({ components: [] });
+                    VCKickInteraction.deferReply();
+                    VCKickInteraction.deleteReply();
                 });
-                embMsg.setTitle(`Kicked -user-`).setDescription('Successfully');
-                interaction.reply({ embeds: [embMsg], ephemeral: true });
                 break;
             }
-            */
 
+            //#endregion
+            //#region on buttonpress - Ban
+            case ButtonAction.VCBan: {
+                const stringSelect: SelectMenuComponentOptionData[] = [];
+                let numberOfOptions = 0;
+                for (const [id, member] of channel.members) {
+                    stringSelect.push({ label: member.user.tag, value: id });
+                    if (numberOfOptions < 10) {
+                        numberOfOptions++;
+                    }
+                }
+                const embMsgBan = new EmbedBuilder().setTitle('Ban users').setDescription('Select up to 10 users to Ban them from the voice chat.').setColor('#00A0FF');
+                const VCBanUserMenu = new StringSelectMenuBuilder().setCustomId(SelectAction.VCBanUser).setMinValues(1).setMaxValues(numberOfOptions).addOptions(stringSelect);
+                const VCSelect = await channel.send({ embeds: [embMsgBan], components: [new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(VCBanUserMenu)] });
+                interaction.deferReply({ ephemeral: true });
+
+                await VCSelect.awaitMessageComponent<ComponentType.StringSelect>().then(async (VCBanInteraction) => {
+                    const modList: string[] = [];
+                    const userList: string[] = [];
+                    for (const id of VCBanInteraction.values) {
+                        if (modCheck(channel.members.get(id), serverConfig)) {
+                            modList.push(channel.members.get(id).user.tag);
+                        } else if (channel.members.has(id)) {
+                            channel.permissionOverwrites.edit(id, { Connect: false });
+                            channel.members.get(id).voice.disconnect();
+                            userList.push(channel.members.get(id).user.tag);
+                        }
+                    }
+                    if (modList.length < 1) {
+                        embMsg.setTitle(`Banned users`).setDescription(`${userList} were banned sucessfully.`);
+                    } else {
+                        embMsg.setTitle(`Banned user`).setDescription(`${userList} were banned sucessfully.\n${modList} were unable to be banned because they are a mod or higher in the server.`);
+                    }
+                    interaction.editReply({ embeds: [embMsg] });
+                    VCSelect.edit({ components: [] });
+                    VCBanInteraction.deferReply();
+                    VCBanInteraction.deleteReply();
+                });
+                break;
+            }
+            //#endregion
+            //#region on buttonpress - Change Owner
+            case ButtonAction.VCNewOwner: {
+                const stringSelect: SelectMenuComponentOptionData[] = [];
+                for (const [id, member] of channel.members) {
+                    stringSelect.push({ label: member.user.tag, value: id });
+                }
+
+                const embMsgOwner = new EmbedBuilder().setTitle('Change Owner').setDescription('Select a user to transfer ownership of this channel to.').setColor('#00A0FF');
+                const VCOwnerMenu = new StringSelectMenuBuilder().setCustomId(SelectAction.VCNewOwnerAction).setMinValues(1).setMaxValues(1).addOptions(stringSelect);
+                await interaction.deferReply({ ephemeral: true });
+                const VCSelect = await interaction.followUp({ embeds: [embMsgOwner], components: [new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(VCOwnerMenu)], ephemeral: true });
+
+                await VCSelect.awaitMessageComponent<ComponentType.StringSelect>().then(async (VCNewOwnerInteraction) => {
+                    if (channel.members.has(VCNewOwnerInteraction.values[0])) {
+                        collections.voiceGenerator.set(channel.id, VCNewOwnerInteraction.values[0]);
+                        embMsg.setTitle(`New Owner`).setDescription(`${channel.members.get(VCNewOwnerInteraction.values[0])} is now the new owner.`);
+                    } else {
+                        embMsg.setTitle(`New Owner`).setDescription(`Cannot change owner to someone not in the channel.`);
+                    }
+                    interaction.editReply({ embeds: [embMsg], components: [] });
+                    VCNewOwnerInteraction.deferReply();
+                    VCNewOwnerInteraction.deleteReply();
+                });
+                break;
+            }
+            //#endregion
+            //#region on buttonpress - Claim Channel
+            case ButtonAction.VCClaim:
+                if (channel.members.has(collections.voiceGenerator.get(channel.id))) {
+                    embMsg.setTitle('Already Claimed').setDescription('The owner is still in this channel.');
+                } else if (channel.members.has(interaction.user.id)) {
+                    collections.voiceGenerator.set(channel.id, interaction.user.id);
+                    embMsg.setTitle('Claimed').setDescription('You are now the owner of this channel.');
+                } else {
+                    embMsg.setTitle('Error').setDescription('Cannot change owner to someone not in the channel.');
+                }
+                interaction.reply({ embeds: [embMsg], ephemeral: true });
+                break;
             //#endregion
         }
         //console.log('helpfulseperator --------');

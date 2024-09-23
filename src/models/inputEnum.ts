@@ -17,6 +17,8 @@ enum ModalAction {
 }
 enum SelectAction {
     VCKickUser = 'vChannelKickSelect',
+    VCBanUser = 'vChannelBanSelect',
+    VCNewOwnerAction = 'vChannelOwnerChange',
 }
 
 export { ButtonAction, TextAction, ModalAction, SelectAction };

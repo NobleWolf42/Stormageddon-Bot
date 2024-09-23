@@ -96,9 +96,9 @@ async function setModMail(message: Message | Interaction, serverConfig: ServerCo
                 });
 
                 const embMsg3 = new EmbedBuilder().setTitle('ModMail Setup').setDescription('Select up to 25 users to receive mod mail.').setColor('#F5820F');
-                const kickUserMenu = new UserSelectMenuBuilder().setCustomId('modMailUsers').setMinValues(1).setMaxValues(25);
+                const userMenu = new UserSelectMenuBuilder().setCustomId('modMailUsers').setMinValues(1).setMaxValues(25);
 
-                const ModMailUserMessage = await channel.send({ embeds: [embMsg3], components: [new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(kickUserMenu)] });
+                const ModMailUserMessage = await channel.send({ embeds: [embMsg3], components: [new ActionRowBuilder<UserSelectMenuBuilder>().addComponents(userMenu)] });
                 await ModMailUserMessage.awaitMessageComponent<ComponentType.UserSelect>().then(async (interaction) => {
                     if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
                         return;
