@@ -174,7 +174,7 @@ function panelCollector(message, collections, serverConfig) {
         }
         const embMsg = new EmbedBuilder().setColor('#10FFAB').setTimestamp();
         switch (interaction.customId) {
-            //#region on buttonpress - Private
+            //#region on button press - Private
             case ButtonAction.VCPrivate:
                 for (const permission of channel.permissionOverwrites.cache) {
                     channel.permissionOverwrites.edit(permission[0], { Connect: false });
@@ -184,7 +184,7 @@ function panelCollector(message, collections, serverConfig) {
                 interaction.reply({ embeds: [embMsg], ephemeral: true });
                 break;
             //#endregion
-            //#region on buttonpress - Public
+            //#region on button press - Public
             case ButtonAction.VCPublic:
                 for (const permission of channel.parent.permissionOverwrites.cache) {
                     if (permission[1].allow.has(PermissionFlagsBits.Connect)) {
@@ -195,7 +195,7 @@ function panelCollector(message, collections, serverConfig) {
                 interaction.reply({ embeds: [embMsg], ephemeral: true });
                 break;
             //#endregion
-            //#region on buttonpress - Hide
+            //#region on button press - Hide
             case ButtonAction.VCHide:
                 for (const permission of channel.permissionOverwrites.cache) {
                     channel.permissionOverwrites.edit(permission[0], { ViewChannel: false });
@@ -205,7 +205,7 @@ function panelCollector(message, collections, serverConfig) {
                 interaction.reply({ embeds: [embMsg], ephemeral: true });
                 break;
             //#endregion
-            //#region on buttonpress - Show
+            //#region on button press - Show
             case ButtonAction.VCShow:
                 for (const permission of channel.parent.permissionOverwrites.cache) {
                     if (permission[1].allow.has(PermissionFlagsBits.ViewChannel)) {
@@ -216,7 +216,7 @@ function panelCollector(message, collections, serverConfig) {
                 interaction.reply({ embeds: [embMsg], ephemeral: true });
                 break;
             //#endregion
-            //#region on buttonpress - Edit
+            //#region on button press - Edit
             case ButtonAction.VCEdit:
                 {
                     /*if (owner)
@@ -249,8 +249,8 @@ function panelCollector(message, collections, serverConfig) {
                     interaction.deferReply();
                 }
                 break;
-            //#endregion on buttonpress - edit
-            //#region on buttonpress - Kick
+            //#endregion on button press - edit
+            //#region on button press - Kick
             case ButtonAction.VCKick: {
                 const stringSelect = [];
                 let numberOfOptions = 0;
@@ -262,8 +262,8 @@ function panelCollector(message, collections, serverConfig) {
                 }
                 const embMsgKick = new EmbedBuilder().setTitle('Kick users').setDescription('Select up to 10 users to kick them from the voice chat.').setColor('#00A0FF');
                 const VCKickUserMenu = new StringSelectMenuBuilder().setCustomId(SelectAction.VCKickUser).setMinValues(1).setMaxValues(numberOfOptions).addOptions(stringSelect);
-                const VCSelect = yield channel.send({ embeds: [embMsgKick], components: [new ActionRowBuilder().addComponents(VCKickUserMenu)] });
-                interaction.deferReply({ ephemeral: true });
+                yield interaction.deferReply({ ephemeral: true });
+                const VCSelect = yield interaction.followUp({ embeds: [embMsgKick], components: [new ActionRowBuilder().addComponents(VCKickUserMenu)] });
                 yield VCSelect.awaitMessageComponent().then((VCKickInteraction) => __awaiter(this, void 0, void 0, function* () {
                     const modList = [];
                     const userList = [];
@@ -277,12 +277,12 @@ function panelCollector(message, collections, serverConfig) {
                         }
                     }
                     if (modList.length < 1) {
-                        embMsg.setTitle(`Kicked users`).setDescription(`${userList} were kicked sucessfully.`);
+                        embMsg.setTitle(`Kicked users`).setDescription(`${userList} were kicked successfully.`);
                     }
                     else {
-                        embMsg.setTitle(`Kicked user`).setDescription(`${userList} were kicked sucessfully.\n${modList} were unable to be kicked because they are a mod or higher in the server.`);
+                        embMsg.setTitle(`Kicked user`).setDescription(`${userList} were kicked successfully.\n${modList} were unable to be kicked because they are a mod or higher in the server.`);
                     }
-                    interaction.editReply({ embeds: [embMsg] });
+                    interaction.editReply({ embeds: [embMsg], components: [] });
                     VCSelect.edit({ components: [] });
                     VCKickInteraction.deferReply();
                     VCKickInteraction.deleteReply();
@@ -290,7 +290,7 @@ function panelCollector(message, collections, serverConfig) {
                 break;
             }
             //#endregion
-            //#region on buttonpress - Ban
+            //#region on button press - Ban
             case ButtonAction.VCBan: {
                 const stringSelect = [];
                 let numberOfOptions = 0;
@@ -302,8 +302,8 @@ function panelCollector(message, collections, serverConfig) {
                 }
                 const embMsgBan = new EmbedBuilder().setTitle('Ban users').setDescription('Select up to 10 users to Ban them from the voice chat.').setColor('#00A0FF');
                 const VCBanUserMenu = new StringSelectMenuBuilder().setCustomId(SelectAction.VCBanUser).setMinValues(1).setMaxValues(numberOfOptions).addOptions(stringSelect);
-                const VCSelect = yield channel.send({ embeds: [embMsgBan], components: [new ActionRowBuilder().addComponents(VCBanUserMenu)] });
-                interaction.deferReply({ ephemeral: true });
+                yield interaction.deferReply({ ephemeral: true });
+                const VCSelect = yield interaction.followUp({ embeds: [embMsgBan], components: [new ActionRowBuilder().addComponents(VCBanUserMenu)] });
                 yield VCSelect.awaitMessageComponent().then((VCBanInteraction) => __awaiter(this, void 0, void 0, function* () {
                     const modList = [];
                     const userList = [];
@@ -318,12 +318,12 @@ function panelCollector(message, collections, serverConfig) {
                         }
                     }
                     if (modList.length < 1) {
-                        embMsg.setTitle(`Banned users`).setDescription(`${userList} were banned sucessfully.`);
+                        embMsg.setTitle(`Banned users`).setDescription(`${userList} were banned successfully.`);
                     }
                     else {
-                        embMsg.setTitle(`Banned user`).setDescription(`${userList} were banned sucessfully.\n${modList} were unable to be banned because they are a mod or higher in the server.`);
+                        embMsg.setTitle(`Banned user`).setDescription(`${userList} were banned successfully.\n${modList} were unable to be banned because they are a mod or higher in the server.`);
                     }
-                    interaction.editReply({ embeds: [embMsg] });
+                    interaction.editReply({ embeds: [embMsg], components: [] });
                     VCSelect.edit({ components: [] });
                     VCBanInteraction.deferReply();
                     VCBanInteraction.deleteReply();
@@ -331,7 +331,7 @@ function panelCollector(message, collections, serverConfig) {
                 break;
             }
             //#endregion
-            //#region on buttonpress - Change Owner
+            //#region on button press - Change Owner
             case ButtonAction.VCNewOwner: {
                 const stringSelect = [];
                 for (const [id, member] of channel.members) {
@@ -356,7 +356,7 @@ function panelCollector(message, collections, serverConfig) {
                 break;
             }
             //#endregion
-            //#region on buttonpress - Claim Channel
+            //#region on button press - Claim Channel
             case ButtonAction.VCClaim:
                 if (channel.members.has(collections.voiceGenerator.get(channel.id))) {
                     embMsg.setTitle('Already Claimed').setDescription('The owner is still in this channel.');
@@ -372,8 +372,6 @@ function panelCollector(message, collections, serverConfig) {
                 break;
             //#endregion
         }
-        //console.log('helpfulseperator --------');
-        //console.log(permission);
     }));
 }
 //#endregion panel
