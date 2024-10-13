@@ -17,6 +17,7 @@ import { registerGlobalSlashCommands, registerGuildSlashCommands, slashCommandHa
 import { joinToCreateHandling } from './internal/voiceHandling.js';
 import { ExtraCollections } from './models/extraCollectionsModel.js';
 import { MongooseServerConfig } from './models/serverConfigModel.js';
+import { logMessageUpdate } from './internal/moderatorLogging.js';
 //#endregion
 
 console.log('Starting Bot...');
@@ -118,6 +119,8 @@ try {
         await joinToCreateHandling(client, extraColl);
         console.log('Starting Slash Command Listener');
         await slashCommandHandling(client, distube, extraColl);
+        console.log('Starting Message Logging Listener');
+        await logMessageUpdate(client);
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
         console.log('Bot Startup Complete!');
         console.log(`Logged in as ${client.user.tag}!`);

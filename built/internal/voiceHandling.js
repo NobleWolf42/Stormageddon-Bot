@@ -249,7 +249,7 @@ function panelCollector(message, collections, serverConfig) {
                     interaction.deferReply();
                 }
                 break;
-            //#endregion on button press - edit
+            //#endregion
             //#region on button press - Kick
             case ButtonAction.VCKick: {
                 const stringSelect = [];

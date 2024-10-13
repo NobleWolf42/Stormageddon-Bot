@@ -984,9 +984,17 @@ function addServerConfig(serverID) {
             },
             logging: {
                 enable: false,
-                loggingChannel: 'Not Set Up',
                 voice: {
                     enable: false,
+                    loggingChannel: 'Not Set Up',
+                    ignoreChannels: [],
+                    ignoreCatagories: [],
+                },
+                text: {
+                    enable: false,
+                    loggingChannel: 'Not Set Up',
+                    ignoreChannels: [],
+                    ignoreCatagories: [],
                 },
             },
         };

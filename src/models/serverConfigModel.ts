@@ -47,9 +47,17 @@ interface ServerConfig {
     };
     logging: {
         enable: boolean;
-        loggingChannel: string;
         voice: {
             enable: boolean;
+            loggingChannel: string;
+            ignoreChannels: string[];
+            ignoreCatagories: string[];
+        };
+        text: {
+            enable: boolean;
+            loggingChannel: string;
+            ignoreChannels: string[];
+            ignoreCatagories: string[];
         };
     };
 }
@@ -102,9 +110,17 @@ const serverConfigSchema = new Schema<ServerConfig>({
     },
     logging: {
         enable: { type: Boolean, required: true },
-        loggingChannel: { type: String, required: true },
         voice: {
             enable: { type: Boolean, required: true },
+            loggingChannel: { type: String, required: true },
+            ignoreChannels: { type: [String], required: true },
+            ignoreCatagories: { type: [String], required: true },
+        },
+        text: {
+            enable: { type: Boolean, required: true },
+            loggingChannel: { type: String, required: true },
+            ignoreChannels: { type: [String], required: true },
+            ignoreCatagories: { type: [String], required: true },
         },
     },
 });

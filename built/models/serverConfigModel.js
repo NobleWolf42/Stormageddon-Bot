@@ -47,9 +47,17 @@ const serverConfigSchema = new Schema({
     },
     logging: {
         enable: { type: Boolean, required: true },
-        loggingChannel: { type: String, required: true },
         voice: {
             enable: { type: Boolean, required: true },
+            loggingChannel: { type: String, required: true },
+            ignoreChannels: { type: [String], required: true },
+            ignoreCatagories: { type: [String], required: true },
+        },
+        text: {
+            enable: { type: Boolean, required: true },
+            loggingChannel: { type: String, required: true },
+            ignoreChannels: { type: [String], required: true },
+            ignoreCatagories: { type: [String], required: true },
         },
     },
 });
