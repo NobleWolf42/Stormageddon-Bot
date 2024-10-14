@@ -25,7 +25,7 @@ const changePrefixCommand = {
         return __awaiter(this, void 0, void 0, function* () {
             //#region Escape Logic
             //Checks to see if user is bot admin
-            if (!adminCheck(message, serverConfig)) {
+            if (!adminCheck(message.member, serverConfig)) {
                 errorNoAdmin(message, this.name);
                 return;
             }

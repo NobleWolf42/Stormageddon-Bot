@@ -9,9 +9,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //#region Imports
 import { AuditLogEvent, EmbedBuilder, Events } from 'discord.js';
-import { MongooseServerConfig } from '../models/serverConfigModel.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { LogType } from '../models/loggingModel.js';
+import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 //#region Message Logging
 /**
@@ -222,14 +222,14 @@ function logMessageUpdate(client) {
  */
 function logVoiceUpdate(client) {
     return __awaiter(this, void 0, void 0, function* () {
-        // setup a listener for voice state update
+        //#region Voice Events
         client.on(Events.VoiceStateUpdate, (oldState, newState) => __awaiter(this, void 0, void 0, function* () {
             // extract the member? and the channel
             const newChannel = newState.channel;
             const oldChannel = oldState.channel;
-            var member = null;
-            var guild = null;
-            var connectEvent = null;
+            let member = null;
+            let guild = null;
+            let connectEvent = null;
             //This is horrible, fix me later
             if (!oldChannel) {
                 member = newState.member;
@@ -266,26 +266,30 @@ function logVoiceUpdate(client) {
                 addToLog(LogType.FatalError, 'logOnVoiceUpdate', 'null', guild.name, 'null', 'The logging output channel is not setup.', client);
                 return;
             }
+            const loggingChannel = yield client.channels.fetch(serverConfig.logging.voice.loggingChannel);
+            if (!loggingChannel.isTextBased() || loggingChannel.isDMBased()) {
+                return;
+            }
             // any time voice state updated execute the following code
             if (connectEvent) {
-                console.log(member);
                 const embMsg = new EmbedBuilder().setTitle(`User ${member.user.username} connected!`).setColor('#ffffff').setDescription("test we'll figure it out later ben I'm tired").setTimestamp();
                 // Trigger every time a connection or disconnection is made to a channel
                 // wrap in message (embeds)
                 // post message to channel
-                yield client.channels.cache.get(serverConfig.logging.voice.loggingChannel).send({ embeds: [embMsg] });
+                yield loggingChannel.send({ embeds: [embMsg] });
             }
             else if (connectEvent != null || !connectEvent) {
                 const embMsg = new EmbedBuilder().setTitle(`User ${member.user.username} disconnected!`).setColor('#ffffff').setDescription("test we'll figure it out later ben I'm tired").setTimestamp();
                 // Trigger every time a connection or disconnection is made to a channel
                 // wrap in message (embeds)
                 // post message to channel
-                yield client.channels.cache.get(serverConfig.logging.voice.loggingChannel).send({ embeds: [embMsg] });
+                yield loggingChannel.send({ embeds: [embMsg] });
             }
             else {
                 //more error logging
             }
         }));
+        //#endregion
         console.log('... OK');
     });
 }
@@ -631,41 +635,132 @@ function logAdminUpdate(client) {
         }));
         //#endregion
         //#region Channel Update
-        client.on(Events.ChannelUpdate, (channel) => __awaiter(this, void 0, void 0, function* () {
-            console.log(channel);
-            /*const serverConfig = await MongooseServerConfig.findById(channel.guild.id);
-    
+        client.on(Events.ChannelUpdate, (oldChannel, newChannel) => __awaiter(this, void 0, void 0, function* () {
+            if (oldChannel.isDMBased() || newChannel.isDMBased()) {
+                return;
+            }
+            const serverConfig = yield MongooseServerConfig.findById(oldChannel.guild.id);
             // check the server config and see if they have logging turned on
             // is the bot setup on the server?
             if (serverConfig.setupNeeded) {
                 return;
             }
-    
             // is logging turned on?
             if (!serverConfig.logging.enable || !serverConfig.logging.text.enable) {
                 return;
             }
-    
             // is logging channel defined?
             if (serverConfig.logging.text.loggingChannel == 'Not Set Up') {
-                addToLog(LogType.FatalError, 'logMessageUpdate-delete', 'null', channel.guild.name, 'null', 'The logging output channel is not setup.', client);
+                addToLog(LogType.FatalError, 'logChannelUpdate', 'null', oldChannel.guild.name, 'null', 'The logging output channel is not setup.', client);
                 return;
             }
-    
-            const auditLogFetch = await channel.guild.fetchAuditLogs({ limit: 1, type: AuditLogEvent.ChannelCreate }); // Fetching the audit logs.
+            const auditLogFetch = yield oldChannel.guild.fetchAuditLogs({ limit: 1, type: AuditLogEvent.ChannelUpdate }); // Fetching the audit logs.
             const auditLog = auditLogFetch.entries.first();
-            const logChannel = await client.channels.fetch(serverConfig.logging.text.loggingChannel);
-    
+            const logChannel = yield client.channels.fetch(serverConfig.logging.text.loggingChannel);
             if (!logChannel.isTextBased() || logChannel.isDMBased()) {
                 return;
             }
-    
-            if (!channel.isTextBased()) {
-                return;
+            const fieldsOut = [];
+            const changes = new Map();
+            let changesString = '';
+            if (oldChannel.isTextBased() && newChannel.isTextBased()) {
+                if (oldChannel.name != newChannel.name || oldChannel.nsfw != newChannel.nsfw || oldChannel.rateLimitPerUser != newChannel.rateLimitPerUser) {
+                    changes.set({ name: 'Name: ', data: oldChannel.name, postDataText: '' }, newChannel.name);
+                    changes.set({ name: 'NSFW: ', data: oldChannel.nsfw, postDataText: '' }, newChannel.nsfw);
+                    changes.set({ name: 'Slowmode Delay: ', data: oldChannel.rateLimitPerUser, postDataText: ' seconds' }, newChannel.rateLimitPerUser);
+                    for (const change of changes) {
+                        console.log(change);
+                        if (change[0].data != change[1]) {
+                            changesString += `- ${change[0].name}${change[0].data}${change[0].postDataText} >> ${change[1]}${change[0].postDataText}\n`;
+                        }
+                    }
+                }
             }
-    
-            const fieldsOut: { name: string; value: string; inline: boolean }[] = [];
-    
+            else if (oldChannel.isVoiceBased() && newChannel.isVoiceBased()) {
+                if (oldChannel.name != newChannel.name || oldChannel.nsfw != newChannel.nsfw || oldChannel.rateLimitPerUser != newChannel.rateLimitPerUser) {
+                    changes.set({ name: 'Bitrate: : ', data: oldChannel.bitrate, postDataText: '' }, newChannel.bitrate);
+                    changes.set({ name: 'Name: ', data: oldChannel.name, postDataText: '' }, newChannel.name);
+                    changes.set({ name: 'NSFW: ', data: oldChannel.nsfw, postDataText: '' }, newChannel.nsfw);
+                    changes.set({ name: 'Slowmode Delay: ', data: oldChannel.rateLimitPerUser, postDataText: ' seconds' }, newChannel.rateLimitPerUser);
+                    changes.set({ name: 'User Limit: ', data: oldChannel.userLimit, postDataText: '' }, newChannel.userLimit);
+                    for (const change of changes) {
+                        console.log(change);
+                        if (change[0].data != change[1]) {
+                            changesString += `- ${change[0].name}${change[0].data}${change[0].postDataText} >> ${change[1]}${change[0].postDataText}\n`;
+                        }
+                    }
+                }
+            }
+            if (oldChannel.permissionOverwrites != newChannel.permissionOverwrites) {
+                for (const key of oldChannel.permissionOverwrites.cache.keys()) {
+                    if (!oldChannel.permissionOverwrites.resolve(key) ||
+                        !newChannel.permissionOverwrites.resolve(key) ||
+                        oldChannel.permissionOverwrites.resolve(key).allow.bitfield != newChannel.permissionOverwrites.resolve(key).allow.bitfield ||
+                        oldChannel.permissionOverwrites.resolve(key).deny.bitfield != newChannel.permissionOverwrites.resolve(key).deny.bitfield) {
+                        let roleName = yield oldChannel.guild.roles.fetch(key);
+                        if (roleName == null) {
+                            roleName = yield client.users.fetch(key);
+                        }
+                        changesString += `*${roleName}:*\n`;
+                        if (!oldChannel.permissionOverwrites.resolve(key)) {
+                            const newAllows = newChannel.permissionOverwrites.resolve(key).allow.toArray();
+                            const newDenys = newChannel.permissionOverwrites.resolve(key).deny.toArray();
+                            for (const key2 of newAllows) {
+                                changesString += `- <:NeutralTick:1295215969513377802> >> <:GreenTick:1295216311739351070> ${key2}\n`;
+                            }
+                            for (const key2 of newDenys) {
+                                changesString += `- <:NeutralTick:1295215969513377802> >> <:RedTick:1295216312603250730> ${key2}\n`;
+                            }
+                        }
+                        else if (!newChannel.permissionOverwrites.resolve(key)) {
+                            const oldAllows = oldChannel.permissionOverwrites.resolve(key).allow.toArray();
+                            const oldDenys = oldChannel.permissionOverwrites.resolve(key).deny.toArray();
+                            for (const key2 of oldAllows) {
+                                changesString += `- <:GreenTick:1295216311739351070> >> <:NeutralTick:1295215969513377802> ${key2}\n`;
+                            }
+                            for (const key2 of oldDenys) {
+                                changesString += `- <:RedTick:1295216312603250730> >> <:NeutralTick:1295215969513377802> ${key2}\n`;
+                            }
+                        }
+                        else {
+                            const oldAllows = oldChannel.permissionOverwrites.resolve(key).allow.toArray();
+                            const newAllows = newChannel.permissionOverwrites.resolve(key).allow.toArray();
+                            const oldDenys = oldChannel.permissionOverwrites.resolve(key).deny.toArray();
+                            const newDenys = newChannel.permissionOverwrites.resolve(key).deny.toArray();
+                            const oldAllowsOnly = oldAllows.filter((value) => !newAllows.includes(value));
+                            const newAllowsOnly = newAllows.filter((value) => !oldAllows.includes(value));
+                            const oldDenysOnly = oldDenys.filter((value) => !newDenys.includes(value));
+                            const newDenysOnly = newDenys.filter((value) => !oldDenys.includes(value));
+                            for (const key2 of newAllowsOnly) {
+                                if (oldDenysOnly.includes(key2)) {
+                                    changesString += `- <:RedTick:1295216312603250730> >> <:GreenTick:1295216311739351070> ${key2}\n`;
+                                }
+                                else {
+                                    changesString += `- <:NeutralTick:1295215969513377802> >> <:GreenTick:1295216311739351070> ${key2}\n`;
+                                }
+                            }
+                            for (const key2 of oldAllowsOnly) {
+                                if (!newDenysOnly.includes(key2)) {
+                                    changesString += `- <:GreenTick:1295216311739351070> >> <:NeutralTick:1295215969513377802> ${key2}\n`;
+                                }
+                            }
+                            for (const key2 of newDenysOnly) {
+                                if (oldAllowsOnly.includes(key2)) {
+                                    changesString += `- <:GreenTick:1295216311739351070> >> <:RedTick:1295216312603250730> ${key2}\n`;
+                                }
+                                else {
+                                    changesString += `- <:NeutralTick:1295215969513377802> >> <:RedTick:1295216312603250730> ${key2}\n`;
+                                }
+                            }
+                            for (const key2 of oldDenysOnly) {
+                                if (!newAllowsOnly.includes(key2)) {
+                                    changesString += `- <:RedTick:1295216312603250730> >> <:NeutralTick:1295215969513377802> ${key2}\n`;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             if (auditLogFetch.entries.first()) {
                 fieldsOut.push({
                     name: '**User Name:**',
@@ -674,12 +769,12 @@ function logAdminUpdate(client) {
                 });
                 fieldsOut.push({
                     name: '**Chanel Name:**',
-                    value: channel.name,
+                    value: newChannel.name,
                     inline: true,
                 });
                 fieldsOut.push({
-                    name: '**Assigned:**',
-                    value: `Name: ${channel.name}\nNSFW: ${channel.nsfw}\nSlowmode Delay: ${channel.rateLimitPerUser} seconds`,
+                    name: '**Changes:**',
+                    value: changesString,
                     inline: true,
                 });
                 fieldsOut.push({
@@ -689,7 +784,7 @@ function logAdminUpdate(client) {
                 });
                 fieldsOut.push({
                     name: '**Channel Mention:**',
-                    value: `${channel}`,
+                    value: `${newChannel}`,
                     inline: true,
                 });
                 fieldsOut.push({
@@ -704,18 +799,24 @@ function logAdminUpdate(client) {
                 });
                 fieldsOut.push({
                     name: '**Channel ID:**',
-                    value: channel.id,
+                    value: newChannel.id,
                     inline: true,
                 });
-            } else {
+                fieldsOut.push({
+                    name: ' ',
+                    value: ' ',
+                    inline: true,
+                });
+            }
+            else {
                 fieldsOut.push({
                     name: '**Chanel Name:**',
-                    value: channel.name,
+                    value: newChannel.name,
                     inline: true,
                 });
                 fieldsOut.push({
-                    name: '**Assigned:**',
-                    value: `Name: ${channel.name}\nNSFW: ${channel.nsfw}\nSlowmode Delay: ${channel.rateLimitPerUser} seconds`,
+                    name: '**Old Assigned:**',
+                    value: changesString,
                     inline: true,
                 });
                 fieldsOut.push({
@@ -725,7 +826,7 @@ function logAdminUpdate(client) {
                 });
                 fieldsOut.push({
                     name: '**Channel Mention:**',
-                    value: `${channel}`,
+                    value: `${newChannel}`,
                     inline: true,
                 });
                 fieldsOut.push({
@@ -740,17 +841,28 @@ function logAdminUpdate(client) {
                 });
                 fieldsOut.push({
                     name: '**Channel ID:**',
-                    value: channel.id,
+                    value: newChannel.id,
+                    inline: true,
+                });
+                fieldsOut.push({
+                    name: ' ',
+                    value: ' ',
+                    inline: true,
+                });
+                fieldsOut.push({
+                    name: ' ',
+                    value: ' ',
                     inline: true,
                 });
             }
-    
-            const embMsg = new EmbedBuilder().setColor('#0000ff').setThumbnail(channel.guild.iconURL()).setTitle(`Channel Created`).setFields(fieldsOut).setTimestamp();
-            logChannel.send({ embeds: [embMsg] });*/
+            if (changesString != '') {
+                const embMsg = new EmbedBuilder().setColor('#0000ff').setThumbnail(newChannel.guild.iconURL()).setTitle(`Channel Changed`).setFields(fieldsOut).setTimestamp();
+                logChannel.send({ embeds: [embMsg] });
+            }
         }));
         //#endregion
         console.log('... OK');
     });
 }
 //#endregion
-export { logMessageUpdate, logVoiceUpdate, logAdminUpdate };
+export { logAdminUpdate, logMessageUpdate, logVoiceUpdate };

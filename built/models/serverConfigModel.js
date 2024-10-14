@@ -61,7 +61,7 @@ const serverConfigSchema = new Schema({
         },
     },
 });
-const MongooseServerConfig = model('Server-Config', serverConfigSchema);
+const MongooseServerConfig = model('ServerConfig', serverConfigSchema);
 //#endregion
 //#region exports
 export { MongooseServerConfig };

@@ -17,7 +17,7 @@ const changePrefixCommand: Command = {
     async execute(message, args, _client, _distube, _collections, serverConfig) {
         //#region Escape Logic
         //Checks to see if user is bot admin
-        if (!adminCheck(message, serverConfig)) {
+        if (!adminCheck(message.member, serverConfig)) {
             errorNoAdmin(message, this.name);
             return;
         }

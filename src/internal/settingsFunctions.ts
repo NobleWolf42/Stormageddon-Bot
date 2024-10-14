@@ -1047,7 +1047,7 @@ async function setup(message: Message | Interaction, serverConfig: ServerConfig,
  */
 async function buildConfigFile(config: ServerConfig, serverID: string) {
     try {
-        const update = {
+        const update: ServerConfig = {
             _id: serverID,
             guildID: serverID,
             setupNeeded: config.setupNeeded,
@@ -1090,9 +1090,17 @@ async function buildConfigFile(config: ServerConfig, serverID: string) {
             },
             logging: {
                 enable: config.logging.enable,
-                loggingChannel: config.logging.loggingChannel,
                 voice: {
                     enable: config.logging.voice.enable,
+                    loggingChannel: config.logging.voice.loggingChannel,
+                    ignoreCatagories: config.logging.voice.ignoreCatagories,
+                    ignoreChannels: config.logging.voice.ignoreChannels,
+                },
+                text: {
+                    enable: config.logging.text.enable,
+                    loggingChannel: config.logging.text.loggingChannel,
+                    ignoreCatagories: config.logging.text.ignoreCatagories,
+                    ignoreChannels: config.logging.text.ignoreChannels,
                 },
             },
         };
