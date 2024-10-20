@@ -117,7 +117,7 @@ const musicSlashCommand: SlashCommand = {
             return;
         }
 
-        if (serverConfig.music.textChannel != channel.name) {
+        if (serverConfig.music.textChannel != channel.id) {
             warnWrongChannel(interaction, serverConfig.music.textChannel, musicSlashCommand.data.name);
             return;
         }

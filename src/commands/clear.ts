@@ -24,7 +24,7 @@ const clearCommand: Command = {
         }
 
         //Checks to see if user is bot mod
-        if (!modCheck(message, serverConfig)) {
+        if (!modCheck(message.member, serverConfig)) {
             errorNoMod(message, this.name);
             return;
         }

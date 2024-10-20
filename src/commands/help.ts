@@ -18,7 +18,7 @@ const helpCommand: Command = {
         'Displays Help Message, specifying a page will show that help info, including a listing of all help pages. Using the **"All"** page will display all commands, the **"DM"** page will display all commands that can be Direct Messaged to the bot, and the **"Server"** page will display all commands that can be used in a discord server. (Works in Direct Messages too.)',
     async execute(message, args, _client, _distube, collections, serverConfig) {
         const lowerArgs = args.map((v) => v.toLowerCase());
-        const adminTF = adminCheck(message, serverConfig);
+        const adminTF = adminCheck(message.member, serverConfig);
         const commands = collections.commands;
         let commandClasses: string[] = [];
         let helpMessageCommands: Command[] = [];

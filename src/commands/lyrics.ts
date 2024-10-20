@@ -31,7 +31,7 @@ const lyricsCommand: Command = {
             return;
         }
 
-        if (serverConfig.music.textChannel != channel.name) {
+        if (serverConfig.music.textChannel != channel.id) {
             warnWrongChannel(message, serverConfig.music.textChannel, this.name);
         }
 

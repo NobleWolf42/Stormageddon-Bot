@@ -341,6 +341,7 @@ function logAdminUpdate(client) {
     return __awaiter(this, void 0, void 0, function* () {
         //#region Channel Creation
         client.on(Events.ChannelCreate, (channel) => __awaiter(this, void 0, void 0, function* () {
+            console.log(channel);
             const serverConfig = yield MongooseServerConfig.findById(channel.guild.id);
             // check the server config and see if they have logging turned on
             // is the bot setup on the server?
@@ -348,17 +349,17 @@ function logAdminUpdate(client) {
                 return;
             }
             // is logging turned on?
-            if (!serverConfig.logging.enable || !serverConfig.logging.text.enable) {
+            if (!serverConfig.logging.enable || !serverConfig.logging.admin.enable) {
                 return;
             }
             // is logging channel defined?
-            if (serverConfig.logging.text.loggingChannel == 'Not Set Up') {
+            if (serverConfig.logging.admin.loggingChannel == 'Not Set Up') {
                 addToLog(LogType.FatalError, 'logMessageUpdate-delete', 'null', channel.guild.name, 'null', 'The logging output channel is not setup.', client);
                 return;
             }
             const auditLogFetch = yield channel.guild.fetchAuditLogs({ limit: 1, type: AuditLogEvent.ChannelCreate }); // Fetching the audit logs.
             const auditLog = auditLogFetch.entries.first();
-            const logChannel = yield client.channels.fetch(serverConfig.logging.text.loggingChannel);
+            const logChannel = yield client.channels.fetch(serverConfig.logging.admin.loggingChannel);
             if (!logChannel.isTextBased() || logChannel.isDMBased()) {
                 return;
             }
@@ -571,17 +572,17 @@ function logAdminUpdate(client) {
                 return;
             }
             // is logging turned on?
-            if (!serverConfig.logging.enable || !serverConfig.logging.text.enable) {
+            if (!serverConfig.logging.enable || !serverConfig.logging.admin.enable) {
                 return;
             }
             // is logging channel defined?
-            if (serverConfig.logging.text.loggingChannel == 'Not Set Up') {
+            if (serverConfig.logging.admin.loggingChannel == 'Not Set Up') {
                 addToLog(LogType.FatalError, 'logMessageUpdate-delete', 'null', channel.guild.name, 'null', 'The logging output channel is not setup.', client);
                 return;
             }
             const auditLogFetch = yield channel.guild.fetchAuditLogs({ limit: 1, type: AuditLogEvent.ChannelDelete }); // Fetching the audit logs.
             const auditLog = auditLogFetch.entries.first();
-            const logChannel = yield client.channels.fetch(serverConfig.logging.text.loggingChannel);
+            const logChannel = yield client.channels.fetch(serverConfig.logging.admin.loggingChannel);
             if (!logChannel.isTextBased() || logChannel.isDMBased()) {
                 return;
             }
@@ -684,17 +685,17 @@ function logAdminUpdate(client) {
                 return;
             }
             // is logging turned on?
-            if (!serverConfig.logging.enable || !serverConfig.logging.text.enable) {
+            if (!serverConfig.logging.enable || !serverConfig.logging.admin.enable) {
                 return;
             }
             // is logging channel defined?
-            if (serverConfig.logging.text.loggingChannel == 'Not Set Up') {
+            if (serverConfig.logging.admin.loggingChannel == 'Not Set Up') {
                 addToLog(LogType.FatalError, 'logChannelUpdate', 'null', oldChannel.guild.name, 'null', 'The logging output channel is not setup.', client);
                 return;
             }
             const auditLogFetch = yield oldChannel.guild.fetchAuditLogs({ limit: 1, type: AuditLogEvent.ChannelUpdate }); // Fetching the audit logs.
             const auditLog = auditLogFetch.entries.first();
-            const logChannel = yield client.channels.fetch(serverConfig.logging.text.loggingChannel);
+            const logChannel = yield client.channels.fetch(serverConfig.logging.admin.loggingChannel);
             if (!logChannel.isTextBased() || logChannel.isDMBased()) {
                 return;
             }

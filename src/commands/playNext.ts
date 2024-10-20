@@ -1,7 +1,7 @@
 //#region Imports
 import { Message } from 'discord.js';
-import { errorCustom, errorNoDJ, errorNoMod, warnCustom, warnDisabled, warnWrongChannel } from '../helpers/embedMessages.js';
-import { djCheck, modCheck } from '../helpers/userPermissions.js';
+import { errorCustom, errorNoMod, warnCustom, warnDisabled, warnWrongChannel } from '../helpers/embedMessages.js';
+import { modCheck } from '../helpers/userPermissions.js';
 import { Command } from '../models/commandModel.js';
 //#endregion
 
@@ -28,19 +28,14 @@ const playNextCommand: Command = {
             return warnDisabled(message, 'music', this.name);
         }
 
-        //Checks to see if the user has DJ access
-        if (!djCheck(message, serverConfig)) {
-            return errorNoDJ(message, this.name);
+        //Checks to see if user is a bot mod
+        if (!modCheck(message.member, serverConfig)) {
+            return errorNoMod(message, this.name);
         }
 
         //Checks to see if the message was sent in the correct channel
-        if (serverConfig.music.textChannel != channel.name) {
+        if (serverConfig.music.textChannel != channel.id) {
             return warnWrongChannel(message, serverConfig.music.textChannel, this.name);
-        }
-
-        //Checks to see if user is a bot mod
-        if (!modCheck(message, serverConfig)) {
-            return errorNoMod(message, this.name);
         }
 
         const voiceChannel = message.member.voice.channel;

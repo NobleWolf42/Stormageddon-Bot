@@ -66,7 +66,7 @@ const createRoleMessageCommand = {
                 return;
             }
             // Checks that the user is an admin
-            if (!adminCheck(message, serverConfig)) {
+            if (!adminCheck(message.member, serverConfig)) {
                 errorNoAdmin(message, this.name);
                 return;
             }

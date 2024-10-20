@@ -101,7 +101,7 @@ const musicSlashCommand = {
             if (channel.isDMBased() || !channel.isTextBased()) {
                 return;
             }
-            if (serverConfig.music.textChannel != channel.name) {
+            if (serverConfig.music.textChannel != channel.id) {
                 warnWrongChannel(interaction, serverConfig.music.textChannel, musicSlashCommand.data.name);
                 return;
             }

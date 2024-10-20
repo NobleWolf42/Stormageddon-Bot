@@ -20,7 +20,7 @@ const sayCommand: Command = {
             return;
         }
 
-        if (!adminCheck(message, serverConfig)) {
+        if (!adminCheck(message.member, serverConfig)) {
             errorNoAdmin(message, this.name);
             return;
         }

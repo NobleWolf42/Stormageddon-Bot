@@ -1,7 +1,7 @@
 //#region Dependencies
 import { SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import { errorCustom } from '../../helpers/embedSlashMessages.js';
-import { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame } from '../../internal/settingsFunctions.js';
+import { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame, setLogging } from '../../internal/settingsFunctions.js';
 import { SlashCommand } from '../../models/slashCommandModel.js';
 import { MongooseServerConfig } from '../../models/serverConfigModel.js';
 //#endregion
@@ -22,6 +22,7 @@ const setSlashCommand: SlashCommand = {
                     name: 'Join To Create Voice Channel',
                     value: 'jointocreatevc',
                 },
+                { name: 'Logging', value: 'logging' },
                 { name: 'ModMail', value: 'modmail' },
                 { name: 'Music', value: 'music' }
             )
@@ -62,6 +63,10 @@ const setSlashCommand: SlashCommand = {
 
             case 'blame':
                 await setBlame(interaction, serverConfig);
+                break;
+
+            case 'logging':
+                await setLogging(interaction, serverConfig);
                 break;
 
             default:

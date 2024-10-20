@@ -31,11 +31,11 @@ const pauseCommand = {
                 return warnDisabled(message, 'music', this.name);
             }
             //Checks to see if the user has DJ access
-            if (!djCheck(message, serverConfig)) {
+            if (!djCheck(message.member, serverConfig)) {
                 return errorNoDJ(message, this.name);
             }
             //Checks to see if the message was sent in the correct channel
-            if (serverConfig.music.textChannel != channel.name) {
+            if (serverConfig.music.textChannel != channel.id) {
                 return warnWrongChannel(message, serverConfig.music.textChannel, this.name);
             }
             const voiceChannel = message.member.voice.channel;

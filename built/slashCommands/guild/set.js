@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //#region Dependencies
 import { SlashCommandBuilder, PermissionFlagsBits } from 'discord.js';
 import { errorCustom } from '../../helpers/embedSlashMessages.js';
-import { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame } from '../../internal/settingsFunctions.js';
+import { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame, setLogging } from '../../internal/settingsFunctions.js';
 import { MongooseServerConfig } from '../../models/serverConfigModel.js';
 //#endregion
 //#region This exports the set command with the information about it
@@ -22,7 +22,7 @@ const setSlashCommand = {
         .addStringOption((option) => option.setName('setting').setDescription('Pick the setting to edit.').setRequired(true).setChoices({ name: 'Auto Role', value: 'autorole' }, { name: 'Blame', value: 'blame' }, { name: 'General', value: 'general' }, { name: 'Join Role', value: 'joinrole' }, {
         name: 'Join To Create Voice Channel',
         value: 'jointocreatevc',
-    }, { name: 'ModMail', value: 'modmail' }, { name: 'Music', value: 'music' })),
+    }, { name: 'Logging', value: 'logging' }, { name: 'ModMail', value: 'modmail' }, { name: 'Music', value: 'music' })),
     execute(client, interaction) {
         return __awaiter(this, void 0, void 0, function* () {
             //#region Escape Logic
@@ -52,6 +52,9 @@ const setSlashCommand = {
                     break;
                 case 'blame':
                     yield setBlame(interaction, serverConfig);
+                    break;
+                case 'logging':
+                    yield setLogging(interaction, serverConfig);
                     break;
                 default:
                     errorCustom(interaction, 'Not a valid settings category!', setSlashCommand.data.name, client);

@@ -7,8 +7,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { errorCustom, errorNoDJ, errorNoMod, warnCustom, warnDisabled, warnWrongChannel } from '../helpers/embedMessages.js';
-import { djCheck, modCheck } from '../helpers/userPermissions.js';
+import { errorCustom, errorNoMod, warnCustom, warnDisabled, warnWrongChannel } from '../helpers/embedMessages.js';
+import { modCheck } from '../helpers/userPermissions.js';
 //#endregion
 //#region This create the playnext command with the information about it
 const playNextCommand = {
@@ -31,17 +31,13 @@ const playNextCommand = {
             if (!serverConfig.music.enable) {
                 return warnDisabled(message, 'music', this.name);
             }
-            //Checks to see if the user has DJ access
-            if (!djCheck(message, serverConfig)) {
-                return errorNoDJ(message, this.name);
+            //Checks to see if user is a bot mod
+            if (!modCheck(message.member, serverConfig)) {
+                return errorNoMod(message, this.name);
             }
             //Checks to see if the message was sent in the correct channel
-            if (serverConfig.music.textChannel != channel.name) {
+            if (serverConfig.music.textChannel != channel.id) {
                 return warnWrongChannel(message, serverConfig.music.textChannel, this.name);
-            }
-            //Checks to see if user is a bot mod
-            if (!modCheck(message, serverConfig)) {
-                return errorNoMod(message, this.name);
             }
             const voiceChannel = message.member.voice.channel;
             const queue = distube.getQueue(message.guildId);

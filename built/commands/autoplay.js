@@ -34,12 +34,12 @@ const autoPlayCommand = {
                 return;
             }
             //Checks to see if the user has DJ access
-            if (!djCheck(message, serverConfig)) {
+            if (!djCheck(message.member, serverConfig)) {
                 errorNoDJ(message, this.name);
                 return;
             }
             //Checks to see if the message was sent in the correct channel
-            if (serverConfig.music.textChannel != channel.name) {
+            if (serverConfig.music.textChannel != channel.id) {
                 warnWrongChannel(message, serverConfig.music.textChannel, this.name);
                 return;
             }

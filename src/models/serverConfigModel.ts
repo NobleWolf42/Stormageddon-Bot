@@ -59,6 +59,12 @@ interface ServerConfig {
             ignoreChannels: string[];
             ignoreCatagories: string[];
         };
+        admin: {
+            enable: boolean;
+            loggingChannel: string;
+            ignoreChannels: string[];
+            ignoreCatagories: string[];
+        };
         user: {
             enable: boolean;
             loggingChannel: string;
@@ -121,6 +127,12 @@ const serverConfigSchema = new Schema<ServerConfig>({
             ignoreCatagories: { type: [String], required: true },
         },
         text: {
+            enable: { type: Boolean, required: true },
+            loggingChannel: { type: String, required: true },
+            ignoreChannels: { type: [String], required: true },
+            ignoreCatagories: { type: [String], required: true },
+        },
+        admin: {
             enable: { type: Boolean, required: true },
             loggingChannel: { type: String, required: true },
             ignoreChannels: { type: [String], required: true },

@@ -129,9 +129,9 @@ function autoRoleListener(client) {
         //#region Listens for a autoRole message to be deleted
         client.on(Events.MessageDelete, (event) => __awaiter(this, void 0, void 0, function* () {
             //This escapes if the deleted message was in a vc or dm, or not authored by this bot
-            // if (event.channel.isDMBased() || !event.author || event.author == undefined || event.author.id != process.env.clientID) {
-            //     return;
-            // }
+            if (event.channel.isDMBased() || !event.author || event.author == undefined || event.author.id != process.env.clientID) {
+                return;
+            }
             //Pulls message listening info from db
             const botConfig = yield MongooseAutoRoleList.findById(event.guildId).exec();
             let needsUpdate = false;

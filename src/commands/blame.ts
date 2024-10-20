@@ -34,7 +34,7 @@ const blameCommand: Command = {
             //#region Adds a person to the blame rotation
             case BlameSubCommands.Add: {
                 //Checks to see the the user is a bot admin
-                if (!adminCheck(message, serverConfig)) {
+                if (!adminCheck(message.member, serverConfig)) {
                     errorNoAdmin(message, this.name + oldSubCommand);
                     return;
                 }
@@ -89,7 +89,7 @@ const blameCommand: Command = {
             //#region Adds a person to the permanent blame list
             case BlameSubCommands.AddPerm: {
                 //Checks to see if the user is a bot admin
-                if (!adminCheck(message, serverConfig)) {
+                if (!adminCheck(message.member, serverConfig)) {
                     errorNoAdmin(message, this.name + oldSubCommand);
                     return;
                 }
@@ -143,7 +143,7 @@ const blameCommand: Command = {
             //#region Removes a person from the blame rotation
             case BlameSubCommands.Remove: {
                 //Checks to see if the user is a bot admin
-                if (!adminCheck(message, serverConfig)) {
+                if (!adminCheck(message.member, serverConfig)) {
                     errorNoAdmin(message, this.name + oldSubCommand);
                     return;
                 }
@@ -197,7 +197,7 @@ const blameCommand: Command = {
             //#region Removes a person from the permanent blame list
             case BlameSubCommands.RemovePerm: {
                 //Checks to see if the user is a bot admin
-                if (!adminCheck(message, serverConfig)) {
+                if (!adminCheck(message.member, serverConfig)) {
                     errorNoAdmin(message, this.name + oldSubCommand);
                     return;
                 }
@@ -251,7 +251,7 @@ const blameCommand: Command = {
             //#region Send the list to the user
             case BlameSubCommands.List: {
                 //Checks to see if the user is a bot admin
-                if (!adminCheck(message, serverConfig)) {
+                if (!adminCheck(message.member, serverConfig)) {
                     errorNoAdmin(message, this.name + oldSubCommand);
                     return;
                 }

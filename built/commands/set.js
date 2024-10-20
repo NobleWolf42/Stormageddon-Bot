@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //#region Imports
 import { PermissionFlagsBits } from 'discord.js';
 import { errorNoServerAdmin, errorCustom } from '../helpers/embedMessages.js';
-import { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame } from '../internal/settingsFunctions.js';
+import { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame, setLogging } from '../internal/settingsFunctions.js';
 //#endregion
 //#region This creates the set command with the information about it
 const setCommand = {
@@ -48,6 +48,9 @@ const setCommand = {
                     break;
                 case 'blame':
                     yield setBlame(message, serverConfig);
+                    break;
+                case 'logging':
+                    yield setLogging(message, serverConfig);
                     break;
                 default:
                     errorCustom(message, 'Not a valid settings category!', this.name, client);

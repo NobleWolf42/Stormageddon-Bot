@@ -19,7 +19,7 @@ const enableButton = new ButtonBuilder().setCustomId('enable').setLabel('Enable'
 const disableButton = new ButtonBuilder().setCustomId('disable').setLabel('Disable').setStyle(ButtonStyle.Danger);
 const enableDisableButtons = new ActionRowBuilder().addComponents(enableButton, disableButton);
 //#endregion
-//#region modMail settings
+//#region ModMail settings
 /**
  * This function runs the setup for the ModMail feature.
  * @param message - Discord.js Message Object
@@ -314,7 +314,7 @@ function setAutoRole(message, serverConfig, client) {
     });
 }
 //#endregion
-//#region Function that sets joinRole settings
+//#region joinRole settings
 /**
  * This function runs the setup for the JoinRole feature.
  * @param message - Discord.js Message Object
@@ -340,7 +340,7 @@ function setJoinRole(message, serverConfig) {
                 case 'enable': {
                     JoinRoleSetUpMessage.edit({ components: [] });
                     serverConfig.joinRole.enable = true;
-                    const embMsg2 = new EmbedBuilder().setTitle('JoinRole Setup').setDescription('Select a role to give upon joining the server..').setColor('#F5820F');
+                    const embMsg2 = new EmbedBuilder().setTitle('JoinRole Setup').setDescription('Select a role to give upon joining the server.').setColor('#F5820F');
                     const roleMenu = new RoleSelectMenuBuilder().setCustomId('joinRoleRole').setMinValues(1).setMaxValues(1);
                     const JoinRoleRoleMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(roleMenu)] });
                     yield JoinRoleRoleMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
@@ -372,7 +372,7 @@ function setJoinRole(message, serverConfig) {
     });
 }
 //#endregion
-//#region Function that sets joinToCreateVC settings
+//#region JoinToCreateVC settings
 /**
  * This function runs the setup for the joinToCreateVC feature.
  * @param message - Discord.js Message Object
@@ -398,7 +398,10 @@ function setJoinToCreateVC(message, serverConfig) {
                 case 'enable': {
                     JTCVCSetUpMessage.edit({ components: [] });
                     serverConfig.JTCVC.enable = true;
-                    const embMsg2 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Select a role to give upon joining the server..').setColor('#F5820F');
+                    const embMsg2 = new EmbedBuilder()
+                        .setTitle('Join to Create Voice Channel Setup')
+                        .setDescription('Select a channel to join for the bot to create a new voice channel.')
+                        .setColor('#F5820F');
                     const channelMenu = new ChannelSelectMenuBuilder().setCustomId('JTVCChannel').setMinValues(1).setMaxValues(1).setChannelTypes(ChannelType.GuildVoice);
                     const JTCVCChannelMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(channelMenu)] });
                     yield JTCVCChannelMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
@@ -430,7 +433,7 @@ function setJoinToCreateVC(message, serverConfig) {
     });
 }
 //#endregion
-//#region Function that sets music settings
+//#region Music settings
 /**
  * This function runs the setup for the Music feature.
  * @param message - Discord.js Message Object
@@ -443,7 +446,7 @@ function setMusic(message, serverConfig) {
             return;
         }
         const serverID = message.guild.id;
-        const embMsg1 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+        const embMsg1 = new EmbedBuilder().setTitle('Music Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
         const MusicSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
         yield MusicSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
             if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
@@ -456,7 +459,7 @@ function setMusic(message, serverConfig) {
                 case 'enable': {
                     MusicSetUpMessage.edit({ components: [] });
                     serverConfig.music.enable = true;
-                    const embMsg2 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Select a role to give upon joining the server..').setColor('#F5820F');
+                    const embMsg2 = new EmbedBuilder().setTitle('Music Setup').setDescription('Select a channel for the music text events.').setColor('#F5820F');
                     const channelMenu = new ChannelSelectMenuBuilder().setCustomId('musicChannel').setMinValues(1).setMaxValues(1).setChannelTypes(ChannelType.GuildText);
                     const musicChannelMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(channelMenu)] });
                     yield musicChannelMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
@@ -527,12 +530,12 @@ function setMusic(message, serverConfig) {
             }
         }));
         yield buildConfigFile(serverConfig, serverID);
-        const embMsg5 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Join to Create Voice Channel Setup Complete!').setColor('#355E3B');
+        const embMsg5 = new EmbedBuilder().setTitle('Music Setup').setDescription('Music Setup Complete!').setColor('#355E3B');
         channel.send({ embeds: [embMsg5] });
     });
 }
 //#endregion
-//#region Function that sets general settings
+//#region General settings
 /**
  * This function runs the setup for the general features.
  * @param message - Discord.js Message Object
@@ -630,12 +633,311 @@ function setGeneral(message, serverConfig) {
             }
         }));
         yield buildConfigFile(serverConfig, serverID);
-        const embMsg5 = new EmbedBuilder().setTitle('Join to Create Voice Channel Setup').setDescription('Join to Create Voice Channel Setup Complete!').setColor('#355E3B');
+        const embMsg5 = new EmbedBuilder().setTitle('General Setup').setDescription('General Setup Complete!').setColor('#355E3B');
         channel.send({ embeds: [embMsg5] });
     });
 }
 //#endregion
-//#region Function that sets blame settings
+//#region Logging settings
+//#region Main set logging
+/**
+ * This function runs the setup for the logging features.
+ * @param message - Discord.js Message Object
+ * @param serverConfig - serverConfig from the server running the command
+ */
+function setLogging(message, serverConfig) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
+        const serverID = message.guild.id;
+        const embMsg1 = new EmbedBuilder().setTitle('Logging Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+        const LoggingSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
+        yield LoggingSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            switch (interaction.customId) {
+                case 'enable': {
+                    LoggingSetUpMessage.edit({ components: [] });
+                    serverConfig.logging.enable = true;
+                    yield setLoggingVoice(message, serverConfig);
+                    yield setLoggingText(message, serverConfig);
+                    yield setLoggingAdmin(message, serverConfig);
+                    yield setLoggingUser(message, serverConfig);
+                    break;
+                }
+                case 'disable': {
+                    LoggingSetUpMessage.edit({ components: [] });
+                    serverConfig.logging.enable = false;
+                    serverConfig.logging.voice = {
+                        enable: false,
+                        loggingChannel: 'Not Set Up',
+                        ignoreChannels: [],
+                        ignoreCatagories: [],
+                    };
+                    serverConfig.logging.text = {
+                        enable: false,
+                        loggingChannel: 'Not Set Up',
+                        ignoreChannels: [],
+                        ignoreCatagories: [],
+                    };
+                    serverConfig.logging.admin = {
+                        enable: false,
+                        loggingChannel: 'Not Set Up',
+                        ignoreChannels: [],
+                        ignoreCatagories: [],
+                    };
+                    serverConfig.logging.user = {
+                        enable: false,
+                        loggingChannel: 'Not Set Up',
+                    };
+                    break;
+                }
+            }
+        }));
+        yield buildConfigFile(serverConfig, serverID);
+        const embMsg2 = new EmbedBuilder().setTitle('Logging Setup').setDescription('Logging Setup Complete!').setColor('#355E3B');
+        channel.send({ embeds: [embMsg2] });
+    });
+}
+//#endregion
+//#region Set voice logging
+/**
+ * This function runs the setup for the voice logging features.
+ * @param message - Discord.js Message Object
+ * @param serverConfig - serverConfig from the server running the command
+ */
+function setLoggingVoice(message, serverConfig) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
+        const embMsg1 = new EmbedBuilder().setTitle('Voice Logging Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+        const LoggingVoiceSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
+        yield LoggingVoiceSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            switch (interaction.customId) {
+                case 'enable': {
+                    LoggingVoiceSetUpMessage.edit({ components: [] });
+                    serverConfig.logging.voice.enable = true;
+                    const embMsg2 = new EmbedBuilder().setTitle('Voice Logging Setup').setDescription('Select a channel for the voice logs.').setColor('#F5820F');
+                    const channelMenu = new ChannelSelectMenuBuilder().setCustomId('voiceLoggingChannel').setMinValues(1).setMaxValues(1).setChannelTypes(ChannelType.GuildText);
+                    const VoiceLoggingChannelMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(channelMenu)] });
+                    yield VoiceLoggingChannelMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        if (interaction.customId != 'voiceLoggingChannel') {
+                            return;
+                        }
+                        VoiceLoggingChannelMessage.edit({ components: [] });
+                        serverConfig.logging.voice.loggingChannel = interaction.values[0];
+                    }));
+                    break;
+                }
+                case 'disable': {
+                    LoggingVoiceSetUpMessage.edit({ components: [] });
+                    serverConfig.logging.voice = {
+                        enable: false,
+                        loggingChannel: 'Not Set Up',
+                        ignoreChannels: [],
+                        ignoreCatagories: [],
+                    };
+                    break;
+                }
+            }
+        }));
+    });
+}
+//#endregion
+//#region Set text logging
+/**
+ * This function runs the setup for the text logging features.
+ * @param message - Discord.js Message Object
+ * @param serverConfig - serverConfig from the server running the command
+ */
+function setLoggingText(message, serverConfig) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
+        const embMsg1 = new EmbedBuilder().setTitle('Text Logging Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+        const LoggingTextSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
+        yield LoggingTextSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            switch (interaction.customId) {
+                case 'enable': {
+                    LoggingTextSetUpMessage.edit({ components: [] });
+                    serverConfig.logging.text.enable = true;
+                    const embMsg2 = new EmbedBuilder().setTitle('Text Logging Setup').setDescription('Select a channel for the text logs.').setColor('#F5820F');
+                    const channelMenu = new ChannelSelectMenuBuilder().setCustomId('textLoggingChannel').setMinValues(1).setMaxValues(1).setChannelTypes(ChannelType.GuildText);
+                    const TextLoggingChannelMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(channelMenu)] });
+                    yield TextLoggingChannelMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        if (interaction.customId != 'textLoggingChannel') {
+                            return;
+                        }
+                        TextLoggingChannelMessage.edit({ components: [] });
+                        serverConfig.logging.text.loggingChannel = interaction.values[0];
+                    }));
+                    break;
+                }
+                case 'disable': {
+                    LoggingTextSetUpMessage.edit({ components: [] });
+                    serverConfig.logging.text = {
+                        enable: false,
+                        loggingChannel: 'Not Set Up',
+                        ignoreChannels: [],
+                        ignoreCatagories: [],
+                    };
+                    break;
+                }
+            }
+        }));
+    });
+}
+//#endregion
+//#region Set admin logging
+/**
+ * This function runs the setup for the admin logging features.
+ * @param message - Discord.js Message Object
+ * @param serverConfig - serverConfig from the server running the command
+ */
+function setLoggingAdmin(message, serverConfig) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
+        const embMsg1 = new EmbedBuilder().setTitle('Admin Logging Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+        const LoggingAdminSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
+        yield LoggingAdminSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            switch (interaction.customId) {
+                case 'enable': {
+                    LoggingAdminSetUpMessage.edit({ components: [] });
+                    serverConfig.logging.admin.enable = true;
+                    const embMsg2 = new EmbedBuilder().setTitle('Admin Logging Setup').setDescription('Select a channel for the admin logs.').setColor('#F5820F');
+                    const channelMenu = new ChannelSelectMenuBuilder().setCustomId('adminLoggingChannel').setMinValues(1).setMaxValues(1).setChannelTypes(ChannelType.GuildText);
+                    const AdminLoggingChannelMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(channelMenu)] });
+                    yield AdminLoggingChannelMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        if (interaction.customId != 'adminLoggingChannel') {
+                            return;
+                        }
+                        AdminLoggingChannelMessage.edit({ components: [] });
+                        serverConfig.logging.admin.loggingChannel = interaction.values[0];
+                    }));
+                    break;
+                }
+                case 'disable': {
+                    LoggingAdminSetUpMessage.edit({ components: [] });
+                    serverConfig.logging.admin = {
+                        enable: false,
+                        loggingChannel: 'Not Set Up',
+                        ignoreChannels: [],
+                        ignoreCatagories: [],
+                    };
+                    break;
+                }
+            }
+        }));
+    });
+}
+//#endregion
+//#region Set user logging
+/**
+ * This function runs the setup for the user logging features.
+ * @param message - Discord.js Message Object
+ * @param serverConfig - serverConfig from the server running the command
+ */
+function setLoggingUser(message, serverConfig) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const channel = message.channel;
+        if (channel.isDMBased()) {
+            return;
+        }
+        const embMsg1 = new EmbedBuilder().setTitle('User Logging Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
+        const LoggingUserSetUpMessage = yield channel.send({ embeds: [embMsg1], components: [enableDisableButtons] });
+        yield LoggingUserSetUpMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+            if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                return;
+            }
+            if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                return;
+            }
+            switch (interaction.customId) {
+                case 'enable': {
+                    LoggingUserSetUpMessage.edit({ components: [] });
+                    serverConfig.logging.user.enable = true;
+                    const embMsg2 = new EmbedBuilder().setTitle('User Logging Setup').setDescription('Select a channel for the user logs.').setColor('#F5820F');
+                    const channelMenu = new ChannelSelectMenuBuilder().setCustomId('userLoggingChannel').setMinValues(1).setMaxValues(1).setChannelTypes(ChannelType.GuildText);
+                    const UserLoggingChannelMessage = yield channel.send({ embeds: [embMsg2], components: [new ActionRowBuilder().addComponents(channelMenu)] });
+                    yield UserLoggingChannelMessage.awaitMessageComponent().then((interaction) => __awaiter(this, void 0, void 0, function* () {
+                        if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
+                            return;
+                        }
+                        if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
+                            return;
+                        }
+                        if (interaction.customId != 'userLoggingChannel') {
+                            return;
+                        }
+                        UserLoggingChannelMessage.edit({ components: [] });
+                        serverConfig.logging.user.loggingChannel = interaction.values[0];
+                    }));
+                    break;
+                }
+                case 'disable': {
+                    LoggingUserSetUpMessage.edit({ components: [] });
+                    serverConfig.logging.user = {
+                        enable: false,
+                        loggingChannel: 'Not Set Up',
+                    };
+                    break;
+                }
+            }
+        }));
+    });
+}
+//#endregion
+//#endregion
+//#region Blame settings
 /**
  * This function runs the setup for the blame features.
  * @param message - Discord.js Message Object
@@ -705,7 +1007,7 @@ function setBlame(message, serverConfig) {
     });
 }
 //#endregion
-//#region Function that adds/removes from blame lists in settings
+//#region Add/Remove blame
 /**
  * This function takes several inputs and adds/removes someone from the blame command.
  * @param addTF - True makes it add the person, False removes them
@@ -806,7 +1108,7 @@ function addRemoveBlame(addTF, permTF, user, serverConfig) {
     });
 }
 //#endregion
-//#region Function that changes offsets for blame lists in settings
+//#region Offset blame
 /**
  * This function takes several inputs and adds/removes someone from the blame command.
  * @param serverID - The id for the server this is run in
@@ -823,7 +1125,7 @@ function changeBlameOffset(serverID, offset, serverConfig) {
     });
 }
 //#endregion
-//#region Function that runs all setup commands
+//#region Setup all
 /**
  * This function runs the setup for all features.
  * @param message - Discord.js Message Object
@@ -845,6 +1147,7 @@ function setup(message, serverConfig, client) {
         yield setModMail(message, serverConfig);
         yield setJoinToCreateVC(message, serverConfig);
         yield setBlame(message, serverConfig);
+        yield setLogging(message, serverConfig);
         //Removes the Setup Needed Tag
         serverConfig.setupNeeded = false;
         yield buildConfigFile(serverConfig, serverID);
@@ -857,7 +1160,7 @@ function setup(message, serverConfig, client) {
     });
 }
 //#endregion
-//#region Function that builds config file
+//#region Build config
 /**
  * This function builds the serverConfig file with the provided JSON.
  * @param config - String of JSON
@@ -921,6 +1224,16 @@ function buildConfigFile(config, serverID) {
                         ignoreCatagories: config.logging.text.ignoreCatagories,
                         ignoreChannels: config.logging.text.ignoreChannels,
                     },
+                    admin: {
+                        enable: config.logging.admin.enable,
+                        loggingChannel: config.logging.admin.loggingChannel,
+                        ignoreCatagories: config.logging.admin.ignoreCatagories,
+                        ignoreChannels: config.logging.admin.ignoreChannels,
+                    },
+                    user: {
+                        enable: config.logging.user.enable,
+                        loggingChannel: config.logging.user.loggingChannel,
+                    },
                 },
             };
             yield MongooseServerConfig.findByIdAndUpdate(serverID, update, {
@@ -938,7 +1251,7 @@ function buildConfigFile(config, serverID) {
     });
 }
 //#endregion
-//#region Function that adds the provided server to the serverConfig file
+//#region Adds server config
 /**
  * This function adds the provided server to the serverConfig file.
  * @param serverID - Server ID for server to be added
@@ -1004,6 +1317,16 @@ function addServerConfig(serverID) {
                     ignoreChannels: [],
                     ignoreCatagories: [],
                 },
+                admin: {
+                    enable: false,
+                    loggingChannel: 'Not Set Up',
+                    ignoreChannels: [],
+                    ignoreCatagories: [],
+                },
+                user: {
+                    enable: false,
+                    loggingChannel: 'Not Set Up',
+                },
             },
         };
         buildConfigFile(defaultConfig, serverID);
@@ -1011,7 +1334,7 @@ function addServerConfig(serverID) {
     });
 }
 //#endregion
-//#region Function that removes the provided server form the serverConfig file
+//#region Removes server config
 /**
  * This function removes the provided server from the serverConfig file
  * @param serverID - Server ID for server to be added
@@ -1023,5 +1346,5 @@ function removeServerConfig(serverID) {
 }
 //#endregion
 //#region exports
-export { addRemoveBlame, addServerConfig, buildConfigFile, changeBlameOffset, removeServerConfig, setAutoRole, setBlame, setGeneral, setJoinRole, setJoinToCreateVC, setModMail, setMusic, setup };
+export { addRemoveBlame, addServerConfig, buildConfigFile, changeBlameOffset, removeServerConfig, setAutoRole, setBlame, setGeneral, setJoinRole, setJoinToCreateVC, setModMail, setMusic, setLogging, setup, };
 //#endregion

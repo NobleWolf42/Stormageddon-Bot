@@ -1,7 +1,7 @@
 //#region Imports
 import { PermissionFlagsBits } from 'discord.js';
 import { errorNoServerAdmin, errorCustom } from '../helpers/embedMessages.js';
-import { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame } from '../internal/settingsFunctions.js';
+import { setAutoRole, setJoinRole, setMusic, setGeneral, setModMail, setJoinToCreateVC, setBlame, setLogging } from '../internal/settingsFunctions.js';
 import { Command } from '../models/commandModel.js';
 //#endregion
 
@@ -47,6 +47,10 @@ const setCommand: Command = {
 
             case 'blame':
                 await setBlame(message, serverConfig);
+                break;
+
+            case 'logging':
+                await setLogging(message, serverConfig);
                 break;
 
             default:
