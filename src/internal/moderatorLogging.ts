@@ -974,7 +974,7 @@ async function logUserUpdate(client: Client) {
         }
 
         // is logging channel defined?
-        if (serverConfig.logging.text.loggingChannel == 'Not Set Up') {
+        if (serverConfig.logging.user.loggingChannel == 'Not Set Up') {
             addToLog(LogType.FatalError, 'logMessageUpdate-delete', 'null', oldMember.guild.name, 'null', 'The logging output channel is not setup.', client);
             return;
         }
@@ -983,7 +983,7 @@ async function logUserUpdate(client: Client) {
             limit: 1,
             type: AuditLogEvent.MemberUpdate,
         }); // Fetching the audit logs.
-        const logChannel = await client.channels.fetch(serverConfig.logging.text.loggingChannel);
+        const logChannel = await client.channels.fetch(serverConfig.logging.user.loggingChannel);
 
         if (!auditLogFetch.entries.first() || auditLogFetch.entries.first().targetId != oldMember.user.id) {
             auditLogFetch = await oldMember.guild.fetchAuditLogs({ limit: 1, type: AuditLogEvent.MemberRoleUpdate }); // Fetching the audit logs.
@@ -1154,7 +1154,7 @@ async function logUserUpdate(client: Client) {
         }
 
         // is logging turned on?
-        if (!serverConfig.logging.enable || !serverConfig.logging.text.enable) {
+        if (!serverConfig.logging.enable || !serverConfig.logging.user.enable) {
             return;
         }
 
@@ -1164,7 +1164,7 @@ async function logUserUpdate(client: Client) {
             return;
         }
 
-        const logChannel = await client.channels.fetch(serverConfig.logging.text.loggingChannel);
+        const logChannel = await client.channels.fetch(serverConfig.logging.user.loggingChannel);
 
         if (!logChannel.isTextBased() || logChannel.isDMBased()) {
             return;
