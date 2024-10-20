@@ -1,7 +1,8 @@
 {
     "name": "stormageddon-bot",
-    "version": "3.1.2",
+    "version": "3.3.0",
     "description": "Custom Discord Bot",
+    "type": "module",
     "main": "storm.js",
     "author": "Ben Carpenter (NobleWolf42) <bencarpenterit@gmail.com>",
     "private": true,
@@ -9,24 +10,38 @@
     "repository": "github:NobleWolf42/Stormageddon-Bot.git",
     "bugs": "https://github.com/NobleWolf42/Stormageddon-Bot/issues",
     "engines": {
-        "node": ">=22.0.0"
+        "node": ">=20.17.0"
     },
     "dependencies": {
-        "@discordjs/opus": "^0.9.0",
         "@discordjs/voice": "^0.17.0",
+        "@distube/deezer": "^2.0.1",
         "@distube/soundcloud": "^2.0.2",
         "@distube/spotify": "^2.0.2",
         "@distube/youtube": "^1.0.2",
         "@distube/yt-dlp": "^2.0.1",
         "@distube/ytsr": "^2.0.0",
+        "@types/node": "^22.5.2",
+        "axios": "^1.7.7",
         "discord-oauth2": "^2.12.1",
-        "discord.js": "^14.15.3",
+        "discord.js": "^14.16.1",
         "distube": "^5.0.2",
         "genius-lyrics": "^4.4.7",
-        "sodium-native": "^4.1.1",
-        "xmlhttprequest": "^1.8.0"
+        "mongodb": "^6.8.0",
+        "mongoose": "^8.5.4",
+        "sodium-native": "^4.1.1"
     },
     "scripts": {
-        "start": "node storm.js"
+        "start": "nodemon --ignore ./built/data --watch built --env-file=.env ./built/storm.js",
+        "build": "tsc -w -P .",
+        "dev": "tsc -w -P . & nodemon --env-file=.env ./built/storm.js"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.9.1",
+        "eslint": "^9.9.1",
+        "globals": "^15.9.0",
+        "nodemon": "^3.1.4",
+        "prettier": "3.3.3",
+        "typescript": "^5.5.4",
+        "typescript-eslint": "^8.4.0"
     }
 }
