@@ -6,7 +6,7 @@ import { Log, LogType } from '../models/loggingModel.js';
 //#endregion
 //#region Error Logs TODO FIX this it needs to not be global
 let errorLogFile = JSON.parse(readFileSync('../../data/errorLog.json').toString());
-let logFile = JSON.parse(readFileSync('../../data/log.json').toString());
+let logFile = JSON.parse(readFileSync('../data/log.json').toString());
 //#endregion
 //#region Function that adds an item to the log file and sends any fatal errors to the bot developers
 /**
@@ -72,7 +72,7 @@ function addToLog(logType, command, user, server, channel, error, client) {
  */
 function addInput(logType) {
     if (logType === LogType.Success || logType === LogType.Warning) {
-        writeFileSync('../../data/log.json', JSON.stringify(logFile, null, 2));
+        writeFileSync('../data/log.json', JSON.stringify(logFile, null, 2));
     }
     else {
         writeFileSync('../../data/errorLog.json', JSON.stringify(errorLogFile, null, 2));
@@ -90,7 +90,7 @@ function addInput(logType) {
  */
 function resetLog(logType) {
     if (logType === LogType.Success || logType === LogType.Warning) {
-        if (existsSync('../../data/log.json')) {
+        if (existsSync('../data/log.json')) {
             buildLog(logType);
             console.log('Successfully Rebuilt the log.json\n');
             return;
@@ -112,8 +112,8 @@ function resetLog(logType) {
  * This function reloads the log file into internal var.
  */
 function reloadLog() {
-    if (existsSync('../../data/log.json')) {
-        logFile = JSON.parse(readFileSync('../../data/log.json', 'utf8'));
+    if (existsSync('../data/log.json')) {
+        logFile = JSON.parse(readFileSync('../data/log.json', 'utf8'));
     }
     if (existsSync('../../data/errorLog.json')) {
         errorLogFile = JSON.parse(readFileSync('../../data/errorLog.json', 'utf8'));
@@ -130,7 +130,7 @@ function buildLog(logType) {
         logging: [new Log(LogType.None, 'Rebuilt Log File')],
     };
     if (logType === LogType.Success || logType === LogType.Warning) {
-        writeFileSync('../../data/log.json', JSON.stringify(logJSON, null, 2));
+        writeFileSync('../data/log.json', JSON.stringify(logJSON, null, 2));
         return;
     }
     writeFileSync('../../data/errorLog.json', JSON.stringify(logJSON, null, 2));

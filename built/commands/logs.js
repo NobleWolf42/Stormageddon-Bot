@@ -40,7 +40,7 @@ const logsCommand = {
                         name: 'errorLog.json',
                     },
                     {
-                        attachment: '../../data/log.json',
+                        attachment: '../data/log.json',
                         name: 'log.json',
                     },
                 ],
