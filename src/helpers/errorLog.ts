@@ -6,8 +6,8 @@ import { Log, LogType } from '../models/loggingModel.js';
 //#endregion
 
 //#region Error Logs TODO FIX this it needs to not be global
-let errorLogFile = JSON.parse(readFileSync('../data/errorLog.json').toString());
-let logFile = JSON.parse(readFileSync('../data/log.json').toString());
+let errorLogFile = JSON.parse(readFileSync('./data/errorLog.json').toString());
+let logFile = JSON.parse(readFileSync('./data/log.json').toString());
 //#endregion
 
 //#region Function that adds an item to the log file and sends any fatal errors to the bot developers
@@ -58,7 +58,7 @@ function addToLog(logType: LogType, command: string, user: string, server: strin
                 embeds: [embMsg],
                 files: [
                     {
-                        attachment: '../data/errorLog.json',
+                        attachment: './data/errorLog.json',
                         name: 'errorLog.json',
                     },
                 ],
@@ -71,16 +71,16 @@ function addToLog(logType: LogType, command: string, user: string, server: strin
 }
 //#endregion
 
-//#region Function that saves the current state of the logFile buffer to ../data/errorLog.json
+//#region Function that saves the current state of the logFile buffer to ./data/errorLog.json
 /**
- * This function saves the current state of the logFile buffer to ../data/errorLog.json.
+ * This function saves the current state of the logFile buffer to ./data/errorLog.json.
  * @param logType - Type of log "success", "warning", "alert", or "fatal error"
  */
 function addInput(logType: LogType) {
     if (logType === LogType.Success || logType === LogType.Warning) {
-        writeFileSync('../data/log.json', JSON.stringify(logFile, null, 2));
+        writeFileSync('./data/log.json', JSON.stringify(logFile, null, 2));
     } else {
-        writeFileSync('../data/errorLog.json', JSON.stringify(errorLogFile, null, 2));
+        writeFileSync('./data/errorLog.json', JSON.stringify(errorLogFile, null, 2));
     }
     reloadLog();
 
@@ -97,7 +97,7 @@ function addInput(logType: LogType) {
  */
 function resetLog(logType: LogType) {
     if (logType === LogType.Success || logType === LogType.Warning) {
-        if (existsSync('../data/log.json')) {
+        if (existsSync('./data/log.json')) {
             buildLog(logType);
             console.log('Successfully Rebuilt the log.json\n');
             return;
@@ -105,7 +105,7 @@ function resetLog(logType: LogType) {
 
         console.log('Failed Rebuild of the log.json.\n');
     } else {
-        if (existsSync('../data/errorLog.json')) {
+        if (existsSync('./data/errorLog.json')) {
             buildLog(logType);
             console.log('Successfully Rebuilt the errorLog.json\n');
             return;
@@ -121,12 +121,12 @@ function resetLog(logType: LogType) {
  * This function reloads the log file into internal var.
  */
 function reloadLog() {
-    if (existsSync('../data/log.json')) {
-        logFile = JSON.parse(readFileSync('../data/log.json', 'utf8'));
+    if (existsSync('./data/log.json')) {
+        logFile = JSON.parse(readFileSync('./data/log.json', 'utf8'));
     }
 
-    if (existsSync('../data/errorLog.json')) {
-        errorLogFile = JSON.parse(readFileSync('../data/errorLog.json', 'utf8'));
+    if (existsSync('./data/errorLog.json')) {
+        errorLogFile = JSON.parse(readFileSync('./data/errorLog.json', 'utf8'));
     }
 }
 //#endregion
@@ -142,11 +142,11 @@ function buildLog(logType: LogType) {
     };
 
     if (logType === LogType.Success || logType === LogType.Warning) {
-        writeFileSync('../data/log.json', JSON.stringify(logJSON, null, 2));
+        writeFileSync('./data/log.json', JSON.stringify(logJSON, null, 2));
         return;
     }
 
-    writeFileSync('../data/errorLog.json', JSON.stringify(logJSON, null, 2));
+    writeFileSync('./data/errorLog.json', JSON.stringify(logJSON, null, 2));
 }
 //#endregion
 

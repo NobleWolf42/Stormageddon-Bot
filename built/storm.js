@@ -9,8 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //#region Creates Critical Files
 import { createJSONfiles } from './helpers/createFiles.js';
-console.log('running create');
-await createJSONfiles();
+createJSONfiles();
 //#endregion
 //#region Imports
 import { SoundCloudPlugin } from '@distube/soundcloud';
