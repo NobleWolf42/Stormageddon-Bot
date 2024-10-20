@@ -1,5 +1,5 @@
 //#region Imports
-import { AuditLogEvent, Client, EmbedBuilder, Events, Role, User } from 'discord.js';
+import { AuditLogEvent, Client, Collection, EmbedBuilder, Events, GuildAuditLogs, Role, User } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { LogType } from '../models/loggingModel.js';
 import { MongooseServerConfig } from '../models/serverConfigModel.js';
@@ -748,22 +748,22 @@ async function logAdminUpdate(client: Client) {
                         const newDenys = newChannel.permissionOverwrites.resolve(key).deny.toArray();
 
                         for (const key2 of newAllows) {
-                            changesString += `- <:NeutralTick:1295215969513377802> >> <:GreenTick:1295216311739351070> ${key2}\n`;
+                            changesString += `- ${key2}: <:NeutralTick:1295215969513377802> >> <:GreenTick:1295216311739351070>\n`;
                         }
 
                         for (const key2 of newDenys) {
-                            changesString += `- <:NeutralTick:1295215969513377802> >> <:RedTick:1295216312603250730> ${key2}\n`;
+                            changesString += `- ${key2}: <:NeutralTick:1295215969513377802> >> <:RedTick:1295216312603250730>\n`;
                         }
                     } else if (!newChannel.permissionOverwrites.resolve(key)) {
                         const oldAllows = oldChannel.permissionOverwrites.resolve(key).allow.toArray();
                         const oldDenys = oldChannel.permissionOverwrites.resolve(key).deny.toArray();
 
                         for (const key2 of oldAllows) {
-                            changesString += `- <:GreenTick:1295216311739351070> >> <:NeutralTick:1295215969513377802> ${key2}\n`;
+                            changesString += `- ${key2}: <:GreenTick:1295216311739351070> >> <:NeutralTick:1295215969513377802>\n`;
                         }
 
                         for (const key2 of oldDenys) {
-                            changesString += `- <:RedTick:1295216312603250730> >> <:NeutralTick:1295215969513377802> ${key2}\n`;
+                            changesString += `- ${key2}: <:RedTick:1295216312603250730> >> <:NeutralTick:1295215969513377802>\n`;
                         }
                     } else {
                         const oldAllows = oldChannel.permissionOverwrites.resolve(key).allow.toArray();
@@ -778,29 +778,29 @@ async function logAdminUpdate(client: Client) {
 
                         for (const key2 of newAllowsOnly) {
                             if (oldDenysOnly.includes(key2)) {
-                                changesString += `- <:RedTick:1295216312603250730> >> <:GreenTick:1295216311739351070> ${key2}\n`;
+                                changesString += `- ${key2}: <:RedTick:1295216312603250730> >> <:GreenTick:1295216311739351070>\n`;
                             } else {
-                                changesString += `- <:NeutralTick:1295215969513377802> >> <:GreenTick:1295216311739351070> ${key2}\n`;
+                                changesString += `- ${key2}: <:NeutralTick:1295215969513377802> >> <:GreenTick:1295216311739351070>\n`;
                             }
                         }
 
                         for (const key2 of oldAllowsOnly) {
                             if (!newDenysOnly.includes(key2)) {
-                                changesString += `- <:GreenTick:1295216311739351070> >> <:NeutralTick:1295215969513377802> ${key2}\n`;
+                                changesString += `- ${key2}: <:GreenTick:1295216311739351070> >> <:NeutralTick:1295215969513377802>\n`;
                             }
                         }
 
                         for (const key2 of newDenysOnly) {
                             if (oldAllowsOnly.includes(key2)) {
-                                changesString += `- <:GreenTick:1295216311739351070> >> <:RedTick:1295216312603250730> ${key2}\n`;
+                                changesString += `- ${key2}: <:GreenTick:1295216311739351070> >> <:RedTick:1295216312603250730>\n`;
                             } else {
-                                changesString += `- <:NeutralTick:1295215969513377802> >> <:RedTick:1295216312603250730> ${key2}\n`;
+                                changesString += `- ${key2}: <:NeutralTick:1295215969513377802> >> <:RedTick:1295216312603250730>\n`;
                             }
                         }
 
                         for (const key2 of oldDenysOnly) {
                             if (!newAllowsOnly.includes(key2)) {
-                                changesString += `- <:RedTick:1295216312603250730> >> <:NeutralTick:1295215969513377802> ${key2}\n`;
+                                changesString += `- ${key2}: <:RedTick:1295216312603250730> >> <:NeutralTick:1295215969513377802>\n`;
                             }
                         }
                     }
@@ -913,4 +913,282 @@ async function logAdminUpdate(client: Client) {
 }
 //#endregion
 
-export { logAdminUpdate, logMessageUpdate, logVoiceUpdate };
+//#region User Logging
+/**
+ * This function handles logging User events
+ * @param client - Discord.js Client
+ */
+async function logUserUpdate(client: Client) {
+    //#region User Update
+    client.on(Events.GuildMemberUpdate, async (oldMember, newMember) => {
+        const serverConfig = await MongooseServerConfig.findById(oldMember.guild.id);
+
+        // check the server config and see if they have logging turned on
+        // is the bot setup on the server?
+        if (serverConfig.setupNeeded) {
+            return;
+        }
+
+        // is logging turned on?
+        if (!serverConfig.logging.enable || !serverConfig.logging.user.enable) {
+            return;
+        }
+
+        // is logging channel defined?
+        if (serverConfig.logging.text.loggingChannel == 'Not Set Up') {
+            addToLog(LogType.FatalError, 'logMessageUpdate-delete', 'null', oldMember.guild.name, 'null', 'The logging output channel is not setup.', client);
+            return;
+        }
+
+        let auditLogFetch: GuildAuditLogs<AuditLogEvent.MemberUpdate> | GuildAuditLogs<AuditLogEvent.MemberRoleUpdate> = await oldMember.guild.fetchAuditLogs({
+            limit: 1,
+            type: AuditLogEvent.MemberUpdate,
+        }); // Fetching the audit logs.
+        const logChannel = await client.channels.fetch(serverConfig.logging.text.loggingChannel);
+
+        if (!auditLogFetch.entries.first() || auditLogFetch.entries.first().targetId != oldMember.user.id) {
+            auditLogFetch = await oldMember.guild.fetchAuditLogs({ limit: 1, type: AuditLogEvent.MemberRoleUpdate }); // Fetching the audit logs.
+        }
+
+        const auditLog = auditLogFetch.entries.first();
+
+        if (!logChannel.isTextBased() || logChannel.isDMBased()) {
+            return;
+        }
+
+        let changes: string = '';
+        const oldRoles = new Collection<string, Role>();
+        const newRoles = new Collection<string, Role>();
+
+        if (oldMember.nickname != newMember.nickname) {
+            changes += '- Nickname: ';
+            if (!oldMember.nickname) {
+                changes += `${oldMember.user.displayName} >> ${newMember.nickname}`;
+            } else if (!newMember.nickname) {
+                changes += `${oldMember.nickname} >> ${newMember.user.displayName}`;
+            } else {
+                changes += `${oldMember.nickname} >> ${newMember.nickname}`;
+            }
+
+            changes += '\n';
+        }
+
+        for (const [id, role] of oldMember.roles.cache) {
+            oldRoles.set(id, role);
+        }
+
+        for (const [id, role] of newMember.roles.cache) {
+            newRoles.set(id, role);
+        }
+
+        let roleChanged = false;
+
+        for (const [id, role] of oldRoles) {
+            if (!newRoles.has(id)) {
+                if (!roleChanged) {
+                    changes += '- Roles:\n';
+                }
+                roleChanged = true;
+                changes += `    - ${role}: <:GreenTick:1295216311739351070> >> <:RedTick:1295216312603250730>\n`;
+            }
+        }
+
+        for (const [id, role] of newRoles) {
+            if (!oldRoles.has(id)) {
+                if (!roleChanged) {
+                    changes += '- Roles:\n';
+                }
+                roleChanged = true;
+                changes += `    - ${role}: <:RedTick:1295216312603250730> >> <:GreenTick:1295216311739351070>\n`;
+            }
+        }
+
+        const fieldsOut: { name: string; value: string; inline: boolean }[] = [];
+
+        if (auditLogFetch.entries.first() && auditLog.targetId == oldMember.user.id && changes != '') {
+            fieldsOut.push({
+                name: '**Changed By Username:**',
+                value: auditLog.executor.username,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Changed Username:**',
+                value: newMember.user.username,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Changes:**',
+                value: changes,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Changed By Mention:**',
+                value: `${auditLog.executor}`,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Changed Mention:**',
+                value: `${newMember}`,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: ' ',
+                value: ' ',
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Changed By User ID:**',
+                value: auditLog.executor.id,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Changed User ID:**',
+                value: newMember.user.id,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: ' ',
+                value: ' ',
+                inline: true,
+            });
+        } else if (changes != '') {
+            fieldsOut.push({
+                name: '**Changed Username:**',
+                value: newMember.user.username,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: ' ',
+                value: ' ',
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Changes:**',
+                value: changes,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Changed Mention:**',
+                value: `${newMember}`,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: ' ',
+                value: ' ',
+                inline: true,
+            });
+            fieldsOut.push({
+                name: ' ',
+                value: ' ',
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Changed User ID:**',
+                value: newMember.user.id,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: ' ',
+                value: ' ',
+                inline: true,
+            });
+            fieldsOut.push({
+                name: ' ',
+                value: ' ',
+                inline: true,
+            });
+        }
+
+        const embMsg = new EmbedBuilder().setColor('#0000ff').setThumbnail(newMember.user.avatarURL()).setTitle(`Member Changed`).setFields(fieldsOut).setTimestamp();
+        logChannel.send({ embeds: [embMsg] });
+    });
+    //#endregion
+
+    //#region User Leaving
+    client.on(Events.GuildMemberRemove, async (member) => {
+        const serverConfig = await MongooseServerConfig.findById(member.guild.id);
+
+        // check the server config and see if they have logging turned on
+        // is the bot setup on the server?
+        if (serverConfig.setupNeeded) {
+            return;
+        }
+
+        // is logging turned on?
+        if (!serverConfig.logging.enable || !serverConfig.logging.text.enable) {
+            return;
+        }
+
+        // is logging channel defined?
+        if (serverConfig.logging.user.loggingChannel == 'Not Set Up') {
+            addToLog(LogType.FatalError, 'logMessageUpdate-delete', 'null', member.guild.name, 'null', 'The logging output channel is not setup.', client);
+            return;
+        }
+
+        const logChannel = await client.channels.fetch(serverConfig.logging.text.loggingChannel);
+
+        if (!logChannel.isTextBased() || logChannel.isDMBased()) {
+            return;
+        }
+
+        const fieldsOut: { name: string; value: string; inline: boolean }[] = [];
+
+        let totalSeconds = Math.round((Date.now() - member.joinedTimestamp) / 1000);
+        const years = Math.floor(totalSeconds / 31556926);
+        totalSeconds -= years * 31556926;
+        const months = Math.floor(totalSeconds / 2629743);
+        totalSeconds -= months * 2629743;
+        const days = Math.floor(totalSeconds / 86400);
+        totalSeconds -= days * 86400;
+        const hours = Math.floor(totalSeconds / 3600);
+        totalSeconds -= hours * 3600;
+        const minuets = Math.floor(totalSeconds / 60);
+        totalSeconds -= minuets * 60;
+        const memberLength = `${years} years, ${months} months, ${days} days, ${hours} hours, ${minuets} minuets, ${totalSeconds} seconds`;
+
+        fieldsOut.push({
+            name: '**User Name:**',
+            value: member.user.username,
+            inline: true,
+        });
+        fieldsOut.push({
+            name: '**User Mention:**',
+            value: `${member}`,
+            inline: true,
+        });
+        fieldsOut.push({
+            name: '**User ID:**',
+            value: member.user.id,
+            inline: true,
+        });
+        fieldsOut.push({
+            name: '**Join Date:**',
+            value: `<t:${Math.round(member.joinedTimestamp / 1000)}>`,
+            inline: true,
+        });
+        fieldsOut.push({
+            name: '**Left Date:**',
+            value: `<t:${Math.round(Date.now() / 1000)}>`,
+            inline: true,
+        });
+        fieldsOut.push({
+            name: '**Member Length:**',
+            value: memberLength,
+            inline: true,
+        });
+
+        const embMsg = new EmbedBuilder()
+            .setColor('#ff0000')
+            .setThumbnail(`https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}`)
+            .setTitle(`User Left`)
+            .setFields(fieldsOut)
+            .setTimestamp();
+        logChannel.send({ embeds: [embMsg] });
+    });
+    //#endregion
+
+    console.log('... OK');
+}
+//#endregion
+
+export { logAdminUpdate, logMessageUpdate, logVoiceUpdate, logUserUpdate };

@@ -26,7 +26,7 @@ import { registerGlobalSlashCommands, registerGuildSlashCommands, slashCommandHa
 import { joinToCreateHandling } from './internal/voiceHandling.js';
 import { ExtraCollections } from './models/extraCollectionsModel.js';
 import { MongooseServerConfig } from './models/serverConfigModel.js';
-import { logMessageUpdate, logVoiceUpdate, logAdminUpdate } from './internal/moderatorLogging.js';
+import { logMessageUpdate, logVoiceUpdate, logAdminUpdate, logUserUpdate } from './internal/moderatorLogging.js';
 //#endregion
 console.log('Starting Bot...');
 createJSONfiles();
@@ -125,6 +125,8 @@ try {
         yield logVoiceUpdate(client);
         console.log('Starting Admin Logging Listener');
         yield logAdminUpdate(client);
+        console.log('Starting User Logging Listener');
+        yield logUserUpdate(client);
         client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
         console.log('Bot Startup Complete!');
         console.log(`Logged in as ${client.user.tag}!`);

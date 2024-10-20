@@ -59,6 +59,10 @@ interface ServerConfig {
             ignoreChannels: string[];
             ignoreCatagories: string[];
         };
+        user: {
+            enable: boolean;
+            loggingChannel: string;
+        };
     };
 }
 //#endregion
@@ -121,6 +125,10 @@ const serverConfigSchema = new Schema<ServerConfig>({
             loggingChannel: { type: String, required: true },
             ignoreChannels: { type: [String], required: true },
             ignoreCatagories: { type: [String], required: true },
+        },
+        user: {
+            enable: { type: Boolean, required: true },
+            loggingChannel: { type: String, required: true },
         },
     },
 });

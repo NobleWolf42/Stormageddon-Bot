@@ -297,7 +297,6 @@ const blameCommand = {
                         let rotateIndex = Math.floor((Date.now() - 493200000) / 604800000) -
                             Math.floor(Math.floor((Date.now() - 493200000) / 604800000) / serverConfig.blame.rotateList.length) * serverConfig.blame.rotateList.length -
                             serverConfig.blame.offset;
-                        console.log(rotateIndex);
                         if (rotateIndex >= serverConfig.blame.rotateList.length) {
                             rotateIndex -= serverConfig.blame.rotateList.length;
                         }
