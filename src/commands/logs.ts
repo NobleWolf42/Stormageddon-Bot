@@ -30,7 +30,7 @@ const logsCommand: Command = {
             embeds: [embMsg],
             files: [
                 {
-                    attachment: '../../data/errorLog.json',
+                    attachment: '../data/errorLog.json',
                     name: 'errorLog.json',
                 },
                 {
