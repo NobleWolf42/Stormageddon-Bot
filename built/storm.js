@@ -7,6 +7,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+//#region Creates Critical Files
+import { createJSONfiles } from './helpers/createFiles.js';
+createJSONfiles();
+//#endregion
 //#region Imports
 import { SoundCloudPlugin } from '@distube/soundcloud';
 import { SpotifyPlugin } from '@distube/spotify';
@@ -16,7 +20,6 @@ import { YtDlpPlugin } from '@distube/yt-dlp';
 import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
 import { DisTube } from 'distube';
 import mongoose from 'mongoose';
-import { createJSONfiles } from './helpers/createFiles.js';
 import { autoRoleListener } from './internal/autoRole.js';
 import { musicHandler } from './internal/distubeHandling.js';
 import { PMHandling, messageHandling } from './internal/messageHandling.js';
@@ -29,7 +32,6 @@ import { MongooseServerConfig } from './models/serverConfigModel.js';
 import { logMessageUpdate, logVoiceUpdate, logAdminUpdate, logUserUpdate } from './internal/moderatorLogging.js';
 //#endregion
 console.log('Starting Bot...');
-createJSONfiles();
 //#region Initialize Discord Bot
 const client = new Client({
     partials: [Partials.Channel, Partials.Message],
@@ -69,7 +71,7 @@ mongoose
     console.log(err);
     console.log('');
 });
-mongoose.set('debug', true);
+//mongoose.set('debug', true);
 //#endregion
 //#region Initialize ExtraCollections
 const extraColl = new ExtraCollections();

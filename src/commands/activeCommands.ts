@@ -32,7 +32,7 @@ import shuffleCommand from './shuffle.js';
 import skipCommand from './skip.js';
 import skipToCommand from './skipto.js';
 import stopCommand from './stop.js';
-import testCommand from './test.js';
+//import testCommand from './test.js';
 import volumeCommand from './volume.js';
 
 const activeCommands: Command[] = [
@@ -69,7 +69,7 @@ const activeCommands: Command[] = [
     skipCommand,
     skipToCommand,
     stopCommand,
-    testCommand,
+    //testCommand,
     volumeCommand,
 ];
 

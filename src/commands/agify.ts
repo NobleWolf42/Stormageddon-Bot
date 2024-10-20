@@ -3,8 +3,6 @@ import { Command } from '../models/commandModel.js';
 import { errorCustom, warnCustom, embedCustom } from '../helpers/embedMessages.js';
 import { capitalize } from '../helpers/stringHelpers.js';
 import axios from 'axios';
-
-console.log(axios.isCancel('something'));
 //#endregion
 
 //#region This creates the agify command with the information about it

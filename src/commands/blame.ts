@@ -324,10 +324,6 @@ const blameCommand: Command = {
                     return;
                 }
 
-                console.log(currentVal);
-                console.log(currentVal - serverConfig.blame.offset);
-                console.log(value - 1 - (currentVal - serverConfig.blame.offset));
-
                 serverConfig = await changeBlameOffset(message.guildId, serverConfig.blame.offset - (value - 1 - (currentVal - serverConfig.blame.offset)), serverConfig).catch((err) => {
                     errorCustom(message, err.message, 'blame' + oldSubCommand, client);
 

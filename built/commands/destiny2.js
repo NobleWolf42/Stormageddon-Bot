@@ -40,7 +40,6 @@ function getClan(message, clan_name, name, client) {
         if (request.status >= 200 && request.status < 400) {
             if (request.data != null && request.data != undefined) {
                 const domain = 'https://www.bungie.net/';
-                console.log(request.data.Response.detail.about);
                 const attachment = domain + request.data.Response.founder.bungieNetUserInfo.iconPath;
                 embedCustom(message, `${request.data.Response.detail.name} Clan Information`, '#F5F5F5', `The clan was created on <t:${Math.round(new Date(request.data.Response.detail.creationDate).getTime() / 1000)}>.\n The founder is ${request.data.Response.founder.destinyUserInfo.displayName}.\n \`${request.data.Response.detail.motto}\`\n\n Description: ${request.data.Response.detail.about}`, {
                     text: `Requested by ${message.author.tag}`,

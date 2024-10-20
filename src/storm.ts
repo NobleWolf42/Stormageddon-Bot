@@ -1,3 +1,8 @@
+//#region Creates Critical Files
+import { createJSONfiles } from './helpers/createFiles.js';
+createJSONfiles();
+//#endregion
+
 //#region Imports
 import { SoundCloudPlugin } from '@distube/soundcloud';
 import { SpotifyPlugin } from '@distube/spotify';
@@ -7,7 +12,6 @@ import { YtDlpPlugin } from '@distube/yt-dlp';
 import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
 import { DisTube } from 'distube';
 import mongoose from 'mongoose';
-import { createJSONfiles } from './helpers/createFiles.js';
 import { autoRoleListener } from './internal/autoRole.js';
 import { musicHandler } from './internal/distubeHandling.js';
 import { PMHandling, messageHandling } from './internal/messageHandling.js';
@@ -21,8 +25,6 @@ import { logMessageUpdate, logVoiceUpdate, logAdminUpdate, logUserUpdate } from 
 //#endregion
 
 console.log('Starting Bot...');
-
-createJSONfiles();
 
 //#region Initialize Discord Bot
 const client = new Client({
@@ -64,7 +66,7 @@ mongoose
         console.log(err);
         console.log('');
     });
-mongoose.set('debug', true);
+//mongoose.set('debug', true);
 //#endregion
 
 //#region Initialize ExtraCollections

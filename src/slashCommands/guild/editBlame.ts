@@ -263,10 +263,6 @@ const editBlameSlashCommand: SlashCommand = {
                     return;
                 }
 
-                console.log(currentVal);
-                console.log(currentVal - serverConfig.blame.offset);
-                console.log(value - 1 - (currentVal - serverConfig.blame.offset));
-
                 serverConfig = await changeBlameOffset(interaction.guildId, serverConfig.blame.offset - (value - 1 - (currentVal - serverConfig.blame.offset)), serverConfig).catch((err) => {
                     errorCustom(interaction, err.message, '/blame fix', client);
 

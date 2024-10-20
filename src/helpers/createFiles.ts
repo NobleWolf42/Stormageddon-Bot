@@ -22,6 +22,8 @@ function createJSONfiles() {
     const botConfigExample = 'authToken = "YOUR-AUTH-TOKEN"\nclientID = "YOUR_CLIENT_ID"\nd2ApiKey = "YOUR_D2_API_KEY"\ndevIDs = ["YOUR_DEV_IDS"]\nmongoDBURI = "YOUR_MONGO_DB_URI"';
     //#endregion
 
+    console.log(existsSync('./data/errorLog.json'));
+
     if (!existsSync('./data/errorLog.json')) {
         writeFileSync('./data/errorLog.json', JSON.stringify(emptyLog));
     }

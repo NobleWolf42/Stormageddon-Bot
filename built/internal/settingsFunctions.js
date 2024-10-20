@@ -307,7 +307,6 @@ function setAutoRole(message, serverConfig, client) {
                 }
             }
         }));
-        console.log(serverConfig.autoRole);
         yield buildConfigFile(serverConfig, serverID);
         const embMsg6 = new EmbedBuilder().setTitle('AutoRole Setup').setDescription('AutoRole Setup Complete!').setColor('#355E3B');
         channel.send({ embeds: [embMsg6] });

@@ -31,7 +31,7 @@ import shuffleCommand from './shuffle.js';
 import skipCommand from './skip.js';
 import skipToCommand from './skipto.js';
 import stopCommand from './stop.js';
-import testCommand from './test.js';
+//import testCommand from './test.js';
 import volumeCommand from './volume.js';
 const activeCommands = [
     addModCommand,
@@ -67,7 +67,7 @@ const activeCommands = [
     skipCommand,
     skipToCommand,
     stopCommand,
-    testCommand,
+    //testCommand,
     volumeCommand,
 ];
 export { activeCommands };

@@ -341,7 +341,6 @@ function logAdminUpdate(client) {
     return __awaiter(this, void 0, void 0, function* () {
         //#region Channel Creation
         client.on(Events.ChannelCreate, (channel) => __awaiter(this, void 0, void 0, function* () {
-            console.log(channel);
             const serverConfig = yield MongooseServerConfig.findById(channel.guild.id);
             // check the server config and see if they have logging turned on
             // is the bot setup on the server?
@@ -708,7 +707,6 @@ function logAdminUpdate(client) {
                     changes.set({ name: 'NSFW: ', data: oldChannel.nsfw, postDataText: '' }, newChannel.nsfw);
                     changes.set({ name: 'Slowmode Delay: ', data: oldChannel.rateLimitPerUser, postDataText: ' seconds' }, newChannel.rateLimitPerUser);
                     for (const change of changes) {
-                        console.log(change);
                         if (change[0].data != change[1]) {
                             changesString += `- ${change[0].name}${change[0].data}${change[0].postDataText} >> ${change[1]}${change[0].postDataText}\n`;
                         }
@@ -723,7 +721,6 @@ function logAdminUpdate(client) {
                     changes.set({ name: 'Slowmode Delay: ', data: oldChannel.rateLimitPerUser, postDataText: ' seconds' }, newChannel.rateLimitPerUser);
                     changes.set({ name: 'User Limit: ', data: oldChannel.userLimit, postDataText: '' }, newChannel.userLimit);
                     for (const change of changes) {
-                        console.log(change);
                         if (change[0].data != change[1]) {
                             changesString += `- ${change[0].name}${change[0].data}${change[0].postDataText} >> ${change[1]}${change[0].postDataText}\n`;
                         }

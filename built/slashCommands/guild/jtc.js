@@ -50,7 +50,6 @@ const joinToCreateSlashCommand = {
                     setTimeout(() => {
                         collections.voiceChanges.set(voiceChannel.id, collections.voiceChanges.get(voiceChannel.id) - 1);
                     }, 600000);
-                    console.log(collections.voiceChanges.get(voiceChannel.id));
                     embedCustomDM(interaction, 'Success:', '#355E3B', 'Channel name changed successfully!', null, client);
                     break;
                 }

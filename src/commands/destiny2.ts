@@ -37,8 +37,6 @@ function getClan(message: MessageWithDeleted, clan_name: string, name: string, c
             if (request.data != null && request.data != undefined) {
                 const domain = 'https://www.bungie.net/';
 
-                console.log(request.data.Response.detail.about);
-
                 const attachment = domain + request.data.Response.founder.bungieNetUserInfo.iconPath;
                 embedCustom(
                     message,

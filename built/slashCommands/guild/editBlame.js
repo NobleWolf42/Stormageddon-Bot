@@ -189,9 +189,6 @@ const editBlameSlashCommand = {
                         warnCustom(interaction, "It is already that user's week!", this.name);
                         return;
                     }
-                    console.log(currentVal);
-                    console.log(currentVal - serverConfig.blame.offset);
-                    console.log(value - 1 - (currentVal - serverConfig.blame.offset));
                     serverConfig = yield changeBlameOffset(interaction.guildId, serverConfig.blame.offset - (value - 1 - (currentVal - serverConfig.blame.offset)), serverConfig).catch((err) => {
                         errorCustom(interaction, err.message, '/blame fix', client);
                         erroredOut = true;

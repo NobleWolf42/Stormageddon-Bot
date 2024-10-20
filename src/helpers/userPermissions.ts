@@ -23,7 +23,6 @@ function serverRoleUpdate(sRole: RoleManager, serverConfig: ServerConfig) {
     for (const [key, value] of sRole.cache) {
         basicServerRoles[value.id] = key;
     }
-    console.log(basicServerRoles);
 
     //Loops through the Admin Role Names, pushing them to an array
     for (const key of serverConfig.general.adminRoles) {
@@ -146,8 +145,6 @@ function djCheck(member: GuildMember, serverConfig: ServerConfig) {
     }
 
     const permArrays = serverRoleUpdate(member.guild.roles, serverConfig);
-
-    console.log(permArrays);
 
     //Checks to see if the DJ role is set
     if (permArrays[2].length != 0) {
