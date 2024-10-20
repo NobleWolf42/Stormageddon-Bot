@@ -6,7 +6,7 @@ import { existsSync, writeFileSync } from 'fs';
 /**
  * This function creates the JSON files the bot requires to function if they do not already exist.
  */
-function createJSONfiles() {
+async function createJSONfiles() {
     const d = new Date();
     const emptyLog = {
         logging: [

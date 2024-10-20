@@ -1,6 +1,7 @@
 //#region Creates Critical Files
 import { createJSONfiles } from './helpers/createFiles.js';
-createJSONfiles();
+console.log('running create');
+await createJSONfiles();
 //#endregion
 
 //#region Imports
