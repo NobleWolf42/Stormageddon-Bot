@@ -1,5 +1,5 @@
 //#region Imports
-import { AuditLogEvent, Client, Collection, EmbedBuilder, Events, GuildAuditLogs, Role, User } from 'discord.js';
+import { AuditLogEvent, Client, Collection, EmbedBuilder, Events, Guild, GuildAuditLogs, GuildMember, Role, User } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { LogType } from '../models/loggingModel.js';
 import { MongooseServerConfig } from '../models/serverConfigModel.js';
@@ -235,12 +235,12 @@ async function logMessageUpdate(client: Client) {
 async function logVoiceUpdate(client: Client) {
     //#region Voice Events
     client.on(Events.VoiceStateUpdate, async (oldState, newState) => {
-        // extract the member? and the channel
+        // extract the member and the channel
         const newChannel = newState.channel;
         const oldChannel = oldState.channel;
-        let member = null;
-        let guild = null;
-        let connectEvent = null;
+        let member: GuildMember = null;
+        let guild: Guild = null;
+        let connectEvent: boolean = null;
 
         //This is horrible, fix me later
         if (!oldChannel) {
@@ -261,6 +261,10 @@ async function logVoiceUpdate(client: Client) {
             connectEvent = false;
         }
 
+        if (!connectEvent) {
+            return;
+        }
+
         const serverConfig = await MongooseServerConfig.findById(newState.guild.id);
 
         // check the server config and see if they have logging turned on
@@ -279,30 +283,67 @@ async function logVoiceUpdate(client: Client) {
             addToLog(LogType.FatalError, 'logOnVoiceUpdate', 'null', guild.name, 'null', 'The logging output channel is not setup.', client);
             return;
         }
-        const loggingChannel = await client.channels.fetch(serverConfig.logging.voice.loggingChannel);
+        const logChannel = await client.channels.fetch(serverConfig.logging.voice.loggingChannel);
 
-        if (!loggingChannel.isTextBased() || loggingChannel.isDMBased()) {
+        if (!logChannel.isTextBased() || logChannel.isDMBased()) {
             return;
         }
 
-        // any time voice state updated execute the following code
-        if (connectEvent) {
-            const embMsg = new EmbedBuilder().setTitle(`User ${member.user.username} connected!`).setColor('#ffffff').setDescription("test we'll figure it out later ben I'm tired").setTimestamp();
+        const fieldsOut: { name: string; value: string; inline: boolean }[] = [];
 
-            // Trigger every time a connection or disconnection is made to a channel
-            // wrap in message (embeds)
-            // post message to channel
-            await loggingChannel.send({ embeds: [embMsg] });
-        } else if (connectEvent != null || !connectEvent) {
-            const embMsg = new EmbedBuilder().setTitle(`User ${member.user.username} disconnected!`).setColor('#ffffff').setDescription("test we'll figure it out later ben I'm tired").setTimestamp();
+        fieldsOut.push({
+            name: '**User Name:**',
+            value: member.user.username,
+            inline: true,
+        });
+        fieldsOut.push({
+            name: '**Chanel Name:**',
+            value: newState.channel.name,
+            inline: true,
+        });
+        fieldsOut.push({
+            name: ' ',
+            value: ' ',
+            inline: true,
+        });
+        fieldsOut.push({
+            name: '**User Mention:**',
+            value: `${member}`,
+            inline: true,
+        });
+        fieldsOut.push({
+            name: '**Channel Mention:**',
+            value: `${newState.channel}`,
+            inline: true,
+        });
+        fieldsOut.push({
+            name: ' ',
+            value: ' ',
+            inline: true,
+        });
+        fieldsOut.push({
+            name: '**User ID:**',
+            value: member.user.id,
+            inline: true,
+        });
+        fieldsOut.push({
+            name: '**Channel ID:**',
+            value: newState.channel.id,
+            inline: true,
+        });
+        fieldsOut.push({
+            name: ' ',
+            value: ' ',
+            inline: true,
+        });
 
-            // Trigger every time a connection or disconnection is made to a channel
-            // wrap in message (embeds)
-            // post message to channel
-            await loggingChannel.send({ embeds: [embMsg] });
-        } else {
-            //more error logging
-        }
+        const embMsg = new EmbedBuilder()
+            .setColor('#00ff00')
+            .setThumbnail(`https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}`)
+            .setTitle(`User Connected To Voice Channel`)
+            .setFields(fieldsOut)
+            .setTimestamp();
+        logChannel.send({ embeds: [embMsg] });
     });
     //#endregion
     console.log('... OK');

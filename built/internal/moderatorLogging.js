@@ -224,7 +224,7 @@ function logVoiceUpdate(client) {
     return __awaiter(this, void 0, void 0, function* () {
         //#region Voice Events
         client.on(Events.VoiceStateUpdate, (oldState, newState) => __awaiter(this, void 0, void 0, function* () {
-            // extract the member? and the channel
+            // extract the member and the channel
             const newChannel = newState.channel;
             const oldChannel = oldState.channel;
             let member = null;
@@ -251,6 +251,9 @@ function logVoiceUpdate(client) {
                 guild = oldState.guild;
                 connectEvent = false;
             }
+            if (!connectEvent) {
+                return;
+            }
             const serverConfig = yield MongooseServerConfig.findById(newState.guild.id);
             // check the server config and see if they have logging turned on
             // is the bot setup on the server?
@@ -266,28 +269,63 @@ function logVoiceUpdate(client) {
                 addToLog(LogType.FatalError, 'logOnVoiceUpdate', 'null', guild.name, 'null', 'The logging output channel is not setup.', client);
                 return;
             }
-            const loggingChannel = yield client.channels.fetch(serverConfig.logging.voice.loggingChannel);
-            if (!loggingChannel.isTextBased() || loggingChannel.isDMBased()) {
+            const logChannel = yield client.channels.fetch(serverConfig.logging.voice.loggingChannel);
+            if (!logChannel.isTextBased() || logChannel.isDMBased()) {
                 return;
             }
-            // any time voice state updated execute the following code
-            if (connectEvent) {
-                const embMsg = new EmbedBuilder().setTitle(`User ${member.user.username} connected!`).setColor('#ffffff').setDescription("test we'll figure it out later ben I'm tired").setTimestamp();
-                // Trigger every time a connection or disconnection is made to a channel
-                // wrap in message (embeds)
-                // post message to channel
-                yield loggingChannel.send({ embeds: [embMsg] });
-            }
-            else if (connectEvent != null || !connectEvent) {
-                const embMsg = new EmbedBuilder().setTitle(`User ${member.user.username} disconnected!`).setColor('#ffffff').setDescription("test we'll figure it out later ben I'm tired").setTimestamp();
-                // Trigger every time a connection or disconnection is made to a channel
-                // wrap in message (embeds)
-                // post message to channel
-                yield loggingChannel.send({ embeds: [embMsg] });
-            }
-            else {
-                //more error logging
-            }
+            const fieldsOut = [];
+            fieldsOut.push({
+                name: '**User Name:**',
+                value: member.user.username,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Chanel Name:**',
+                value: newState.channel.name,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: ' ',
+                value: ' ',
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**User Mention:**',
+                value: `${member}`,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Channel Mention:**',
+                value: `${newState.channel}`,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: ' ',
+                value: ' ',
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**User ID:**',
+                value: member.user.id,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: '**Channel ID:**',
+                value: newState.channel.id,
+                inline: true,
+            });
+            fieldsOut.push({
+                name: ' ',
+                value: ' ',
+                inline: true,
+            });
+            const embMsg = new EmbedBuilder()
+                .setColor('#00ff00')
+                .setThumbnail(`https://cdn.discordapp.com/avatars/${member.user.id}/${member.user.avatar}`)
+                .setTitle(`User Connected To Voice Channel`)
+                .setFields(fieldsOut)
+                .setTimestamp();
+            logChannel.send({ embeds: [embMsg] });
         }));
         //#endregion
         console.log('... OK');
