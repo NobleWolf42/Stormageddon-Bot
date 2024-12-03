@@ -74,7 +74,7 @@ async function autoRoleListener(client: Client) {
         const react = message.reactions.cache.get(emojiKey);
 
         if (!react) {
-            //Error, Reaction not Valid
+            //Error, Reaction not Valid FIXME triggers randomly on normal messages
             addToLog(LogType.Alert, `${reaction.emoji.name}:${reaction.emoji.id} - is not found`, member.user.tag, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
         }
 
@@ -117,7 +117,7 @@ async function autoRoleListener(client: Client) {
         const react = message.reactions.cache.get(emojiKey);
 
         if (!react) {
-            //Error, Reaction not Valid
+            //Error, Reaction not Valid FIXME triggers randomly on normal messages
             addToLog(LogType.Alert, `${emojiKey} - is not found`, member.user.tag, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
         }
 

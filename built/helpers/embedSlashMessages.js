@@ -261,7 +261,7 @@ function warnWrongChannel(interaction, correctChannel, commandName) {
         const embMsg = new EmbedBuilder()
             .setTitle('Warning!')
             .setColor('#F8AA2A')
-            .setDescription(`That was not the correct channel for that command. The correct channel for this command is #${correctChannel}`)
+            .setDescription(`That was not the correct channel for that command. The correct channel for this command is <#${correctChannel}>`)
             .setFooter({
             text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
