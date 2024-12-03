@@ -74,7 +74,7 @@ function autoRoleListener(client) {
             const emojiKey = reaction.emoji.id ? reaction.emoji.id : reaction.emoji.name; //`${reaction.emoji.name}:${reaction.emoji.id}`
             const react = message.reactions.cache.get(emojiKey);
             if (!react) {
-                //Error, Reaction not Valid
+                //Error, Reaction not Valid FIXME triggers randomly on normal messages
                 addToLog(LogType.Alert, `${reaction.emoji.name}:${reaction.emoji.id} - is not found`, member.user.tag, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
             }
             if (message.author.id === client.user.id &&
@@ -107,7 +107,7 @@ function autoRoleListener(client) {
             const emojiKey = reaction.emoji.id ? reaction.emoji.id : reaction.emoji.name; //`${reaction.emoji.name}:${reaction.emoji.id}`
             const react = message.reactions.cache.get(emojiKey);
             if (!react) {
-                //Error, Reaction not Valid
+                //Error, Reaction not Valid FIXME triggers randomly on normal messages
                 addToLog(LogType.Alert, `${emojiKey} - is not found`, member.user.tag, message.guild.name, message.channel.name, 'Issue with ReactEmoji Event', client);
             }
             if (message.author.id === client.user.id &&
