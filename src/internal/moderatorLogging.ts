@@ -113,7 +113,10 @@ async function logMessageUpdate(client: Client) {
             .setTitle(`Message Deleted`)
             .setFields(fieldsOut)
             .setTimestamp();
-        logChannel.send({ embeds: [embMsg] });
+
+        if (fieldsOut.length != 0) {
+            logChannel.send({ embeds: [embMsg] });
+        }
     });
     //#endregion
 
@@ -220,7 +223,10 @@ async function logMessageUpdate(client: Client) {
             .setDescription(`[Jump To Message](https://discordapp.com/channels/${oldMessage.guildId}/${oldMessage.channelId}/${oldMessage.id})`)
             .setFields(fieldsOut)
             .setTimestamp();
-        logChannel.send({ embeds: [embMsg] });
+
+        if (fieldsOut.length != 0) {
+            logChannel.send({ embeds: [embMsg] });
+        }
     });
     //#endregion
     console.log('... OK');
@@ -343,7 +349,10 @@ async function logVoiceUpdate(client: Client) {
             .setTitle(`User Connected To Voice Channel`)
             .setFields(fieldsOut)
             .setTimestamp();
-        logChannel.send({ embeds: [embMsg] });
+
+        if (fieldsOut.length != 0) {
+            logChannel.send({ embeds: [embMsg] });
+        }
     });
     //#endregion
     console.log('... OK');
@@ -578,7 +587,10 @@ async function logAdminUpdate(client: Client) {
         }
 
         const embMsg = new EmbedBuilder().setColor('#00ff00').setThumbnail(channel.guild.iconURL()).setTitle(`Channel Created`).setFields(fieldsOut).setTimestamp();
-        logChannel.send({ embeds: [embMsg] });
+
+        if (fieldsOut.length != 0) {
+            logChannel.send({ embeds: [embMsg] });
+        }
     });
     //#endregion
 
@@ -700,7 +712,10 @@ async function logAdminUpdate(client: Client) {
         }
 
         const embMsg = new EmbedBuilder().setColor('#ff0000').setThumbnail(channel.guild.iconURL()).setTitle(`Channel Deleted`).setFields(fieldsOut).setTimestamp();
-        logChannel.send({ embeds: [embMsg] });
+
+        if (fieldsOut.length != 0) {
+            logChannel.send({ embeds: [embMsg] });
+        }
     });
     //#endregion
 
@@ -941,7 +956,7 @@ async function logAdminUpdate(client: Client) {
             });
         }
 
-        if (changesString != '') {
+        if (changesString != '' && fieldsOut.length != 0) {
             const embMsg = new EmbedBuilder().setColor('#0000ff').setThumbnail(newChannel.guild.iconURL()).setTitle(`Channel Changed`).setFields(fieldsOut).setTimestamp();
             logChannel.send({ embeds: [embMsg] });
         }
@@ -1139,7 +1154,9 @@ async function logUserUpdate(client: Client) {
         }
 
         const embMsg = new EmbedBuilder().setColor('#0000ff').setThumbnail(newMember.user.avatarURL()).setTitle(`Member Changed`).setFields(fieldsOut).setTimestamp();
-        logChannel.send({ embeds: [embMsg] });
+        if (fieldsOut.length != 0) {
+            logChannel.send({ embeds: [embMsg] });
+        }
     });
     //#endregion
 
@@ -1222,7 +1239,10 @@ async function logUserUpdate(client: Client) {
             .setTitle(`User Left`)
             .setFields(fieldsOut)
             .setTimestamp();
-        logChannel.send({ embeds: [embMsg] });
+
+        if (fieldsOut.length != 0) {
+            logChannel.send({ embeds: [embMsg] });
+        }
     });
     //#endregion
 
