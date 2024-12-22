@@ -25,7 +25,6 @@ import { logMessageUpdate, logVoiceUpdate, logAdminUpdate, logUserUpdate } from 
 //#endregion
 
 console.log('Starting Bot...');
-console.log(process.env.authToken);
 
 //#region Initialize Discord Bot
 const client = new Client({
