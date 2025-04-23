@@ -1,4 +1,5 @@
 //#region Imports
+import { XMLHttpRequest } from 'xmlhttprequest-ts';
 import { SlashCommandBuilder } from 'discord.js';
 import { embedCustom, warnCustom, errorCustom } from '../../helpers/embedSlashMessages.js';
 //#endregion
