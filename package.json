@@ -28,7 +28,8 @@
         "genius-lyrics": "^4.4.7",
         "mongodb": "^6.8.0",
         "mongoose": "^8.5.4",
-        "sodium-native": "^4.1.1"
+        "sodium-native": "^4.1.1",
+        "xmlhttprequest-ts": "^1.0.1"
     },
     "scripts": {
         "start": "nodemon --ignore ./built/data --watch built --env-file=.env ./built/storm.js",

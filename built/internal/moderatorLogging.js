@@ -112,7 +112,9 @@ function logMessageUpdate(client) {
                 .setTitle(`Message Deleted`)
                 .setFields(fieldsOut)
                 .setTimestamp();
-            logChannel.send({ embeds: [embMsg] });
+            if (fieldsOut.length != 0) {
+                logChannel.send({ embeds: [embMsg] });
+            }
         }));
         //#endregion
         //#region Message Edit
@@ -208,7 +210,9 @@ function logMessageUpdate(client) {
                 .setDescription(`[Jump To Message](https://discordapp.com/channels/${oldMessage.guildId}/${oldMessage.channelId}/${oldMessage.id})`)
                 .setFields(fieldsOut)
                 .setTimestamp();
-            logChannel.send({ embeds: [embMsg] });
+            if (fieldsOut.length != 0) {
+                logChannel.send({ embeds: [embMsg] });
+            }
         }));
         //#endregion
         console.log('... OK');
@@ -325,7 +329,9 @@ function logVoiceUpdate(client) {
                 .setTitle(`User Connected To Voice Channel`)
                 .setFields(fieldsOut)
                 .setTimestamp();
-            logChannel.send({ embeds: [embMsg] });
+            if (fieldsOut.length != 0) {
+                logChannel.send({ embeds: [embMsg] });
+            }
         }));
         //#endregion
         console.log('... OK');
@@ -556,7 +562,9 @@ function logAdminUpdate(client) {
                 }
             }
             const embMsg = new EmbedBuilder().setColor('#00ff00').setThumbnail(channel.guild.iconURL()).setTitle(`Channel Created`).setFields(fieldsOut).setTimestamp();
-            logChannel.send({ embeds: [embMsg] });
+            if (fieldsOut.length != 0) {
+                logChannel.send({ embeds: [embMsg] });
+            }
         }));
         //#endregion
         //#region Channel Deletion
@@ -669,7 +677,9 @@ function logAdminUpdate(client) {
                 });
             }
             const embMsg = new EmbedBuilder().setColor('#ff0000').setThumbnail(channel.guild.iconURL()).setTitle(`Channel Deleted`).setFields(fieldsOut).setTimestamp();
-            logChannel.send({ embeds: [embMsg] });
+            if (fieldsOut.length != 0) {
+                logChannel.send({ embeds: [embMsg] });
+            }
         }));
         //#endregion
         //#region Channel Update
@@ -891,7 +901,7 @@ function logAdminUpdate(client) {
                     inline: true,
                 });
             }
-            if (changesString != '') {
+            if (changesString != '' && fieldsOut.length != 0) {
                 const embMsg = new EmbedBuilder().setColor('#0000ff').setThumbnail(newChannel.guild.iconURL()).setTitle(`Channel Changed`).setFields(fieldsOut).setTimestamp();
                 logChannel.send({ embeds: [embMsg] });
             }
@@ -1074,7 +1084,9 @@ function logUserUpdate(client) {
                 });
             }
             const embMsg = new EmbedBuilder().setColor('#0000ff').setThumbnail(newMember.user.avatarURL()).setTitle(`Member Changed`).setFields(fieldsOut).setTimestamp();
-            logChannel.send({ embeds: [embMsg] });
+            if (fieldsOut.length != 0) {
+                logChannel.send({ embeds: [embMsg] });
+            }
         }));
         //#endregion
         //#region User Leaving
@@ -1147,7 +1159,9 @@ function logUserUpdate(client) {
                 .setTitle(`User Left`)
                 .setFields(fieldsOut)
                 .setTimestamp();
-            logChannel.send({ embeds: [embMsg] });
+            if (fieldsOut.length != 0) {
+                logChannel.send({ embeds: [embMsg] });
+            }
         }));
         //#endregion
         console.log('... OK');
