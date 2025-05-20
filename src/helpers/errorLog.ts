@@ -5,9 +5,9 @@ import { capitalize } from './stringHelpers.js';
 import { Log, LogType } from '../models/loggingModel.js';
 //#endregion
 
-//#region Error Logs TODO FIX this it needs to not be global (.. is for linux, . for windows fuck if I know why this cant be standardized)
-let errorLogFile = JSON.parse(readFileSync('../data/errorLog.json').toString());
-let logFile = JSON.parse(readFileSync('../data/log.json').toString());
+//#region Error Logs TODO FIX this it needs to not be global
+let errorLogFile = JSON.parse(readFileSync('./data/errorLog.json').toString());
+let logFile = JSON.parse(readFileSync('./data/log.json').toString());
 //#endregion
 
 console.log(errorLogFile);
