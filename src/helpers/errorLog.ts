@@ -1,6 +1,6 @@
 //#region Imports
 import { Client, EmbedBuilder } from 'discord.js';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFile, existsSync } from 'fs';
 import { resolve } from 'path';
 import { capitalize } from './stringHelpers.js';
 import { Log, LogType } from '../models/loggingModel.js';
@@ -84,9 +84,9 @@ function addToLog(logType: LogType, command: string, user: string, server: strin
 function addInput(logType: LogType) {
     try {
         if (logType === LogType.Success || logType === LogType.Warning) {
-            writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2));
+            writeFile(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2));
         } else {
-            writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2));
+            writeFile(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2));
         }
         reloadLog();
 
@@ -151,11 +151,11 @@ function buildLog(logType: LogType) {
     };
 
     if (logType === LogType.Success || logType === LogType.Warning) {
-        writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logJSON, null, 2));
+        writeFile(resolve(__dirname, './data/log.json'), JSON.stringify(logJSON, null, 2));
         return;
     }
 
-    writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(logJSON, null, 2));
+    writeFile(resolve(__dirname, './data/errorLog.json'), JSON.stringify(logJSON, null, 2));
 }
 //#endregion
 
