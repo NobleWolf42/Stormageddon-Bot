@@ -49,7 +49,9 @@ async function logMessageUpdate(client: Client) {
             type: AuditLogEvent.MessageDelete,
         });
 
-        if (auditLogFetch.entries.first().executorId == client.user.id) {
+        console.log(auditLogFetch.entries.first());
+
+        if (auditLogFetch.entries.first() != undefined && auditLogFetch.entries.first().executorId == client.user.id) {
             return;
         }
 
