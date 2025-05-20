@@ -48,7 +48,6 @@ function addToLog(logType: LogType, command: string, user: string, server: strin
 
         errorLogFile.logging.push(logAdd);
         addInput(logType);
-        console.log(errorLogFile);
         const devList = process.env.devIDs.split(',');
         for (const key of devList) {
             const embMsg = new EmbedBuilder().setDescription(`${logAdd.Log}`).setTimestamp();
