@@ -77,10 +77,12 @@ function addToLog(logType, command, user, server, channel, error, client) {
 function addInput(logType) {
     try {
         if (logType === LogType.Success || logType === LogType.Warning) {
-            writeFile(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2));
+            writeFile(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2), (err) => err && console.error(err));
+            ;
         }
         else {
-            writeFile(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2));
+            writeFile(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2), (err) => err && console.error(err));
+            ;
         }
         reloadLog();
         if (logFile.logging.length > 100 || errorLogFile.logging.length > 100) {
