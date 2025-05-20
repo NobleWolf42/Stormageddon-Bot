@@ -45,6 +45,13 @@ function logMessageUpdate(client) {
             if (!logChannel.isTextBased() || logChannel.isDMBased()) {
                 return;
             }
+            const auditLogFetch = yield message.guild.fetchAuditLogs({
+                limit: 1,
+                type: AuditLogEvent.MessageDelete,
+            });
+            if (auditLogFetch.entries.first().executorId == client.user.id) {
+                return;
+            }
             const fieldsOut = [];
             fieldsOut.push({
                 name: '**User Name:**',

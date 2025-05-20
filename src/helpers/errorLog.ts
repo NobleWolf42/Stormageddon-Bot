@@ -83,9 +83,9 @@ function addToLog(logType: LogType, command: string, user: string, server: strin
  */
 function addInput(logType: LogType) {
     if (logType === LogType.Success || logType === LogType.Warning) {
-        writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2));
+        console.log(writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2)));
     } else {
-        writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2));
+        console.log(writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2)));
     }
     reloadLog();
 
