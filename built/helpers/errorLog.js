@@ -1,6 +1,6 @@
 //#region Imports
 import { EmbedBuilder } from 'discord.js';
-import { readFileSync, writeFile, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 import { capitalize } from './stringHelpers.js';
 import { Log, LogType } from '../models/loggingModel.js';
@@ -36,11 +36,12 @@ function addToLog(logType, command, user, server, channel, error, client) {
         console.log(logAdd.Log);
         console.log('');
         if (logType === LogType.Success || logType === LogType.Warning) {
-            logFile.logging[logFile.logging.length] = logAdd;
+            logFile.logging.push(logAdd);
             addInput(logType);
             return;
         }
-        errorLogFile.logging[errorLogFile.logging.length] = logAdd;
+        errorLogFile.logging.push(logAdd);
+        console.log(errorLogFile);
         const devList = process.env.devIDs.split(',');
         for (const key of devList) {
             const embMsg = new EmbedBuilder().setDescription(`${logAdd.Log}`).setTimestamp();
@@ -75,22 +76,15 @@ function addToLog(logType, command, user, server, channel, error, client) {
  * @param logType - Type of log "success", "warning", "alert", or "fatal error"
  */
 function addInput(logType) {
-    try {
-        if (logType === LogType.Success || logType === LogType.Warning) {
-            writeFile(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2), (err) => err && console.error(err));
-            ;
-        }
-        else {
-            writeFile(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2), (err) => err && console.error(err));
-            ;
-        }
-        reloadLog();
-        if (logFile.logging.length > 100 || errorLogFile.logging.length > 100) {
-            resetLog(logType);
-        }
+    if (logType === LogType.Success || logType === LogType.Warning) {
+        writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2));
     }
-    catch (err) {
-        console.log(err);
+    else {
+        writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2));
+    }
+    reloadLog();
+    if (logFile.logging.length > 100 || errorLogFile.logging.length > 100) {
+        resetLog(logType);
     }
 }
 //#endregion
@@ -141,10 +135,10 @@ function buildLog(logType) {
         logging: [new Log(LogType.None, 'Rebuilt Log File')],
     };
     if (logType === LogType.Success || logType === LogType.Warning) {
-        writeFile(resolve(__dirname, './data/log.json'), JSON.stringify(logJSON, null, 2));
+        writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logJSON, null, 2));
         return;
     }
-    writeFile(resolve(__dirname, './data/errorLog.json'), JSON.stringify(logJSON, null, 2));
+    writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(logJSON, null, 2));
 }
 //#endregion
 export { addToLog };

@@ -21,13 +21,20 @@ class Log {
     Date: string;
     Code: LogType;
 
-    constructor(code: LogType, log: string = '', date: string = new Date().toTimeString()) {
+    constructor(code: LogType, log: string = '', date: string = new Date().toUTCString()) {
         this.Log = log;
         this.Date = date;
         this.Code = code;
     }
 }
+//#endregion
+
+//#region Log File
+interface LogFile {
+    logging: Log[];
+}
+//#endregion
 
 //#region Exports
-export { LogType, Log, ErrorType };
+export { LogType, Log, ErrorType, LogFile };
 //#endregion

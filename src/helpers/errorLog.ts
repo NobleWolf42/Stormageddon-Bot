@@ -1,9 +1,9 @@
 //#region Imports
 import { Client, EmbedBuilder } from 'discord.js';
-import { readFileSync, writeFile, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { resolve } from 'path';
 import { capitalize } from './stringHelpers.js';
-import { Log, LogType } from '../models/loggingModel.js';
+import { Log, LogFile, LogType } from '../models/loggingModel.js';
 //#endregion
 
 //#region stupid constants to make the __dirname work
@@ -11,8 +11,8 @@ const __dirname = resolve();
 //#endregion
 
 //#region Error Logs TODO FIX this it needs to not be global
-let errorLogFile = JSON.parse(readFileSync(resolve(__dirname, './data/errorLog.json')).toString());
-let logFile = JSON.parse(readFileSync(resolve(__dirname, './data/log.json')).toString());
+let errorLogFile: LogFile = JSON.parse(readFileSync(resolve(__dirname, './data/errorLog.json')).toString());
+let logFile: LogFile = JSON.parse(readFileSync(resolve(__dirname, './data/log.json')).toString());
 //#endregion
 
 //#region Function that adds an item to the log file and sends any fatal errors to the bot developers
@@ -41,12 +41,13 @@ function addToLog(logType: LogType, command: string, user: string, server: strin
         console.log('');
 
         if (logType === LogType.Success || logType === LogType.Warning) {
-            logFile.logging[logFile.logging.length] = logAdd;
+            logFile.logging.push(logAdd);
             addInput(logType);
             return;
         }
 
-        errorLogFile.logging[errorLogFile.logging.length] = logAdd;
+        errorLogFile.logging.push(logAdd);
+        console.log(errorLogFile);
         const devList = process.env.devIDs.split(',');
         for (const key of devList) {
             const embMsg = new EmbedBuilder().setDescription(`${logAdd.Log}`).setTimestamp();
@@ -82,19 +83,15 @@ function addToLog(logType: LogType, command: string, user: string, server: strin
  * @param logType - Type of log "success", "warning", "alert", or "fatal error"
  */
 function addInput(logType: LogType) {
-    try {
-        if (logType === LogType.Success || logType === LogType.Warning) {
-            writeFile(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2), (err) => err && console.error(err)));
-        } else {
-            writeFile(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2), (err) => err && console.error(err)));
-        }
-        reloadLog();
+    if (logType === LogType.Success || logType === LogType.Warning) {
+        writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2));
+    } else {
+        writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2));
+    }
+    reloadLog();
 
-        if (logFile.logging.length > 100 || errorLogFile.logging.length > 100) {
-            resetLog(logType);
-        }
-    } catch (err) {
-        console.log(err);
+    if (logFile.logging.length > 100 || errorLogFile.logging.length > 100) {
+        resetLog(logType);
     }
 }
 //#endregion
@@ -151,11 +148,11 @@ function buildLog(logType: LogType) {
     };
 
     if (logType === LogType.Success || logType === LogType.Warning) {
-        writeFile(resolve(__dirname, './data/log.json'), JSON.stringify(logJSON, null, 2));
+        writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logJSON, null, 2));
         return;
     }
 
-    writeFile(resolve(__dirname, './data/errorLog.json'), JSON.stringify(logJSON, null, 2));
+    writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(logJSON, null, 2));
 }
 //#endregion
 

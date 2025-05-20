@@ -1,3 +1,4 @@
+/*
 //#region Imports
 import { ButtonInteraction, Client, ComponentType, Events } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
@@ -11,6 +12,8 @@ import { MongooseServerConfig } from '../models/serverConfigModel.js';
  * This function starts the listening to see if a user hits a reaction, and gives them the role when they do react.
  * @param client - Discord.js Client Object
  */
+
+/*
 async function ticketListener(client: Client) {
     //#region Loads Messages to Listen to
     const ticketLists = await MongooseTicketList.find({}).exec();
@@ -100,3 +103,4 @@ async function ticketListener(client: Client) {
 //#region exports
 export { ticketListener as autoRoleListener };
 //#endregion
+*/
