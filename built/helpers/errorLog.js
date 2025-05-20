@@ -75,15 +75,20 @@ function addToLog(logType, command, user, server, channel, error, client) {
  * @param logType - Type of log "success", "warning", "alert", or "fatal error"
  */
 function addInput(logType) {
-    if (logType === LogType.Success || logType === LogType.Warning) {
-        console.log(writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2)));
+    try {
+        if (logType === LogType.Success || logType === LogType.Warning) {
+            writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2));
+        }
+        else {
+            writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2));
+        }
+        reloadLog();
+        if (logFile.logging.length > 100 || errorLogFile.logging.length > 100) {
+            resetLog(logType);
+        }
     }
-    else {
-        console.log(writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2)));
-    }
-    reloadLog();
-    if (logFile.logging.length > 100 || errorLogFile.logging.length > 100) {
-        resetLog(logType);
+    catch (err) {
+        console.log(err);
     }
 }
 //#endregion
