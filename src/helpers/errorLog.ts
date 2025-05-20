@@ -1,16 +1,20 @@
 //#region Imports
 import { Client, EmbedBuilder } from 'discord.js';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { resolve } from 'path';
 import { capitalize } from './stringHelpers.js';
 import { Log, LogType } from '../models/loggingModel.js';
 //#endregion
 
-//#region Error Logs TODO FIX this it needs to not be global
-let errorLogFile = JSON.parse(readFileSync('./data/errorLog.json').toString());
-let logFile = JSON.parse(readFileSync('./data/log.json').toString());
+//#region stupid constants to make the __dirname work
+const __dirname = resolve();
 //#endregion
 
-console.log(errorLogFile);
+//#region Error Logs TODO FIX this it needs to not be global
+let errorLogFile = JSON.parse(readFileSync(resolve(__dirname, './data/errorLog.json')).toString());
+let logFile = JSON.parse(readFileSync(resolve(__dirname, './data/log.json')).toString());
+//#endregion
+
 //#region Function that adds an item to the log file and sends any fatal errors to the bot developers
 /**
  * This function adds an item to the log file and sends any fatal errors to the bot developers.
@@ -59,7 +63,7 @@ function addToLog(logType: LogType, command: string, user: string, server: strin
                 embeds: [embMsg],
                 files: [
                     {
-                        attachment: '../data/errorLog.json',
+                        attachment: './data/errorLog.json',
                         name: 'errorLog.json',
                     },
                 ],
@@ -79,9 +83,9 @@ function addToLog(logType: LogType, command: string, user: string, server: strin
  */
 function addInput(logType: LogType) {
     if (logType === LogType.Success || logType === LogType.Warning) {
-        writeFileSync('./data/log.json', JSON.stringify(logFile, null, 2));
+        writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logFile, null, 2));
     } else {
-        writeFileSync('./data/errorLog.json', JSON.stringify(errorLogFile, null, 2));
+        writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(errorLogFile, null, 2));
     }
     reloadLog();
 
@@ -98,7 +102,7 @@ function addInput(logType: LogType) {
  */
 function resetLog(logType: LogType) {
     if (logType === LogType.Success || logType === LogType.Warning) {
-        if (existsSync('./data/log.json')) {
+        if (existsSync(resolve(__dirname, './data/log.json'))) {
             buildLog(logType);
             console.log('Successfully Rebuilt the log.json\n');
             return;
@@ -106,7 +110,7 @@ function resetLog(logType: LogType) {
 
         console.log('Failed Rebuild of the log.json.\n');
     } else {
-        if (existsSync('./data/errorLog.json')) {
+        if (existsSync(resolve(__dirname, './data/errorLog.json'))) {
             buildLog(logType);
             console.log('Successfully Rebuilt the errorLog.json\n');
             return;
@@ -122,12 +126,12 @@ function resetLog(logType: LogType) {
  * This function reloads the log file into internal var.
  */
 function reloadLog() {
-    if (existsSync('./data/log.json')) {
+    if (existsSync(resolve(__dirname, './data/log.json'))) {
         logFile = JSON.parse(readFileSync('./data/log.json', 'utf8'));
     }
 
-    if (existsSync('./data/errorLog.json')) {
-        errorLogFile = JSON.parse(readFileSync('./data/errorLog.json', 'utf8'));
+    if (existsSync(resolve(__dirname, './data/errorLog.json'))) {
+        errorLogFile = JSON.parse(readFileSync(resolve(__dirname, './data/errorLog.json'), 'utf8'));
     }
 }
 //#endregion
@@ -143,11 +147,11 @@ function buildLog(logType: LogType) {
     };
 
     if (logType === LogType.Success || logType === LogType.Warning) {
-        writeFileSync('./data/log.json', JSON.stringify(logJSON, null, 2));
+        writeFileSync(resolve(__dirname, './data/log.json'), JSON.stringify(logJSON, null, 2));
         return;
     }
 
-    writeFileSync('./data/errorLog.json', JSON.stringify(logJSON, null, 2));
+    writeFileSync(resolve(__dirname, './data/errorLog.json'), JSON.stringify(logJSON, null, 2));
 }
 //#endregion
 
