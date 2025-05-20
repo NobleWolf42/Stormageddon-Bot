@@ -44,17 +44,6 @@ async function logMessageUpdate(client: Client) {
             return;
         }
 
-        const auditLogFetch: GuildAuditLogs<AuditLogEvent.MessageDelete> | GuildAuditLogs<AuditLogEvent.MessageBulkDelete> = await message.guild.fetchAuditLogs({
-            limit: 1,
-            type: AuditLogEvent.MessageDelete,
-        });
-
-        console.log(auditLogFetch.entries.first());
-
-        if (auditLogFetch.entries.first() != undefined && auditLogFetch.entries.first().executorId == client.user.id) {
-            return;
-        }
-
         const fieldsOut: { name: string; value: string; inline: boolean }[] = [];
 
         fieldsOut.push({
