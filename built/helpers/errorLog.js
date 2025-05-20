@@ -41,6 +41,7 @@ function addToLog(logType, command, user, server, channel, error, client) {
             return;
         }
         errorLogFile.logging.push(logAdd);
+        addInput(logType);
         console.log(errorLogFile);
         const devList = process.env.devIDs.split(',');
         for (const key of devList) {
