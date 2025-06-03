@@ -17,6 +17,16 @@ interface ServerConfig {
             url: string;
         };
     };
+    ticketing: {
+        enable: boolean;
+        embedTitle: string;
+        embedMessage: string;
+        embedFooter: string;
+        embedThumbnail: {
+            enable: boolean;
+            url: string;
+        };
+    };
     joinRole: {
         enable: boolean;
         role: string;
@@ -85,6 +95,16 @@ const serverConfigSchema = new Schema<ServerConfig>({
         embedFooter: { type: String, required: true },
         roles: { type: [String], required: true },
         reactions: { type: [String], required: true },
+        embedThumbnail: {
+            enable: { type: Boolean, required: true },
+            url: { type: String, required: true },
+        },
+    },
+    ticketing: {
+        enable: { type: Boolean, required: true },
+        embedTitle: { type: String, required: true },
+        embedMessage: { type: String, required: true },
+        embedFooter: { type: String, required: true },
         embedThumbnail: {
             enable: { type: Boolean, required: true },
             url: { type: String, required: true },
