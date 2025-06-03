@@ -85,10 +85,10 @@ try {
         savePreviousSongs: false,
         plugins: [
             new SpotifyPlugin(),
-            new SoundCloudPlugin(),
             new YouTubePlugin(),
             new DeezerPlugin(),
             // YouTube DL Plugin with optimizations
+            new SoundCloudPlugin(),
             new YtDlpPlugin({
                 update: true, // Update youtube-dl automatically
             }),

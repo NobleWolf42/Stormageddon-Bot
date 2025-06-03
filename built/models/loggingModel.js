@@ -17,12 +17,13 @@ var ErrorType;
 //#endregion
 //#region Log interface
 class Log {
-    constructor(code, log = '', date = new Date().toTimeString()) {
+    constructor(code, log = '', date = new Date().toUTCString()) {
         this.Log = log;
         this.Date = date;
         this.Code = code;
     }
 }
+//#endregion
 //#region Exports
 export { LogType, Log, ErrorType };
 //#endregion
