@@ -182,7 +182,7 @@ async function panelCreation(channel: VoiceChannel, collections: ExtraCollection
 }
 //#endregion
 
-//#region Panel Creation
+//#region Panel Listener
 /**
  * This function starts the listener that handles that handles Join to Create Channels.
  * @param message - The Discord.JS Message Object for the Panel Message
@@ -199,6 +199,12 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
             return;
         }
         const embMsg = new EmbedBuilder().setColor('#10FFAB').setTimestamp();
+
+        if (collections.voiceGenerator.get(channel.id) != interaction.user.id && interaction.customId != ButtonAction.VCClaim) {
+            embMsg.setTitle('Error').setDescription('You are not the channel owner.');
+            interaction.reply({ embeds: [embMsg], ephemeral: true });
+        }
+
         switch (interaction.customId) {
             //#region on button press - Private
             case ButtonAction.VCPrivate:
@@ -249,8 +255,6 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
             //#region on button press - Edit
             case ButtonAction.VCEdit:
                 {
-                    /*if (owner)
-                     */
                     const VCNewNameBody = new TextInputBuilder().setCustomId(TextAction.VCNewName).setLabel('Input Channel Name:').setValue(channel.name).setStyle(TextInputStyle.Short);
 
                     const VCNewNameBodyInput = new ActionRowBuilder<TextInputBuilder>().addComponents(VCNewNameBody);

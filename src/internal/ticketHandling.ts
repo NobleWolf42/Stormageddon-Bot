@@ -1,9 +1,6 @@
-/*
 //#region Imports
-import { ButtonInteraction, Client, ComponentType, Events } from 'discord.js';
-import { addToLog } from '../helpers/errorLog.js';
+import { ButtonInteraction, Client, ComponentType, Message, ChannelType, ButtonStyle, ButtonBuilder, ActionRowBuilder, PermissionsBitField } from 'discord.js';
 import { MongooseTicketList, TicketChannel } from '../models/ticketingList.js';
-import { LogType } from '../models/loggingModel.js';
 import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 
@@ -12,15 +9,13 @@ import { MongooseServerConfig } from '../models/serverConfigModel.js';
  * This function starts the listening to see if a user hits a reaction, and gives them the role when they do react.
  * @param client - Discord.js Client Object
  */
-
-/*
 async function ticketListener(client: Client) {
     //#region Loads Messages to Listen to
     const ticketLists = await MongooseTicketList.find({}).exec();
     const channelObjects: TicketChannel[] = [];
 
     for (const guild of ticketLists) {
-        for (const channels of guild.roleChannels) {
+        for (const channels of guild.ticketChannels) {
             channelObjects.push(channels);
         }
     }
@@ -32,65 +27,7 @@ async function ticketListener(client: Client) {
         }
         for (const msg of channels.messageIDs) {
             const ticketMsg = await channel.messages.fetch(msg);
-            const collector = ticketMsg.createMessageComponentCollector({
-                componentType: ComponentType.Button,
-            });
-
-            //#region This event handel adding a role to a user when the react to the add role message
-            collector.on('collect', async (interaction: ButtonInteraction) => {
-                const message = reaction.message;
-
-                //This escapes if the reaction was in a vc or dm, or done by a bot
-                if (!message.channel.isTextBased() || message.channel.isDMBased() || user.bot) {
-                    return;
-                }
-
-                const serverID = message.channel.guild.id;
-                const member = message.guild.members.cache.get(user.id);
-
-                //Gets serverConfig from database
-                const serverConfig = (await MongooseServerConfig.findById(serverID).exec()).toObject();
-
-                //Stops if the feature is not enabled
-                if (!serverConfig.autoRole.enable) {
-                    return;
-                }
-
-                const emojiKey = reaction.emoji.id ? reaction.emoji.id : reaction.emoji.name; //`${reaction.emoji.name}:${reaction.emoji.id}`
-                const react = message.reactions.cache.get(emojiKey);
-
-                if (!react) {
-                    //Error, Reaction not Valid FIXME triggers randomly on normal messages
-                    addToLog(
-                        LogType.Alert,
-                        `${reaction.emoji.name}:${reaction.emoji.id} - is not found`,
-                        member.user.tag,
-                        message.guild.name,
-                        message.channel.name,
-                        'Issue with ReactEmoji Event',
-                        client
-                    );
-                }
-
-                if (
-                    message.author.id === client.user.id &&
-                    (message.content !== serverConfig.autoRole.embedMessage || (message.embeds[0] && message.embeds[0].footer.text !== serverConfig.autoRole.embedFooter))
-                ) {
-                    if (message.embeds.length >= 1) {
-                        const fields = message.embeds[0].fields;
-
-                        for (const { name, value } of fields) {
-                            if (member.id !== client.user.id) {
-                                const guildRole = message.guild.roles.cache.find((r) => r.name === value);
-                                if (name === react.emoji.name || name === react.emoji.toString()) {
-                                    member.roles.add(guildRole.id);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            //#endregion
+            ticketCollector(ticketMsg);
         }
     }
 
@@ -100,7 +37,112 @@ async function ticketListener(client: Client) {
 }
 //#endregion
 
-//#region exports
-export { ticketListener as autoRoleListener };
+//#region Listens for message button clicks
+/**
+ * This function takes a message and listens to the buttons on it
+ * @pram message - Discord.js Message Object
+ */
+async function ticketCollector(message: Message) {
+    const collector = message.createMessageComponentCollector({
+        componentType: ComponentType.Button,
+    });
+
+    collector.on('collect', async (interaction: ButtonInteraction) => {
+        switch (interaction.customId) {
+            case 'newTicket': {
+                //creates a new text channel
+                const botConfig = await MongooseTicketList.findById(interaction.guildId).exec();
+                const serverConfig = await MongooseServerConfig.findById(interaction.guildId).exec();
+                botConfig.ticketNumber = botConfig.ticketNumber + 1;
+                botConfig.markModified('ticketNumber');
+                await botConfig.save().then(() => {
+                    console.log(`Updated TicketingListeningDB for ${interaction.guildId}`);
+                });
+
+                const ticketChannel = await interaction.guild.channels.create({
+                    name: `${interaction.member.user.username}'s Ticket - #${botConfig.ticketNumber}`,
+                    type: ChannelType.GuildText,
+                    parent: interaction.channel.parent,
+                    permissionOverwrites: [
+                        {
+                            id: interaction.guild.id,
+                            deny: [PermissionsBitField.Flags.ViewChannel],
+                        },
+                        {
+                            id: interaction.user.id,
+                            allow: [PermissionsBitField.Flags.ViewChannel],
+                        },
+                        {
+                            id: serverConfig.general.modRoles,
+                            allow: [PermissionsBitField.Flags.ViewChannel],
+                        },
+                    ],
+                });
+
+                panelCreation(ticketChannel, collections, serverConfig);
+
+                break;
+            }
+
+            case 'closeTicket': {
+                //creates a new text channel
+                const botConfig = await MongooseTicketList.findById(interaction.guildId).exec();
+                botConfig.ticketNumber = botConfig.ticketNumber + 1;
+                botConfig.markModified('ticketNumber');
+                await botConfig.save().then(() => {
+                    console.log(`Updated TicketingListeningDB for ${interaction.guildId}`);
+                });
+
+                const ticketChannel = await guild.channels.create({
+                    name: `${interaction.member.user.username}'s Ticket - #${botConfig.ticketNumber}`,
+                    type: ChannelType.GuildText,
+                    parent: interaction.channel.parent,
+                    permissionOverwrites: newChannel.parent.permissionOverwrites.cache.map((p) => {
+                        return {
+                            id: p.id,
+                            allow: p.allow.toArray(),
+                            deny: p.deny.toArray(),
+                        };
+                    }),
+                });
+
+                panelCreation(ticketChannel, collections, serverConfig);
+
+                break;
+            }
+        }
+    });
+    //#endregion
+}
 //#endregion
-*/
+
+//#region Panel Creation
+/**
+ * This function starts the listener that handles that handles Join to Create Channels.
+ * @param channel - Current Discord.js VoiceChannel Object
+ * @param collections - Current ExtraCollections Object
+ * @param serverConfig - Current Server Config File
+ */
+async function panelCreation(channel: VoiceChannel, collections: ExtraCollections, serverConfig: ServerConfig) {
+    const embMsg = new EmbedBuilder()
+        .setTitle('Voice Channel Controls')
+        .setColor('#00A0FF')
+        .setDescription(`Temporary Channel\nUse the buttons below to moderate your temporary voice channel!\nYou can also use slash '/' commands.`)
+        .setTimestamp();
+    //#region button creation
+    const closeTicketButton = new ButtonBuilder().setCustomId('closeTicket').setLabel('Close Ticket 📫').setStyle(ButtonStyle.Secondary);
+    const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(closeTicketButton);
+    //#endregion
+
+    const panelMessage = await channel.send({
+        embeds: [embMsg],
+        components: [buttons],
+    });
+
+    ticketCollector(panelMessage);
+}
+//#endregion
+
+//#region exports
+export { ticketListener, ticketCollector };
+//#endregion

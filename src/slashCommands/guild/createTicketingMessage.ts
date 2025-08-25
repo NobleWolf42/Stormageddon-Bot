@@ -1,14 +1,14 @@
 //#region Imports
-import { APIEmbedField, EmbedBuilder, PermissionFlagsBits, PermissionsBitField, RestOrArray, SlashCommandBuilder } from 'discord.js';
+import { EmbedBuilder, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType } from 'discord.js';
 import { embedCustomDM, errorCustom, warnDisabled } from '../../helpers/embedSlashMessages.js';
-import { generateEmbedFields } from '../../internal/autoRole.js';
 import { MongooseServerConfig } from '../../models/serverConfigModel.js';
 import { SlashCommand } from '../../models/slashCommandModel.js';
 import { MongooseTicketList } from '../../models/ticketingList.js';
+import { ticketCollector } from '../../internal/ticketHandling.js';
 //#endregion
 
 //#region This exports the createrolemessage command with the information about it
-const createRoleMessageSlashCommand: SlashCommand = {
+const createTicketingMessageSlashCommand: SlashCommand = {
     data: new SlashCommandBuilder()
         .setName('createticketmessage')
         .setDescription('Creates the message for users to use to open a ticket.')
@@ -98,7 +98,12 @@ const createRoleMessageSlashCommand: SlashCommand = {
 
         const ticketChan = botConfig.ticketChannels.findIndex((test) => test.id == channel.id);
 
-        const m = await channel.send({ embeds: [embMsg] });
+        const newTicketButton = new ButtonBuilder().setCustomId('newTicket').setLabel('New Ticket 📩').setStyle(ButtonStyle.Secondary);
+        const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(newTicketButton);
+
+        const m = await channel.send({ embeds: [embMsg], components: [buttons] });
+
+        ticketCollector(m);
 
         if (botConfig.ticketChannels[ticketChan].messageIDs.find((test) => test == m.id) == undefined) {
             botConfig.ticketChannels[ticketChan].messageIDs.push(m.id);
@@ -117,5 +122,5 @@ const createRoleMessageSlashCommand: SlashCommand = {
 //#endregion
 
 //#region Exports
-export default createRoleMessageSlashCommand;
+export default createTicketingMessageSlashCommand;
 //#endregion
