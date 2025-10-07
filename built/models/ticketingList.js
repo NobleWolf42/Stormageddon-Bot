@@ -4,9 +4,9 @@ import { Schema, model } from 'mongoose';
 const ticketListSchema = new Schema({
     _id: { type: String, required: true },
     guildID: { type: String, required: true },
-    roleChannels: { type: [{ id: String, messageIDs: [String] }], required: true },
+    ticketChannels: { type: [{ id: String, messageIDs: [String] }], required: true },
 });
-const MongooseTicketList = model('Auto-Role-List', ticketListSchema);
+const MongooseTicketList = model('Ticket-List', ticketListSchema);
 //#endregion
 //#region exports
 export { MongooseTicketList };

@@ -17,6 +17,16 @@ const serverConfigSchema = new Schema({
             url: { type: String, required: true },
         },
     },
+    ticketing: {
+        enable: { type: Boolean, required: true },
+        embedTitle: { type: String, required: true },
+        embedMessage: { type: String, required: true },
+        embedFooter: { type: String, required: true },
+        embedThumbnail: {
+            enable: { type: Boolean, required: true },
+            url: { type: String, required: true },
+        },
+    },
     joinRole: {
         enable: { type: Boolean, required: true },
         role: { type: String, required: true },
