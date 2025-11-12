@@ -22,7 +22,20 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
  * @param command - String of command keyword
  * @param args - Array of the words after the command keyword
  */
-function tryCommand(client: Client, message: Message, command: Command, args: string[], distube: DisTube, serverConfig: ServerConfig, collections: ExtraCollections) {
+function tryCommand(
+    client: Client,
+    message: Message,
+    command: Command,
+    args: string[],
+    distube: DisTube,
+    serverConfig: ServerConfig &
+        Required<{
+            _id: string;
+        }> & {
+            __v: number;
+        },
+    collections: ExtraCollections
+) {
     try {
         command.execute(message, args, client, distube, collections, serverConfig);
         if (message.channel.isDMBased()) {

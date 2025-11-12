@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Imports
-import { REST, Routes } from 'discord.js';
+import { REST, Routes, MessageFlags } from 'discord.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { LogType } from '../models/loggingModel.js';
 import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCommands/activeSlashCommands.js';
@@ -58,13 +58,13 @@ function slashCommandHandling(client, distube, collections) {
                 if (interaction.replied || interaction.deferred) {
                     yield interaction.followUp({
                         content: 'There was an error while executing this command!',
-                        ephemeral: true,
+                        flags: MessageFlags.Ephemeral,
                     });
                 }
                 else {
                     yield interaction.reply({
                         content: 'There was an error while executing this command!',
-                        ephemeral: true,
+                        flags: MessageFlags.Ephemeral,
                     });
                 }
             }

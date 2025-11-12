@@ -1,5 +1,5 @@
 //#region Imports
-import { ApplicationCommand, Client, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes } from 'discord.js';
+import { ApplicationCommand, Client, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes, MessageFlags } from 'discord.js';
 import { DisTube } from 'distube';
 import { addToLog } from '../helpers/errorLog.js';
 import { ExtraCollections } from '../models/extraCollectionsModel.js';
@@ -52,12 +52,12 @@ async function slashCommandHandling(client: Client, distube: DisTube, collection
             if (interaction.replied || interaction.deferred) {
                 await interaction.followUp({
                     content: 'There was an error while executing this command!',
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral,
                 });
             } else {
                 await interaction.reply({
                     content: 'There was an error while executing this command!',
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral,
                 });
             }
         }

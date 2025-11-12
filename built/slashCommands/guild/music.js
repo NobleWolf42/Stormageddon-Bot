@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Imports
-import { EmbedBuilder, GuildMember, SlashCommandBuilder } from 'discord.js';
+import { EmbedBuilder, GuildMember, SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { Client as GeniusClient } from 'genius-lyrics';
 import { embedCustom, errorCustom, errorNoDJ, errorNoMod, warnCustom, warnDisabled, warnWrongChannel } from '../../helpers/embedSlashMessages.js';
 import { addToLog } from '../../helpers/errorLog.js';
@@ -124,7 +124,7 @@ const musicSlashCommand = {
                     });
                     interaction.reply({
                         content: 'Added',
-                        ephemeral: true,
+                        flags: MessageFlags.Ephemeral,
                     });
                     break;
                 }

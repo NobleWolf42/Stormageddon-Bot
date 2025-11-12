@@ -9,7 +9,8 @@ interface TicketChannel {
 interface TicketList {
     _id: string;
     guildID: string;
-    roleChannels: TicketChannel[];
+    ticketNumber: number;
+    ticketChannels: TicketChannel[];
 }
 //#endregion
 
@@ -17,10 +18,11 @@ interface TicketList {
 const ticketListSchema = new Schema<TicketList>({
     _id: { type: String, required: true },
     guildID: { type: String, required: true },
-    roleChannels: { type: [{ id: String, messageIDs: [String] }], required: true },
+    ticketNumber: { type: Number, required: true },
+    ticketChannels: { type: [{ id: String, messageIDs: [String] }], required: true },
 });
 
-const MongooseTicketList = model('Auto-Role-List', ticketListSchema);
+const MongooseTicketList = model('Ticket-List', ticketListSchema);
 //#endregion
 
 //#region exports

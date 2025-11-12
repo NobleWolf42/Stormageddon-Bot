@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Imports
-import { EmbedBuilder } from 'discord.js';
+import { EmbedBuilder, MessageFlags } from 'discord.js';
 import { addToLog } from './errorLog.js';
 import { LogType } from '../models/loggingModel.js';
 //#endregion
@@ -58,7 +58,7 @@ function embedCustomDM(interaction, title, color, text, img, client) {
         user.send({ embeds: [embMsg] });
         interaction.reply({
             content: 'Sent',
-            ephemeral: true,
+            flags: MessageFlags.Ephemeral,
         });
     });
 }
@@ -80,7 +80,7 @@ function embedHelp(interaction, title, text) {
             text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
-        interaction.reply({ embeds: [embMsg], ephemeral: true });
+        interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
     });
 }
 //#endregion
@@ -102,7 +102,7 @@ function warnCustom(interaction, text, commandName) {
             text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
-        interaction.reply({ embeds: [embMsg], ephemeral: true });
+        interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
         if (interaction.channel.isDMBased()) {
             addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', text);
         }
@@ -129,7 +129,7 @@ function errorNoAdmin(interaction, commandName) {
             text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
-        interaction.reply({ embeds: [embMsg], ephemeral: true });
+        interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
         if (interaction.channel.isDMBased()) {
             addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not Bot Admin!');
         }
@@ -156,7 +156,7 @@ function errorNoMod(interaction, commandName) {
             text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
-        interaction.reply({ embeds: [embMsg], ephemeral: true });
+        interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
         if (interaction.channel.isDMBased()) {
             addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not Bot Moderator!');
         }
@@ -183,7 +183,7 @@ function errorNoDJ(interaction, commandName) {
             text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
-        interaction.reply({ embeds: [embMsg], ephemeral: true });
+        interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
         if (interaction.channel.isDMBased()) {
             addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not DJ!');
         }
@@ -210,7 +210,7 @@ function errorNoServerAdmin(interaction, commandName) {
             text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
-        interaction.reply({ embeds: [embMsg], ephemeral: true });
+        interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
         if (interaction.channel.isDMBased()) {
             addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not Server Admin!');
         }
@@ -238,7 +238,7 @@ function errorCustom(interaction, text, commandName, client) {
             text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
-        interaction.reply({ embeds: [embMsg], ephemeral: true });
+        interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
         if (interaction.channel.isDMBased()) {
             addToLog(LogType.FatalError, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', text);
         }
@@ -266,7 +266,7 @@ function warnWrongChannel(interaction, correctChannel, commandName) {
             text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
-        interaction.reply({ embeds: [embMsg], ephemeral: true });
+        interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
         if (interaction.channel.isDMBased()) {
             addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Wrong Text Channel');
         }
@@ -294,7 +294,7 @@ function warnDisabled(interaction, feature, commandName) {
             text: `Requested by ${interaction.user.tag}`,
             iconURL: null,
         });
-        interaction.reply({ embeds: [embMsg], ephemeral: true });
+        interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
         if (interaction.channel.isDMBased()) {
             addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Feature Disabled');
         }

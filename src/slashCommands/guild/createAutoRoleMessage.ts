@@ -1,5 +1,5 @@
 //#region Imports
-import { APIEmbedField, EmbedBuilder, PermissionFlagsBits, PermissionsBitField, RestOrArray, SlashCommandBuilder } from 'discord.js';
+import { APIEmbedField, EmbedBuilder, PermissionFlagsBits, PermissionsBitField, RestOrArray, SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { embedCustomDM, errorCustom, warnDisabled } from '../../helpers/embedSlashMessages.js';
 import { generateEmbedFields } from '../../internal/autoRole.js';
 import { MongooseServerConfig } from '../../models/serverConfigModel.js';
@@ -157,7 +157,7 @@ const createRoleMessageSlashCommand: SlashCommand = {
             console.log(`Updated AutoRoleListeningDB for ${interaction.guildId}`);
             interaction.reply({
                 content: 'Command Run',
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         });
     },

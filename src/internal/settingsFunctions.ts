@@ -11,6 +11,7 @@ import {
     EmbedBuilder,
     GuildMember,
     Interaction,
+    LabelBuilder,
     Message,
     ModalBuilder,
     PermissionFlagsBits,
@@ -19,6 +20,7 @@ import {
     TextInputStyle,
     User,
     UserSelectMenuBuilder,
+    TextInputModalData,
 } from 'discord.js';
 import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
 //#endregion
@@ -152,10 +154,11 @@ async function setAutoRole(message: Message | Interaction, serverConfig: ServerC
     }
 
     channel.send('Example Message:');
-    const embMsg = new EmbedBuilder().setTitle('Role Message').setDescription('**React to the messages below to receive the associated role.**').setColor('#FFFF00').setFooter({
-        text: `If you do not receive the role try reacting again.`,
-        iconURL: null,
-    });
+    const embMsg = new EmbedBuilder()
+        .setTitle('Role Message')
+        .setDescription('**React to the messages below to receive the associated role.**')
+        .setColor('#FFFF00')
+        .setFooter({ text: `If you do not receive the role try reacting again.`, iconURL: null });
 
     channel.send({ embeds: [embMsg] });
 
@@ -178,17 +181,13 @@ async function setAutoRole(message: Message | Interaction, serverConfig: ServerC
                 AutoRoleSetUpMessage.edit({ components: [] });
                 serverConfig.autoRole.enable = true;
 
-                const autoRoleBody = new TextInputBuilder().setCustomId('autoRoleBody').setLabel('Input Role Message:').setValue(serverConfig.autoRole.embedMessage).setStyle(TextInputStyle.Paragraph);
-                const autoRoleFooter = new TextInputBuilder()
-                    .setCustomId('autoRoleFooter')
-                    .setLabel('Input Footer for Role Message:')
-                    .setValue(serverConfig.autoRole.embedFooter)
-                    .setStyle(TextInputStyle.Short);
+                const autoRoleBody = new TextInputBuilder().setCustomId('autoRoleBody').setValue(serverConfig.autoRole.embedMessage).setStyle(TextInputStyle.Paragraph);
+                const autoRoleFooter = new TextInputBuilder().setCustomId('autoRoleFooter').setValue(serverConfig.autoRole.embedFooter).setStyle(TextInputStyle.Short);
 
-                const autoRoleBodyInput = new ActionRowBuilder<TextInputBuilder>().addComponents(autoRoleBody);
-                const autoRoleFooterInput = new ActionRowBuilder<TextInputBuilder>().addComponents(autoRoleFooter);
+                const autoRoleBodyInput = new LabelBuilder().setLabel('Input Role Message:').setTextInputComponent(autoRoleBody);
+                const autoRoleFooterInput = new LabelBuilder().setLabel('Input Footer for Role Message:').setTextInputComponent(autoRoleFooter);
 
-                const autoRoleModal = new ModalBuilder().setCustomId('autoRoleModal').setTitle('AutoRole SetUp - Message Content').addComponents(autoRoleBodyInput, autoRoleFooterInput);
+                const autoRoleModal = new ModalBuilder().setCustomId('autoRoleModal').setTitle('AutoRole SetUp - Message Content').addLabelComponents(autoRoleBodyInput, autoRoleFooterInput);
 
                 await interaction.showModal(autoRoleModal);
                 await interaction.awaitModalSubmit({ time: 300000 }).then(async (interaction) => {
@@ -204,8 +203,8 @@ async function setAutoRole(message: Message | Interaction, serverConfig: ServerC
                         return;
                     }
 
-                    serverConfig.autoRole.embedMessage = interaction.fields.getField('autoRoleBody').value;
-                    serverConfig.autoRole.embedFooter = interaction.fields.getField('autoRoleFooter').value;
+                    serverConfig.autoRole.embedMessage = (<TextInputModalData>interaction.fields.getField('autoRoleBody')).value;
+                    serverConfig.autoRole.embedFooter = (<TextInputModalData>interaction.fields.getField('autoRoleFooter')).value;
 
                     interaction.deferReply();
                     interaction.deleteReply();
@@ -232,15 +231,11 @@ async function setAutoRole(message: Message | Interaction, serverConfig: ServerC
                             case 'enable':
                                 {
                                     serverConfig.autoRole.embedThumbnail.enable = true;
-                                    const autoRoleThumbnailURL = new TextInputBuilder()
-                                        .setCustomId('autoRoleThumbnailURL')
-                                        .setLabel('Input URL below. Blank=Server Profile Image.')
-                                        .setRequired(false)
-                                        .setStyle(TextInputStyle.Short);
+                                    const autoRoleThumbnailURL = new TextInputBuilder().setCustomId('autoRoleThumbnailURL').setRequired(false).setStyle(TextInputStyle.Short);
 
-                                    const thumbnailURLField = new ActionRowBuilder<TextInputBuilder>().addComponents(autoRoleThumbnailURL);
+                                    const thumbnailURLField = new LabelBuilder().setLabel('Input URL below. Blank=Server Profile Image.').setTextInputComponent(autoRoleThumbnailURL);
 
-                                    const thumbnailModal = new ModalBuilder().setCustomId('thumbnailModal').setTitle('AutoRole SetUp - Thumbnail').addComponents(thumbnailURLField);
+                                    const thumbnailModal = new ModalBuilder().setCustomId('thumbnailModal').setTitle('AutoRole SetUp - Thumbnail').addLabelComponents(thumbnailURLField);
 
                                     await interaction.showModal(thumbnailModal);
                                     await interaction.awaitModalSubmit({ time: 300000 }).then(async (interaction) => {
@@ -256,7 +251,7 @@ async function setAutoRole(message: Message | Interaction, serverConfig: ServerC
                                             return;
                                         }
 
-                                        serverConfig.autoRole.embedThumbnail.url = interaction.fields.getField('autoRoleThumbnailURL').value;
+                                        serverConfig.autoRole.embedThumbnail.url = (<TextInputModalData>interaction.fields.getField('autoRoleThumbnailURL')).value;
 
                                         interaction.deferReply();
                                         interaction.deleteReply();
@@ -367,12 +362,7 @@ async function setAutoRole(message: Message | Interaction, serverConfig: ServerC
                         );
 
                         try {
-                            const embedReactIn = await channel.awaitMessages({
-                                filter: msgFilter,
-                                max: 1,
-                                time: 300000,
-                                errors: ['time'],
-                            });
+                            const embedReactIn = await channel.awaitMessages({ filter: msgFilter, max: 1, time: 300000, errors: ['time'] });
                             const reactions = embedReactIn.first().content.split(' ');
                             serverConfig.autoRole.reactions = reactions;
                         } catch (err) {
@@ -849,28 +839,10 @@ async function setLogging(message: Message | Interaction, serverConfig: ServerCo
             case 'disable': {
                 LoggingSetUpMessage.edit({ components: [] });
                 serverConfig.logging.enable = false;
-                serverConfig.logging.voice = {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                    ignoreChannels: [],
-                    ignoreCatagories: [],
-                };
-                serverConfig.logging.text = {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                    ignoreChannels: [],
-                    ignoreCatagories: [],
-                };
-                serverConfig.logging.admin = {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                    ignoreChannels: [],
-                    ignoreCatagories: [],
-                };
-                serverConfig.logging.user = {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                };
+                serverConfig.logging.voice = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
+                serverConfig.logging.text = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
+                serverConfig.logging.admin = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
+                serverConfig.logging.user = { enable: false, loggingChannel: 'Not Set Up' };
                 break;
             }
         }
@@ -939,12 +911,7 @@ async function setLoggingVoice(message: Message | Interaction, serverConfig: Ser
 
             case 'disable': {
                 LoggingVoiceSetUpMessage.edit({ components: [] });
-                serverConfig.logging.voice = {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                    ignoreChannels: [],
-                    ignoreCatagories: [],
-                };
+                serverConfig.logging.voice = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
                 break;
             }
         }
@@ -1008,12 +975,7 @@ async function setLoggingText(message: Message | Interaction, serverConfig: Serv
 
             case 'disable': {
                 LoggingTextSetUpMessage.edit({ components: [] });
-                serverConfig.logging.text = {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                    ignoreChannels: [],
-                    ignoreCatagories: [],
-                };
+                serverConfig.logging.text = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
                 break;
             }
         }
@@ -1077,12 +1039,7 @@ async function setLoggingAdmin(message: Message | Interaction, serverConfig: Ser
 
             case 'disable': {
                 LoggingAdminSetUpMessage.edit({ components: [] });
-                serverConfig.logging.admin = {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                    ignoreChannels: [],
-                    ignoreCatagories: [],
-                };
+                serverConfig.logging.admin = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
                 break;
             }
         }
@@ -1146,10 +1103,7 @@ async function setLoggingUser(message: Message | Interaction, serverConfig: Serv
 
             case 'disable': {
                 LoggingUserSetUpMessage.edit({ components: [] });
-                serverConfig.logging.user = {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                };
+                serverConfig.logging.user = { enable: false, loggingChannel: 'Not Set Up' };
                 break;
             }
         }
@@ -1250,7 +1204,17 @@ async function setBlame(message: Message | Interaction, serverConfig: ServerConf
  * @param serverConfig - serverConfig from the server running the command
  * @return ServerConfig Object
  */
-async function addRemoveBlame(addTF: boolean, permTF: boolean, user: User, serverConfig: ServerConfig) {
+async function addRemoveBlame(
+    addTF: boolean,
+    permTF: boolean,
+    user: User,
+    serverConfig: ServerConfig &
+        Required<{
+            _id: string;
+        }> & {
+            __v: number;
+        }
+) {
     //Pulls the current blame lists
     //Gets serverConfig from database
     let personFound = false;
@@ -1272,10 +1236,7 @@ async function addRemoveBlame(addTF: boolean, permTF: boolean, user: User, serve
             if (!personFound) {
                 serverConfig.blame.permList.push(person);
             } else {
-                throw {
-                    name: 'PersonExists',
-                    message: `${user} is already in the permanent blame list!`,
-                };
+                throw { name: 'PersonExists', message: `${user} is already in the permanent blame list!` };
             }
         } else {
             serverConfig.blame.permList.forEach((item) => {
@@ -1288,10 +1249,7 @@ async function addRemoveBlame(addTF: boolean, permTF: boolean, user: User, serve
                     return item !== person;
                 });
             } else {
-                throw {
-                    name: 'PersonNotExists',
-                    message: `${user} is not in the permanent blame list!`,
-                };
+                throw { name: 'PersonNotExists', message: `${user} is not in the permanent blame list!` };
             }
         }
     } else {
@@ -1310,10 +1268,7 @@ async function addRemoveBlame(addTF: boolean, permTF: boolean, user: User, serve
             if (!personFound) {
                 serverConfig.blame.rotateList.push(person);
             } else {
-                throw {
-                    name: 'PersonExists',
-                    message: `${user} is already in the rotating blame list!`,
-                };
+                throw { name: 'PersonExists', message: `${user} is already in the rotating blame list!` };
             }
         } else {
             serverConfig.blame.permList.forEach((item) => {
@@ -1326,10 +1281,7 @@ async function addRemoveBlame(addTF: boolean, permTF: boolean, user: User, serve
                     return item !== person;
                 });
             } else {
-                throw {
-                    name: 'PersonNotExists',
-                    message: `${user} is not in the rotating blame list!`,
-                };
+                throw { name: 'PersonNotExists', message: `${user} is not in the rotating blame list!` };
             }
         }
     }
@@ -1346,7 +1298,16 @@ async function addRemoveBlame(addTF: boolean, permTF: boolean, user: User, serve
  * @param serverConfig - serverConfig from the server running the command
  * @return ServerConfig Object
  */
-async function changeBlameOffset(serverID: string, offset: number, serverConfig: ServerConfig) {
+async function changeBlameOffset(
+    serverID: string,
+    offset: number,
+    serverConfig: ServerConfig &
+        Required<{
+            _id: string;
+        }> & {
+            __v: number;
+        }
+) {
     //Pulls the current blame lists
     serverConfig.blame.offset = offset;
 
@@ -1402,6 +1363,7 @@ async function setup(message: Message | Interaction, serverConfig: ServerConfig,
  */
 async function buildConfigFile(config: ServerConfig, serverID: string) {
     try {
+        //FIX ticketing
         const update: ServerConfig = {
             _id: serverID,
             guildID: serverID,
@@ -1415,64 +1377,46 @@ async function buildConfigFile(config: ServerConfig, serverID: string) {
                 reactions: config.autoRole.reactions,
                 embedThumbnail: config.autoRole.embedThumbnail,
             },
-            joinRole: {
-                enable: config.joinRole.enable,
-                role: config.joinRole.role,
+            ticketing: {
+                enable: false,
+                embedTitle: 'Not Set Up',
+                embedMessage: 'Not Set Up',
+                embedFooter: 'Not Set Up',
+                embedThumbnail: {
+                    enable: false,
+                    url: 'Not Set Up',
+                },
             },
-            music: {
-                enable: config.music.enable,
-                djRoles: config.music.djRoles,
-                textChannel: config.music.textChannel,
-            },
-            general: {
-                adminRoles: config.general.adminRoles,
-                modRoles: config.general.modRoles,
-            },
-            modMail: {
-                enable: config.modMail.enable,
-                modList: config.modMail.modList,
-            },
-            JTCVC: {
-                enable: config.JTCVC.enable,
-                voiceChannel: config.JTCVC.voiceChannel,
-            },
-            blame: {
-                enable: config.blame.enable,
-                cursing: config.blame.cursing,
-                offset: config.blame.offset,
-                permList: config.blame.permList,
-                rotateList: config.blame.rotateList,
-            },
+            joinRole: { enable: config.joinRole.enable, role: config.joinRole.role },
+            music: { enable: config.music.enable, djRoles: config.music.djRoles, textChannel: config.music.textChannel },
+            general: { adminRoles: config.general.adminRoles, modRoles: config.general.modRoles },
+            modMail: { enable: config.modMail.enable, modList: config.modMail.modList },
+            JTCVC: { enable: config.JTCVC.enable, voiceChannel: config.JTCVC.voiceChannel },
+            blame: { enable: config.blame.enable, cursing: config.blame.cursing, offset: config.blame.offset, permList: config.blame.permList, rotateList: config.blame.rotateList },
             logging: {
                 enable: config.logging.enable,
                 voice: {
                     enable: config.logging.voice.enable,
                     loggingChannel: config.logging.voice.loggingChannel,
-                    ignoreCatagories: config.logging.voice.ignoreCatagories,
+                    ignoreCategories: config.logging.voice.ignoreCategories,
                     ignoreChannels: config.logging.voice.ignoreChannels,
                 },
                 text: {
                     enable: config.logging.text.enable,
                     loggingChannel: config.logging.text.loggingChannel,
-                    ignoreCatagories: config.logging.text.ignoreCatagories,
+                    ignoreCategories: config.logging.text.ignoreCategories,
                     ignoreChannels: config.logging.text.ignoreChannels,
                 },
                 admin: {
                     enable: config.logging.admin.enable,
                     loggingChannel: config.logging.admin.loggingChannel,
-                    ignoreCatagories: config.logging.admin.ignoreCatagories,
+                    ignoreCategories: config.logging.admin.ignoreCategories,
                     ignoreChannels: config.logging.admin.ignoreChannels,
                 },
-                user: {
-                    enable: config.logging.user.enable,
-                    loggingChannel: config.logging.user.loggingChannel,
-                },
+                user: { enable: config.logging.user.enable, loggingChannel: config.logging.user.loggingChannel },
             },
         };
-        await MongooseServerConfig.findByIdAndUpdate(serverID, update, {
-            new: true,
-            upsert: true,
-        })
+        await MongooseServerConfig.findByIdAndUpdate(serverID, update, { new: true, upsert: true })
             .exec()
             .then(() => {
                 console.log(`Updated ServerConfig for ${serverID}`);
@@ -1495,69 +1439,29 @@ async function addServerConfig(serverID: string) {
         guildID: serverID,
         setupNeeded: true,
         prefix: '!',
-        autoRole: {
+        autoRole: { enable: false, embedMessage: 'Not Set Up', embedFooter: 'Not Set Up', roles: [], reactions: [], embedThumbnail: { enable: false, url: 'Not Set Up' } },
+        ticketing: {
             enable: false,
+            embedTitle: 'Not Set Up',
             embedMessage: 'Not Set Up',
             embedFooter: 'Not Set Up',
-            roles: [],
-            reactions: [],
             embedThumbnail: {
                 enable: false,
                 url: 'Not Set Up',
             },
         },
-        joinRole: {
-            enable: false,
-            role: 'Not Set Up',
-        },
-        music: {
-            enable: false,
-            djRoles: [],
-            textChannel: 'Not Set Up',
-        },
-        general: {
-            adminRoles: [],
-            modRoles: [],
-        },
-        modMail: {
-            enable: false,
-            modList: [],
-        },
-        JTCVC: {
-            enable: false,
-            voiceChannel: 'Not Set Up',
-        },
-        blame: {
-            enable: false,
-            cursing: false,
-            offset: 0,
-            permList: [],
-            rotateList: [],
-        },
+        joinRole: { enable: false, role: 'Not Set Up' },
+        music: { enable: false, djRoles: [], textChannel: 'Not Set Up' },
+        general: { adminRoles: [], modRoles: [] },
+        modMail: { enable: false, modList: [] },
+        JTCVC: { enable: false, voiceChannel: 'Not Set Up' },
+        blame: { enable: false, cursing: false, offset: 0, permList: [], rotateList: [] },
         logging: {
             enable: false,
-            voice: {
-                enable: false,
-                loggingChannel: 'Not Set Up',
-                ignoreChannels: [],
-                ignoreCatagories: [],
-            },
-            text: {
-                enable: false,
-                loggingChannel: 'Not Set Up',
-                ignoreChannels: [],
-                ignoreCatagories: [],
-            },
-            admin: {
-                enable: false,
-                loggingChannel: 'Not Set Up',
-                ignoreChannels: [],
-                ignoreCatagories: [],
-            },
-            user: {
-                enable: false,
-                loggingChannel: 'Not Set Up',
-            },
+            voice: { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] },
+            text: { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] },
+            admin: { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] },
+            user: { enable: false, loggingChannel: 'Not Set Up' },
         },
     };
 

@@ -10,6 +10,7 @@ import modSlashCommand from './mod.js';
 import musicSlashCommand from './music.js';
 import saySlashCommand from './say.js';
 import setSlashCommand from './set.js';
+//import createTicketingMessageSlashCommand from './createTicketingMessage.js';
 //#endregion
 
 //#region Global Slash Command Array
@@ -24,6 +25,7 @@ const activeGuildSlashCommands: SlashCommand[] = [
     musicSlashCommand,
     saySlashCommand,
     setSlashCommand,
+    //createTicketingMessageSlashCommand,
 ];
 //#endregion
 
