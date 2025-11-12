@@ -117,18 +117,15 @@ function djCheck(message, serverConfig) {
     //#region Escape Logic
     //Checks that a member exists on the message
     if (message.member == null) {
-        console.log('NULL');
         return false;
     }
     //Checks to see if user is a bot mod
     if (modCheck(message, serverConfig)) {
-        console.log('TRUE');
         return true;
     }
     const permArrays = serverRoleUpdate(message.guild.roles, serverConfig);
     //Checks to see if the DJ role is set
     if (permArrays[2].length == 0) {
-        console.log('0');
         return true;
     }
     //#endregion
@@ -136,12 +133,10 @@ function djCheck(message, serverConfig) {
     for (const role in message.member.roles) {
         for (const permRole of permArrays[2]) {
             if (message.member.roles[role] == permRole) {
-                console.log('perROle');
                 return true;
             }
         }
     }
-    console.log('END');
     return false;
     //#endregion
 }
