@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Imports
-import { EmbedBuilder, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder } from 'discord.js';
+import { EmbedBuilder, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { embedCustomDM, errorCustom, warnDisabled } from '../../helpers/embedSlashMessages.js';
 import { generateEmbedFields } from '../../internal/autoRole.js';
 import { MongooseServerConfig } from '../../models/serverConfigModel.js';
@@ -148,7 +148,7 @@ const createRoleMessageSlashCommand = {
                 console.log(`Updated AutoRoleListeningDB for ${interaction.guildId}`);
                 interaction.reply({
                     content: 'Command Run',
-                    ephemeral: true,
+                    flags: MessageFlags.Ephemeral,
                 });
             });
         });

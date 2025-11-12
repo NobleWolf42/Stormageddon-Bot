@@ -9,6 +9,7 @@ import {
     ComponentType,
     EmbedBuilder,
     Events,
+    LabelBuilder,
     Message,
     ModalBuilder,
     PermissionFlagsBits,
@@ -17,6 +18,8 @@ import {
     TextInputBuilder,
     TextInputStyle,
     VoiceChannel,
+    TextInputModalData,
+    MessageFlags,
 } from 'discord.js';
 import { Document } from 'mongoose';
 import { addToLog } from '../helpers/errorLog.js';
@@ -202,7 +205,7 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
 
         if (collections.voiceGenerator.get(channel.id) != interaction.user.id && interaction.customId != ButtonAction.VCClaim) {
             embMsg.setTitle('Error').setDescription('You are not the channel owner.');
-            interaction.reply({ embeds: [embMsg], ephemeral: true });
+            interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
         }
 
         switch (interaction.customId) {
@@ -213,7 +216,7 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
                 }
                 channel.permissionOverwrites.edit(interaction.user.id, { Connect: true });
                 embMsg.setTitle('Channel Set to Private').setDescription('Successful');
-                interaction.reply({ embeds: [embMsg], ephemeral: true });
+                interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
                 break;
             //#endregion
 
@@ -225,7 +228,7 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
                     }
                 }
                 embMsg.setTitle('Channel set to Public').setDescription('Successful');
-                interaction.reply({ embeds: [embMsg], ephemeral: true });
+                interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
                 break;
             //#endregion
 
@@ -236,7 +239,7 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
                 }
                 channel.permissionOverwrites.edit(interaction.user.id, { ViewChannel: true });
                 embMsg.setTitle('Channel hidden').setDescription('Successful');
-                interaction.reply({ embeds: [embMsg], ephemeral: true });
+                interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
                 break;
             //#endregion
 
@@ -248,17 +251,17 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
                     }
                 }
                 embMsg.setTitle('Channel Shown').setDescription('Successful');
-                interaction.reply({ embeds: [embMsg], ephemeral: true });
+                interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
                 break;
             //#endregion
 
             //#region on button press - Edit
             case ButtonAction.VCEdit:
                 {
-                    const VCNewNameBody = new TextInputBuilder().setCustomId(TextAction.VCNewName).setLabel('Input Channel Name:').setValue(channel.name).setStyle(TextInputStyle.Short);
+                    const VCNewNameBody = new TextInputBuilder().setCustomId(TextAction.VCNewName).setValue(channel.name).setStyle(TextInputStyle.Short);
 
-                    const VCNewNameBodyInput = new ActionRowBuilder<TextInputBuilder>().addComponents(VCNewNameBody);
-                    const VCNewNameModal = new ModalBuilder().setCustomId(ModalAction.VCNameModal).setTitle('Channel Name').addComponents(VCNewNameBodyInput);
+                    const VCNewNameBodyInput = new LabelBuilder().setLabel('Input Channel Name:').setTextInputComponent(VCNewNameBody);
+                    const VCNewNameModal = new ModalBuilder().setCustomId(ModalAction.VCNameModal).setTitle('Channel Name').addLabelComponents(VCNewNameBodyInput);
 
                     await interaction.showModal(VCNewNameModal);
                     await interaction.awaitModalSubmit({ time: 60000 }).then(async (VCTextInteraction) => {
@@ -268,10 +271,10 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
 
                         if (collections.voiceChanges.get(channel.id) > 1) {
                             embMsg.setTitle('Error changing title').setDescription("Due to how discord's API works, you can only change the channel name twice every ten minutes.").setColor('#F8AA2A');
-                            VCTextInteraction.reply({ embeds: [embMsg], ephemeral: true });
+                            VCTextInteraction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
                             return;
                         }
-                        channel.edit({ name: VCTextInteraction.fields.getField(TextAction.VCNewName).value });
+                        channel.edit({ name: (<TextInputModalData>VCTextInteraction.fields.getField(TextAction.VCNewName)).value });
                         let changes = 0;
                         if (!isNaN(collections.voiceChanges.get(channel.id))) {
                             changes = collections.voiceChanges.get(channel.id);
@@ -281,8 +284,8 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
                             collections.voiceChanges.set(channel.id, collections.voiceChanges.get(channel.id) - 1);
                         }, 600000);
 
-                        embMsg.setTitle(`Title set to ${VCTextInteraction.fields.getField(TextAction.VCNewName).value}`).setDescription('Successful');
-                        VCTextInteraction.reply({ embeds: [embMsg], ephemeral: true });
+                        embMsg.setTitle(`Title set to ${(<TextInputModalData>VCTextInteraction.fields.getField(TextAction.VCNewName)).value}`).setDescription('Successful');
+                        VCTextInteraction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
                     });
                     interaction.deferReply();
                 }
@@ -301,7 +304,7 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
                 }
                 const embMsgKick = new EmbedBuilder().setTitle('Kick users').setDescription('Select up to 10 users to kick them from the voice chat.').setColor('#00A0FF');
                 const VCKickUserMenu = new StringSelectMenuBuilder().setCustomId(SelectAction.VCKickUser).setMinValues(1).setMaxValues(numberOfOptions).addOptions(stringSelect);
-                await interaction.deferReply({ ephemeral: true });
+                await interaction.deferReply({ flags: MessageFlags.Ephemeral });
                 const VCSelect = await interaction.followUp({ embeds: [embMsgKick], components: [new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(VCKickUserMenu)] });
 
                 await VCSelect.awaitMessageComponent<ComponentType.StringSelect>().then(async (VCKickInteraction) => {
@@ -342,7 +345,7 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
                 }
                 const embMsgBan = new EmbedBuilder().setTitle('Ban users').setDescription('Select up to 10 users to Ban them from the voice chat.').setColor('#00A0FF');
                 const VCBanUserMenu = new StringSelectMenuBuilder().setCustomId(SelectAction.VCBanUser).setMinValues(1).setMaxValues(numberOfOptions).addOptions(stringSelect);
-                await interaction.deferReply({ ephemeral: true });
+                await interaction.deferReply({ flags: MessageFlags.Ephemeral });
                 const VCSelect = await interaction.followUp({ embeds: [embMsgBan], components: [new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(VCBanUserMenu)] });
 
                 await VCSelect.awaitMessageComponent<ComponentType.StringSelect>().then(async (VCBanInteraction) => {
@@ -380,8 +383,12 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
 
                 const embMsgOwner = new EmbedBuilder().setTitle('Change Owner').setDescription('Select a user to transfer ownership of this channel to.').setColor('#00A0FF');
                 const VCOwnerMenu = new StringSelectMenuBuilder().setCustomId(SelectAction.VCNewOwnerAction).setMinValues(1).setMaxValues(1).addOptions(stringSelect);
-                await interaction.deferReply({ ephemeral: true });
-                const VCSelect = await interaction.followUp({ embeds: [embMsgOwner], components: [new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(VCOwnerMenu)], ephemeral: true });
+                await interaction.deferReply({ flags: MessageFlags.Ephemeral });
+                const VCSelect = await interaction.followUp({
+                    embeds: [embMsgOwner],
+                    components: [new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(VCOwnerMenu)],
+                    flags: MessageFlags.Ephemeral,
+                });
 
                 await VCSelect.awaitMessageComponent<ComponentType.StringSelect>().then(async (VCNewOwnerInteraction) => {
                     if (channel.members.has(VCNewOwnerInteraction.values[0])) {
@@ -408,7 +415,7 @@ function panelCollector(message: Message, collections: ExtraCollections, serverC
                 } else {
                     embMsg.setTitle('Error').setDescription('Cannot change owner to someone not in the channel.');
                 }
-                interaction.reply({ embeds: [embMsg], ephemeral: true });
+                interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
                 break;
             //#endregion
         }

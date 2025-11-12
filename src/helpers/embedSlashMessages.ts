@@ -1,5 +1,5 @@
 //#region Imports
-import { APIEmbedField, Client, ColorResolvable, EmbedBuilder } from 'discord.js';
+import { APIEmbedField, Client, ColorResolvable, EmbedBuilder, MessageFlags } from 'discord.js';
 import { addToLog } from './errorLog.js';
 import { LogType } from '../models/loggingModel.js';
 import { InteractionWithChanges } from '../models/interactionModel.js';
@@ -63,7 +63,7 @@ async function embedCustomDM(interaction: InteractionWithChanges, title: string,
 
     interaction.reply({
         content: 'Sent',
-        ephemeral: true,
+        flags: MessageFlags.Ephemeral,
     });
 }
 //#endregion
@@ -85,7 +85,7 @@ async function embedHelp(interaction: InteractionWithChanges, title: string, tex
             iconURL: null,
         });
 
-    interaction.reply({ embeds: [embMsg], ephemeral: true });
+    interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
 }
 //#endregion
 
@@ -107,7 +107,7 @@ async function warnCustom(interaction: InteractionWithChanges, text: string, com
             iconURL: null,
         });
 
-    interaction.reply({ embeds: [embMsg], ephemeral: true });
+    interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
 
     if (interaction.channel.isDMBased()) {
         addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', text);
@@ -134,7 +134,7 @@ async function errorNoAdmin(interaction: InteractionWithChanges, commandName: st
             iconURL: null,
         });
 
-    interaction.reply({ embeds: [embMsg], ephemeral: true });
+    interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
 
     if (interaction.channel.isDMBased()) {
         addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not Bot Admin!');
@@ -161,7 +161,7 @@ async function errorNoMod(interaction: InteractionWithChanges, commandName: stri
             iconURL: null,
         });
 
-    interaction.reply({ embeds: [embMsg], ephemeral: true });
+    interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
 
     if (interaction.channel.isDMBased()) {
         addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not Bot Moderator!');
@@ -188,7 +188,7 @@ async function errorNoDJ(interaction: InteractionWithChanges, commandName: strin
             iconURL: null,
         });
 
-    interaction.reply({ embeds: [embMsg], ephemeral: true });
+    interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
 
     if (interaction.channel.isDMBased()) {
         addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not DJ!');
@@ -215,7 +215,7 @@ async function errorNoServerAdmin(interaction: InteractionWithChanges, commandNa
             iconURL: null,
         });
 
-    interaction.reply({ embeds: [embMsg], ephemeral: true });
+    interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
 
     if (interaction.channel.isDMBased()) {
         addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Not Server Admin!');
@@ -243,7 +243,7 @@ async function errorCustom(interaction: InteractionWithChanges, text: string, co
             iconURL: null,
         });
 
-    interaction.reply({ embeds: [embMsg], ephemeral: true });
+    interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
 
     if (interaction.channel.isDMBased()) {
         addToLog(LogType.FatalError, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', text);
@@ -271,7 +271,7 @@ async function warnWrongChannel(interaction: InteractionWithChanges, correctChan
             iconURL: null,
         });
 
-    interaction.reply({ embeds: [embMsg], ephemeral: true });
+    interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
 
     if (interaction.channel.isDMBased()) {
         addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Wrong Text Channel');
@@ -299,7 +299,7 @@ async function warnDisabled(interaction: InteractionWithChanges, feature: string
             iconURL: null,
         });
 
-    interaction.reply({ embeds: [embMsg], ephemeral: true });
+    interaction.reply({ embeds: [embMsg], flags: MessageFlags.Ephemeral });
 
     if (interaction.channel.isDMBased()) {
         addToLog(LogType.Warning, commandName, interaction.user.tag, 'Direct Interaction', 'Direct Interaction', 'Feature Disabled');

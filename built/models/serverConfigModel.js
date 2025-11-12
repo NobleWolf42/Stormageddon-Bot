@@ -61,19 +61,19 @@ const serverConfigSchema = new Schema({
             enable: { type: Boolean, required: true },
             loggingChannel: { type: String, required: true },
             ignoreChannels: { type: [String], required: true },
-            ignoreCatagories: { type: [String], required: true },
+            ignoreCategories: { type: [String], required: true },
         },
         text: {
             enable: { type: Boolean, required: true },
             loggingChannel: { type: String, required: true },
             ignoreChannels: { type: [String], required: true },
-            ignoreCatagories: { type: [String], required: true },
+            ignoreCategories: { type: [String], required: true },
         },
         admin: {
             enable: { type: Boolean, required: true },
             loggingChannel: { type: String, required: true },
             ignoreChannels: { type: [String], required: true },
-            ignoreCatagories: { type: [String], required: true },
+            ignoreCategories: { type: [String], required: true },
         },
         user: {
             enable: { type: Boolean, required: true },

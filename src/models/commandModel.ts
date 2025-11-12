@@ -24,7 +24,19 @@ interface Command {
      * @param collections - ExtraCollections needed for some commands
      * @param serverConfig - serverConfig pulled and the start of each command for the guild it is run in
      */
-    execute(message: MessageWithDeleted, args: string[], client: Client, distube?: DisTube, collections?: ExtraCollections, serverConfig?: ServerConfig): void | Promise<void>;
+    execute(
+        message: MessageWithDeleted,
+        args: string[],
+        client: Client,
+        distube?: DisTube,
+        collections?: ExtraCollections,
+        serverConfig?: ServerConfig &
+            Required<{
+                _id: string;
+            }> & {
+                __v: number;
+            }
+    ): void | Promise<void>;
 }
 //#endregion
 

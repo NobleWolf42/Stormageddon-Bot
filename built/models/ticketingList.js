@@ -4,6 +4,7 @@ import { Schema, model } from 'mongoose';
 const ticketListSchema = new Schema({
     _id: { type: String, required: true },
     guildID: { type: String, required: true },
+    ticketNumber: { type: Number, required: true },
     ticketChannels: { type: [{ id: String, messageIDs: [String] }], required: true },
 });
 const MongooseTicketList = model('Ticket-List', ticketListSchema);

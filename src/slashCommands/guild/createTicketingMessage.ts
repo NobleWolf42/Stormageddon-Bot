@@ -1,4 +1,4 @@
-//#region Imports
+/*//#region Imports
 import { EmbedBuilder, PermissionFlagsBits, PermissionsBitField, SlashCommandBuilder, ButtonBuilder, ButtonStyle, ActionRowBuilder, ComponentType } from 'discord.js';
 import { embedCustomDM, errorCustom, warnDisabled } from '../../helpers/embedSlashMessages.js';
 import { MongooseServerConfig } from '../../models/serverConfigModel.js';
@@ -114,7 +114,7 @@ const createTicketingMessageSlashCommand: SlashCommand = {
             console.log(`Updated TicketingListeningDB for ${interaction.guildId}`);
             interaction.reply({
                 content: 'Command Run',
-                ephemeral: true,
+                flags: MessageFlags.Ephemeral,
             });
         });
     },
@@ -124,3 +124,4 @@ const createTicketingMessageSlashCommand: SlashCommand = {
 //#region Exports
 export default createTicketingMessageSlashCommand;
 //#endregion
+*/

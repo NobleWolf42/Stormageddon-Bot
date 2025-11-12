@@ -81,14 +81,15 @@ try {
         emitNewSongOnly: false,
         savePreviousSongs: false,
         plugins: [
-            new SpotifyPlugin(),
+            new SoundCloudPlugin(),
+            //new SpotifyPlugin(),
             new YouTubePlugin(),
-            new DeezerPlugin(),
+            //new DeezerPlugin(),
             // YouTube DL Plugin with optimizations
             new SoundCloudPlugin(),
-            new YtDlpPlugin({
-                update: true, // Update youtube-dl automatically
-            }),
+            //new YtDlpPlugin({
+            //    update: true, // Update youtube-dl automatically
+            //}),
         ],
     });
     console.log('... OK');

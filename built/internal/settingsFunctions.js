@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Imports
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, EmbedBuilder, GuildMember, ModalBuilder, PermissionFlagsBits, RoleSelectMenuBuilder, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelSelectMenuBuilder, ChannelType, EmbedBuilder, GuildMember, LabelBuilder, ModalBuilder, PermissionFlagsBits, RoleSelectMenuBuilder, TextInputBuilder, TextInputStyle, UserSelectMenuBuilder, } from 'discord.js';
 import { MongooseServerConfig } from '../models/serverConfigModel.js';
 //#endregion
 //#region Initial Setup
@@ -116,10 +116,11 @@ function setAutoRole(message, serverConfig, client) {
             return;
         }
         channel.send('Example Message:');
-        const embMsg = new EmbedBuilder().setTitle('Role Message').setDescription('**React to the messages below to receive the associated role.**').setColor('#FFFF00').setFooter({
-            text: `If you do not receive the role try reacting again.`,
-            iconURL: null,
-        });
+        const embMsg = new EmbedBuilder()
+            .setTitle('Role Message')
+            .setDescription('**React to the messages below to receive the associated role.**')
+            .setColor('#FFFF00')
+            .setFooter({ text: `If you do not receive the role try reacting again.`, iconURL: null });
         channel.send({ embeds: [embMsg] });
         const serverID = message.guild.id;
         const embMsg1 = new EmbedBuilder().setTitle('AutoRole Setup').setDescription('Select Enable To Turn this Feature on, Disable to Leave it off.').setColor('#F5820F');
@@ -135,15 +136,11 @@ function setAutoRole(message, serverConfig, client) {
                 case 'enable': {
                     AutoRoleSetUpMessage.edit({ components: [] });
                     serverConfig.autoRole.enable = true;
-                    const autoRoleBody = new TextInputBuilder().setCustomId('autoRoleBody').setLabel('Input Role Message:').setValue(serverConfig.autoRole.embedMessage).setStyle(TextInputStyle.Paragraph);
-                    const autoRoleFooter = new TextInputBuilder()
-                        .setCustomId('autoRoleFooter')
-                        .setLabel('Input Footer for Role Message:')
-                        .setValue(serverConfig.autoRole.embedFooter)
-                        .setStyle(TextInputStyle.Short);
-                    const autoRoleBodyInput = new ActionRowBuilder().addComponents(autoRoleBody);
-                    const autoRoleFooterInput = new ActionRowBuilder().addComponents(autoRoleFooter);
-                    const autoRoleModal = new ModalBuilder().setCustomId('autoRoleModal').setTitle('AutoRole SetUp - Message Content').addComponents(autoRoleBodyInput, autoRoleFooterInput);
+                    const autoRoleBody = new TextInputBuilder().setCustomId('autoRoleBody').setValue(serverConfig.autoRole.embedMessage).setStyle(TextInputStyle.Paragraph);
+                    const autoRoleFooter = new TextInputBuilder().setCustomId('autoRoleFooter').setValue(serverConfig.autoRole.embedFooter).setStyle(TextInputStyle.Short);
+                    const autoRoleBodyInput = new LabelBuilder().setLabel('Input Role Message:').setTextInputComponent(autoRoleBody);
+                    const autoRoleFooterInput = new LabelBuilder().setLabel('Input Footer for Role Message:').setTextInputComponent(autoRoleFooter);
+                    const autoRoleModal = new ModalBuilder().setCustomId('autoRoleModal').setTitle('AutoRole SetUp - Message Content').addLabelComponents(autoRoleBodyInput, autoRoleFooterInput);
                     yield interaction.showModal(autoRoleModal);
                     yield interaction.awaitModalSubmit({ time: 300000 }).then((interaction) => __awaiter(this, void 0, void 0, function* () {
                         if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
@@ -177,13 +174,9 @@ function setAutoRole(message, serverConfig, client) {
                                 case 'enable':
                                     {
                                         serverConfig.autoRole.embedThumbnail.enable = true;
-                                        const autoRoleThumbnailURL = new TextInputBuilder()
-                                            .setCustomId('autoRoleThumbnailURL')
-                                            .setLabel('Input URL below. Blank=Server Profile Image.')
-                                            .setRequired(false)
-                                            .setStyle(TextInputStyle.Short);
-                                        const thumbnailURLField = new ActionRowBuilder().addComponents(autoRoleThumbnailURL);
-                                        const thumbnailModal = new ModalBuilder().setCustomId('thumbnailModal').setTitle('AutoRole SetUp - Thumbnail').addComponents(thumbnailURLField);
+                                        const autoRoleThumbnailURL = new TextInputBuilder().setCustomId('autoRoleThumbnailURL').setRequired(false).setStyle(TextInputStyle.Short);
+                                        const thumbnailURLField = new LabelBuilder().setLabel('Input URL below. Blank=Server Profile Image.').setTextInputComponent(autoRoleThumbnailURL);
+                                        const thumbnailModal = new ModalBuilder().setCustomId('thumbnailModal').setTitle('AutoRole SetUp - Thumbnail').addLabelComponents(thumbnailURLField);
                                         yield interaction.showModal(thumbnailModal);
                                         yield interaction.awaitModalSubmit({ time: 300000 }).then((interaction) => __awaiter(this, void 0, void 0, function* () {
                                             if (!interaction.inGuild() || !(interaction.member instanceof GuildMember)) {
@@ -278,12 +271,7 @@ function setAutoRole(message, serverConfig, client) {
                             }
                             channel.send('Please respond to this message with the list of reactions you want to be used for the roles above, matching their order. Format the list with spaces separating the reactions, like this: `🐕 🎩 👾`. (NOTE: You can use custom reactions as long as they are not animated and belong to this server)');
                             try {
-                                const embedReactIn = yield channel.awaitMessages({
-                                    filter: msgFilter,
-                                    max: 1,
-                                    time: 300000,
-                                    errors: ['time'],
-                                });
+                                const embedReactIn = yield channel.awaitMessages({ filter: msgFilter, max: 1, time: 300000, errors: ['time'] });
                                 const reactions = embedReactIn.first().content.split(' ');
                                 serverConfig.autoRole.reactions = reactions;
                             }
@@ -673,28 +661,10 @@ function setLogging(message, serverConfig) {
                 case 'disable': {
                     LoggingSetUpMessage.edit({ components: [] });
                     serverConfig.logging.enable = false;
-                    serverConfig.logging.voice = {
-                        enable: false,
-                        loggingChannel: 'Not Set Up',
-                        ignoreChannels: [],
-                        ignoreCatagories: [],
-                    };
-                    serverConfig.logging.text = {
-                        enable: false,
-                        loggingChannel: 'Not Set Up',
-                        ignoreChannels: [],
-                        ignoreCatagories: [],
-                    };
-                    serverConfig.logging.admin = {
-                        enable: false,
-                        loggingChannel: 'Not Set Up',
-                        ignoreChannels: [],
-                        ignoreCatagories: [],
-                    };
-                    serverConfig.logging.user = {
-                        enable: false,
-                        loggingChannel: 'Not Set Up',
-                    };
+                    serverConfig.logging.voice = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
+                    serverConfig.logging.text = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
+                    serverConfig.logging.admin = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
+                    serverConfig.logging.user = { enable: false, loggingChannel: 'Not Set Up' };
                     break;
                 }
             }
@@ -750,12 +720,7 @@ function setLoggingVoice(message, serverConfig) {
                 }
                 case 'disable': {
                     LoggingVoiceSetUpMessage.edit({ components: [] });
-                    serverConfig.logging.voice = {
-                        enable: false,
-                        loggingChannel: 'Not Set Up',
-                        ignoreChannels: [],
-                        ignoreCatagories: [],
-                    };
+                    serverConfig.logging.voice = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
                     break;
                 }
             }
@@ -808,12 +773,7 @@ function setLoggingText(message, serverConfig) {
                 }
                 case 'disable': {
                     LoggingTextSetUpMessage.edit({ components: [] });
-                    serverConfig.logging.text = {
-                        enable: false,
-                        loggingChannel: 'Not Set Up',
-                        ignoreChannels: [],
-                        ignoreCatagories: [],
-                    };
+                    serverConfig.logging.text = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
                     break;
                 }
             }
@@ -866,12 +826,7 @@ function setLoggingAdmin(message, serverConfig) {
                 }
                 case 'disable': {
                     LoggingAdminSetUpMessage.edit({ components: [] });
-                    serverConfig.logging.admin = {
-                        enable: false,
-                        loggingChannel: 'Not Set Up',
-                        ignoreChannels: [],
-                        ignoreCatagories: [],
-                    };
+                    serverConfig.logging.admin = { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] };
                     break;
                 }
             }
@@ -924,10 +879,7 @@ function setLoggingUser(message, serverConfig) {
                 }
                 case 'disable': {
                     LoggingUserSetUpMessage.edit({ components: [] });
-                    serverConfig.logging.user = {
-                        enable: false,
-                        loggingChannel: 'Not Set Up',
-                    };
+                    serverConfig.logging.user = { enable: false, loggingChannel: 'Not Set Up' };
                     break;
                 }
             }
@@ -1037,10 +989,7 @@ function addRemoveBlame(addTF, permTF, user, serverConfig) {
                     serverConfig.blame.permList.push(person);
                 }
                 else {
-                    throw {
-                        name: 'PersonExists',
-                        message: `${user} is already in the permanent blame list!`,
-                    };
+                    throw { name: 'PersonExists', message: `${user} is already in the permanent blame list!` };
                 }
             }
             else {
@@ -1055,10 +1004,7 @@ function addRemoveBlame(addTF, permTF, user, serverConfig) {
                     });
                 }
                 else {
-                    throw {
-                        name: 'PersonNotExists',
-                        message: `${user} is not in the permanent blame list!`,
-                    };
+                    throw { name: 'PersonNotExists', message: `${user} is not in the permanent blame list!` };
                 }
             }
         }
@@ -1078,10 +1024,7 @@ function addRemoveBlame(addTF, permTF, user, serverConfig) {
                     serverConfig.blame.rotateList.push(person);
                 }
                 else {
-                    throw {
-                        name: 'PersonExists',
-                        message: `${user} is already in the rotating blame list!`,
-                    };
+                    throw { name: 'PersonExists', message: `${user} is already in the rotating blame list!` };
                 }
             }
             else {
@@ -1096,10 +1039,7 @@ function addRemoveBlame(addTF, permTF, user, serverConfig) {
                     });
                 }
                 else {
-                    throw {
-                        name: 'PersonNotExists',
-                        message: `${user} is not in the rotating blame list!`,
-                    };
+                    throw { name: 'PersonNotExists', message: `${user} is not in the rotating blame list!` };
                 }
             }
         }
@@ -1168,6 +1108,7 @@ function setup(message, serverConfig, client) {
 function buildConfigFile(config, serverID) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
+            //FIX ticketing
             const update = {
                 _id: serverID,
                 guildID: serverID,
@@ -1181,64 +1122,46 @@ function buildConfigFile(config, serverID) {
                     reactions: config.autoRole.reactions,
                     embedThumbnail: config.autoRole.embedThumbnail,
                 },
-                joinRole: {
-                    enable: config.joinRole.enable,
-                    role: config.joinRole.role,
+                ticketing: {
+                    enable: false,
+                    embedTitle: 'Not Set Up',
+                    embedMessage: 'Not Set Up',
+                    embedFooter: 'Not Set Up',
+                    embedThumbnail: {
+                        enable: false,
+                        url: 'Not Set Up',
+                    },
                 },
-                music: {
-                    enable: config.music.enable,
-                    djRoles: config.music.djRoles,
-                    textChannel: config.music.textChannel,
-                },
-                general: {
-                    adminRoles: config.general.adminRoles,
-                    modRoles: config.general.modRoles,
-                },
-                modMail: {
-                    enable: config.modMail.enable,
-                    modList: config.modMail.modList,
-                },
-                JTCVC: {
-                    enable: config.JTCVC.enable,
-                    voiceChannel: config.JTCVC.voiceChannel,
-                },
-                blame: {
-                    enable: config.blame.enable,
-                    cursing: config.blame.cursing,
-                    offset: config.blame.offset,
-                    permList: config.blame.permList,
-                    rotateList: config.blame.rotateList,
-                },
+                joinRole: { enable: config.joinRole.enable, role: config.joinRole.role },
+                music: { enable: config.music.enable, djRoles: config.music.djRoles, textChannel: config.music.textChannel },
+                general: { adminRoles: config.general.adminRoles, modRoles: config.general.modRoles },
+                modMail: { enable: config.modMail.enable, modList: config.modMail.modList },
+                JTCVC: { enable: config.JTCVC.enable, voiceChannel: config.JTCVC.voiceChannel },
+                blame: { enable: config.blame.enable, cursing: config.blame.cursing, offset: config.blame.offset, permList: config.blame.permList, rotateList: config.blame.rotateList },
                 logging: {
                     enable: config.logging.enable,
                     voice: {
                         enable: config.logging.voice.enable,
                         loggingChannel: config.logging.voice.loggingChannel,
-                        ignoreCatagories: config.logging.voice.ignoreCatagories,
+                        ignoreCategories: config.logging.voice.ignoreCategories,
                         ignoreChannels: config.logging.voice.ignoreChannels,
                     },
                     text: {
                         enable: config.logging.text.enable,
                         loggingChannel: config.logging.text.loggingChannel,
-                        ignoreCatagories: config.logging.text.ignoreCatagories,
+                        ignoreCategories: config.logging.text.ignoreCategories,
                         ignoreChannels: config.logging.text.ignoreChannels,
                     },
                     admin: {
                         enable: config.logging.admin.enable,
                         loggingChannel: config.logging.admin.loggingChannel,
-                        ignoreCatagories: config.logging.admin.ignoreCatagories,
+                        ignoreCategories: config.logging.admin.ignoreCategories,
                         ignoreChannels: config.logging.admin.ignoreChannels,
                     },
-                    user: {
-                        enable: config.logging.user.enable,
-                        loggingChannel: config.logging.user.loggingChannel,
-                    },
+                    user: { enable: config.logging.user.enable, loggingChannel: config.logging.user.loggingChannel },
                 },
             };
-            yield MongooseServerConfig.findByIdAndUpdate(serverID, update, {
-                new: true,
-                upsert: true,
-            })
+            yield MongooseServerConfig.findByIdAndUpdate(serverID, update, { new: true, upsert: true })
                 .exec()
                 .then(() => {
                 console.log(`Updated ServerConfig for ${serverID}`);
@@ -1263,69 +1186,29 @@ function addServerConfig(serverID) {
             guildID: serverID,
             setupNeeded: true,
             prefix: '!',
-            autoRole: {
+            autoRole: { enable: false, embedMessage: 'Not Set Up', embedFooter: 'Not Set Up', roles: [], reactions: [], embedThumbnail: { enable: false, url: 'Not Set Up' } },
+            ticketing: {
                 enable: false,
+                embedTitle: 'Not Set Up',
                 embedMessage: 'Not Set Up',
                 embedFooter: 'Not Set Up',
-                roles: [],
-                reactions: [],
                 embedThumbnail: {
                     enable: false,
                     url: 'Not Set Up',
                 },
             },
-            joinRole: {
-                enable: false,
-                role: 'Not Set Up',
-            },
-            music: {
-                enable: false,
-                djRoles: [],
-                textChannel: 'Not Set Up',
-            },
-            general: {
-                adminRoles: [],
-                modRoles: [],
-            },
-            modMail: {
-                enable: false,
-                modList: [],
-            },
-            JTCVC: {
-                enable: false,
-                voiceChannel: 'Not Set Up',
-            },
-            blame: {
-                enable: false,
-                cursing: false,
-                offset: 0,
-                permList: [],
-                rotateList: [],
-            },
+            joinRole: { enable: false, role: 'Not Set Up' },
+            music: { enable: false, djRoles: [], textChannel: 'Not Set Up' },
+            general: { adminRoles: [], modRoles: [] },
+            modMail: { enable: false, modList: [] },
+            JTCVC: { enable: false, voiceChannel: 'Not Set Up' },
+            blame: { enable: false, cursing: false, offset: 0, permList: [], rotateList: [] },
             logging: {
                 enable: false,
-                voice: {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                    ignoreChannels: [],
-                    ignoreCatagories: [],
-                },
-                text: {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                    ignoreChannels: [],
-                    ignoreCatagories: [],
-                },
-                admin: {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                    ignoreChannels: [],
-                    ignoreCatagories: [],
-                },
-                user: {
-                    enable: false,
-                    loggingChannel: 'Not Set Up',
-                },
+                voice: { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] },
+                text: { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] },
+                admin: { enable: false, loggingChannel: 'Not Set Up', ignoreChannels: [], ignoreCategories: [] },
+                user: { enable: false, loggingChannel: 'Not Set Up' },
             },
         };
         buildConfigFile(defaultConfig, serverID);

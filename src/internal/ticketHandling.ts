@@ -1,4 +1,4 @@
-//#region Imports
+/*//#region Imports
 import { ButtonInteraction, Client, ComponentType, Message, ChannelType, ButtonStyle, ButtonBuilder, ActionRowBuilder, PermissionsBitField } from 'discord.js';
 import { MongooseTicketList, TicketChannel } from '../models/ticketingList.js';
 import { MongooseServerConfig } from '../models/serverConfigModel.js';
@@ -8,7 +8,7 @@ import { MongooseServerConfig } from '../models/serverConfigModel.js';
 /**
  * This function starts the listening to see if a user hits a reaction, and gives them the role when they do react.
  * @param client - Discord.js Client Object
- */
+ *
 async function ticketListener(client: Client) {
     //#region Loads Messages to Listen to
     const ticketLists = await MongooseTicketList.find({}).exec();
@@ -41,7 +41,7 @@ async function ticketListener(client: Client) {
 /**
  * This function takes a message and listens to the buttons on it
  * @pram message - Discord.js Message Object
- */
+ *
 async function ticketCollector(message: Message) {
     const collector = message.createMessageComponentCollector({
         componentType: ComponentType.Button,
@@ -122,7 +122,7 @@ async function ticketCollector(message: Message) {
  * @param channel - Current Discord.js VoiceChannel Object
  * @param collections - Current ExtraCollections Object
  * @param serverConfig - Current Server Config File
- */
+ *
 async function panelCreation(channel: VoiceChannel, collections: ExtraCollections, serverConfig: ServerConfig) {
     const embMsg = new EmbedBuilder()
         .setTitle('Voice Channel Controls')
@@ -146,3 +146,4 @@ async function panelCreation(channel: VoiceChannel, collections: ExtraCollection
 //#region exports
 export { ticketListener, ticketCollector };
 //#endregion
+*/
