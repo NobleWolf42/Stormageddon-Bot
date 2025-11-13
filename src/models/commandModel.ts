@@ -4,6 +4,7 @@ import { DisTube } from 'distube';
 import { MessageWithDeleted } from './messagesModel.js';
 import { ServerConfig } from './serverConfigModel.js';
 import { ExtraCollections } from './extraCollectionsModel.js';
+import Innertube from 'youtubei.js';
 //#endregion
 
 //#region Command interface
@@ -35,7 +36,8 @@ interface Command {
                 _id: string;
             }> & {
                 __v: number;
-            }
+            },
+        youtube?: Innertube
     ): void | Promise<void>;
 }
 //#endregion

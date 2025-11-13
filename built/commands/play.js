@@ -7,7 +7,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import { Innertube } from 'youtubei.js';
 import { errorNoDJ, warnCustom, warnDisabled, warnWrongChannel } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
 //#endregion
@@ -20,7 +19,7 @@ const playCommand = {
     class: 'music',
     usage: 'play ***SEARCH-TERM/YOUTUBE-LINK/YOUTUBE-PLAYLIST/SPOTIFY-LINK/SPOTIFY-PLAYLIST***',
     description: 'Plays the selected music in the voice channel you are in.',
-    execute(message, args, _client, distube, _collections, serverConfig) {
+    execute(message, args, _client, distube, _collections, serverConfig, youtube) {
         return __awaiter(this, void 0, void 0, function* () {
             //Checks to see if the music feature is enabled in this server
             if (!serverConfig.music.enable) {
@@ -56,7 +55,6 @@ const playCommand = {
             else {
                 const regex = /^(?:https?:\/\/)?(?:(?:www|m)\.)?(?:youtube\.com|youtu\.be|music\.youtube\.com)(?:\/(?:(?:watch\?v=|embed\/|v\/|shorts\/|live\/)?([\w-]{11}))(?:\S+)?|\/playlist\?list=((?:PL|UU|LL|RD|OL)[\w-]{16,41}))(?:\S+)?/;
                 if (song.match(regex)) {
-                    const youtube = yield Innertube.create();
                     const info = yield youtube.getBasicInfo(Array.from(song.matchAll(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/gi), (m) => m[1])[0]);
                     song = info.basic_info.title;
                 }

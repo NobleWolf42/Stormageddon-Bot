@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //#region Imports
 import { EmbedBuilder, GuildMember, SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { Client as GeniusClient } from 'genius-lyrics';
-import { Innertube } from 'youtubei.js';
 import { embedCustom, errorCustom, errorNoDJ, errorNoMod, warnCustom, warnDisabled, warnWrongChannel } from '../../helpers/embedSlashMessages.js';
 import { addToLog } from '../../helpers/errorLog.js';
 import { djCheck, modCheck } from '../../helpers/userSlashPermissions.js';
@@ -64,7 +63,7 @@ const musicSlashCommand = {
         .addIntegerOption((option) => option.setName('volume').setDescription('Volume to change to.').setRequired(false))),
     //#endregion
     //#region Execution of the commands
-    execute(client, interaction, distube, _collections) {
+    execute(client, interaction, distube, _collections, youtube) {
         return __awaiter(this, void 0, void 0, function* () {
             //#region Function wide variables and permission checks
             //Max fields for an embed per discord, change this if it ever changes
@@ -120,7 +119,6 @@ const musicSlashCommand = {
                         return;
                     }
                     else if (song.match(regex)) {
-                        const youtube = yield Innertube.create();
                         const info = yield youtube.getBasicInfo(Array.from(song.matchAll(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/gi), (m) => m[1])[0]);
                         song = info.basic_info.title;
                     }

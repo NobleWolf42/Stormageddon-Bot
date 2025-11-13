@@ -9,6 +9,7 @@ import { Command } from '../models/commandModel.js';
 import { MongooseServerConfig, ServerConfig } from '../models/serverConfigModel.js';
 import { ExtraCollections } from '../models/extraCollectionsModel.js';
 import { LogType } from '../models/loggingModel.js';
+import Innertube from 'youtubei.js';
 //#endregion
 
 //Regex that tests for str (prefix)
@@ -34,10 +35,11 @@ function tryCommand(
         }> & {
             __v: number;
         },
-    collections: ExtraCollections
+    collections: ExtraCollections,
+    youtube: Innertube
 ) {
     try {
-        command.execute(message, args, client, distube, collections, serverConfig);
+        command.execute(message, args, client, distube, collections, serverConfig, youtube);
         if (message.channel.isDMBased()) {
             addToLog(LogType.Success, command.name, message.author.tag, 'DM', 'DM');
         } else {
@@ -61,7 +63,7 @@ function tryCommand(
  * @param client - Discord.js Client Object
  * @param distube - DisTube Client Object
  */
-function messageHandling(client: Client, distube: DisTube, collections: ExtraCollections) {
+function messageHandling(client: Client, distube: DisTube, collections: ExtraCollections, youtube: Innertube) {
     const coolDowns: Collection<string, Collection<string, number>> = new Collection();
 
     //#region Imports commands from ./commands
@@ -178,7 +180,7 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
 
         //#region Checks to see if server is set up
         if (command.name == 'setup' || command.name == 'test') {
-            tryCommand(client, message, command, args, distube, serverConfig, collections);
+            tryCommand(client, message, command, args, distube, serverConfig, collections, youtube);
             return;
         }
 
@@ -191,7 +193,7 @@ function messageHandling(client: Client, distube: DisTube, collections: ExtraCol
         }
         //#endregion
 
-        tryCommand(client, message, command, args, distube, serverConfig, collections);
+        tryCommand(client, message, command, args, distube, serverConfig, collections, youtube);
         //#endregion
     });
     console.log('... OK');

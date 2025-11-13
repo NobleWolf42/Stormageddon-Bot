@@ -1,7 +1,6 @@
 //#region Import
 //import('discord.js', { with: { 'resolution-mode': 'import' } }).VoiceBasedChannel;
 import { VoiceBasedChannel } from 'discord.js';
-import { Innertube } from 'youtubei.js';
 import { errorNoDJ, warnCustom, warnDisabled, warnWrongChannel } from '../helpers/embedMessages.js';
 import { djCheck } from '../helpers/userPermissions.js';
 import { Command } from '../models/commandModel.js';
@@ -16,7 +15,7 @@ const playCommand: Command = {
     class: 'music',
     usage: 'play ***SEARCH-TERM/YOUTUBE-LINK/YOUTUBE-PLAYLIST/SPOTIFY-LINK/SPOTIFY-PLAYLIST***',
     description: 'Plays the selected music in the voice channel you are in.',
-    async execute(message, args, _client, distube, _collections, serverConfig) {
+    async execute(message, args, _client, distube, _collections, serverConfig, youtube) {
         //Checks to see if the music feature is enabled in this server
         if (!serverConfig.music.enable) {
             return warnDisabled(message, 'music', this.name);
@@ -53,7 +52,6 @@ const playCommand: Command = {
             const regex =
                 /^(?:https?:\/\/)?(?:(?:www|m)\.)?(?:youtube\.com|youtu\.be|music\.youtube\.com)(?:\/(?:(?:watch\?v=|embed\/|v\/|shorts\/|live\/)?([\w-]{11}))(?:\S+)?|\/playlist\?list=((?:PL|UU|LL|RD|OL)[\w-]{16,41}))(?:\S+)?/;
             if (song.match(regex)) {
-                const youtube = await Innertube.create();
                 const info = await youtube.getBasicInfo(Array.from(song.matchAll(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/gi), (m) => m[1])[0]);
                 song = info.basic_info.title;
             }

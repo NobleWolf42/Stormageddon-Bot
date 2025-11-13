@@ -26,9 +26,9 @@ const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
  * @param command - String of command keyword
  * @param args - Array of the words after the command keyword
  */
-function tryCommand(client, message, command, args, distube, serverConfig, collections) {
+function tryCommand(client, message, command, args, distube, serverConfig, collections, youtube) {
     try {
-        command.execute(message, args, client, distube, collections, serverConfig);
+        command.execute(message, args, client, distube, collections, serverConfig, youtube);
         if (message.channel.isDMBased()) {
             addToLog(LogType.Success, command.name, message.author.tag, 'DM', 'DM');
         }
@@ -54,7 +54,7 @@ function tryCommand(client, message, command, args, distube, serverConfig, colle
  * @param client - Discord.js Client Object
  * @param distube - DisTube Client Object
  */
-function messageHandling(client, distube, collections) {
+function messageHandling(client, distube, collections, youtube) {
     const coolDowns = new Collection();
     //#region Imports commands from ./commands
     for (let i = 0; i < activeCommands.length; i++) {
@@ -139,14 +139,14 @@ function messageHandling(client, distube, collections) {
         //#endregion
         //#region Checks to see if server is set up
         if (command.name == 'setup' || command.name == 'test') {
-            tryCommand(client, message, command, args, distube, serverConfig, collections);
+            tryCommand(client, message, command, args, distube, serverConfig, collections, youtube);
             return;
         }
         if (serverConfig.setupNeeded) {
             return warnCustom(message, `You must set up the bot on this server before you can use commands. You can do this by using the \`${prefix}setup\` command in an Admin Only chat.`, command.name);
         }
         //#endregion
-        tryCommand(client, message, command, args, distube, serverConfig, collections);
+        tryCommand(client, message, command, args, distube, serverConfig, collections, youtube);
         //#endregion
     }));
     console.log('... OK');

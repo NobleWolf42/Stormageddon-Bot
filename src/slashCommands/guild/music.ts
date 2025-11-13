@@ -1,7 +1,6 @@
 //#region Imports
 import { EmbedBuilder, GuildMember, SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { Client as GeniusClient } from 'genius-lyrics';
-import { Innertube } from 'youtubei.js';
 import { embedCustom, errorCustom, errorNoDJ, errorNoMod, warnCustom, warnDisabled, warnWrongChannel } from '../../helpers/embedSlashMessages.js';
 import { addToLog } from '../../helpers/errorLog.js';
 import { djCheck, modCheck } from '../../helpers/userSlashPermissions.js';
@@ -73,7 +72,7 @@ const musicSlashCommand: SlashCommand = {
     //#endregion
 
     //#region Execution of the commands
-    async execute(client, interaction, distube, _collections) {
+    async execute(client, interaction, distube, _collections, youtube) {
         //#region Function wide variables and permission checks
         //Max fields for an embed per discord, change this if it ever changes
         const maxFields = 20;
@@ -137,7 +136,6 @@ const musicSlashCommand: SlashCommand = {
                     warnCustom(interaction, 'No song input detected, please try again.', musicSlashCommand.data.name);
                     return;
                 } else if (song.match(regex)) {
-                    const youtube = await Innertube.create();
                     const info = await youtube.getBasicInfo(Array.from(song.matchAll(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/gi), (m) => m[1])[0]);
                     song = info.basic_info.title;
                 }

@@ -14,7 +14,7 @@ import { LogType } from '../models/loggingModel.js';
 import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCommands/activeSlashCommands.js';
 //#endregion
 //#region Slash Command Handler
-function slashCommandHandling(client, distube, collections) {
+function slashCommandHandling(client, distube, collections, youtube) {
     return __awaiter(this, void 0, void 0, function* () {
         //This Loops through the active command array and adds them to the collection
         for (let i = 0; i < activeGlobalSlashCommands.length; i++) {
@@ -45,7 +45,7 @@ function slashCommandHandling(client, distube, collections) {
                 return;
             }
             try {
-                yield command.execute(client, interaction, distube, collections);
+                yield command.execute(client, interaction, distube, collections, youtube);
             }
             catch (error) {
                 console.error(error);

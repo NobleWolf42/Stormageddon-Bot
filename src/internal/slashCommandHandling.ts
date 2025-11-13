@@ -1,6 +1,7 @@
 //#region Imports
 import { ApplicationCommand, Client, REST, RESTPostAPIChatInputApplicationCommandsJSONBody, Routes, MessageFlags } from 'discord.js';
 import { DisTube } from 'distube';
+import { Innertube } from 'youtubei.js';
 import { addToLog } from '../helpers/errorLog.js';
 import { ExtraCollections } from '../models/extraCollectionsModel.js';
 import { LogType } from '../models/loggingModel.js';
@@ -8,7 +9,7 @@ import { activeGlobalSlashCommands, activeGuildSlashCommands } from '../slashCom
 //#endregion
 
 //#region Slash Command Handler
-async function slashCommandHandling(client: Client, distube: DisTube, collections: ExtraCollections) {
+async function slashCommandHandling(client: Client, distube: DisTube, collections: ExtraCollections, youtube: Innertube) {
     //This Loops through the active command array and adds them to the collection
     for (let i = 0; i < activeGlobalSlashCommands.length; i++) {
         const command = activeGlobalSlashCommands[i];
@@ -41,7 +42,7 @@ async function slashCommandHandling(client: Client, distube: DisTube, collection
         }
 
         try {
-            await command.execute(client, interaction, distube, collections);
+            await command.execute(client, interaction, distube, collections, youtube);
         } catch (error) {
             console.error(error);
             if (interaction.channel.isDMBased()) {
