@@ -138,19 +138,22 @@ const musicSlashCommand: SlashCommand = {
                     return;
                 } else if (song.match(regex)) {
                     const youtube = await Innertube.create();
-                    console.log(Array.from(song.matchAll(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/gi), (m) => m[1])[0]);
                     const info = await youtube.getBasicInfo(Array.from(song.matchAll(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/gi), (m) => m[1])[0]);
                     song = info.basic_info.title;
                 }
 
-                distube.play(voiceChannel, song, {
-                    member: interaction.member,
-                    textChannel: channel,
-                });
-                //interaction.reply({
-                //    content: 'Added',
-                //    flags: MessageFlags.Ephemeral,
-                //});
+                distube
+                    .play(voiceChannel, song, {
+                        member: interaction.member,
+                        textChannel: channel,
+                    })
+                    .then(() =>
+                        interaction.reply({
+                            content: 'Added',
+                            flags: MessageFlags.Ephemeral,
+                        })
+                    );
+
                 break;
             }
             //#endregion

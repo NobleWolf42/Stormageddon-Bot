@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 //#region Imports
-import { EmbedBuilder, GuildMember, SlashCommandBuilder } from 'discord.js';
+import { EmbedBuilder, GuildMember, SlashCommandBuilder, MessageFlags } from 'discord.js';
 import { Client as GeniusClient } from 'genius-lyrics';
 import { Innertube } from 'youtubei.js';
 import { embedCustom, errorCustom, errorNoDJ, errorNoMod, warnCustom, warnDisabled, warnWrongChannel } from '../../helpers/embedSlashMessages.js';
@@ -121,18 +121,18 @@ const musicSlashCommand = {
                     }
                     else if (song.match(regex)) {
                         const youtube = yield Innertube.create();
-                        console.log(Array.from(song.matchAll(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/gi), (m) => m[1])[0]);
                         const info = yield youtube.getBasicInfo(Array.from(song.matchAll(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/gi), (m) => m[1])[0]);
                         song = info.basic_info.title;
                     }
-                    distube.play(voiceChannel, song, {
+                    distube
+                        .play(voiceChannel, song, {
                         member: interaction.member,
                         textChannel: channel,
-                    });
-                    //interaction.reply({
-                    //    content: 'Added',
-                    //    flags: MessageFlags.Ephemeral,
-                    //});
+                    })
+                        .then(() => interaction.reply({
+                        content: 'Added',
+                        flags: MessageFlags.Ephemeral,
+                    }));
                     break;
                 }
                 //#endregion
