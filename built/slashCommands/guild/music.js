@@ -124,15 +124,14 @@ const musicSlashCommand = {
                         const info = yield youtube.getBasicInfo(Array.from(song.matchAll(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/gi), (m) => m[1])[0]);
                         song = info.basic_info.title;
                     }
-                    distube
-                        .play(voiceChannel, song, {
+                    distube.play(voiceChannel, song, {
                         member: interaction.member,
                         textChannel: channel,
-                    })
-                        .then(() => interaction.reply({
-                        content: 'Added',
+                    });
+                    interaction.reply({
+                        content: 'Adding...',
                         flags: MessageFlags.Ephemeral,
-                    }));
+                    });
                     break;
                 }
                 //#endregion

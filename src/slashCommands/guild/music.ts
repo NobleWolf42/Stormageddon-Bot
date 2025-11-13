@@ -142,18 +142,14 @@ const musicSlashCommand: SlashCommand = {
                     song = info.basic_info.title;
                 }
 
-                distube
-                    .play(voiceChannel, song, {
-                        member: interaction.member,
-                        textChannel: channel,
-                    })
-                    .then(() =>
-                        interaction.reply({
-                            content: 'Added',
-                            flags: MessageFlags.Ephemeral,
-                        })
-                    );
-
+                distube.play(voiceChannel, song, {
+                    member: interaction.member,
+                    textChannel: channel,
+                });
+                interaction.reply({
+                    content: 'Adding...',
+                    flags: MessageFlags.Ephemeral,
+                });
                 break;
             }
             //#endregion
