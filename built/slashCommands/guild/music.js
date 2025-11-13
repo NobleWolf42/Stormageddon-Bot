@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 //#region Imports
 import { EmbedBuilder, GuildMember, SlashCommandBuilder } from 'discord.js';
 import { Client as GeniusClient } from 'genius-lyrics';
+import { Innertube } from 'youtubei.js';
 import { embedCustom, errorCustom, errorNoDJ, errorNoMod, warnCustom, warnDisabled, warnWrongChannel } from '../../helpers/embedSlashMessages.js';
 import { addToLog } from '../../helpers/errorLog.js';
 import { djCheck, modCheck } from '../../helpers/userSlashPermissions.js';
@@ -63,7 +64,7 @@ const musicSlashCommand = {
         .addIntegerOption((option) => option.setName('volume').setDescription('Volume to change to.').setRequired(false))),
     //#endregion
     //#region Execution of the commands
-    execute(client, interaction, distube) {
+    execute(client, interaction, distube, _collections) {
         return __awaiter(this, void 0, void 0, function* () {
             //#region Function wide variables and permission checks
             //Max fields for an embed per discord, change this if it ever changes
@@ -111,13 +112,19 @@ const musicSlashCommand = {
             switch (interaction.options.getSubcommand()) {
                 //#region Play subcommand
                 case 'play': {
-                    const song = interaction.options.getString('song');
+                    const regex = /^(?:https?:\/\/)?(?:(?:www|m)\.)?(?:youtube\.com|youtu\.be|music\.youtube\.com)(?:\/(?:(?:watch\?v=|embed\/|v\/|shorts\/|live\/)?([\w-]{11}))(?:\S+)?|\/playlist\?list=((?:PL|UU|LL|RD|OL)[\w-]{16,41}))(?:\S+)?/;
+                    let song = interaction.options.getString('song');
                     //Checks to see if a song input is detected, is there is a song it checks to see if there is a queue, if there is no queue it plays the song, if there is an queue it will add it to the end of the queue
                     if (!song) {
                         warnCustom(interaction, 'No song input detected, please try again.', musicSlashCommand.data.name);
                         return;
                     }
-                    //FIX this error in the future, distube and discordjs hate each other apparently
+                    else if (song.match(regex)) {
+                        const youtube = yield Innertube.create();
+                        console.log(Array.from(song.matchAll(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/gi), (m) => m[1])[0]);
+                        const info = yield youtube.getBasicInfo(Array.from(song.matchAll(/(?:youtube\.com\/(?:[^\/]+\/.+\/|(?:v|e(?:mbed)?)\/|.*[?&]v=)|youtu\.be\/)([^"&?\/\s]{11})/gi), (m) => m[1])[0]);
+                        song = info.basic_info.title;
+                    }
                     distube.play(voiceChannel, song, {
                         member: interaction.member,
                         textChannel: channel,
