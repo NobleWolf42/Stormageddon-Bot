@@ -13,7 +13,10 @@ createJSONfiles();
 //#endregion
 //#region Imports
 import { SoundCloudPlugin } from '@distube/soundcloud';
-import { YouTubePlugin } from '@distube/youtube';
+//import { SpotifyPlugin } from '@distube/spotify';
+//import { YouTubePlugin } from '@distube/youtube';
+//import { DeezerPlugin } from '@distube/deezer';
+//import { YtDlpPlugin } from '@distube/yt-dlp';
 import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
 import { DisTube } from 'distube';
 import mongoose from 'mongoose';
@@ -83,7 +86,7 @@ try {
         plugins: [
             new SoundCloudPlugin(),
             //new SpotifyPlugin(),
-            new YouTubePlugin(),
+            //new YouTubePlugin(),
             //new DeezerPlugin(),
             // YouTube DL Plugin with optimizations
             new SoundCloudPlugin(),

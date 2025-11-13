@@ -26,13 +26,16 @@
         "@types/node": "^24.10.1",
         "axios": "^1.13.2",
         "discord-oauth2": "^2.12.1",
+        "discord-player": "^7.1.0",
+        "discord-player-youtubei": "^1.5.0",
         "discord.js": "^14.24.2",
         "distube": "^5.0.7",
         "genius-lyrics": "^4.4.7",
         "mongodb": "^7.0.0",
         "mongoose": "^8.19.3",
         "sodium-native": "^5.0.9",
-        "xmlhttprequest-ts": "^1.0.1"
+        "xmlhttprequest-ts": "^1.0.1",
+        "youtubei.js": "^16.0.1"
     },
     "scripts": {
         "start": "nodemon --ignore ./built/data --watch built --env-file=.env ./built/storm.js",

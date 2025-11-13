@@ -5,10 +5,10 @@ createJSONfiles();
 
 //#region Imports
 import { SoundCloudPlugin } from '@distube/soundcloud';
-import { SpotifyPlugin } from '@distube/spotify';
-import { YouTubePlugin } from '@distube/youtube';
-import { DeezerPlugin } from '@distube/deezer';
-import { YtDlpPlugin } from '@distube/yt-dlp';
+//import { SpotifyPlugin } from '@distube/spotify';
+//import { YouTubePlugin } from '@distube/youtube';
+//import { DeezerPlugin } from '@distube/deezer';
+//import { YtDlpPlugin } from '@distube/yt-dlp';
 import { Client, Events, GatewayIntentBits, Partials } from 'discord.js';
 import { DisTube } from 'distube';
 import mongoose from 'mongoose';
@@ -82,14 +82,14 @@ try {
         savePreviousSongs: false,
         plugins: [
             new SoundCloudPlugin(),
-            new SpotifyPlugin(),
-            new YouTubePlugin(),
-            new DeezerPlugin(),
+            //new SpotifyPlugin(),
+            //new YouTubePlugin(),
+            //new DeezerPlugin(),
             // YouTube DL Plugin with optimizations
             new SoundCloudPlugin(),
-            new YtDlpPlugin({
-                update: true, // Update youtube-dl automatically
-            }),
+            //new YtDlpPlugin({
+            //    update: true, // Update youtube-dl automatically
+            //}),
         ],
     });
     console.log('... OK');

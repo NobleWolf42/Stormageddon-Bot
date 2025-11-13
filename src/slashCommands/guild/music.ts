@@ -140,10 +140,10 @@ const musicSlashCommand: SlashCommand = {
                     member: interaction.member,
                     textChannel: channel,
                 });
-                interaction.reply({
-                    content: 'Added',
-                    flags: MessageFlags.Ephemeral,
-                });
+                //interaction.reply({
+                //    content: 'Added',
+                //    flags: MessageFlags.Ephemeral,
+                //});
                 break;
             }
             //#endregion
