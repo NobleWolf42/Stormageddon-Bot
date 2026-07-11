@@ -9,7 +9,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //#region Creates Critical Files
 import { createJSONfiles } from './helpers/createFiles.js';
+import { runWebServer } from './webserver/stormWebServer.js';
 createJSONfiles();
+let envPort = 3000;
+if (process.env.oauthPort !== undefined) {
+    envPort = parseInt(process.env.oauthPort);
+}
+else {
+    console.error('SET WEBSERVER PORT!');
+}
+runWebServer(envPort);
 //#endregion
 //#region Imports
 import { SoundCloudPlugin } from '@distube/soundcloud';
@@ -60,19 +69,24 @@ const client = new Client({
 });
 //#endregion
 //#region Initialize mongoDB/mongoose client
-mongoose
-    .connect(process.env.mongoDBURI)
-    .then(() => {
-    console.log('Connecting to MongoDB');
-    console.log('... OK');
-})
-    .catch((err) => {
-    console.log('Connecting to MongoDB');
-    console.log('... Failed');
-    console.log(err);
-    console.log('');
-});
-//mongoose.set('debug', true);
+if (process.env.mongoDBURI != undefined) {
+    mongoose
+        .connect(process.env.mongoDBURI)
+        .then(() => {
+        console.log('Connecting to MongoDB');
+        console.log('... OK');
+    })
+        .catch((err) => {
+        console.log('Connecting to MongoDB');
+        console.log('... Failed');
+        console.log(err);
+        console.log('');
+    });
+    //mongoose.set('debug', true);
+}
+else {
+    console.error('SET MONGODB URI!');
+}
 //#endregion
 //#region Initialize ExtraCollections
 const extraColl = new ExtraCollections();
@@ -132,10 +146,15 @@ try {
         yield logAdminUpdate(client);
         console.log('Starting User Logging Listener');
         yield logUserUpdate(client);
-        client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
-        console.log('Bot Startup Complete!');
-        console.log(`Logged in as ${client.user.tag}!`);
-        console.log('');
+        if (client.user != null) {
+            client.user.setActivity(`@me for more info and use the ! prefix when you dm me.`);
+            console.log('Bot Startup Complete!');
+            console.log(`Logged in as ${client.user.tag}!`);
+            console.log('');
+        }
+        else {
+            console.error('client.user IS NULL!');
+        }
         registerGlobalSlashCommands();
         for (const guild in serverConfigs) {
             registerGuildSlashCommands(serverConfigs[guild].guildID, client);
