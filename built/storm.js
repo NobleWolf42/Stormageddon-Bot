@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 //#region Creates Critical Files
 import { createJSONfiles } from './helpers/createFiles.js';
-import { runWebServer } from './webserver/stormWebServer.js';
+import { runWebServer } from './webServer/stormWebServer.js';
 createJSONfiles();
 let envPort = 3000;
 if (process.env.oauthPort !== undefined) {
