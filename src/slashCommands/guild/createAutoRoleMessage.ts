@@ -1,5 +1,5 @@
 //#region Imports
-import { APIEmbedField, EmbedBuilder, PermissionFlagsBits, PermissionsBitField, RestOrArray, SlashCommandBuilder, MessageFlags } from 'discord.js';
+import { APIEmbedField, EmbedBuilder, PermissionFlagsBits, PermissionsBitField, RestOrArray, SlashCommandBuilder, MessageFlags, Role } from 'discord.js';
 import { embedCustomDM, errorCustom, warnDisabled } from '../../helpers/embedSlashMessages.js';
 import { generateEmbedFields } from '../../internal/autoRole.js';
 import { MongooseServerConfig } from '../../models/serverConfigModel.js';
@@ -95,10 +95,11 @@ const createRoleMessageSlashCommand: SlashCommand = {
                 return;
             }
 
+            const thisRole = await interaction.guild.roles.fetch(role);
             const customEmote = client.emojis.cache.find((e) => e.name === emoji)?.id;
 
             if (!customEmote) {
-                fieldsOut.push({ name: emoji, value: role, inline: true });
+                fieldsOut.push({ name: emoji, value: thisRole.name, inline: true });
             } else {
                 fieldsOut.push({
                     name: customEmote,

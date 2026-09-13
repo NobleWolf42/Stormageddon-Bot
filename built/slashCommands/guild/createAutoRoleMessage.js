@@ -91,9 +91,10 @@ const createRoleMessageSlashCommand = {
                     errorCustom(interaction, `The role '${role}' does not exist!! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
                     return;
                 }
+                const thisRole = yield interaction.guild.roles.fetch(role);
                 const customEmote = (_a = client.emojis.cache.find((e) => e.name === emoji)) === null || _a === void 0 ? void 0 : _a.id;
                 if (!customEmote) {
-                    fieldsOut.push({ name: emoji, value: role, inline: true });
+                    fieldsOut.push({ name: emoji, value: thisRole.name, inline: true });
                 }
                 else {
                     fieldsOut.push({
