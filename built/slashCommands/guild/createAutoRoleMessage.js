@@ -87,7 +87,7 @@ const createRoleMessageSlashCommand = {
             }
             const fields = yield generateEmbedFields(serverConfig);
             for (const { emoji, role } of fields) {
-                if (!interaction.guild.roles.cache.find((r) => r.name === role)) {
+                if (!interaction.guild.roles.cache.find((r) => r.id === role)) {
                     errorCustom(interaction, `The role '${role}' does not exist!! Please run the setup command again (${serverConfig.prefix}set autorole).`, this.name, client);
                     return;
                 }
